@@ -555,7 +555,7 @@
                     </p>
                     <p class="text-sm text-gray-600 leading-relaxed">
                         이는 당분간 미국 명문대 입시 환경이 학생 선발 자체보다
-                        정책 준수와 법적 분쟁 회피 중심으로 경직될 것임을 시사합니다.
+                        정책 준수와 법적 분쟁 회피 중심으로 경직될 단서임을 시사합니다.
                     </p>
                 </div>
             </div>
@@ -1355,6 +1355,24 @@ function renderSchools(schoolList, containerId) {
             if (topWeakness) insightsHTML += '<p class="text-gray-700"><i class="fa-solid fa-arrow-trend-down text-red-500 w-4 mr-1"></i><span class="font-bold text-xs text-gray-400 uppercase tracking-wide mr-1">최대 단점:</span>' + topWeakness + '</p>';
             insightsHTML += '</div>';
         }
+        
+        let temporaryMeasureHTML = '';
+        if (school === "청담엘유학원") {
+            temporaryMeasureHTML = `
+                <div class="mt-3 bg-red-50 border border-red-200 p-3 rounded-md shadow-sm">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5 text-sm"></i>
+                        <div>
+                            <p class="text-xs font-bold text-red-700 mb-1">게시물 임시조치 안내</p>
+                            <p class="text-[11px] text-red-600/90 leading-relaxed">
+                                정보통신망법 제44조의2에 따라, 해당 학원 측의 권리침해(명예훼손) 신고로 인해 <strong>1점 리뷰 1건이 30일간 임시 블라인드 처리</strong>되었습니다. 소명 절차에 따라 해당 리뷰는 재게시되거나 영구 삭제될 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         let starsHTML = '';
         for (let i = 1; i <= 5; i++) {
             starsHTML += '<i class="fa-solid fa-star text-2xl text-gray-300 star" onmouseover="hoverStars(this,' + i + ')" onmouseout="resetStars(this)" onclick="initiateRating(\'' + school.replace(/'/g, "\\'") + '\',' + i + ')"></i>';
@@ -1365,6 +1383,7 @@ function renderSchools(schoolList, containerId) {
             '<div><h3 class="text-xl font-semibold text-gray-800 leading-tight break-keep">' + school + '</h3>' + badge + contactHTML + '</div>' +
             '<div class="flex items-center space-x-2 mt-4 mb-2"><span class="text-3xl font-bold text-blue-600">' + (avg > 0 ? avg : '-') + '</span><span class="text-sm text-gray-500 mt-1">/ 5 (' + votes + '개 리뷰)</span></div>' +
             insightsHTML +
+            temporaryMeasureHTML +
             '<div class="stars-container flex space-x-1 mt-4">' + starsHTML + '</div>' +
             '<p class="text-xs text-gray-400 mt-2">별점을 클릭하여 리뷰를 남겨보세요.</p>';
         container.appendChild(card);
