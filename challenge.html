@@ -9,90 +9,42 @@
     <link rel="stylesheet" as="style" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0;
-            background: #f3f4f6;
-            color: #1f2937;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* ── Hero ── */
-        .hero {
-            position: relative;
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
-            overflow: hidden;
-            padding: 80px 24px 100px;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 15% 80%, rgba(147,197,253,.18) 0%, transparent 50%),
-                radial-gradient(circle at 85% 20%, rgba(196,181,253,.12) 0%, transparent 45%);
-            pointer-events: none;
-        }
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -2px; left: 0; right: 0;
-            height: 60px;
-            background: #f3f4f6;
-            clip-path: ellipse(55% 100% at 50% 100%);
-        }
-        .hero-grid {
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none;
-        }
-
-        /* ── Stat cards ── */
+        /* ── Hero stat cards (calmed down) ── */
         .stat-number { font-variant-numeric: tabular-nums; }
         .stat-card {
-            position: relative;
             background: rgba(255,255,255,.10);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,.18);
-            border-radius: 20px;
-            padding: 36px 28px;
+            border-radius: 16px;
+            padding: 20px 14px;
             text-align: center;
-            transition: transform .3s ease, box-shadow .3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,.15);
         }
         .stat-card .stat-number {
-            font-size: clamp(2.8rem, 6vw, 4rem);
-            font-weight: 800;
+            font-size: clamp(1.9rem, 4.5vw, 2.5rem);
+            font-weight: 700;
+            color: white;
             line-height: 1.1;
-            letter-spacing: -0.03em;
-            background: linear-gradient(135deg, #ffffff 30%, #bfdbfe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            letter-spacing: -0.02em;
         }
         .stat-card .stat-unit {
-            font-size: 1rem;
+            font-size: .8rem;
             font-weight: 600;
-            color: rgba(255,255,255,.7);
-            margin-top: 2px;
+            color: rgba(255,255,255,.85);
+            margin-top: 4px;
         }
         .stat-card .stat-label {
-            font-size: .85rem;
-            font-weight: 500;
-            color: rgba(255,255,255,.55);
-            margin-top: 10px;
-            line-height: 1.5;
+            font-size: .7rem;
+            color: rgba(255,255,255,.65);
+            margin-top: 8px;
+            line-height: 1.4;
         }
 
-        /* ── Section panels (reuse site's 3D bubble) ── */
+        /* ── 3D bubble panels (reused from main site) ── */
         .panel-bg {
             position: relative;
             overflow: hidden;
@@ -126,13 +78,6 @@
             opacity: .45;
             pointer-events: none;
         }
-
-        .panel-fuchsia {
-            background: linear-gradient(160deg, #fdf4ff 0%, #fae8ff 40%, #f5d0fe 100%);
-        }
-        .panel-fuchsia::after {
-            background: radial-gradient(circle, #e879f9 0%, #f5d0fe 60%, transparent 100%);
-        }
         .panel-blue {
             background: linear-gradient(160deg, #f0f7ff 0%, #e0ecff 40%, #dbeafe 100%);
         }
@@ -146,227 +91,62 @@
             background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
         }
 
-        /* ── Price card ── */
-        .price-card {
-            position: relative;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 24px;
-            padding: 44px 36px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,.04);
-            overflow: hidden;
-            transition: transform .3s ease, box-shadow .3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .price-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(0,0,0,.08);
-        }
-        .price-card.recommended {
-            border: 2px solid #2563eb;
-            box-shadow: 0 12px 48px rgba(37,99,235,.14);
-            transform: scale(1.02);
-        }
-        .price-card.recommended:hover {
-            transform: scale(1.02) translateY(-4px);
-        }
-        .price-card.recommended::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, #2563eb, #7c3aed, #db2777);
-        }
-        .price-badge {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: #2563eb;
-            color: white;
-            font-size: .7rem;
-            font-weight: 700;
-            letter-spacing: .05em;
-            padding: 5px 10px;
-            border-radius: 999px;
-            text-transform: uppercase;
-        }
-        .price-amount {
-            font-size: clamp(3rem, 7vw, 4.25rem);
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            color: #1e3a8a;
-            line-height: 1;
-        }
-        .price-amount .currency {
-            font-size: .45em;
-            font-weight: 700;
-            vertical-align: super;
-            color: #3b82f6;
-            margin-right: 2px;
-        }
-        .price-per-set {
-            font-size: .8rem;
-            color: #6b7280;
-            margin-top: 8px;
-            font-weight: 500;
-        }
-        .price-savings {
-            display: inline-block;
-            background: #ecfdf5;
-            color: #047857;
-            font-size: .7rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            margin-left: 4px;
-        }
-
-        /* ── Process steps ── */
+        /* ── Process step connector line ── */
         .step-line {
             position: absolute;
-            left: 27px;
-            top: 56px;
+            left: 19px;
+            top: 44px;
             bottom: 0;
             width: 2px;
-            background: linear-gradient(180deg, #3b82f6 0%, #dbeafe 100%);
-        }
-        .step-dot {
-            width: 56px; height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.15rem;
-            flex-shrink: 0;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            background: linear-gradient(180deg, #dbeafe 0%, #e5e7eb 100%);
         }
 
-        /* ── Fade-in animation ── */
+        /* ── Subtle fade-up on scroll ── */
         .fade-up {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity .7s ease, transform .7s ease;
+            transform: translateY(16px);
+            transition: opacity .5s ease, transform .5s ease;
         }
         .fade-up.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* ── Quote cards ── */
-        .quote-card {
-            position: relative;
-            background: white;
-            border-radius: 20px;
-            padding: 36px 30px 30px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 20px rgba(0,0,0,.04);
-            transition: transform .3s ease, box-shadow .3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .quote-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(0,0,0,.08);
-        }
-        .quote-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 30px; right: 30px;
-            height: 3px;
-            border-radius: 0 0 3px 3px;
-        }
-        .quote-card.accent-blue::before { background: #2563eb; }
-        .quote-card.accent-teal::before { background: #0d9488; }
-        .quote-card.accent-amber::before { background: #f59e0b; }
-        .quote-mark {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 4rem;
-            line-height: 0.8;
-            font-weight: 700;
-            color: #e5e7eb;
-            margin-bottom: 8px;
-        }
-        .quote-en {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 1.1rem;
-            font-style: italic;
-            font-weight: 400;
-            color: #1f2937;
-            line-height: 1.55;
-            margin-bottom: 16px;
-            letter-spacing: -0.005em;
-        }
-        .quote-ko {
-            font-size: .85rem;
-            color: #6b7280;
-            line-height: 1.65;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-        .quote-attribution {
-            padding-top: 18px;
-            border-top: 1px solid #f3f4f6;
-        }
-        .quote-name {
-            font-weight: 700;
-            font-size: .95rem;
-            color: #111827;
-        }
-        .quote-title {
-            font-size: .8rem;
-            color: #6b7280;
-            margin-top: 2px;
-            line-height: 1.4;
-        }
-
         @media (max-width: 768px) {
-            .hero { padding: 60px 20px 80px; }
-            .stat-card { padding: 24px 20px; }
-            .price-card { padding: 36px 24px; }
-            .price-card.recommended { transform: none; }
-            .price-card.recommended:hover { transform: translateY(-4px); }
+            .panel-bg { border-radius: 16px; }
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-800">
 
-<!-- ══════════════════════════════════════════════════════
-     HEADER
-     ══════════════════════════════════════════════════════ -->
+
+<!-- ════════════════════════════════════════════════════════════
+     TOP NAV (link back to main site)
+     ════════════════════════════════════════════════════════════ -->
 <header class="bg-blue-600 text-white py-4 shadow-md">
-    <div class="container mx-auto px-4 flex items-center justify-center">
-        <a href="#" class="text-2xl font-bold tracking-wide hover:opacity-90 transition">EduFinder</a>
+    <div class="container mx-auto px-4">
+        <a href="edufinder.html"
+           class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
+        </a>
     </div>
 </header>
 
 
-<!-- ══════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════════════
      HERO
-     ══════════════════════════════════════════════════════ -->
-<section class="hero">
-    <div class="hero-grid"></div>
-    <div class="container mx-auto max-w-5xl text-center" style="position:relative;z-index:2;">
-
-        <p class="text-blue-300 text-sm md:text-base font-medium tracking-wide mb-4">
-            EduFinder presents
-        </p>
-        <h1 class="text-white text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-3 tracking-tight">
-            <span class="bg-gradient-to-r from-blue-200 to-fuchsia-200 bg-clip-text text-transparent">
-                The Challenge!
-            </span>
-            Series
+     ════════════════════════════════════════════════════════════ -->
+<section class="bg-blue-600 text-white py-14 md:py-20 shadow-md">
+    <div class="container mx-auto px-4 text-center">
+        <p class="text-blue-200 text-sm mb-3 font-light">EduFinder 제공</p>
+        <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">
+            The Challenge! Series
         </h1>
-        <p class="text-blue-200 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12 font-light">
-            Digital SAT Mock Exams Built from 100+ Real Papers
+        <p class="text-blue-100 text-base md:text-lg font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+            100회 이상의 기출을 분석해 완성한 디지털 SAT 모의고사
         </p>
 
-        <div class="grid grid-cols-3 gap-4 md:gap-6 max-w-3xl mx-auto">
+        <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
             <div class="stat-card">
                 <div class="stat-number" data-target="100" data-suffix="+">0</div>
                 <div class="stat-unit">회분 이상</div>
@@ -380,133 +160,121 @@
             <div class="stat-card">
                 <div class="stat-number" data-target="4" data-suffix="">0</div>
                 <div class="stat-unit">콘텐츠 도메인</div>
-                <div class="stat-label">실제 시험 전 영역 완벽 커버</div>
+                <div class="stat-label">실제 시험 전 영역 커버</div>
             </div>
         </div>
     </div>
 </section>
 
 
-<!-- ══════════════════════════════════════════════════════
-     TEST STRUCTURE
-     ══════════════════════════════════════════════════════ -->
-<section class="container mx-auto max-w-5xl px-4 py-20">
-    <div class="text-center mb-14 fade-up">
-        <p class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-3">Test Structure</p>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-            실전과 구분할 수 없는 시험 구성
-        </h2>
-        <p class="text-gray-500 mt-3 max-w-xl mx-auto leading-relaxed">
-            실제 Digital SAT Reading & Writing과 동일한 문항 수, 제한 시간,
-            적응형 난이도를 그대로 재현합니다.
-        </p>
-    </div>
+<main class="container mx-auto px-4 py-10 md:py-12">
 
-    <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto fade-up">
-        <div class="panel-bg panel-blue p-7">
-            <div class="flex items-center gap-3 mb-5">
-                <span class="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-xl font-extrabold text-sm shadow">S1</span>
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: 시험 구성
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-4 fade-up">
+        실전과 구분할 수 없는 시험 구성
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        실제 Digital SAT Reading &amp; Writing과 동일한 문항 수, 제한 시간, 적응형 난이도를 그대로 재현합니다.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-6 fade-up">
+        <!-- S1 -->
+        <div class="panel-bg panel-blue p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full shadow-sm font-bold text-sm">S1</span>
                 <div>
-                    <h4 class="font-bold text-gray-900">Section 1 · R&W</h4>
+                    <h4 class="font-bold text-gray-800">Section 1 · R&amp;W</h4>
                     <p class="text-xs text-gray-500">Standard Difficulty</p>
                 </div>
             </div>
-            <div class="flex gap-6 text-center justify-center">
-                <div>
-                    <p class="text-3xl font-extrabold text-blue-700">27</p>
-                    <p class="text-xs text-gray-500 mt-1">문항</p>
+            <div class="flex gap-8 justify-center py-1">
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-blue-600">27</p>
+                    <p class="text-xs text-gray-500 mt-0.5">문항</p>
                 </div>
-                <div>
-                    <p class="text-3xl font-extrabold text-blue-700">32</p>
-                    <p class="text-xs text-gray-500 mt-1">분</p>
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-blue-600">32</p>
+                    <p class="text-xs text-gray-500 mt-0.5">분</p>
                 </div>
             </div>
-            <div class="mt-5 pt-5 border-t border-blue-200/60 text-center">
-                <p class="text-2xl font-extrabold text-blue-700 leading-none">
-                    1,000<span class="text-xl">+</span>
-                </p>
-                <p class="text-xs text-gray-500 mt-1.5 font-medium">표준 난이도 문제은행</p>
+            <div class="mt-3 pt-3 border-t border-blue-200/60 text-center">
+                <p class="text-xl font-bold text-blue-600">1,000<span class="text-base">+</span></p>
+                <p class="text-xs text-gray-500 mt-1">표준 난이도 문제은행</p>
             </div>
         </div>
-        <div class="panel-bg panel-amber p-7">
-            <div class="flex items-center gap-3 mb-5">
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-500 text-white rounded-xl font-extrabold text-sm shadow">S2</span>
+
+        <!-- S2 -->
+        <div class="panel-bg panel-amber p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm font-bold text-sm">S2</span>
                 <div>
-                    <h4 class="font-bold text-gray-900">Section 2 · R&W</h4>
+                    <h4 class="font-bold text-gray-800">Section 2 · R&amp;W</h4>
                     <p class="text-xs text-gray-500">Adaptive Difficulty</p>
                 </div>
             </div>
-            <div class="flex gap-6 text-center justify-center">
-                <div>
-                    <p class="text-3xl font-extrabold text-amber-600">27</p>
-                    <p class="text-xs text-gray-500 mt-1">문항</p>
+            <div class="flex gap-8 justify-center py-1">
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-amber-600">27</p>
+                    <p class="text-xs text-gray-500 mt-0.5">문항</p>
                 </div>
-                <div>
-                    <p class="text-3xl font-extrabold text-amber-600">32</p>
-                    <p class="text-xs text-gray-500 mt-1">분</p>
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-amber-600">32</p>
+                    <p class="text-xs text-gray-500 mt-0.5">분</p>
                 </div>
             </div>
-            <div class="mt-5 pt-5 border-t border-amber-200/60 text-center">
-                <p class="text-2xl font-extrabold text-amber-600 leading-none">
-                    1,000<span class="text-xl">+</span>
-                </p>
-                <p class="text-xs text-gray-500 mt-1.5 font-medium">고난이도 문제은행</p>
+            <div class="mt-3 pt-3 border-t border-amber-200/60 text-center">
+                <p class="text-xl font-bold text-amber-600">1,000<span class="text-base">+</span></p>
+                <p class="text-xs text-gray-500 mt-1">고난이도 문제은행</p>
             </div>
         </div>
     </div>
 
     <!-- Pattern mastery callout -->
-    <div class="max-w-3xl mx-auto mt-6 fade-up">
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 md:p-7 shadow-sm">
-            <div class="flex items-start gap-4">
-                <div class="flex-shrink-0">
-                    <span class="flex items-center justify-center w-11 h-11 bg-blue-50 text-blue-600 rounded-xl">
-                        <i class="fa-solid fa-fingerprint text-lg"></i>
-                    </span>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-900 mb-2">최근 기출의 숨은 패턴까지 재현합니다</h4>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        본 서비스의 전문가들은 최근 기출을 분석하여 세 가지 일정한 패턴을 찾았습니다.
-                        문제 유형의 구성, 지문을 만드는 방식, 섹션 안에서 문제가 놓이는 순서입니다.
-                        본 서비스가 제공하는 모든 시험은 이 패턴을 그대로 따릅니다.
-                        학생은 문제를 풀면서 실제 시험의 흐름에 익숙해집니다.
-                    </p>
-                </div>
+    <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12 fade-up">
+        <div class="flex items-start gap-4">
+            <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full shadow-sm">
+                <i class="fa-solid fa-fingerprint text-base"></i>
+            </span>
+            <div>
+                <h4 class="text-base font-bold text-gray-800 mb-2">최근 기출의 숨은 패턴까지 재현합니다</h4>
+                <p class="text-sm md:text-base text-gray-700 leading-relaxed">
+                    본 서비스의 전문가들은 최근 기출을 분석하여 세 가지 일정한 패턴을 찾았습니다.
+                    문제 유형의 구성, 지문을 만드는 방식, 섹션 안에서 문제가 놓이는 순서입니다.
+                    본 서비스가 제공하는 모든 시험은 이 패턴을 그대로 따릅니다.
+                    학생은 문제를 풀면서 실제 시험의 흐름에 익숙해집니다.
+                </p>
             </div>
         </div>
     </div>
-</section>
 
 
-<!-- ══════════════════════════════════════════════════════
-     HOW IT WORKS
-     ══════════════════════════════════════════════════════ -->
-<section class="container mx-auto max-w-5xl px-4 pb-20">
-    <div class="text-center mb-14 fade-up">
-        <p class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-3">How It Works</p>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-            4단계로 완성하는 실전 연습
-        </h2>
-    </div>
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: 4단계 학습 과정
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-indigo-500 pb-2 mb-6 fade-up">
+        4단계로 완성하는 실전 연습
+    </h2>
 
-    <div class="max-w-2xl mx-auto fade-up">
-        <div class="relative flex gap-6 pb-12">
+    <div class="bg-white rounded-lg shadow-md p-6 md:p-8 border border-gray-100 mb-12 fade-up">
+        <div class="relative flex gap-4 items-start pb-8">
             <div class="step-line"></div>
-            <div class="step-dot bg-blue-600 text-white">1</div>
-            <div class="pt-2 min-h-[6.5rem]">
-                <h3 class="text-lg font-bold text-gray-900 mb-1">시험 응시</h3>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">1</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">시험 응시</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">
-                    시험 당일과 동일한 환경에서 두 개의 R&W 섹션을 연속으로 풀게 됩니다.
+                    시험 당일과 동일한 환경에서 두 개의 R&amp;W 섹션을 연속으로 풀게 됩니다.
                     적응형 난이도 전환까지 완벽 재현하여 실전 감각을 그대로 익힐 수 있습니다.
                 </p>
             </div>
         </div>
-        <div class="relative flex gap-6 pb-12">
+        <div class="relative flex gap-4 items-start pb-8">
             <div class="step-line"></div>
-            <div class="step-dot bg-fuchsia-600 text-white">2</div>
-            <div class="pt-2 min-h-[6.5rem]">
-                <h3 class="text-lg font-bold text-gray-900 mb-1">즉시 채점</h3>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">2</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">즉시 채점</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">
                     시험 종료 즉시 예상 점수가 표시됩니다.
                     어떤 유형에서 실수했는지 한눈에 확인할 수 있어,
@@ -514,21 +282,21 @@
                 </p>
             </div>
         </div>
-        <div class="relative flex gap-6 pb-12">
+        <div class="relative flex gap-4 items-start pb-8">
             <div class="step-line"></div>
-            <div class="step-dot bg-teal-600 text-white">3</div>
-            <div class="pt-2 min-h-[6.5rem]">
-                <h3 class="text-lg font-bold text-gray-900 mb-1">해설 & 맞춤 코멘터리</h3>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">3</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">해설 &amp; 맞춤 코멘터리</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">
                     틀린 문항마다 직관적이고 상세한 해설이 제공됩니다.
                     점수대별 맞춤 코멘터리를 통해 다음 시험까지 무엇을 보완해야 할지 정확히 알 수 있습니다.
                 </p>
             </div>
         </div>
-        <div class="relative flex gap-6">
-            <div class="step-dot bg-indigo-600 text-white">4</div>
-            <div class="pt-2 min-h-[6.5rem]">
-                <h3 class="text-lg font-bold text-gray-900 mb-1">PDF 다운로드 & 언제 어디서나 복습</h3>
+        <div class="relative flex gap-4 items-start">
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">4</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">PDF 다운로드 &amp; 언제 어디서나 복습</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">
                     응시한 시험 전체를 PDF 한 부로 제공합니다.
                     내가 고른 답, 정답, 오답 해설, 총평까지 한 문서에 담아,
@@ -537,186 +305,192 @@
             </div>
         </div>
     </div>
-</section>
 
 
-<!-- ══════════════════════════════════════════════════════
-     AUTHORITATIVE VOICES
-     ══════════════════════════════════════════════════════ -->
-<section class="container mx-auto max-w-6xl px-4 pb-20">
-    <div class="text-center mb-14 fade-up">
-        <p class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-3">What Actually Works</p>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-            증명된 준비 전략
-        </h2>
-        <p class="text-gray-500 mt-3 max-w-2xl mx-auto leading-relaxed">
-            명문대의 입장, 인지 심리학의 증거, 그리고 SAT 전문가들의 조언.
-            모두 같은 결론을 가리킵니다 — <strong>실전과 동일한 모의고사</strong>가 답이라는 사실을.
-        </p>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-6 fade-up">
-        <!-- Quote 1: MIT — Why SAT Matters -->
-        <div class="quote-card accent-blue">
-            <div class="quote-mark">"</div>
-            <p class="quote-en">
-                Standardized tests help us better assess the academic preparedness of all applicants.
-            </p>
-            <p class="quote-ko">
-                On MIT's decision to reinstate its SAT/ACT requirement after four years of internal research —
-                making MIT one of the first elite universities to bring the test back.
-            </p>
-            <div class="quote-attribution">
-                <p class="quote-name">Stuart Schmill</p>
-                <p class="quote-title">Dean of Admissions, MIT</p>
-            </div>
-        </div>
-
-        <!-- Quote 2: Roediger — Testing Effect -->
-        <div class="quote-card accent-teal">
-            <div class="quote-mark">"</div>
-            <p class="quote-en">
-                Tests enhance later retention more than additional study of the material.
-            </p>
-            <p class="quote-ko">
-                From the foundational paper establishing the "Testing Effect" in cognitive psychology —
-                the finding that retrieving information strengthens memory far more than passive re-reading.
-            </p>
-            <div class="quote-attribution">
-                <p class="quote-name">Henry L. Roediger III</p>
-                <p class="quote-title">Psychologist, Washington University in St. Louis<br>
-                    Co-author of <em>Make It Stick</em></p>
-            </div>
-        </div>
-
-        <!-- Quote 3: Ericsson — Deliberate Practice -->
-        <div class="quote-card accent-amber">
-            <div class="quote-mark">"</div>
-            <p class="quote-en">
-                If you never push yourself beyond your comfort zone, you will never improve.
-            </p>
-            <p class="quote-ko">
-                From <em>Peak</em>, the bestselling distillation of decades of research into how top performers
-                achieve mastery — through what Ericsson termed "Deliberate Practice."
-            </p>
-            <div class="quote-attribution">
-                <p class="quote-name">K. Anders Ericsson</p>
-                <p class="quote-title">Psychologist, Florida State University<br>
-                    Author of <em>Peak</em> · Originator of "Deliberate Practice"</p>
-            </div>
-        </div>
-    </div>
-
-    <p class="text-center text-xs text-gray-400 mt-8 fade-up">
-        출처: MIT Admissions · Perspectives on Psychological Science (2006) · Peak (Ericsson & Pool, 2016)
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: 증명된 준비 전략
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-teal-500 pb-2 mb-4 fade-up">
+        증명된 준비 전략
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        명문대의 입장, 인지 심리학의 증거, SAT 전문가들의 조언.
+        모두 같은 결론을 가리킵니다 — <strong>실전과 동일한 모의고사</strong>가 답이라는 사실을.
     </p>
-</section>
 
+    <div class="grid md:grid-cols-3 gap-6 mb-4 fade-up">
 
-<!-- ══════════════════════════════════════════════════════
-     PRICING
-     ══════════════════════════════════════════════════════ -->
-<section id="pricing" class="container mx-auto max-w-5xl px-4 pb-24">
-    <div class="text-center mb-14 fade-up">
-        <p class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-3">Pricing</p>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-            목표에 맞는 패키지를 선택하세요
-        </h2>
-        <p class="text-gray-500 mt-3 max-w-xl mx-auto leading-relaxed">
-            패키지에 포함된 모든 세트는 실제 시험과 동일한 구성의
-            풀 모의고사 1회분입니다.
-        </p>
+        <!-- Quote 1: MIT -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow flex flex-col">
+            <div class="flex items-start gap-3 mb-3">
+                <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-building-columns text-base"></i>
+                </span>
+                <div>
+                    <p class="font-bold text-gray-900 text-sm">Stuart Schmill</p>
+                    <p class="text-xs text-gray-500 mt-0.5">MIT 입학처장</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mb-3 flex-grow">
+                MIT가 4년간의 내부 연구 끝에 SAT/ACT 제출 의무를 부활시키며,
+                명문 대학 중 선도적으로 시험 체제를 되살린 결정을 밝혔습니다.
+            </p>
+            <blockquote class="text-xs italic text-gray-600 border-l-2 border-blue-400 pl-3 py-1 leading-relaxed">
+                "Standardized tests help us better assess the academic preparedness of all applicants."
+            </blockquote>
+        </div>
+
+        <!-- Quote 2: Roediger -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow flex flex-col">
+            <div class="flex items-start gap-3 mb-3">
+                <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-brain text-base"></i>
+                </span>
+                <div>
+                    <p class="font-bold text-gray-900 text-sm">Henry L. Roediger III</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Washington University 인지심리학자</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mb-3 flex-grow">
+                인지 심리학에서 '시험 효과(Testing Effect)'를 정립한 기념비적 논문으로,
+                정보를 인출하는 행위가 수동적인 복습보다 훨씬 강하게 기억을 굳힌다는 것을 보여줍니다.
+            </p>
+            <blockquote class="text-xs italic text-gray-600 border-l-2 border-teal-400 pl-3 py-1 leading-relaxed">
+                "Tests enhance later retention more than additional study of the material."
+            </blockquote>
+        </div>
+
+        <!-- Quote 3: Ericsson -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow flex flex-col">
+            <div class="flex items-start gap-3 mb-3">
+                <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-mountain text-base"></i>
+                </span>
+                <div>
+                    <p class="font-bold text-gray-900 text-sm">K. Anders Ericsson</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Peak 저자 · '의식적 연습' 개념 창시</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mb-3 flex-grow">
+                저서 《Peak》에서 탁월한 성과를 내는 사람들의 공통점을 수십 년간 연구한 결과를
+                정리하며, '의식적 연습(Deliberate Practice)'의 원리를 제시합니다.
+            </p>
+            <blockquote class="text-xs italic text-gray-600 border-l-2 border-amber-400 pl-3 py-1 leading-relaxed">
+                "If you never push yourself beyond your comfort zone, you will never improve."
+            </blockquote>
+        </div>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto fade-up items-stretch">
+    <p class="text-xs text-gray-400 mb-12 fade-up">
+        출처: MIT Admissions · Perspectives on Psychological Science (2006) · Peak (Ericsson &amp; Pool, 2016)
+    </p>
 
-        <!-- Starter Package -->
-        <div class="price-card">
-            <p class="text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Starter</p>
-            <h3 class="text-lg font-bold text-gray-800 mb-5">3-Set Package</h3>
-            <div class="price-amount mb-1">
-                <span class="currency">$</span>19
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: 패키지 선택
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-fuchsia-500 pb-2 mb-4 fade-up">
+        목표에 맞는 패키지를 선택하세요
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        모든 세트는 실제 시험과 동일한 구성의 풀 모의고사 1회분으로 구성됩니다.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-12 fade-up">
+
+        <!-- Starter -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 flex flex-col hover:shadow-lg transition-shadow">
+            <div class="mb-4">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Starter</p>
+                <h3 class="text-lg font-bold text-gray-800">3-Set Package</h3>
             </div>
-            <p class="price-per-set">세트당 약 $6.33</p>
-
-            <div class="text-left space-y-3 mt-8 mb-8 px-2 flex-grow">
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700"><strong>3회분</strong>의 풀 모의고사</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">적응형 R&W 2섹션 완벽 재현</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">전 문항 상세 해설 & 즉시 채점</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">점수대별 맞춤 코멘터리</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">시험별 PDF 다운로드</p>
-                </div>
+            <div class="mb-6 pb-6 border-b border-gray-100">
+                <p class="text-4xl font-bold text-blue-600 leading-none">
+                    <span class="text-xl align-top">$</span>19
+                </p>
+                <p class="text-xs text-gray-500 mt-2">세트당 약 $6.33</p>
             </div>
-
-            <div class="inline-flex items-center self-center px-5 py-2.5 bg-gray-100 text-gray-600
+            <ul class="space-y-2.5 text-sm text-gray-700 mb-6 flex-grow">
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-blue-500 mt-1 text-xs"></i>
+                    <span><strong>3회분</strong>의 풀 모의고사</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-blue-500 mt-1 text-xs"></i>
+                    <span>적응형 R&amp;W 2섹션 완벽 재현</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-blue-500 mt-1 text-xs"></i>
+                    <span>전 문항 상세 해설 &amp; 즉시 채점</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-blue-500 mt-1 text-xs"></i>
+                    <span>점수대별 맞춤 코멘터리</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-blue-500 mt-1 text-xs"></i>
+                    <span>시험별 PDF 다운로드</span>
+                </li>
+            </ul>
+            <div class="inline-flex items-center justify-center px-5 py-2.5 bg-gray-100 text-gray-600
                         text-sm font-semibold rounded-lg border border-gray-200">
                 <i class="fa-solid fa-calendar-check mr-2"></i>4월 말 정식 출시
             </div>
         </div>
 
-        <!-- Pro Package (Recommended) -->
-        <div class="price-card recommended">
-            <span class="price-badge">Best Value</span>
-            <p class="text-xs font-bold text-blue-600 tracking-widest uppercase mb-2">Pro</p>
-            <h3 class="text-lg font-bold text-gray-800 mb-5">5-Set Package</h3>
-            <div class="price-amount mb-1">
-                <span class="currency">$</span>29
+        <!-- Pro (recommended) -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-2 border-fuchsia-500 flex flex-col relative hover:shadow-lg transition-shadow">
+            <span class="absolute -top-3 left-6 bg-fuchsia-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                <i class="fa-solid fa-star mr-1 text-[10px]"></i>추천
+            </span>
+            <div class="mb-4">
+                <p class="text-xs font-bold text-fuchsia-600 uppercase tracking-wide mb-1">Pro</p>
+                <h3 class="text-lg font-bold text-gray-800">5-Set Package</h3>
             </div>
-            <p class="price-per-set">
-                세트당 약 $5.80
-                <span class="price-savings">SAVE 8%</span>
-            </p>
-
-            <div class="text-left space-y-3 mt-8 mb-8 px-2 flex-grow">
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700"><strong>5회분</strong>의 풀 모의고사</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">적응형 R&W 2섹션 완벽 재현</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">전 문항 상세 해설 & 즉시 채점</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">점수대별 맞춤 코멘터리</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <i class="fa-solid fa-check text-blue-600 mt-0.5 text-sm"></i>
-                    <p class="text-sm text-gray-700">시험별 PDF 다운로드</p>
-                </div>
+            <div class="mb-6 pb-6 border-b border-gray-100">
+                <p class="text-4xl font-bold text-fuchsia-600 leading-none">
+                    <span class="text-xl align-top">$</span>29
+                </p>
+                <p class="text-xs text-gray-500 mt-2 flex items-center gap-2 flex-wrap">
+                    <span>세트당 약 $5.80</span>
+                    <span class="inline-flex items-center bg-green-50 text-green-700 text-xs font-bold px-2 py-0.5 rounded border border-green-200">SAVE 8%</span>
+                </p>
             </div>
-
-            <div class="inline-flex items-center self-center px-5 py-2.5 bg-fuchsia-50 text-fuchsia-600
+            <ul class="space-y-2.5 text-sm text-gray-700 mb-6 flex-grow">
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-fuchsia-500 mt-1 text-xs"></i>
+                    <span><strong>5회분</strong>의 풀 모의고사</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-fuchsia-500 mt-1 text-xs"></i>
+                    <span>적응형 R&amp;W 2섹션 완벽 재현</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-fuchsia-500 mt-1 text-xs"></i>
+                    <span>전 문항 상세 해설 &amp; 즉시 채점</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-fuchsia-500 mt-1 text-xs"></i>
+                    <span>점수대별 맞춤 코멘터리</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-fuchsia-500 mt-1 text-xs"></i>
+                    <span>시험별 PDF 다운로드</span>
+                </li>
+            </ul>
+            <div class="inline-flex items-center justify-center px-5 py-2.5 bg-fuchsia-50 text-fuchsia-600
                         text-sm font-semibold rounded-lg border border-fuchsia-200">
                 <i class="fa-solid fa-calendar-check mr-2"></i>4월 말 정식 출시
             </div>
         </div>
-
     </div>
-</section>
+
+</main>
 
 
-<!-- ══════════════════════════════════════════════════════
-     FOOTER
-     ══════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER (matches main site)
+     ════════════════════════════════════════════════════════════ -->
 <footer class="bg-gray-800 text-white text-center py-6">
     <p>&copy; 2026 EduFinder by Waystar</p>
 </footer>
@@ -726,7 +500,7 @@
 function animateCounters() {
     document.querySelectorAll('.stat-number[data-target]').forEach(el => {
         const target = parseInt(el.dataset.target);
-        const duration = 1800;
+        const duration = 1600;
         const start = performance.now();
         function tick(now) {
             const elapsed = now - start;
@@ -749,7 +523,7 @@ const observer = new IntersectionObserver(
             }
         });
     },
-    { threshold: 0.15 }
+    { threshold: 0.1 }
 );
 
 document.addEventListener('DOMContentLoaded', () => {
