@@ -17,29 +17,271 @@ const HARD_COUNT_STANDARD_LEAN = 7;
 const HARD_COUNT_HARDER_LEAN = 20;
 // ≥ 60% correct on module 1 routes the user into the harder module 2.
 const ADAPTIVE_THRESHOLD = 0.6;
+// Hard 32-minute cap per module. Stored on the module row as expires_at
+// so the clock keeps ticking even while the user is signed out.
+const MODULE_DURATION_MS = 32 * 60 * 1000;
 
-type Question = {
+type PublicQuestion = {
   id: string;
   question_type: string;
   passage: string;
   stem: string;
   choices: Record<string, string>;
-  correct_answer: string;
+};
+
+type FullQuestion = PublicQuestion & { correct_answer: string };
+
+type AnswerKeyRow = { id: string; a: string };
+
+type ModuleRow = {
+  id: string;
+  user_id: string;
+  difficulty: string;
+  module_number: number;
+  parent_module_id: string | null;
+  question_ids: string[];
+  answer_key: unknown;
+  answers: unknown;
+  score: number | null;
+  total: number | null;
+  submitted_at: string | null;
+  expires_at: string | null;
+  current_index: number | null;
+};
+
+type TakingResponse = {
+  kind: "taking";
+  module_id: string;
+  difficulty: Difficulty;
+  module_number: 1 | 2;
+  parent_module_id: string | null;
+  questions: PublicQuestion[];
+  expires_at: string;
+  current_index: number;
+  answers: Record<string, string>;
+};
+
+type SubmittedResponse = {
+  kind: "submitted";
+  module_id: string;
+  module_number: 1 | 2;
+  parent_module_id: string | null;
+  score: number;
+  total: number;
+  reason: "already_submitted" | "auto_submitted_on_resume";
 };
 
 type PairKey = `${TypeCode}|${Difficulty}`;
 const pairKey = (t: TypeCode, d: Difficulty): PairKey => `${t}|${d}` as PairKey;
 
+type Admin = ReturnType<typeof createSupabaseAdminClient>;
+
+// Grades an expired unsubmitted module using only the answers the client
+// managed to save before abandoning. Called the next time the owner tries
+// to resume it.
+async function finalizeExpiredModule(
+  admin: Admin,
+  mod: ModuleRow,
+): Promise<SubmittedResponse> {
+  const key = (mod.answer_key as AnswerKeyRow[]) ?? [];
+  const stored = (mod.answers as Record<string, string> | null) ?? {};
+  const score = key.filter(({ id, a }) => stored[id] === a).length;
+  const total = key.length;
+
+  await admin
+    .from("modules")
+    .update({
+      submitted_at: new Date().toISOString(),
+      score,
+      total,
+    })
+    .eq("id", mod.id);
+
+  return {
+    kind: "submitted",
+    module_id: mod.id,
+    module_number: mod.module_number as 1 | 2,
+    parent_module_id: mod.parent_module_id,
+    score,
+    total,
+    reason: "auto_submitted_on_resume",
+  };
+}
+
+// Converts a stored module row into the shape the client needs to keep
+// taking it — or finalizes it if the 32-minute window has already closed.
+async function resumeExistingModule(
+  admin: Admin,
+  mod: ModuleRow,
+): Promise<TakingResponse | SubmittedResponse | { error: string; status: number }> {
+  if (mod.submitted_at) {
+    return {
+      kind: "submitted",
+      module_id: mod.id,
+      module_number: mod.module_number as 1 | 2,
+      parent_module_id: mod.parent_module_id,
+      score: mod.score ?? 0,
+      total: mod.total ?? 0,
+      reason: "already_submitted",
+    };
+  }
+
+  const expiresAt = mod.expires_at ? new Date(mod.expires_at) : null;
+  if (expiresAt && expiresAt.getTime() <= Date.now()) {
+    return finalizeExpiredModule(admin, mod);
+  }
+
+  const { data: rawQs, error: qErr } = await admin
+    .from("questions")
+    .select("id, question_type, passage, stem, choices")
+    .in("id", mod.question_ids);
+  if (qErr) return { error: qErr.message, status: 500 };
+
+  const byId = new Map((rawQs ?? []).map((q) => [q.id as string, q as PublicQuestion]));
+  const orderedQuestions = mod.question_ids
+    .map((id) => byId.get(id))
+    .filter((q): q is PublicQuestion => !!q);
+
+  return {
+    kind: "taking",
+    module_id: mod.id,
+    difficulty: mod.difficulty as Difficulty,
+    module_number: mod.module_number as 1 | 2,
+    parent_module_id: mod.parent_module_id,
+    questions: orderedQuestions,
+    expires_at: (expiresAt ?? new Date(Date.now() + MODULE_DURATION_MS)).toISOString(),
+    current_index: mod.current_index ?? 0,
+    answers: (mod.answers as Record<string, string> | null) ?? {},
+  };
+}
+
+// Fresh module: roll blueprint, draw questions from the pools (excluding
+// anything the parent module already used), persist the row.
+async function createNewModule(
+  admin: Admin,
+  userId: string,
+  parentModuleId: string | null,
+  overallDifficulty: Difficulty,
+  moduleNumber: 1 | 2,
+  excludeQuestionIds: string[],
+): Promise<TakingResponse | { error: string; status: number }> {
+  const hardCount =
+    overallDifficulty === "harder" ? HARD_COUNT_HARDER_LEAN : HARD_COUNT_STANDARD_LEAN;
+
+  const slots = rollModuleBlueprint();
+  const mix = assignDifficultyMix(slots, hardCount);
+
+  const demand: Partial<Record<PairKey, number>> = {};
+  for (let i = 0; i < slots.length; i++) {
+    const k = pairKey(slots[i], mix[i]);
+    demand[k] = (demand[k] ?? 0) + 1;
+  }
+
+  const excludeIds = new Set<string>(excludeQuestionIds);
+  const picks: Partial<Record<PairKey, FullQuestion[]>> = {};
+
+  for (const key of Object.keys(demand) as PairKey[]) {
+    const [code, diff] = key.split("|") as [TypeCode, Difficulty];
+    const need = demand[key]!;
+
+    const { data, error } = await admin
+      .from("questions")
+      .select("id, question_type, passage, stem, choices, correct_answer")
+      .eq("difficulty", diff)
+      .eq("question_type", code)
+      .limit(500);
+    if (error) return { error: error.message, status: 500 };
+
+    const available = ((data as FullQuestion[]) ?? []).filter(
+      (q) => !excludeIds.has(q.id),
+    );
+    if (available.length < need) {
+      return {
+        error: `Not enough ${diff}/${code} questions (need ${need}, have ${available.length} after exclusions)`,
+        status: 500,
+      };
+    }
+
+    // Fisher–Yates shuffle, take `need`.
+    for (let i = available.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [available[i], available[j]] = [available[j], available[i]];
+    }
+    const taken = available.slice(0, need);
+    picks[key] = taken;
+    for (const q of taken) excludeIds.add(q.id);
+  }
+
+  const chosen: FullQuestion[] = [];
+  const cursor: Partial<Record<PairKey, number>> = {};
+  for (let i = 0; i < slots.length; i++) {
+    const key = pairKey(slots[i], mix[i]);
+    const idx = cursor[key] ?? 0;
+    chosen.push(picks[key]![idx]);
+    cursor[key] = idx + 1;
+  }
+  for (let i = chosen.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [chosen[i], chosen[j]] = [chosen[j], chosen[i]];
+  }
+
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + MODULE_DURATION_MS);
+  const answerKey = chosen.map((q) => ({ id: q.id, a: q.correct_answer }));
+
+  const { data: moduleRow, error: moduleErr } = await admin
+    .from("modules")
+    .insert({
+      user_id: userId,
+      difficulty: overallDifficulty,
+      question_ids: chosen.map((q) => q.id),
+      answer_key: answerKey,
+      parent_module_id: parentModuleId,
+      module_number: moduleNumber,
+      expires_at: expiresAt.toISOString(),
+      current_index: 0,
+      answers: {},
+    })
+    .select("id")
+    .single();
+  if (moduleErr || !moduleRow) {
+    return { error: moduleErr?.message ?? "Could not create module", status: 500 };
+  }
+
+  const publicQuestions: PublicQuestion[] = chosen.map((q) => ({
+    id: q.id,
+    question_type: q.question_type,
+    passage: q.passage,
+    stem: q.stem,
+    choices: q.choices,
+  }));
+
+  return {
+    kind: "taking",
+    module_id: moduleRow.id,
+    difficulty: overallDifficulty,
+    module_number: moduleNumber,
+    parent_module_id: parentModuleId,
+    questions: publicQuestions,
+    expires_at: expiresAt.toISOString(),
+    current_index: 0,
+    answers: {},
+  };
+}
+
+const MODULE_COLUMNS =
+  "id, user_id, difficulty, module_number, parent_module_id, question_ids, answer_key, answers, score, total, submitted_at, expires_at, current_index";
+
 /**
- * Starts a module for the authenticated user.
+ * Starts, resumes, or finalizes a module for the authenticated user.
  *
- * Call shape:
- *   POST {}                                 → module 1 of a fresh exam
- *   POST { parent_module_id: "<m1 id>" }    → module 2 (adaptive)
+ * Body shapes:
+ *   {}                             → module 1 of a new exam, or resume existing unsubmitted M1
+ *   { parent_module_id: "<id>" }   → module 2 for that exam (resume if one already exists)
+ *   { module_id: "<id>" }          → resume/view a specific module
  *
- * For module 2, leaning is decided from module 1's score and all 27
- * question IDs from module 1 are excluded from the pool so the full
- * 54-question exam has no overlap.
+ * Response is either `{ kind: "taking", ... }` (show questions) or
+ * `{ kind: "submitted", ... }` (already graded — client should go to dashboard).
  */
 export async function POST(request: Request) {
   const authed = await createSupabaseServerClient();
@@ -47,17 +289,33 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = (await request.json().catch(() => ({}))) as {
+    module_id?: string;
     parent_module_id?: string;
   };
 
   const admin = createSupabaseAdminClient();
 
-  // --- Resolve module context ---------------------------------------------
-  let parentQuestionIds: string[] = [];
-  let parentModuleId: string | null = null;
-  let moduleNumber: 1 | 2 = 1;
-  let overallDifficulty: Difficulty = "standard";
+  // -- Case 1: resume a specific module by id ------------------------------
+  if (body.module_id) {
+    const { data: mod, error } = await admin
+      .from("modules")
+      .select(MODULE_COLUMNS)
+      .eq("id", body.module_id)
+      .single();
+    if (error || !mod) {
+      return NextResponse.json({ error: "Module not found" }, { status: 404 });
+    }
+    if (mod.user_id !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    const result = await resumeExistingModule(admin, mod as ModuleRow);
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+    return NextResponse.json(result);
+  }
 
+  // -- Case 2: start or resume module 2 for a given parent -----------------
   if (body.parent_module_id) {
     const { data: parent, error: parentErr } = await admin
       .from("modules")
@@ -79,124 +337,65 @@ export async function POST(request: Request) {
 
     const { data: existing } = await admin
       .from("modules")
-      .select("id")
+      .select(MODULE_COLUMNS)
       .eq("parent_module_id", parent.id)
       .maybeSingle();
     if (existing) {
-      return NextResponse.json(
-        { error: "Module 2 already exists for this exam", existing_module_id: existing.id },
-        { status: 409 },
-      );
+      const result = await resumeExistingModule(admin, existing as ModuleRow);
+      if ("error" in result) {
+        return NextResponse.json({ error: result.error }, { status: result.status });
+      }
+      return NextResponse.json(result);
     }
 
-    parentModuleId = parent.id;
-    parentQuestionIds = (parent.question_ids ?? []) as string[];
-    moduleNumber = 2;
-    const score = parent.score ?? 0;
-    const total = parent.total ?? 1;
-    overallDifficulty = score / total >= ADAPTIVE_THRESHOLD ? "harder" : "standard";
-  }
+    const pScore = parent.score ?? 0;
+    const pTotal = parent.total ?? 1;
+    const overallDifficulty: Difficulty =
+      pScore / pTotal >= ADAPTIVE_THRESHOLD ? "harder" : "standard";
 
-  const hardCount =
-    overallDifficulty === "harder" ? HARD_COUNT_HARDER_LEAN : HARD_COUNT_STANDARD_LEAN;
-
-  // --- Roll blueprint + per-slot difficulty -------------------------------
-  const slots = rollModuleBlueprint();
-  const mix = assignDifficultyMix(slots, hardCount);
-
-  // Aggregate demand per (type, difficulty) pair.
-  const demand: Partial<Record<PairKey, number>> = {};
-  for (let i = 0; i < slots.length; i++) {
-    const k = pairKey(slots[i], mix[i]);
-    demand[k] = (demand[k] ?? 0) + 1;
-  }
-
-  // --- Draw from each pool, excluding module 1's ids ----------------------
-  const excludeIds = new Set<string>(parentQuestionIds);
-  const picks: Partial<Record<PairKey, Question[]>> = {};
-
-  for (const key of Object.keys(demand) as PairKey[]) {
-    const [code, diff] = key.split("|") as [TypeCode, Difficulty];
-    const need = demand[key]!;
-
-    const { data, error } = await admin
-      .from("questions")
-      .select("id, question_type, passage, stem, choices, correct_answer")
-      .eq("difficulty", diff)
-      .eq("question_type", code)
-      .limit(500);
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    const available = (data ?? []).filter((q) => !excludeIds.has(q.id));
-    if (available.length < need) {
-      return NextResponse.json(
-        {
-          error: `Not enough ${diff}/${code} questions (need ${need}, have ${available.length} after exclusions)`,
-        },
-        { status: 500 },
-      );
-    }
-
-    // Fisher–Yates shuffle, take `need`.
-    for (let i = available.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [available[i], available[j]] = [available[j], available[i]];
-    }
-    const taken = available.slice(0, need);
-    picks[key] = taken;
-    for (const q of taken) excludeIds.add(q.id);
-  }
-
-  // Walk the blueprint in order and pop one question per slot from the
-  // matching pair's bucket.
-  const chosen: Question[] = [];
-  const cursor: Partial<Record<PairKey, number>> = {};
-  for (let i = 0; i < slots.length; i++) {
-    const key = pairKey(slots[i], mix[i]);
-    const idx = cursor[key] ?? 0;
-    chosen.push(picks[key]![idx]);
-    cursor[key] = idx + 1;
-  }
-
-  // Shuffle final order so types/difficulties don't cluster.
-  for (let i = chosen.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [chosen[i], chosen[j]] = [chosen[j], chosen[i]];
-  }
-
-  // --- Persist -------------------------------------------------------------
-  const answerKey = chosen.map((q) => ({ id: q.id, a: q.correct_answer }));
-  const { data: moduleRow, error: moduleErr } = await admin
-    .from("modules")
-    .insert({
-      user_id: user.id,
-      difficulty: overallDifficulty,
-      question_ids: chosen.map((q) => q.id),
-      answer_key: answerKey,
-      parent_module_id: parentModuleId,
-      module_number: moduleNumber,
-    })
-    .select("id")
-    .single();
-
-  if (moduleErr || !moduleRow) {
-    return NextResponse.json(
-      { error: moduleErr?.message ?? "Could not create module" },
-      { status: 500 },
+    const created = await createNewModule(
+      admin,
+      user.id,
+      parent.id,
+      overallDifficulty,
+      2,
+      (parent.question_ids ?? []) as string[],
     );
+    if ("error" in created) {
+      return NextResponse.json({ error: created.error }, { status: created.status });
+    }
+    return NextResponse.json(created);
   }
 
-  const publicQuestions = chosen.map(({ correct_answer: _discard, ...safe }) => safe);
+  // -- Case 3: "new exam" — reuse a live M1 if the user already has one ----
+  // Prevents accidentally stacking multiple in-progress exams. An expired
+  // M1 is finalized silently and a fresh one is created in its place.
+  const { data: pendingM1 } = await admin
+    .from("modules")
+    .select(MODULE_COLUMNS)
+    .eq("user_id", user.id)
+    .eq("module_number", 1)
+    .is("submitted_at", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-  return NextResponse.json({
-    module_id: moduleRow.id,
-    difficulty: overallDifficulty,
-    module_number: moduleNumber,
-    parent_module_id: parentModuleId,
-    slots: slots as TypeCode[],
-    questions: publicQuestions,
-  });
+  if (pendingM1) {
+    const expiresAt = pendingM1.expires_at ? new Date(pendingM1.expires_at) : null;
+    if (!expiresAt || expiresAt.getTime() > Date.now()) {
+      const result = await resumeExistingModule(admin, pendingM1 as ModuleRow);
+      if ("error" in result) {
+        return NextResponse.json({ error: result.error }, { status: result.status });
+      }
+      return NextResponse.json(result);
+    }
+    await finalizeExpiredModule(admin, pendingM1 as ModuleRow);
+    // Fall through to create a fresh M1.
+  }
+
+  const created = await createNewModule(admin, user.id, null, "standard", 1, []);
+  if ("error" in created) {
+    return NextResponse.json({ error: created.error }, { status: created.status });
+  }
+  return NextResponse.json(created);
 }
