@@ -4,12 +4,18 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
+// Must match /challenge/api/module/start/route.ts
+const ADAPTIVE_THRESHOLD = 0.6;
+
 type AnswerKeyRow = { id: string; a: string };
 
 /**
  * Grades a user's answers for a module.
  * Authoritative answer comparison happens server-side; the client never
  * sees `correct_answer` until AFTER they submit.
+ *
+ * For module 1, the response includes `next_module` so the client knows
+ * which leaning (standard / harder) module 2 will have.
  */
 export async function POST(request: Request) {
   const authed = await createSupabaseServerClient();
@@ -28,7 +34,7 @@ export async function POST(request: Request) {
 
   const { data: mod, error: modErr } = await admin
     .from("modules")
-    .select("id, user_id, answer_key, submitted_at")
+    .select("id, user_id, answer_key, submitted_at, module_number")
     .eq("id", body.module_id)
     .single();
 
@@ -64,9 +70,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: updErr.message }, { status: 500 });
   }
 
+  // Tell the client whether a module 2 is next, and which leaning.
+  const nextModule =
+    mod.module_number === 1
+      ? {
+          parent_module_id: mod.id,
+          difficulty:
+            score / Math.max(1, results.length) >= ADAPTIVE_THRESHOLD
+              ? ("harder" as const)
+              : ("standard" as const),
+        }
+      : null;
+
   return NextResponse.json({
     score,
     total: results.length,
+    module_number: mod.module_number as 1 | 2,
+    next_module: nextModule,
     results,
   });
 }
