@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
   const { data: mod, error: modErr } = await admin
     .from("modules")
-    .select("id, user_id, answer_key, submitted_at, module_number")
+    .select("id, user_id, answer_key, answers, submitted_at, module_number")
     .eq("id", body.module_id)
     .single();
 
@@ -48,9 +48,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Already submitted" }, { status: 409 });
   }
 
+  // Merge with save-progress state so a submit call that arrives without
+  // the freshest client state (e.g. an auto-submit fired from a flaky
+  // tab) still credits answers the server has already seen.
+  const storedAnswers = (mod.answers as Record<string, string> | null) ?? {};
+  const finalAnswers: Record<string, string> = { ...storedAnswers, ...body.answers };
+
   const key = mod.answer_key as AnswerKeyRow[];
   const results = key.map(({ id, a }) => {
-    const picked = body.answers?.[id] ?? null;
+    const picked = finalAnswers[id] ?? null;
     return { id, correct_answer: a, picked_answer: picked, is_correct: picked === a };
   });
 
@@ -62,7 +68,7 @@ export async function POST(request: Request) {
       submitted_at: new Date().toISOString(),
       score,
       total: results.length,
-      answers: body.answers,
+      answers: finalAnswers,
     })
     .eq("id", mod.id);
 
