@@ -184,30 +184,56 @@ async function createNewModule(
     const [code, diff] = key.split("|") as [TypeCode, Difficulty];
     const need = demand[key]!;
 
-    const { data, error } = await admin
+    // First pass: just the IDs for this (type, difficulty) bucket. We used
+    // to pull `passage`+`stem`+`choices` for up to 500 rows per bucket on
+    // every module start — fine at ~1k questions, wasteful once the pool
+    // grows. Fetching only `id` keeps this light even for very large pools.
+    const { data: idRows, error: idErr } = await admin
       .from("questions")
-      .select("id, question_type, passage, stem, choices, correct_answer")
+      .select("id")
       .eq("difficulty", diff)
-      .eq("question_type", code)
-      .limit(500);
-    if (error) return { error: error.message, status: 500 };
+      .eq("question_type", code);
+    if (idErr) return { error: idErr.message, status: 500 };
 
-    const available = ((data as FullQuestion[]) ?? []).filter(
-      (q) => !excludeIds.has(q.id),
-    );
-    if (available.length < need) {
+    const availableIds = ((idRows as { id: string }[]) ?? [])
+      .map((r) => r.id)
+      .filter((id) => !excludeIds.has(id));
+    if (availableIds.length < need) {
       return {
-        error: `Not enough ${diff}/${code} questions (need ${need}, have ${available.length} after exclusions)`,
+        error: `Not enough ${diff}/${code} questions (need ${need}, have ${availableIds.length} after exclusions)`,
         status: 500,
       };
     }
 
-    // Fisher–Yates shuffle, take `need`.
-    for (let i = available.length - 1; i > 0; i--) {
+    // Partial Fisher–Yates: we only need `need` winners, so shuffle the
+    // last `need` positions into place and stop — O(need) instead of
+    // O(pool) — then fetch the full rows for just the winners.
+    const pickCount = Math.min(need, availableIds.length);
+    for (let i = availableIds.length - 1; i >= availableIds.length - pickCount; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [available[i], available[j]] = [available[j], available[i]];
+      [availableIds[i], availableIds[j]] = [availableIds[j], availableIds[i]];
     }
-    const taken = available.slice(0, need);
+    const winnerIds = availableIds.slice(availableIds.length - pickCount);
+
+    const { data: winnerRows, error: winnerErr } = await admin
+      .from("questions")
+      .select("id, question_type, passage, stem, choices, correct_answer")
+      .in("id", winnerIds);
+    if (winnerErr) return { error: winnerErr.message, status: 500 };
+
+    const byWinnerId = new Map(
+      ((winnerRows as FullQuestion[]) ?? []).map((q) => [q.id, q]),
+    );
+    const taken = winnerIds
+      .map((id) => byWinnerId.get(id))
+      .filter((q): q is FullQuestion => !!q);
+    if (taken.length < need) {
+      return {
+        error: `Could not load ${diff}/${code} picks (expected ${need}, got ${taken.length})`,
+        status: 500,
+      };
+    }
+
     picks[key] = taken;
     for (const q of taken) excludeIds.add(q.id);
   }
