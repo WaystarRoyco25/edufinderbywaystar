@@ -13,12 +13,18 @@ type Question = {
 type StartResponse = {
   module_id: string;
   difficulty: "standard" | "harder";
+  module_number: 1 | 2;
+  parent_module_id: string | null;
   questions: Question[];
 };
 
 type SubmitResult = {
   score: number;
   total: number;
+  module_number: 1 | 2;
+  next_module:
+    | { parent_module_id: string; difficulty: "standard" | "harder" }
+    | null;
   results: {
     id: string;
     correct_answer: string;
@@ -27,79 +33,142 @@ type SubmitResult = {
   }[];
 };
 
+type Phase = "loading" | "taking" | "between" | "done" | "error";
+
 export default function ModulePage() {
-  const [loading, setLoading] = useState(true);
+  const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<StartResponse | null>(null);
+  const [current, setCurrent] = useState<StartResponse | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [index, setIndex] = useState(0);
-  const [result, setResult] = useState<SubmitResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [module1Result, setModule1Result] = useState<SubmitResult | null>(null);
+  const [module2Result, setModule2Result] = useState<SubmitResult | null>(null);
+
+  async function loadModule(parentId: string | null) {
+    setPhase("loading");
+    setError(null);
+    setAnswers({});
+    setIndex(0);
+    try {
+      const res = await fetch("/challenge/api/module/start", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(parentId ? { parent_module_id: parentId } : {}),
+      });
+      if (!res.ok) {
+        throw new Error((await res.json()).error ?? "Failed to start module");
+      }
+      setCurrent(await res.json());
+      setPhase("taking");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to start module");
+      setPhase("error");
+    }
+  }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/challenge/api/module/start", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ difficulty: "standard" }),
-        });
-        if (!res.ok) throw new Error((await res.json()).error ?? "Failed to start module");
-        setData(await res.json());
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to start module");
-      } finally {
-        setLoading(false);
-      }
-    })();
+    void loadModule(null);
   }, []);
 
   async function onSubmit() {
-    if (!data) return;
+    if (!current) return;
     setSubmitting(true);
     try {
       const res = await fetch("/challenge/api/module/submit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ module_id: data.module_id, answers }),
+        body: JSON.stringify({ module_id: current.module_id, answers }),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Submit failed");
-      setResult(await res.json());
+      if (!res.ok) {
+        throw new Error((await res.json()).error ?? "Submit failed");
+      }
+      const result = (await res.json()) as SubmitResult;
+      if (result.module_number === 1) {
+        setModule1Result(result);
+        setPhase("between");
+      } else {
+        setModule2Result(result);
+        setPhase("done");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Submit failed");
+      setPhase("error");
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (loading) return <main className="p-8">모의고사를 불러오는 중...</main>;
-  if (error) return <main className="p-8 text-red-600">오류: {error}</main>;
-  if (!data) return null;
+  if (phase === "loading") {
+    return <main className="p-8">모의고사를 불러오는 중...</main>;
+  }
 
-  if (result) {
+  if (phase === "error") {
+    return <main className="p-8 text-red-600">오류: {error}</main>;
+  }
+
+  if (phase === "between" && module1Result) {
+    const next = module1Result.next_module;
+    const pct = Math.round((module1Result.score / module1Result.total) * 100);
     return (
       <main className="mx-auto max-w-3xl p-6 space-y-4">
-        <h1 className="text-2xl font-semibold">
-          점수: {result.score} / {result.total}
-        </h1>
-        <p className="text-gray-600">
-          {Math.round((result.score / result.total) * 100)}%
+        <h1 className="text-2xl font-semibold">모듈 1 완료</h1>
+        <p className="text-gray-700">
+          모듈 1 점수: {module1Result.score} / {module1Result.total} ({pct}%)
         </p>
-        <a href="/challenge/module" className="inline-block rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700">
+        <p className="text-gray-600">
+          {next?.difficulty === "harder"
+            ? "잘하셨습니다! 모듈 2는 더 어려운 문제 위주로 구성됩니다."
+            : "모듈 2는 기본 난이도 위주로 구성됩니다."}
+        </p>
+        <button
+          onClick={() => next && loadModule(next.parent_module_id)}
+          className="rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
+        >
+          모듈 2 시작하기
+        </button>
+      </main>
+    );
+  }
+
+  if (phase === "done" && module1Result && module2Result) {
+    const totalScore = module1Result.score + module2Result.score;
+    const totalMax = module1Result.total + module2Result.total;
+    const pct = Math.round((totalScore / totalMax) * 100);
+    return (
+      <main className="mx-auto max-w-3xl p-6 space-y-4">
+        <h1 className="text-2xl font-semibold">모의고사 완료</h1>
+        <div className="space-y-1 text-gray-700">
+          <p>
+            모듈 1: {module1Result.score} / {module1Result.total}
+          </p>
+          <p>
+            모듈 2: {module2Result.score} / {module2Result.total}
+          </p>
+          <p className="text-lg font-medium pt-2">
+            총점: {totalScore} / {totalMax} ({pct}%)
+          </p>
+        </div>
+        <a
+          href="/challenge/module"
+          className="inline-block rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
+        >
           다른 모의고사 응시하기
         </a>
       </main>
     );
   }
 
-  const q = data.questions[index];
+  if (phase !== "taking" || !current) return null;
+
+  const q = current.questions[index];
   const picked = answers[q.id];
 
   return (
     <main className="mx-auto max-w-3xl p-6 space-y-6">
       <header className="flex items-center justify-between">
         <div className="text-sm text-gray-500">
-          {index + 1} / {data.questions.length} 번 문제 · {q.question_type}
+          모듈 {current.module_number} · {index + 1} / {current.questions.length} 번 문제 · {q.question_type}
         </div>
         <div className="text-sm text-gray-500">
           {Object.keys(answers).length}문제 답변 완료
@@ -145,7 +214,7 @@ export default function ModulePage() {
           이전
         </button>
 
-        {index < data.questions.length - 1 ? (
+        {index < current.questions.length - 1 ? (
           <button
             onClick={() => setIndex(index + 1)}
             className="rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
@@ -158,7 +227,11 @@ export default function ModulePage() {
             disabled={submitting}
             className="rounded-md bg-green-600 px-4 py-2 text-white font-medium hover:bg-green-700 disabled:opacity-60"
           >
-            {submitting ? "제출 중..." : "모의고사 제출"}
+            {submitting
+              ? "제출 중..."
+              : current.module_number === 1
+                ? "모듈 1 제출"
+                : "모의고사 제출"}
           </button>
         )}
       </footer>
