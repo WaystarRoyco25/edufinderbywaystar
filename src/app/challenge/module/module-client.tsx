@@ -89,6 +89,8 @@ export default function ModuleClient() {
           body: JSON.stringify({ module_id: current.module_id, answers }),
         });
         if (!res.ok) {
+          // If the server already finalized this module (expired) we just
+          // bounce to the dashboard — nothing useful to show here.
           if (res.status === 409) {
             router.push("/challenge/dashboard");
             return;
@@ -113,6 +115,7 @@ export default function ModuleClient() {
     [current, answers, router],
   );
 
+  // --- Fire the start/resume request once on mount -----------------------
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
@@ -121,6 +124,8 @@ export default function ModuleClient() {
     const parentId = searchParams.get("parent");
     const isNew = searchParams.get("new") === "1";
 
+    // Without any of these query params we have no idea what the user
+    // wants — send them back to the dashboard to pick.
     if (!moduleId && !parentId && !isNew) {
       router.replace("/challenge/dashboard");
       return;
@@ -143,6 +148,8 @@ export default function ModuleClient() {
         const data = (await res.json()) as StartResponse;
 
         if (data.kind === "submitted") {
+          // Already done (or auto-graded on resume). Dashboard is the right
+          // place to view the score.
           router.replace("/challenge/dashboard");
           return;
         }
@@ -154,6 +161,7 @@ export default function ModuleClient() {
         setSecondsLeft(Math.max(0, Math.floor(remainingMs / 1000)));
         setPhase("taking");
 
+        // Canonicalize the URL so a refresh lands on the same module.
         if (!moduleId) {
           router.replace(`/challenge/module?id=${data.module_id}`);
         }
@@ -165,6 +173,7 @@ export default function ModuleClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // --- Countdown ---------------------------------------------------------
   useEffect(() => {
     if (phase !== "taking" || !current) return;
     const expiresAt = new Date(current.expires_at).getTime();
@@ -180,22 +189,63 @@ export default function ModuleClient() {
     return () => window.clearInterval(id);
   }, [phase, current, onSubmit]);
 
+  // --- Save progress, debounced -----------------------------------------
+  // Previously every keystroke/nav fired a POST. At 10k concurrent users
+  // that's a lot of DB writes for zero user-visible benefit — the server
+  // only needs the latest state. Coalesce bursts into a single write ~500ms
+  // after the user pauses.
+  const saveTimerRef = useRef<number | null>(null);
+  const pendingSaveRef = useRef<{
+    answers: Record<string, string>;
+    index: number;
+  } | null>(null);
+
+  const flushSave = useCallback(() => {
+    if (!current || !pendingSaveRef.current) return;
+    const { answers: nextAnswers, index: nextIndex } = pendingSaveRef.current;
+    pendingSaveRef.current = null;
+    if (saveTimerRef.current !== null) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+    void fetch("/challenge/api/module/save-progress", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        module_id: current.module_id,
+        answers: nextAnswers,
+        current_index: nextIndex,
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  }, [current]);
+
   const saveProgress = useCallback(
     (nextAnswers: Record<string, string>, nextIndex: number) => {
       if (!current) return;
-      void fetch("/challenge/api/module/save-progress", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          module_id: current.module_id,
-          answers: nextAnswers,
-          current_index: nextIndex,
-        }),
-        keepalive: true,
-      }).catch(() => {});
+      pendingSaveRef.current = { answers: nextAnswers, index: nextIndex };
+      if (saveTimerRef.current !== null) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+      saveTimerRef.current = window.setTimeout(flushSave, 500);
     },
-    [current],
+    [current, flushSave],
   );
+
+  // Flush on tab close / navigation so we don't lose the final burst.
+  // `keepalive: true` on the fetch lets it survive the unload.
+  useEffect(() => {
+    const onLeave = () => flushSave();
+    window.addEventListener("pagehide", onLeave);
+    window.addEventListener("beforeunload", onLeave);
+    return () => {
+      window.removeEventListener("pagehide", onLeave);
+      window.removeEventListener("beforeunload", onLeave);
+      if (saveTimerRef.current !== null) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, [flushSave]);
 
   function pickAnswer(qid: string, letter: string) {
     const next = { ...answers, [qid]: letter };
@@ -208,6 +258,7 @@ export default function ModuleClient() {
     saveProgress(answers, nextIndex);
   }
 
+  // --- Render ------------------------------------------------------------
   if (phase === "loading") {
     return <main className="p-8">모의고사를 불러오는 중...</main>;
   }
@@ -268,8 +319,12 @@ export default function ModuleClient() {
       <main className="mx-auto max-w-3xl p-6 space-y-4">
         <h1 className="text-2xl font-semibold">모의고사 완료</h1>
         <div className="space-y-1 text-gray-700">
-          <p>모듈 1: {module1Result.score} / {module1Result.total}</p>
-          <p>모듈 2: {module2Result.score} / {module2Result.total}</p>
+          <p>
+            모듈 1: {module1Result.score} / {module1Result.total}
+          </p>
+          <p>
+            모듈 2: {module2Result.score} / {module2Result.total}
+          </p>
           <p className="text-lg font-medium pt-2">
             총점: {totalScore} / {totalMax} ({pct}%)
           </p>
