@@ -77,3 +77,28 @@ export function rollModuleBlueprint(): TypeCode[] {
 
   return slots;
 }
+
+/**
+ * For each slot in a 27-slot blueprint, randomly assign either "standard"
+ * or "harder" difficulty such that exactly `hardCount` of the 27 slots are
+ * "harder". Used to build the module-1 / module-2 mixes:
+ *   - module 1 and easier module 2: hardCount = 7  (20 std + 7 hard)
+ *   - harder module 2:              hardCount = 20 (20 hard + 7 std)
+ */
+export function assignDifficultyMix(
+  slots: TypeCode[],
+  hardCount: number,
+): Difficulty[] {
+  const n = slots.length;
+  if (hardCount < 0 || hardCount > n) {
+    throw new Error(`hardCount ${hardCount} out of range for ${n} slots`);
+  }
+  const indexes = Array.from({ length: n }, (_, i) => i);
+  // Fisher–Yates shuffle.
+  for (let i = indexes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+  }
+  const harderSet = new Set(indexes.slice(0, hardCount));
+  return slots.map((_, i): Difficulty => (harderSet.has(i) ? "harder" : "standard"));
+}
