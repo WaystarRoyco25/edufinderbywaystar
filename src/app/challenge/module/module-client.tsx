@@ -71,6 +71,7 @@ export default function ModuleClient() {
   const [index, setIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   const [module1Result, setModule1Result] = useState<SubmitResult | null>(null);
   const [module2Result, setModule2Result] = useState<SubmitResult | null>(null);
 
@@ -217,7 +218,23 @@ export default function ModuleClient() {
         current_index: nextIndex,
       }),
       keepalive: true,
-    }).catch(() => {});
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          // Used to swallow these silently, which is exactly how we ended up
+          // with a bug where the DB never got the user's progress. Log the
+          // server's response so the next regression is visible in devtools.
+          const text = await res.text().catch(() => "");
+          console.error("save-progress failed", { status: res.status, body: text });
+          setSaveFailed(true);
+          return;
+        }
+        setSaveFailed(false);
+      })
+      .catch((err) => {
+        console.error("save-progress network error", err);
+        setSaveFailed(true);
+      });
   }, [current]);
 
   const saveProgress = useCallback(
@@ -364,6 +381,13 @@ export default function ModuleClient() {
           ⏱ {formatClock(secondsLeft)}
         </div>
       </header>
+
+      {saveFailed && (
+        <div className="rounded border border-red-300 bg-red-50 p-2 text-sm text-red-700">
+          진행 저장 실패 — 다음 답변 시 자동으로 재시도합니다. 문제가 지속되면
+          페이지를 새로고침해주세요.
+        </div>
+      )}
 
       <div className="flex items-center justify-between text-sm text-gray-500">
         <div>
