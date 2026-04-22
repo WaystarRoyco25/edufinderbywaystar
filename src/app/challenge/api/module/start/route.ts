@@ -126,9 +126,22 @@ async function resumeExistingModule(
     };
   }
 
-  const expiresAt = mod.expires_at ? new Date(mod.expires_at) : null;
+  let expiresAt = mod.expires_at ? new Date(mod.expires_at) : null;
   if (expiresAt && expiresAt.getTime() <= Date.now()) {
     return finalizeExpiredModule(admin, mod);
+  }
+
+  // Legacy rows written before the migration can have null expires_at. If we
+  // just synthesize one per request, the 32-minute window keeps restarting
+  // on every refresh — which is exactly the "timer resets" symptom. Persist
+  // it once so all future resumes see the same deadline.
+  if (!expiresAt) {
+    expiresAt = new Date(Date.now() + MODULE_DURATION_MS);
+    const { error: backfillErr } = await admin
+      .from("modules")
+      .update({ expires_at: expiresAt.toISOString() })
+      .eq("id", mod.id);
+    if (backfillErr) return { error: backfillErr.message, status: 500 };
   }
 
   const { data: rawQs, error: qErr } = await admin
@@ -149,7 +162,7 @@ async function resumeExistingModule(
     module_number: mod.module_number as 1 | 2,
     parent_module_id: mod.parent_module_id,
     questions: orderedQuestions,
-    expires_at: (expiresAt ?? new Date(Date.now() + MODULE_DURATION_MS)).toISOString(),
+    expires_at: expiresAt.toISOString(),
     current_index: mod.current_index ?? 0,
     answers: (mod.answers as Record<string, string> | null) ?? {},
   };
