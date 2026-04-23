@@ -103,25 +103,30 @@ function LockedReview({ m1, m2 }: { m1: ModuleRow; m2: ModuleRow | null }) {
 
   return (
     <main className="mx-auto max-w-3xl p-6 space-y-5">
-      <Link href="/challenge/dashboard" className="text-sm text-gray-600 underline">
+      <Link
+        href="/challenge/dashboard"
+        className="text-sm text-gray-600 underline hover:text-gray-800"
+      >
         대시보드로 돌아가기
       </Link>
-      <section className="rounded-xl border bg-white p-6 shadow-sm space-y-3">
-        <h1 className="text-2xl font-semibold">해설은 모의고사 완료 후 열립니다</h1>
+      <section className="rounded-lg border border-gray-100 bg-white p-6 shadow-md space-y-3">
+        <h1 className="text-2xl font-bold tracking-wide">
+          해설은 모의고사 완료 후 열립니다
+        </h1>
         <p className="text-gray-600">
           모듈 1과 모듈 2를 모두 제출한 뒤에 모든 문제의 정답과 해설을 확인할 수 있습니다.
         </p>
         <div className="flex flex-wrap gap-2 pt-2">
           <Link
             href="/challenge/dashboard"
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
             대시보드
           </Link>
           {nextHref && (
             <Link
               href={nextHref}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
             >
               {lockedLabel(m1, m2)}
             </Link>
