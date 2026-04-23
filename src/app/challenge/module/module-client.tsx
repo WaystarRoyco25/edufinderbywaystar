@@ -271,19 +271,26 @@ export default function ModuleClient() {
 
   // --- Render ------------------------------------------------------------
   if (phase === "loading") {
-    return <main className="p-8">모의고사를 불러오는 중...</main>;
+    return (
+      <main className="mx-auto max-w-3xl p-8 text-sm text-gray-500">
+        모의고사를 불러오는 중...
+      </main>
+    );
   }
 
   if (phase === "error") {
     return (
-      <main className="mx-auto max-w-3xl p-6 space-y-4">
-        <p className="text-red-600">오류: {error}</p>
-        <Link
-          href="/challenge/dashboard"
-          className="inline-block rounded border px-3 py-2 text-sm hover:bg-gray-50"
-        >
-          대시보드로 돌아가기
-        </Link>
+      <main className="mx-auto max-w-3xl p-6">
+        <section className="rounded-lg border border-gray-100 bg-white shadow-md p-6 space-y-4">
+          <h1 className="text-2xl font-bold tracking-wide text-red-600">오류</h1>
+          <p className="text-sm text-gray-700">{error}</p>
+          <Link
+            href="/challenge/dashboard"
+            className="inline-block rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
+          >
+            대시보드로 돌아가기
+          </Link>
+        </section>
       </main>
     );
   }
@@ -292,32 +299,34 @@ export default function ModuleClient() {
     const next = module1Result.next_module;
     const pct = Math.round((module1Result.score / module1Result.total) * 100);
     return (
-      <main className="mx-auto max-w-3xl p-6 space-y-4">
-        <h1 className="text-2xl font-semibold">모듈 1 완료</h1>
-        <p className="text-gray-700">
-          모듈 1 점수: {module1Result.score} / {module1Result.total} ({pct}%)
-        </p>
-        <p className="text-gray-600">
-          {next?.difficulty === "harder"
-            ? "잘하셨습니다! 모듈 2는 더 어려운 문제 위주로 구성됩니다."
-            : "모듈 2는 기본 난이도 위주로 구성됩니다."}
-        </p>
-        <div className="flex gap-2">
-          <Link
-            href="/challenge/dashboard"
-            className="rounded-md border px-4 py-2 text-gray-700 font-medium hover:bg-gray-50"
-          >
-            대시보드로
-          </Link>
-          {next && (
+      <main className="mx-auto max-w-3xl p-6">
+        <section className="rounded-lg border border-gray-100 bg-white shadow-md p-6 space-y-4">
+          <h1 className="text-3xl font-bold tracking-wide">모듈 1 완료</h1>
+          <p className="text-gray-700">
+            모듈 1 점수: {module1Result.score} / {module1Result.total} ({pct}%)
+          </p>
+          <p className="text-gray-600">
+            {next?.difficulty === "harder"
+              ? "잘하셨습니다! 모듈 2는 더 어려운 문제 위주로 구성됩니다."
+              : "모듈 2는 기본 난이도 위주로 구성됩니다."}
+          </p>
+          <div className="flex gap-2 pt-2">
             <Link
-              href={`/challenge/module?parent=${next.parent_module_id}`}
-              className="rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
+              href="/challenge/dashboard"
+              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
             >
-              모듈 2 시작하기
+              대시보드로
             </Link>
-          )}
-        </div>
+            {next && (
+              <Link
+                href={`/challenge/module?parent=${next.parent_module_id}`}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
+              >
+                모듈 2 시작하기
+              </Link>
+            )}
+          </div>
+        </section>
       </main>
     );
   }
@@ -327,25 +336,27 @@ export default function ModuleClient() {
     const totalMax = module1Result.total + module2Result.total;
     const pct = Math.round((totalScore / totalMax) * 100);
     return (
-      <main className="mx-auto max-w-3xl p-6 space-y-4">
-        <h1 className="text-2xl font-semibold">모의고사 완료</h1>
-        <div className="space-y-1 text-gray-700">
-          <p>
-            모듈 1: {module1Result.score} / {module1Result.total}
-          </p>
-          <p>
-            모듈 2: {module2Result.score} / {module2Result.total}
-          </p>
-          <p className="text-lg font-medium pt-2">
-            총점: {totalScore} / {totalMax} ({pct}%)
-          </p>
-        </div>
-        <Link
-          href="/challenge/dashboard"
-          className="inline-block rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
-        >
-          대시보드로 돌아가기
-        </Link>
+      <main className="mx-auto max-w-3xl p-6">
+        <section className="rounded-lg border border-gray-100 bg-white shadow-md p-6 space-y-4">
+          <h1 className="text-3xl font-bold tracking-wide">모의고사 완료</h1>
+          <div className="space-y-1 text-gray-700">
+            <p>
+              모듈 1: {module1Result.score} / {module1Result.total}
+            </p>
+            <p>
+              모듈 2: {module2Result.score} / {module2Result.total}
+            </p>
+            <p className="text-lg font-semibold pt-2">
+              총점: {totalScore} / {totalMax} ({pct}%)
+            </p>
+          </div>
+          <Link
+            href="/challenge/dashboard"
+            className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
+          >
+            대시보드로 돌아가기
+          </Link>
+        </section>
       </main>
     );
   }
@@ -358,10 +369,10 @@ export default function ModuleClient() {
 
   return (
     <main className="mx-auto max-w-3xl p-6 space-y-6">
-      <header className="flex items-center justify-between gap-4 border-b pb-3">
+      <header className="flex items-center justify-between gap-4 border-b border-gray-200 pb-3">
         <Link
           href="/challenge/dashboard"
-          className="rounded border px-3 py-1.5 text-sm hover:bg-gray-50"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           title="진행 상태는 자동으로 저장됩니다"
         >
           ← 대시보드
@@ -377,7 +388,7 @@ export default function ModuleClient() {
       </header>
 
       {saveFailed && (
-        <div className="rounded border border-red-300 bg-red-50 p-2 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           진행 저장 실패 — 다음 답변 시 자동으로 재시도합니다. 문제가 지속되면
           페이지를 새로고침해주세요.
         </div>
@@ -391,19 +402,21 @@ export default function ModuleClient() {
       </div>
 
       {q.passage && (
-        <section className="rounded border p-4 text-sm whitespace-pre-wrap">
+        <section className="rounded-lg border border-gray-100 bg-white p-4 text-sm leading-6 shadow-sm whitespace-pre-wrap">
           {q.passage}
         </section>
       )}
 
       <section className="space-y-4">
-        <p className="font-medium">{q.stem}</p>
+        <p className="font-semibold leading-7 text-gray-900">{q.stem}</p>
         <div className="space-y-2">
           {(["A", "B", "C", "D"] as const).map((letter) => (
             <label
               key={letter}
-              className={`block cursor-pointer rounded border p-3 ${
-                picked === letter ? "border-black bg-gray-50" : ""
+              className={`block cursor-pointer rounded-lg border bg-white p-3 shadow-sm transition-shadow hover:shadow ${
+                picked === letter
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200"
               }`}
             >
               <input
@@ -424,7 +437,7 @@ export default function ModuleClient() {
         <button
           onClick={() => goTo(Math.max(0, index - 1))}
           disabled={index === 0}
-          className="rounded border px-3 py-2 disabled:opacity-40"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-40 transition"
         >
           이전
         </button>
@@ -432,7 +445,7 @@ export default function ModuleClient() {
         {index < current.questions.length - 1 ? (
           <button
             onClick={() => goTo(index + 1)}
-            className="rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
           >
             다음
           </button>
@@ -440,7 +453,7 @@ export default function ModuleClient() {
           <button
             onClick={() => onSubmit(false)}
             disabled={submitting}
-            className="rounded-md bg-green-600 px-4 py-2 text-white font-medium hover:bg-green-700 disabled:opacity-60"
+            className="rounded-lg bg-green-600 px-4 py-2 text-white font-semibold shadow hover:bg-green-700 disabled:opacity-60 transition"
           >
             {submitting
               ? "제출 중..."
