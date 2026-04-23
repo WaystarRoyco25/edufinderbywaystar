@@ -19,6 +19,7 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const verifying = useRef(false);
 
   // Legacy OTP-only users (signed up via edufinder before passwords
@@ -92,6 +93,7 @@ export default function LoginForm() {
     if (verifying.current) return;
     if (enteredCode.length < 6) return;
     verifying.current = true;
+    setIsVerifying(true);
     clearMessages();
     const supabase = createSupabaseBrowserClient();
     const { data, error } = await supabase.auth.verifyOtp({
@@ -100,6 +102,7 @@ export default function LoginForm() {
       type: "email",
     });
     verifying.current = false;
+    setIsVerifying(false);
     if (error) {
       setCode("");
       setError("인증번호가 일치하지 않거나 만료되었습니다.");
@@ -139,13 +142,6 @@ export default function LoginForm() {
     router.push(next);
     router.refresh();
   }
-
-  useEffect(() => {
-    if (step === "otp-code" && code.length === 6) {
-      verifyCode(code);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, step]);
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
@@ -254,6 +250,7 @@ export default function LoginForm() {
               onChange={(e) => {
                 const v = e.target.value.replace(/\D/g, "");
                 setCode(v);
+                if (v.length === 6) void verifyCode(v);
               }}
               className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500 tracking-widest text-center"
             />
@@ -275,7 +272,7 @@ export default function LoginForm() {
               <button
                 type="button"
                 onClick={() => verifyCode(code)}
-                disabled={code.length < 6 || verifying.current}
+                disabled={code.length < 6 || isVerifying}
                 className="flex-1 rounded-md bg-green-600 px-3 py-2 text-white font-medium hover:bg-green-700 disabled:opacity-60"
               >
                 인증하기
