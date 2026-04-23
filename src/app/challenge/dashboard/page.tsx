@@ -118,7 +118,7 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-3xl p-6 space-y-8">
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">대시보드</h1>
+        <h1 className="text-3xl font-bold tracking-wide">대시보드</h1>
         <SignOutButton />
       </header>
 
@@ -127,7 +127,7 @@ export default async function DashboardPage() {
       <div>
         <Link
           href="/challenge/module?new=1"
-          className="inline-block rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
+          className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
         >
           새 모의고사 시작하기
         </Link>
@@ -138,13 +138,18 @@ export default async function DashboardPage() {
 
       {inProgress.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-lg font-medium">진행 중 / 이어하기</h2>
+          <h2 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">
+            진행 중 / 이어하기
+          </h2>
           <ul className="space-y-2">
             {inProgress.map((e) => (
-              <li key={e.m1.module.id} className="rounded border p-4 space-y-2">
+              <li
+                key={e.m1.module.id}
+                className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm space-y-2"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-sm">
-                    <div className="font-medium">
+                    <div className="font-semibold text-gray-800">
                       {formatDate(e.createdAt)}에 시작된 모의고사
                     </div>
                     <div className="text-gray-600">
@@ -160,13 +165,15 @@ export default async function DashboardPage() {
       )}
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">완료된 모의고사 기록</h2>
+        <h2 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">
+          완료된 모의고사 기록
+        </h2>
         {completed.length === 0 ? (
           <p className="text-sm text-gray-500">
             아직 완료한 모의고사가 없습니다. 위의 버튼으로 시작해보세요.
           </p>
         ) : (
-          <ul className="divide-y rounded border">
+          <ul className="divide-y divide-gray-100 rounded-lg border border-gray-100 bg-white shadow-sm">
             {completed.map((e, i) => {
               const m1 = e.m1.module;
               const m2 = e.m2!.module;
@@ -207,7 +214,7 @@ export default async function DashboardPage() {
                     )}
                     <Link
                       href={`/challenge/review/${m1.id}`}
-                      className="mt-2 inline-block rounded-md border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                      className="mt-2 inline-block rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition"
                     >
                       해설 보기
                     </Link>
@@ -253,7 +260,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
     return (
       <Link
         href={`/challenge/module?parent=${m1.module.id}`}
-        className="whitespace-nowrap rounded-md bg-blue-600 px-3 py-2 text-sm text-white font-medium hover:bg-blue-700"
+        className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-sm text-white font-semibold shadow hover:bg-blue-700 transition"
       >
         모듈 2 시작
       </Link>
@@ -264,7 +271,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
     return (
       <Link
         href={`/challenge/module?id=${m1.module.id}`}
-        className="whitespace-nowrap rounded-md bg-blue-600 px-3 py-2 text-sm text-white font-medium hover:bg-blue-700"
+        className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-sm text-white font-semibold shadow hover:bg-blue-700 transition"
       >
         {label}
       </Link>
@@ -275,7 +282,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
     return (
       <Link
         href={`/challenge/module?id=${m2!.module.id}`}
-        className="whitespace-nowrap rounded-md bg-blue-600 px-3 py-2 text-sm text-white font-medium hover:bg-blue-700"
+        className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-sm text-white font-semibold shadow hover:bg-blue-700 transition"
       >
         {label}
       </Link>
