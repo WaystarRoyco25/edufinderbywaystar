@@ -73,7 +73,7 @@ function ChoiceReview({
       : "border-gray-200 bg-white";
 
   return (
-    <div className={`rounded border p-3 ${stateClass}`}>
+    <div className={`rounded-lg border p-4 shadow-sm ${stateClass}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <p className="font-medium text-gray-950">
           <span className="mr-2 font-semibold">{letter}.</span>
@@ -88,7 +88,7 @@ function ChoiceReview({
           {isCorrect && <span className="text-green-700">정답</span>}
         </div>
       </div>
-      <p className="mt-3 border-t pt-3 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
+      <p className="mt-3 border-t border-gray-200 pt-3 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
         {explanationFor(question, letter, correct)}
       </p>
     </div>
@@ -97,7 +97,7 @@ function ChoiceReview({
 
 function MissingQuestion({ item }: { item: ReviewQuestion }) {
   return (
-    <section className="rounded border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+    <section className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 shadow-sm">
       문제 {item.number}번을 불러올 수 없습니다. 질문 ID: {item.questionId}
     </section>
   );
@@ -135,16 +135,16 @@ export default function ReviewClient({
 
   return (
     <main className="mx-auto max-w-3xl p-6 space-y-6">
-      <header className="space-y-4 border-b pb-4">
+      <header className="space-y-4 border-b border-gray-200 pb-4">
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/challenge/dashboard"
-            className="rounded border px-3 py-1.5 text-sm hover:bg-gray-50"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
             ← 대시보드
           </Link>
           <div className="text-right text-sm">
-            <div className="font-semibold">
+            <div className="font-semibold text-gray-800">
               총점 {summary.totalScore} / {summary.totalMax}
               <span className="ml-1 text-gray-500">({summary.pct}%)</span>
             </div>
@@ -156,7 +156,7 @@ export default function ReviewClient({
 
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold">모의고사 해설</h1>
+            <h1 className="text-3xl font-bold tracking-wide">모의고사 해설</h1>
             <p className="mt-1 text-sm text-gray-500">
               {summary.startedAt}에 시작한 모의고사
             </p>
@@ -184,13 +184,13 @@ export default function ReviewClient({
           ) : (
             <>
               {item.question.passage && (
-                <section className="rounded border p-4 text-sm leading-6 whitespace-pre-wrap">
+                <section className="rounded-lg border border-gray-100 bg-white p-4 text-sm leading-6 shadow-sm whitespace-pre-wrap">
                   {item.question.passage}
                 </section>
               )}
 
               <section className="space-y-4">
-                <p className="font-medium leading-7 text-gray-950">{item.question.stem}</p>
+                <p className="font-semibold leading-7 text-gray-950">{item.question.stem}</p>
                 <div className="space-y-3">
                   {CHOICE_LETTERS.map((letter) => (
                     <ChoiceReview
@@ -207,16 +207,16 @@ export default function ReviewClient({
           )}
         </>
       ) : (
-        <section className="rounded border p-4 text-sm text-gray-600">
+        <section className="rounded-lg border border-gray-100 bg-white p-4 text-sm text-gray-600 shadow-sm">
           표시할 해설이 없습니다.
         </section>
       )}
 
-      <footer className="flex items-center justify-between border-t pt-4">
+      <footer className="flex items-center justify-between border-t border-gray-200 pt-4">
         <button
           onClick={() => goTo(index - 1)}
           disabled={index === 0}
-          className="rounded border px-3 py-2 disabled:opacity-40"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-40 transition"
         >
           이전
         </button>
@@ -224,14 +224,14 @@ export default function ReviewClient({
         {index < total - 1 ? (
           <button
             onClick={() => goTo(index + 1)}
-            className="rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
           >
             다음 해설
           </button>
         ) : (
           <Link
             href="/challenge/dashboard"
-            className="rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
           >
             대시보드로 돌아가기
           </Link>
