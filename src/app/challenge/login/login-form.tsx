@@ -144,11 +144,11 @@ export default function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
-      <div className="w-full max-w-sm bg-white rounded-lg shadow-md p-6 space-y-4">
+    <main className="flex-1 flex items-center justify-center p-6">
+      <div className="w-full max-w-sm bg-white rounded-lg shadow-md p-6 space-y-4 border border-gray-100">
         {step === "password" && (
           <form onSubmit={onPasswordSignIn} className="space-y-4">
-            <h1 className="text-xl font-bold">로그인</h1>
+            <h1 className="text-2xl font-bold tracking-wide">로그인</h1>
             <p className="text-sm text-gray-500">
               EduFinder 계정으로 로그인해주세요.
             </p>
@@ -176,7 +176,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-md bg-blue-600 px-3 py-2 text-white font-medium hover:bg-blue-700 disabled:opacity-60"
+              className="w-full rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
             >
               {loading ? "..." : "로그인"}
             </button>
@@ -197,7 +197,7 @@ export default function LoginForm() {
 
         {step === "otp-email" && (
           <form onSubmit={onSendCode} className="space-y-4">
-            <h1 className="text-xl font-bold">이메일 인증</h1>
+            <h1 className="text-2xl font-bold tracking-wide">이메일 인증</h1>
             <p className="text-sm text-gray-500">
               이메일로 6자리 인증번호를 보내드립니다.
             </p>
@@ -220,14 +220,14 @@ export default function LoginForm() {
                   clearMessages();
                   setStep("password");
                 }}
-                className="flex-1 rounded-md border px-3 py-2 text-gray-700 font-medium hover:bg-gray-50"
+                className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
               >
                 취소
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 rounded-md bg-blue-600 px-3 py-2 text-white font-medium hover:bg-blue-700 disabled:opacity-60"
+                className="flex-1 rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
               >
                 {loading ? "..." : "인증번호 전송"}
               </button>
@@ -237,7 +237,7 @@ export default function LoginForm() {
 
         {step === "otp-code" && (
           <div className="space-y-4">
-            <h1 className="text-xl font-bold">인증번호 입력</h1>
+            <h1 className="text-2xl font-bold tracking-wide">인증번호 입력</h1>
             <p className="text-sm text-blue-600 font-medium">{info}</p>
 
             <input
@@ -265,7 +265,7 @@ export default function LoginForm() {
                   setCode("");
                   setStep("otp-email");
                 }}
-                className="flex-1 rounded-md border px-3 py-2 text-gray-700 font-medium hover:bg-gray-50"
+                className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
               >
                 뒤로
               </button>
@@ -273,7 +273,7 @@ export default function LoginForm() {
                 type="button"
                 onClick={() => verifyCode(code)}
                 disabled={code.length < 6 || isVerifying}
-                className="flex-1 rounded-md bg-green-600 px-3 py-2 text-white font-medium hover:bg-green-700 disabled:opacity-60"
+                className="flex-1 rounded-lg bg-green-600 px-3 py-2 text-white font-semibold shadow hover:bg-green-700 disabled:opacity-60 transition"
               >
                 인증하기
               </button>
@@ -283,7 +283,7 @@ export default function LoginForm() {
 
         {step === "set-password" && (
           <form onSubmit={onSetPassword} className="space-y-4">
-            <h1 className="text-xl font-bold">비밀번호 설정</h1>
+            <h1 className="text-2xl font-bold tracking-wide">비밀번호 설정</h1>
             <p className="text-sm text-gray-500">
               다음 로그인부터 사용할 비밀번호를 설정해주세요. (최소 8자)
             </p>
@@ -312,7 +312,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-md bg-blue-600 px-3 py-2 text-white font-medium hover:bg-blue-700 disabled:opacity-60"
+              className="w-full rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
             >
               {loading ? "..." : "비밀번호 설정 및 로그인"}
             </button>
