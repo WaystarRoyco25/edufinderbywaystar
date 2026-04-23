@@ -3,7 +3,13 @@ import LoginForm from "./login-form";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<main className="p-6">Loading...</main>}>
+    <Suspense
+      fallback={
+        <main className="flex-1 flex items-center justify-center p-6">
+          <p className="text-sm text-gray-500">불러오는 중...</p>
+        </main>
+      }
+    >
       <LoginForm />
     </Suspense>
   );
