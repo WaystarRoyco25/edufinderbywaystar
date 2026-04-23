@@ -205,6 +205,12 @@ export default async function DashboardPage() {
                         {delta > 0 ? `+${delta}` : delta}점 (직전 대비)
                       </div>
                     )}
+                    <Link
+                      href={`/challenge/review/${m1.id}`}
+                      className="mt-2 inline-block rounded-md border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                      해설 보기
+                    </Link>
                   </div>
                 </li>
               );
