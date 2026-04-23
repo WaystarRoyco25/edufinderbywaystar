@@ -43,12 +43,6 @@ type SubmitResult = {
   next_module:
     | { parent_module_id: string; difficulty: "standard" | "harder" }
     | null;
-  results: {
-    id: string;
-    correct_answer: string;
-    picked_answer: string | null;
-    is_correct: boolean;
-  }[];
 };
 
 type Phase = "loading" | "taking" | "between" | "done" | "error";
