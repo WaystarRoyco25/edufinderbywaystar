@@ -12,7 +12,7 @@ type AnswerKeyRow = { id: string; a: string };
 /**
  * Grades a user's answers for a module.
  * Authoritative answer comparison happens server-side; the client never
- * sees `correct_answer` until AFTER they submit.
+ * receives answer-level correctness or `correct_answer` from this endpoint.
  *
  * For module 1, the response includes `next_module` so the client knows
  * which leaning (standard / harder) module 2 will have.
@@ -55,19 +55,15 @@ export async function POST(request: Request) {
   const finalAnswers: Record<string, string> = { ...storedAnswers, ...body.answers };
 
   const key = mod.answer_key as AnswerKeyRow[];
-  const results = key.map(({ id, a }) => {
-    const picked = finalAnswers[id] ?? null;
-    return { id, correct_answer: a, picked_answer: picked, is_correct: picked === a };
-  });
-
-  const score = results.filter((r) => r.is_correct).length;
+  const score = key.filter(({ id, a }) => finalAnswers[id] === a).length;
+  const total = key.length;
 
   const { error: updErr } = await admin
     .from("modules")
     .update({
       submitted_at: new Date().toISOString(),
       score,
-      total: results.length,
+      total,
       answers: finalAnswers,
     })
     .eq("id", mod.id);
@@ -82,7 +78,7 @@ export async function POST(request: Request) {
       ? {
           parent_module_id: mod.id,
           difficulty:
-            score / Math.max(1, results.length) >= ADAPTIVE_THRESHOLD
+            score / Math.max(1, total) >= ADAPTIVE_THRESHOLD
               ? ("harder" as const)
               : ("standard" as const),
         }
@@ -90,9 +86,8 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     score,
-    total: results.length,
+    total,
     module_number: mod.module_number as 1 | 2,
     next_module: nextModule,
-    results,
   });
 }
