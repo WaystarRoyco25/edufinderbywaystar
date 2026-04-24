@@ -40,7 +40,6 @@ type ModuleRow = {
   module_number: number;
   parent_module_id: string | null;
   question_ids: string[];
-  answer_key: unknown;
   answers: unknown;
   score: number | null;
   total: number | null;
@@ -75,6 +74,30 @@ type PairKey = `${TypeCode}|${Difficulty}`;
 const pairKey = (t: TypeCode, d: Difficulty): PairKey => `${t}|${d}` as PairKey;
 
 type Admin = ReturnType<typeof createSupabaseAdminClient>;
+type RouteError = { error: string; status: number };
+
+async function loadAnswerKey(
+  admin: Admin,
+  moduleId: string,
+): Promise<AnswerKeyRow[] | RouteError> {
+  const { data, error } = await admin
+    .from("module_answer_keys")
+    .select("answer_key")
+    .eq("module_id", moduleId)
+    .single();
+
+  if (error || !data || !Array.isArray(data.answer_key)) {
+    return { error: "Answer key unavailable", status: 500 };
+  }
+
+  return data.answer_key.filter(
+    (row): row is AnswerKeyRow =>
+      !!row &&
+      typeof row === "object" &&
+      typeof (row as AnswerKeyRow).id === "string" &&
+      typeof (row as AnswerKeyRow).a === "string",
+  );
+}
 
 // Grades an expired unsubmitted module using only the answers the client
 // managed to save before abandoning. Called the next time the owner tries
@@ -82,13 +105,15 @@ type Admin = ReturnType<typeof createSupabaseAdminClient>;
 async function finalizeExpiredModule(
   admin: Admin,
   mod: ModuleRow,
-): Promise<SubmittedResponse> {
-  const key = (mod.answer_key as AnswerKeyRow[]) ?? [];
+): Promise<SubmittedResponse | RouteError> {
+  const key = await loadAnswerKey(admin, mod.id);
+  if ("error" in key) return key;
+
   const stored = (mod.answers as Record<string, string> | null) ?? {};
   const score = key.filter(({ id, a }) => stored[id] === a).length;
   const total = key.length;
 
-  await admin
+  const { error: updateErr } = await admin
     .from("modules")
     .update({
       submitted_at: new Date().toISOString(),
@@ -96,6 +121,7 @@ async function finalizeExpiredModule(
       total,
     })
     .eq("id", mod.id);
+  if (updateErr) return { error: updateErr.message, status: 500 };
 
   return {
     kind: "submitted",
@@ -274,7 +300,6 @@ async function createNewModule(
       user_id: userId,
       difficulty: overallDifficulty,
       question_ids: chosen.map((q) => q.id),
-      answer_key: answerKey,
       parent_module_id: parentModuleId,
       module_number: moduleNumber,
       expires_at: expiresAt.toISOString(),
@@ -285,6 +310,17 @@ async function createNewModule(
     .single();
   if (moduleErr || !moduleRow) {
     return { error: moduleErr?.message ?? "Could not create module", status: 500 };
+  }
+
+  const { error: keyErr } = await admin
+    .from("module_answer_keys")
+    .insert({
+      module_id: moduleRow.id,
+      answer_key: answerKey,
+    });
+  if (keyErr) {
+    await admin.from("modules").delete().eq("id", moduleRow.id);
+    return { error: keyErr.message, status: 500 };
   }
 
   const publicQuestions: PublicQuestion[] = chosen.map((q) => ({
@@ -309,7 +345,7 @@ async function createNewModule(
 }
 
 const MODULE_COLUMNS =
-  "id, user_id, difficulty, module_number, parent_module_id, question_ids, answer_key, answers, score, total, submitted_at, expires_at, current_index";
+  "id, user_id, difficulty, module_number, parent_module_id, question_ids, answers, score, total, submitted_at, expires_at, current_index";
 
 /**
  * Starts, resumes, or finalizes a module for the authenticated user.
@@ -428,7 +464,10 @@ export async function POST(request: Request) {
       }
       return NextResponse.json(result);
     }
-    await finalizeExpiredModule(admin, pendingM1 as ModuleRow);
+    const finalized = await finalizeExpiredModule(admin, pendingM1 as ModuleRow);
+    if ("error" in finalized) {
+      return NextResponse.json({ error: finalized.error }, { status: finalized.status });
+    }
     // Fall through to create a fresh M1.
   }
 

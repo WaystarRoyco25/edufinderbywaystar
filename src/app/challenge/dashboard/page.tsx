@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import SignOutButton from "./sign-out-button";
 
@@ -78,11 +79,13 @@ export default async function DashboardPage() {
     redirect("/challenge/login?next=/challenge/dashboard");
   }
 
-  const { data: modules } = await supabase
+  const admin = createSupabaseAdminClient();
+  const { data: modules } = await admin
     .from("modules")
     .select(
       "id, created_at, difficulty, score, total, submitted_at, module_number, parent_module_id, expires_at",
     )
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(200);
 

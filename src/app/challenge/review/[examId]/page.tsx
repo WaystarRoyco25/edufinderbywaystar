@@ -20,7 +20,6 @@ type ModuleRow = {
   user_id: string;
   difficulty: string;
   question_ids: string[];
-  answer_key: unknown;
   answers: unknown;
   score: number | null;
   total: number | null;
@@ -29,13 +28,18 @@ type ModuleRow = {
   module_number: number;
 };
 
+type ModuleAnswerKeyRow = {
+  module_id: string;
+  answer_key: unknown;
+};
+
 type AnswerKeyRow = {
   id?: unknown;
   a?: unknown;
 };
 
 const MODULE_COLUMNS =
-  "id, created_at, user_id, difficulty, question_ids, answer_key, answers, score, total, submitted_at, parent_module_id, module_number";
+  "id, created_at, user_id, difficulty, question_ids, answers, score, total, submitted_at, parent_module_id, module_number";
 
 function asAnswerMap(value: unknown): Record<string, string> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
@@ -68,9 +72,13 @@ function scoreText(score: number | null, total: number | null): string {
   return `${score ?? 0}/${total ?? 0}`;
 }
 
-function buildReviewQuestions(module: ModuleRow, moduleNumber: 1 | 2, questions: Map<string, QuestionRow>) {
+function buildReviewQuestions(
+  module: ModuleRow,
+  moduleNumber: 1 | 2,
+  questions: Map<string, QuestionRow>,
+  answerKey: Map<string, string>,
+) {
   const answers = asAnswerMap(module.answers);
-  const answerKey = asAnswerKeyMap(module.answer_key);
 
   return module.question_ids.map((questionId, index): ReviewQuestion => {
     const question = questions.get(questionId) ?? null;
@@ -192,8 +200,33 @@ export default async function ReviewPage({ params }: PageProps) {
   const questions = new Map(
     ((rawQuestions as QuestionRow[]) ?? []).map((question) => [question.id, question]),
   );
-  const m1Questions = buildReviewQuestions(module1, 1, questions);
-  const m2Questions = buildReviewQuestions(module2, 2, questions);
+
+  const { data: keyRows, error: keyErr } = await admin
+    .from("module_answer_keys")
+    .select("module_id, answer_key")
+    .in("module_id", [module1.id, module2.id]);
+  if (keyErr) {
+    throw new Error(keyErr.message);
+  }
+
+  const answerKeysByModule = new Map(
+    ((keyRows as ModuleAnswerKeyRow[]) ?? []).map((row) => [
+      row.module_id,
+      asAnswerKeyMap(row.answer_key),
+    ]),
+  );
+  const m1Questions = buildReviewQuestions(
+    module1,
+    1,
+    questions,
+    answerKeysByModule.get(module1.id) ?? new Map(),
+  );
+  const m2Questions = buildReviewQuestions(
+    module2,
+    2,
+    questions,
+    answerKeysByModule.get(module2.id) ?? new Map(),
+  );
 
   const totalScore = (module1.score ?? 0) + (module2.score ?? 0);
   const totalMax = (module1.total ?? 0) + (module2.total ?? 0);

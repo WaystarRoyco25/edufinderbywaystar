@@ -1161,18 +1161,33 @@ const TOAST_ICONS = {
 
 function showToast(message, type = 'info', duration = 3500) {
     const container = document.getElementById('toast-container');
+    const safeType = TOAST_ICONS[type] ? type : 'info';
     container.querySelectorAll('.toast').forEach(function(t) {
         clearTimeout(t._timer);
         t.remove();
     });
     const toast = document.createElement('div');
-    toast.className = 'toast toast-' + type;
-    toast.innerHTML =
-        '<span class="toast-icon"><i class="' + TOAST_ICONS[type] + '"></i></span>' +
-        '<span class="toast-body">' + message + '</span>' +
-        '<button class="toast-close" onclick="dismissToast(this.parentElement)">' +
-            '<i class="fa-solid fa-xmark"></i>' +
-        '</button>';
+    toast.className = 'toast toast-' + safeType;
+
+    const iconWrap = document.createElement('span');
+    iconWrap.className = 'toast-icon';
+    const icon = document.createElement('i');
+    icon.className = TOAST_ICONS[safeType];
+    iconWrap.appendChild(icon);
+
+    const body = document.createElement('span');
+    body.className = 'toast-body';
+    body.textContent = String(message);
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'toast-close';
+    close.addEventListener('click', function() { dismissToast(toast); });
+    const closeIcon = document.createElement('i');
+    closeIcon.className = 'fa-solid fa-xmark';
+    close.appendChild(closeIcon);
+
+    toast.append(iconWrap, body, close);
     container.appendChild(toast);
     const timer = setTimeout(function() { dismissToast(toast); }, duration);
     toast._timer = timer;
@@ -1290,6 +1305,7 @@ const NEGATIVE_REASONS = [
     "교사진의 자질 부족","비체계적인 커리큘럼","열악한 시설 및 환경",
     "학비 대비 낮은 만족도","학생 관리 부족","과도한 학업 스트레스"
 ];
+const ALLOWED_REASONS = new Set([...POSITIVE_REASONS, ...NEGATIVE_REASONS]);
 
 let pendingSchool = "";
 let pendingRating = 0;
@@ -1300,24 +1316,42 @@ let pendingEmail = "";
 let ratingsData = {};
 let myReviewedSchools = [];
 
+function safeNumber(value) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+}
+
 function getTopReason(obj) {
     if (!obj || !Object.keys(obj).length) return null;
     let maxCount = 0;
     let topKey = null;
     for (const [reason, count] of Object.entries(obj)) {
-        if (count > maxCount) { maxCount = count; topKey = reason; }
+        const safeCount = safeNumber(count);
+        if (ALLOWED_REASONS.has(reason) && safeCount > maxCount) {
+            maxCount = safeCount;
+            topKey = reason;
+        }
     }
     return topKey;
 }
 
 function updateAuthUI() {
     const el = document.getElementById('auth-status');
+    el.replaceChildren();
     if (currentUser) {
-        el.innerHTML =
-            '<span class="mr-3 opacity-90"><i class="fa-regular fa-user mr-1"></i> ' + currentUser + '</span> ' +
-            '<button onclick="logout()" class="bg-white text-blue-600 px-3 py-1 rounded shadow text-xs hover:bg-gray-100 transition">로그아웃</button>';
-    } else {
-        el.innerHTML = '';
+        const userLabel = document.createElement('span');
+        userLabel.className = 'mr-3 opacity-90';
+        const icon = document.createElement('i');
+        icon.className = 'fa-regular fa-user mr-1';
+        userLabel.append(icon, document.createTextNode(' ' + currentUser));
+
+        const logoutButton = document.createElement('button');
+        logoutButton.type = 'button';
+        logoutButton.className = 'bg-white text-blue-600 px-3 py-1 rounded shadow text-xs hover:bg-gray-100 transition';
+        logoutButton.textContent = '로그아웃';
+        logoutButton.addEventListener('click', logout);
+
+        el.append(userLabel, logoutButton);
     }
 }
 
@@ -1440,8 +1474,10 @@ async function fetchRatingsFromDB() {
     ratingsData = {};
     if (data) {
         data.forEach(row => {
+            if (typeof row.school_name !== 'string') return;
             ratingsData[row.school_name] = {
-                totalScore: row.total_score, votes: row.votes,
+                totalScore: safeNumber(row.total_score),
+                votes: safeNumber(row.votes),
                 positiveReasons: row.positive_reasons || {},
                 negativeReasons: row.negative_reasons || {}
             };
@@ -1457,46 +1493,117 @@ async function fetchMyReviews() {
 
 function renderSchools(schoolList, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = '';
+    container.replaceChildren();
     const sorted = [...schoolList].sort((a, b) => {
-        const votesA = ratingsData[a] ? ratingsData[a].votes : 0;
-        const votesB = ratingsData[b] ? ratingsData[b].votes : 0;
+        const votesA = ratingsData[a] ? safeNumber(ratingsData[a].votes) : 0;
+        const votesB = ratingsData[b] ? safeNumber(ratingsData[b].votes) : 0;
         if (votesB !== votesA) return votesB - votesA;
         return a.localeCompare(b);
     });
     sorted.forEach(school => {
         let avg = 0, votes = 0, topStrength = null, topWeakness = null;
         if (ratingsData[school]) {
-            votes = ratingsData[school].votes;
+            votes = safeNumber(ratingsData[school].votes);
             if (votes > 0) avg = (ratingsData[school].totalScore / votes).toFixed(1);
             topStrength = getTopReason(ratingsData[school].positiveReasons);
             topWeakness = getTopReason(ratingsData[school].negativeReasons);
         }
-        const badge = governmentApproved.includes(school)
-            ? '<div class="mt-2 inline-flex items-center bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded border border-green-200"><i class="fa-solid fa-check text-green-500 mr-1.5"></i> 교육부 인가</div>' : '';
-        let contactHTML = '';
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-lg shadow-md p-6 flex flex-col justify-between hover:shadow-lg transition-shadow border border-gray-100";
+
+        const topSection = document.createElement('div');
+        const title = document.createElement('h3');
+        title.className = "text-xl font-semibold text-gray-800 leading-tight break-keep";
+        title.textContent = school;
+        topSection.appendChild(title);
+
+        if (governmentApproved.includes(school)) {
+            const badge = document.createElement('div');
+            badge.className = "mt-2 inline-flex items-center bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded border border-green-200";
+            const icon = document.createElement('i');
+            icon.className = "fa-solid fa-check text-green-500 mr-1.5";
+            badge.append(icon, document.createTextNode('교육부 인가'));
+            topSection.appendChild(badge);
+        }
+
         const contactData = schoolContactInfo[school];
         if (contactData) {
-            contactHTML = '<div class="mt-3 space-y-1.5 text-xs text-gray-500">';
-            contactHTML += '<p class="flex items-start gap-1.5"><i class="fa-solid fa-location-dot text-gray-400 mt-0.5 w-3 text-center flex-shrink-0"></i><span>' + contactData.address + '</span></p>';
+            const contact = document.createElement('div');
+            contact.className = "mt-3 space-y-1.5 text-xs text-gray-500";
+
+            const address = document.createElement('p');
+            address.className = "flex items-start gap-1.5";
+            const addressIcon = document.createElement('i');
+            addressIcon.className = "fa-solid fa-location-dot text-gray-400 mt-0.5 w-3 text-center flex-shrink-0";
+            const addressText = document.createElement('span');
+            addressText.textContent = contactData.address;
+            address.append(addressIcon, addressText);
+            contact.appendChild(address);
+
+            const phoneRow = document.createElement('p');
+            phoneRow.className = "flex items-center gap-1.5";
+            const phoneIcon = document.createElement('i');
+            phoneIcon.className = "fa-solid fa-phone text-gray-400 w-3 text-center flex-shrink-0";
+            phoneRow.appendChild(phoneIcon);
             if (contactData.phone) {
-                contactHTML += '<p class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-gray-400 w-3 text-center flex-shrink-0"></i><a href="tel:' + contactData.phone + '" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium transition-colors">' + contactData.phone + ' <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-60"></i></a></p>';
+                const phone = String(contactData.phone);
+                const link = document.createElement('a');
+                link.href = 'tel:' + phone.replace(/[^\d+]/g, '');
+                link.className = "inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium transition-colors";
+                link.textContent = phone + ' ';
+                const linkIcon = document.createElement('i');
+                linkIcon.className = "fa-solid fa-arrow-up-right-from-square text-[9px] opacity-60";
+                link.appendChild(linkIcon);
+                phoneRow.appendChild(link);
             } else {
-                contactHTML += '<p class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-gray-400 w-3 text-center flex-shrink-0"></i><span class="text-gray-400">비공개</span></p>';
+                const privateLabel = document.createElement('span');
+                privateLabel.className = "text-gray-400";
+                privateLabel.textContent = "비공개";
+                phoneRow.appendChild(privateLabel);
             }
-            contactHTML += '</div>';
+            contact.appendChild(phoneRow);
+            topSection.appendChild(contact);
         }
-        let insightsHTML = '';
+
+        card.appendChild(topSection);
+
+        const scoreRow = document.createElement('div');
+        scoreRow.className = "flex items-center space-x-2 mt-4 mb-2";
+        const scoreValue = document.createElement('span');
+        scoreValue.className = "text-3xl font-bold text-blue-600";
+        scoreValue.textContent = avg > 0 ? String(avg) : '-';
+        const scoreMeta = document.createElement('span');
+        scoreMeta.className = "text-sm text-gray-500 mt-1";
+        scoreMeta.textContent = '/ 5 (' + votes + '개 리뷰)';
+        scoreRow.append(scoreValue, scoreMeta);
+        card.appendChild(scoreRow);
+
         if (topStrength || topWeakness) {
-            insightsHTML = '<div class="mt-3 text-sm border-t border-gray-100 pt-3 space-y-1.5">';
-            if (topStrength) insightsHTML += '<p class="text-gray-700"><i class="fa-solid fa-arrow-trend-up text-green-500 w-4 mr-1"></i><span class="font-bold text-xs text-gray-400 uppercase tracking-wide mr-1">최대 장점:</span>' + topStrength + '</p>';
-            if (topWeakness) insightsHTML += '<p class="text-gray-700"><i class="fa-solid fa-arrow-trend-down text-red-500 w-4 mr-1"></i><span class="font-bold text-xs text-gray-400 uppercase tracking-wide mr-1">최대 단점:</span>' + topWeakness + '</p>';
-            insightsHTML += '</div>';
+            const insights = document.createElement('div');
+            insights.className = "mt-3 text-sm border-t border-gray-100 pt-3 space-y-1.5";
+            const addInsight = (iconClass, label, reason) => {
+                const row = document.createElement('p');
+                row.className = "text-gray-700";
+                const icon = document.createElement('i');
+                icon.className = iconClass;
+                const labelEl = document.createElement('span');
+                labelEl.className = "font-bold text-xs text-gray-400 uppercase tracking-wide mr-1";
+                labelEl.textContent = label;
+                row.append(icon, labelEl, document.createTextNode(reason));
+                insights.appendChild(row);
+            };
+            if (topStrength) {
+                addInsight("fa-solid fa-arrow-trend-up text-green-500 w-4 mr-1", "최대 장점:", topStrength);
+            }
+            if (topWeakness) {
+                addInsight("fa-solid fa-arrow-trend-down text-red-500 w-4 mr-1", "최대 단점:", topWeakness);
+            }
+            card.appendChild(insights);
         }
         
-        let temporaryMeasureHTML = '';
         if (school === "청담엘유학원") {
-            temporaryMeasureHTML = `
+            const temporaryMeasure = document.createElement('div');
+            temporaryMeasure.innerHTML = `
                 <div class="mt-3 bg-red-50 border border-red-200 p-3 rounded-md shadow-sm">
                     <div class="flex items-start gap-2">
                         <i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5 text-sm"></i>
@@ -1509,21 +1616,26 @@ function renderSchools(schoolList, containerId) {
                     </div>
                 </div>
             `;
+            card.appendChild(temporaryMeasure.firstElementChild);
         }
 
-        let starsHTML = '';
+        const stars = document.createElement('div');
+        stars.className = "stars-container flex space-x-1 mt-4";
         for (let i = 1; i <= 5; i++) {
-            starsHTML += '<i class="fa-solid fa-star text-2xl text-gray-300 star" onmouseover="hoverStars(this,' + i + ')" onmouseout="resetStars(this)" onclick="initiateRating(\'' + school.replace(/'/g, "\\'") + '\',' + i + ')"></i>';
+            const star = document.createElement('i');
+            star.className = "fa-solid fa-star text-2xl text-gray-300 star";
+            star.addEventListener('mouseover', function() { hoverStars(star, i); });
+            star.addEventListener('mouseout', function() { resetStars(star); });
+            star.addEventListener('click', function() { initiateRating(school, i); });
+            stars.appendChild(star);
         }
-        const card = document.createElement('div');
-        card.className = "bg-white rounded-lg shadow-md p-6 flex flex-col justify-between hover:shadow-lg transition-shadow border border-gray-100";
-        card.innerHTML =
-            '<div><h3 class="text-xl font-semibold text-gray-800 leading-tight break-keep">' + school + '</h3>' + badge + contactHTML + '</div>' +
-            '<div class="flex items-center space-x-2 mt-4 mb-2"><span class="text-3xl font-bold text-blue-600">' + (avg > 0 ? avg : '-') + '</span><span class="text-sm text-gray-500 mt-1">/ 5 (' + votes + '개 리뷰)</span></div>' +
-            insightsHTML +
-            temporaryMeasureHTML +
-            '<div class="stars-container flex space-x-1 mt-4">' + starsHTML + '</div>' +
-            '<p class="text-xs text-gray-400 mt-2">별점을 클릭하여 리뷰를 남겨보세요.</p>';
+        card.appendChild(stars);
+
+        const hint = document.createElement('p');
+        hint.className = "text-xs text-gray-400 mt-2";
+        hint.textContent = "별점을 클릭하여 리뷰를 남겨보세요.";
+        card.appendChild(hint);
+
         container.appendChild(card);
     });
 }

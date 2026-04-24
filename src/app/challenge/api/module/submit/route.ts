@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     | { module_id?: string; answers?: Record<string, string> }
     | null;
 
-  if (!body?.module_id || typeof body.answers !== "object") {
+  if (!body?.module_id || !body.answers || typeof body.answers !== "object" || Array.isArray(body.answers)) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
   const { data: mod, error: modErr } = await admin
     .from("modules")
-    .select("id, user_id, answer_key, answers, submitted_at, module_number")
+    .select("id, user_id, answers, submitted_at, module_number, expires_at")
     .eq("id", body.module_id)
     .single();
 
@@ -48,13 +48,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Already submitted" }, { status: 409 });
   }
 
+  const { data: keyRow, error: keyErr } = await admin
+    .from("module_answer_keys")
+    .select("answer_key")
+    .eq("module_id", mod.id)
+    .single();
+  if (keyErr || !keyRow || !Array.isArray(keyRow.answer_key)) {
+    return NextResponse.json({ error: "Answer key unavailable" }, { status: 500 });
+  }
+
   // Merge with save-progress state so a submit call that arrives without
   // the freshest client state (e.g. an auto-submit fired from a flaky
-  // tab) still credits answers the server has already seen.
+  // tab) still credits answers the server has already seen. Once expired,
+  // ignore late client-supplied answers and grade only already-saved state.
   const storedAnswers = (mod.answers as Record<string, string> | null) ?? {};
-  const finalAnswers: Record<string, string> = { ...storedAnswers, ...body.answers };
+  const expired = mod.expires_at
+    ? new Date(mod.expires_at).getTime() <= Date.now()
+    : false;
+  const finalAnswers: Record<string, string> = expired
+    ? storedAnswers
+    : { ...storedAnswers, ...body.answers };
 
-  const key = mod.answer_key as AnswerKeyRow[];
+  const key = keyRow.answer_key as AnswerKeyRow[];
   const score = key.filter(({ id, a }) => finalAnswers[id] === a).length;
   const total = key.length;
 
