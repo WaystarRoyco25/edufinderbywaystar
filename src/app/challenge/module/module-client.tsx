@@ -368,7 +368,7 @@ export default function ModuleClient() {
   const lowTime = secondsLeft <= 5 * 60;
 
   return (
-    <main className="mx-auto max-w-3xl p-6 space-y-6">
+    <main className="mx-auto max-w-6xl p-6 space-y-6">
       <header className="flex items-center justify-between gap-4 border-b border-gray-200 pb-3">
         <Link
           href="/challenge/dashboard"
@@ -401,37 +401,45 @@ export default function ModuleClient() {
         <div>{Object.keys(answers).length}문제 답변 완료</div>
       </div>
 
-      {q.passage && (
-        <section className="rounded-lg border border-gray-100 bg-white p-4 text-sm leading-6 shadow-sm whitespace-pre-wrap">
-          {q.passage}
-        </section>
-      )}
+      <div
+        className={
+          q.passage
+            ? "grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:items-start"
+            : "mx-auto max-w-3xl"
+        }
+      >
+        {q.passage && (
+          <section className="rounded-lg border border-gray-100 bg-white p-5 text-sm leading-6 shadow-sm whitespace-pre-wrap">
+            {q.passage}
+          </section>
+        )}
 
-      <section className="space-y-4">
-        <p className="font-semibold leading-7 text-gray-900">{q.stem}</p>
-        <div className="space-y-2">
-          {(["A", "B", "C", "D"] as const).map((letter) => (
-            <label
-              key={letter}
-              className={`block cursor-pointer rounded-lg border bg-white p-3 shadow-sm transition-shadow hover:shadow ${
-                picked === letter
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200"
-              }`}
-            >
-              <input
-                type="radio"
-                name={q.id}
-                className="mr-2"
-                checked={picked === letter}
-                onChange={() => pickAnswer(q.id, letter)}
-              />
-              <span className="font-semibold mr-2">{letter}.</span>
-              {q.choices[letter]}
-            </label>
-          ))}
-        </div>
-      </section>
+        <section className="space-y-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm lg:sticky lg:top-6">
+          <p className="font-semibold leading-7 text-gray-900">{q.stem}</p>
+          <div className="space-y-2">
+            {(["A", "B", "C", "D"] as const).map((letter) => (
+              <label
+                key={letter}
+                className={`block cursor-pointer rounded-lg border p-3 transition-shadow hover:shadow ${
+                  picked === letter
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name={q.id}
+                  className="mr-2"
+                  checked={picked === letter}
+                  onChange={() => pickAnswer(q.id, letter)}
+                />
+                <span className="font-semibold mr-2">{letter}.</span>
+                {q.choices[letter]}
+              </label>
+            ))}
+          </div>
+        </section>
+      </div>
 
       <footer className="flex items-center justify-between">
         <button
