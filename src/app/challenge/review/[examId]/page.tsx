@@ -59,7 +59,7 @@ function asAnswerKeyMap(value: unknown): Map<string, string> {
 }
 
 function formatDate(d: Date): string {
-  return d.toLocaleString("ko-KR", {
+  return d.toLocaleString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -101,9 +101,9 @@ function lockedHref(m1: ModuleRow, m2: ModuleRow | null): string | null {
 }
 
 function lockedLabel(m1: ModuleRow, m2: ModuleRow | null): string {
-  if (!m1.submitted_at) return "모듈 1 이어가기";
-  if (!m2) return "모듈 2 시작하기";
-  return "모듈 2 이어가기";
+  if (!m1.submitted_at) return "Resume Module 1";
+  if (!m2) return "Start Module 2";
+  return "Resume Module 2";
 }
 
 function LockedReview({ m1, m2 }: { m1: ModuleRow; m2: ModuleRow | null }) {
@@ -115,21 +115,21 @@ function LockedReview({ m1, m2 }: { m1: ModuleRow; m2: ModuleRow | null }) {
         href="/challenge/dashboard"
         className="text-sm text-gray-600 underline hover:text-gray-800"
       >
-        대시보드로 돌아가기
+        Back to Dashboard
       </Link>
       <section className="rounded-lg border border-gray-100 bg-white p-6 shadow-md space-y-3">
         <h1 className="text-2xl font-bold tracking-wide">
-          해설은 모의고사 완료 후 열립니다
+          Review Unlocks After You Complete the Practice Test
         </h1>
         <p className="text-gray-600">
-          모듈 1과 모듈 2를 모두 제출한 뒤에 모든 문제의 정답과 해설을 확인할 수 있습니다.
+          Submit both Module 1 and Module 2 to see the correct answers and explanations for every question.
         </p>
         <div className="flex flex-wrap gap-2 pt-2">
           <Link
             href="/challenge/dashboard"
             className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
-            대시보드
+            Dashboard
           </Link>
           {nextHref && (
             <Link

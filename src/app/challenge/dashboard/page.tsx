@@ -53,7 +53,7 @@ function examStatus(m1: ModuleSlot, m2: ModuleSlot | null): Exam["status"] {
 }
 
 function formatDate(d: Date): string {
-  return d.toLocaleString("ko-KR", {
+  return d.toLocaleString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -121,28 +121,28 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-3xl p-6 space-y-8">
       <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-wide">대시보드</h1>
+        <h1 className="text-3xl font-bold tracking-wide">Dashboard</h1>
         <SignOutButton />
       </header>
 
-      <p className="text-sm text-gray-600">{user.email} 님으로 로그인됨</p>
+      <p className="text-sm text-gray-600">Logged in as {user.email}</p>
 
       <div>
         <Link
           href="/challenge/module?new=1"
           className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
         >
-          새 모의고사 시작하기
+          Start a New Practice Test
         </Link>
         <p className="mt-1 text-xs text-gray-500">
-          진행 중인 모의고사가 있다면 자동으로 이어서 시작됩니다.
+          If you already have a practice test in progress, it will resume automatically.
         </p>
       </div>
 
       {inProgress.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">
-            진행 중 / 이어하기
+            In Progress
           </h2>
           <ul className="space-y-2">
             {inProgress.map((e) => (
@@ -153,7 +153,7 @@ export default async function DashboardPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-sm">
                     <div className="font-semibold text-gray-800">
-                      {formatDate(e.createdAt)}에 시작된 모의고사
+                      Practice test started on {formatDate(e.createdAt)}
                     </div>
                     <div className="text-gray-600">
                       {statusLabel(e, now)}
@@ -169,11 +169,11 @@ export default async function DashboardPage() {
 
       <section className="space-y-3">
         <h2 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">
-          완료된 모의고사 기록
+          Completed Practice Tests
         </h2>
         {completed.length === 0 ? (
           <p className="text-sm text-gray-500">
-            아직 완료한 모의고사가 없습니다. 위의 버튼으로 시작해보세요.
+            You have not completed a practice test yet. Use the button above to start.
           </p>
         ) : (
           <ul className="divide-y divide-gray-100 rounded-lg border border-gray-100 bg-white shadow-sm">
@@ -183,8 +183,8 @@ export default async function DashboardPage() {
               const score = (m1.score ?? 0) + (m2.score ?? 0);
               const total = (m1.total ?? 0) + (m2.total ?? 0);
               const pct = total > 0 ? Math.round((score / total) * 100) : 0;
-              // Show a per-exam delta so the timeline view actually *feels*
-              // like a timeline — "회차 4 · 이전 대비 +3점" etc.
+              // Show a per-exam delta so the timeline view actually feels
+              // like a timeline: "Test 4 · +3 points vs. previous", etc.
               const prev = completed[i + 1];
               const prevScore = prev
                 ? (prev.m1.module.score ?? 0) + (prev.m2!.module.score ?? 0)
@@ -195,7 +195,7 @@ export default async function DashboardPage() {
                   <div className="text-sm">
                     <div className="font-medium">{formatDate(e.createdAt)}</div>
                     <div className="text-gray-500">
-                      모듈 1: {m1.score}/{m1.total} · 모듈 2: {m2.score}/{m2.total}
+                      Module 1: {m1.score}/{m1.total} · Module 2: {m2.score}/{m2.total}
                     </div>
                   </div>
                   <div className="text-right text-sm">
@@ -212,14 +212,14 @@ export default async function DashboardPage() {
                               : "text-gray-500"
                         }
                       >
-                        {delta > 0 ? `+${delta}` : delta}점 (직전 대비)
+                        {delta > 0 ? `+${delta}` : delta} points vs. previous
                       </div>
                     )}
                     <Link
                       href={`/challenge/review/${m1.id}`}
                       className="mt-2 inline-block rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition"
                     >
-                      해설 보기
+                      Review Explanations
                     </Link>
                   </div>
                 </li>
@@ -237,21 +237,21 @@ function statusLabel(e: Exam, now: number): string {
   switch (status) {
     case "m1_in_progress": {
       const mins = minutesLeft(m1.module, now);
-      return `모듈 1 진행 중 · 남은 시간 약 ${mins}분`;
+      return `Module 1 in progress · About ${mins} minutes remaining`;
     }
     case "m1_expired":
-      return "모듈 1 시간이 만료되었습니다. 이어하기를 누르면 현재까지의 답안으로 채점됩니다.";
+      return "Module 1 has expired. Continue to grade the answers saved so far.";
     case "awaiting_m2": {
       const s = m1.module.score ?? 0;
       const t = m1.module.total ?? 0;
-      return `모듈 1 완료 (${s}/${t}) · 모듈 2 아직 시작하지 않음`;
+      return `Module 1 complete (${s}/${t}) · Module 2 has not started yet`;
     }
     case "m2_in_progress": {
       const mins = minutesLeft(m2!.module, now);
-      return `모듈 2 진행 중 · 남은 시간 약 ${mins}분`;
+      return `Module 2 in progress · About ${mins} minutes remaining`;
     }
     case "m2_expired":
-      return "모듈 2 시간이 만료되었습니다. 이어하기를 누르면 현재까지의 답안으로 채점됩니다.";
+      return "Module 2 has expired. Continue to grade the answers saved so far.";
     default:
       return "";
   }
@@ -265,12 +265,12 @@ function InProgressAction({ exam }: { exam: Exam }) {
         href={`/challenge/module?parent=${m1.module.id}`}
         className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-sm text-white font-semibold shadow hover:bg-blue-700 transition"
       >
-        모듈 2 시작
+        Start Module 2
       </Link>
     );
   }
   if (status === "m1_in_progress" || status === "m1_expired") {
-    const label = status === "m1_expired" ? "채점하기" : "모듈 1 이어하기";
+    const label = status === "m1_expired" ? "Grade Now" : "Resume Module 1";
     return (
       <Link
         href={`/challenge/module?id=${m1.module.id}`}
@@ -281,7 +281,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
     );
   }
   if (status === "m2_in_progress" || status === "m2_expired") {
-    const label = status === "m2_expired" ? "채점하기" : "모듈 2 이어하기";
+    const label = status === "m2_expired" ? "Grade Now" : "Resume Module 2";
     return (
       <Link
         href={`/challenge/module?id=${m2!.module.id}`}

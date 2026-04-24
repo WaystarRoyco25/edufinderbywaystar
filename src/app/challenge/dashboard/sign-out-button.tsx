@@ -15,7 +15,7 @@ export default function SignOutButton() {
       }}
       className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
     >
-      로그아웃
+      Log Out
     </button>
   );
 }

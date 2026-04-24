@@ -6,7 +6,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <main className="flex-1 flex items-center justify-center p-6">
-          <p className="text-sm text-gray-500">불러오는 중...</p>
+          <p className="text-sm text-gray-500">Loading...</p>
         </main>
       }
     >

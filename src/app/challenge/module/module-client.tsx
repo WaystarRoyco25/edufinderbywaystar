@@ -273,7 +273,7 @@ export default function ModuleClient() {
   if (phase === "loading") {
     return (
       <main className="mx-auto max-w-3xl p-8 text-sm text-gray-500">
-        모의고사를 불러오는 중...
+        Loading your practice test...
       </main>
     );
   }
@@ -282,13 +282,13 @@ export default function ModuleClient() {
     return (
       <main className="mx-auto max-w-3xl p-6">
         <section className="rounded-lg border border-gray-100 bg-white shadow-md p-6 space-y-4">
-          <h1 className="text-2xl font-bold tracking-wide text-red-600">오류</h1>
+          <h1 className="text-2xl font-bold tracking-wide text-red-600">Error</h1>
           <p className="text-sm text-gray-700">{error}</p>
           <Link
             href="/challenge/dashboard"
             className="inline-block rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
-            대시보드로 돌아가기
+            Back to Dashboard
           </Link>
         </section>
       </main>
@@ -301,28 +301,28 @@ export default function ModuleClient() {
     return (
       <main className="mx-auto max-w-3xl p-6">
         <section className="rounded-lg border border-gray-100 bg-white shadow-md p-6 space-y-4">
-          <h1 className="text-3xl font-bold tracking-wide">모듈 1 완료</h1>
+          <h1 className="text-3xl font-bold tracking-wide">Module 1 Complete</h1>
           <p className="text-gray-700">
-            모듈 1 점수: {module1Result.score} / {module1Result.total} ({pct}%)
+            Module 1 score: {module1Result.score} / {module1Result.total} ({pct}%)
           </p>
           <p className="text-gray-600">
             {next?.difficulty === "harder"
-              ? "잘하셨습니다! 모듈 2는 더 어려운 문제 위주로 구성됩니다."
-              : "모듈 2는 기본 난이도 위주로 구성됩니다."}
+              ? "Strong work. Module 2 will focus on harder questions."
+              : "Module 2 will focus on standard-difficulty questions."}
           </p>
           <div className="flex gap-2 pt-2">
             <Link
               href="/challenge/dashboard"
               className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
             >
-              대시보드로
+              Dashboard
             </Link>
             {next && (
               <Link
                 href={`/challenge/module?parent=${next.parent_module_id}`}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
               >
-                모듈 2 시작하기
+                Start Module 2
               </Link>
             )}
           </div>
@@ -338,23 +338,23 @@ export default function ModuleClient() {
     return (
       <main className="mx-auto max-w-3xl p-6">
         <section className="rounded-lg border border-gray-100 bg-white shadow-md p-6 space-y-4">
-          <h1 className="text-3xl font-bold tracking-wide">모의고사 완료</h1>
+          <h1 className="text-3xl font-bold tracking-wide">Practice Test Complete</h1>
           <div className="space-y-1 text-gray-700">
             <p>
-              모듈 1: {module1Result.score} / {module1Result.total}
+              Module 1: {module1Result.score} / {module1Result.total}
             </p>
             <p>
-              모듈 2: {module2Result.score} / {module2Result.total}
+              Module 2: {module2Result.score} / {module2Result.total}
             </p>
             <p className="text-lg font-semibold pt-2">
-              총점: {totalScore} / {totalMax} ({pct}%)
+              Total score: {totalScore} / {totalMax} ({pct}%)
             </p>
           </div>
           <Link
             href="/challenge/dashboard"
             className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
           >
-            대시보드로 돌아가기
+            Back to Dashboard
           </Link>
         </section>
       </main>
@@ -373,15 +373,15 @@ export default function ModuleClient() {
         <Link
           href="/challenge/dashboard"
           className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
-          title="진행 상태는 자동으로 저장됩니다"
+          title="Your progress is saved automatically"
         >
-          ← 대시보드
+          ← Dashboard
         </Link>
         <div
           className={`font-mono text-lg font-semibold tabular-nums ${
             lowTime ? "text-red-600" : "text-gray-800"
           }`}
-          aria-label="남은 시간"
+          aria-label="Time remaining"
         >
           ⏱ {formatClock(secondsLeft)}
         </div>
@@ -389,16 +389,16 @@ export default function ModuleClient() {
 
       {saveFailed && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          진행 저장 실패 — 다음 답변 시 자동으로 재시도합니다. 문제가 지속되면
-          페이지를 새로고침해주세요.
+          Progress could not be saved. We will retry after your next answer. If this
+          continues, refresh the page.
         </div>
       )}
 
       <div className="flex items-center justify-between text-sm text-gray-500">
         <div>
-          모듈 {current.module_number} · {index + 1} / {current.questions.length}번 문제 · {q.question_type}
+          Module {current.module_number} · Question {index + 1} / {current.questions.length} · {q.question_type}
         </div>
-        <div>{Object.keys(answers).length}문제 답변 완료</div>
+        <div>{Object.keys(answers).length} answered</div>
       </div>
 
       <div
@@ -447,7 +447,7 @@ export default function ModuleClient() {
           disabled={index === 0}
           className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-40 transition"
         >
-          이전
+          Previous
         </button>
 
         {index < current.questions.length - 1 ? (
@@ -455,7 +455,7 @@ export default function ModuleClient() {
             onClick={() => goTo(index + 1)}
             className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
           >
-            다음
+            Next
           </button>
         ) : (
           <button
@@ -464,10 +464,10 @@ export default function ModuleClient() {
             className="rounded-lg bg-green-600 px-4 py-2 text-white font-semibold shadow hover:bg-green-700 disabled:opacity-60 transition"
           >
             {submitting
-              ? "제출 중..."
+              ? "Submitting..."
               : current.module_number === 1
-                ? "모듈 1 제출"
-                : "모의고사 제출"}
+                ? "Submit Module 1"
+                : "Submit Practice Test"}
           </button>
         )}
       </footer>

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export type ChoiceLetter = "A" | "B" | "C" | "D";
 
 const CHOICE_LETTERS: ChoiceLetter[] = ["A", "B", "C", "D"];
-const MISSING_EXPLANATION = "해설이 준비되지 않았습니다.";
+const MISSING_EXPLANATION = "No explanation is available yet.";
 
 export type QuestionRow = {
   id: string;
@@ -92,10 +92,10 @@ function ChoiceReview({
           <span className="flex gap-2 text-xs font-semibold">
             {isPicked && (
               <span className={isCorrect ? "text-green-700" : "text-red-700"}>
-                내 답
+                Your Answer
               </span>
             )}
-            {isCorrect && <span className="text-green-700">정답</span>}
+            {isCorrect && <span className="text-green-700">Correct Answer</span>}
           </span>
         </div>
       </button>
@@ -111,7 +111,7 @@ function ChoiceReview({
 function MissingQuestion({ item }: { item: ReviewQuestion }) {
   return (
     <section className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 shadow-sm">
-      문제 {item.number}번을 불러올 수 없습니다. 질문 ID: {item.questionId}
+      Question {item.number} could not be loaded. Question ID: {item.questionId}
     </section>
   );
 }
@@ -143,10 +143,10 @@ export default function ReviewClient({
   }
 
   const resultLabel = !item?.picked
-    ? "미응답"
+    ? "Unanswered"
     : item.picked === item.correct
-      ? "정답"
-      : "오답";
+      ? "Correct"
+      : "Incorrect";
   const resultClass = !item?.picked
     ? "text-gray-600"
     : item.picked === item.correct
@@ -161,24 +161,24 @@ export default function ReviewClient({
             href="/challenge/dashboard"
             className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
-            ← 대시보드
+            ← Dashboard
           </Link>
           <div className="text-right text-sm">
             <div className="font-semibold text-gray-800">
-              총점 {summary.totalScore} / {summary.totalMax}
+              Total Score {summary.totalScore} / {summary.totalMax}
               <span className="ml-1 text-gray-500">({summary.pct}%)</span>
             </div>
             <div className="text-gray-500">
-              모듈 1 {summary.module1Score} · 모듈 2 {summary.module2Score}
+              Module 1 {summary.module1Score} · Module 2 {summary.module2Score}
             </div>
           </div>
         </div>
 
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold tracking-wide">모의고사 해설</h1>
+            <h1 className="text-3xl font-bold tracking-wide">Practice Test Review</h1>
             <p className="mt-1 text-sm text-gray-500">
-              {summary.startedAt}에 시작한 모의고사
+              Practice test started on {summary.startedAt}
             </p>
           </div>
           <div className="text-sm font-medium text-gray-600">
@@ -191,11 +191,11 @@ export default function ReviewClient({
         <>
           <div className="flex items-center justify-between text-sm text-gray-500">
             <div>
-              모듈 {item.moduleNumber} · {item.number}번 문제
+              Module {item.moduleNumber} · Question {item.number}
               {item.question ? ` · ${item.question.question_type}` : ""}
             </div>
             <div className={resultClass}>
-              {resultLabel} · 내 답 {item.picked ?? "미응답"} · 정답 {item.correct ?? "-"}
+              {resultLabel} · Your answer {item.picked ?? "Unanswered"} · Correct answer {item.correct ?? "-"}
             </div>
           </div>
 
@@ -236,7 +236,7 @@ export default function ReviewClient({
         </>
       ) : (
         <section className="rounded-lg border border-gray-100 bg-white p-4 text-sm text-gray-600 shadow-sm">
-          표시할 해설이 없습니다.
+          No review is available to display.
         </section>
       )}
 
@@ -246,7 +246,7 @@ export default function ReviewClient({
           disabled={index === 0}
           className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-40 transition"
         >
-          이전
+          Previous
         </button>
 
         {index < total - 1 ? (
@@ -254,14 +254,14 @@ export default function ReviewClient({
             onClick={() => goTo(index + 1)}
             className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
           >
-            다음 해설
+            Next Explanation
           </button>
         ) : (
           <Link
             href="/challenge/dashboard"
             className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
           >
-            대시보드로 돌아가기
+            Back to Dashboard
           </Link>
         )}
       </footer>
