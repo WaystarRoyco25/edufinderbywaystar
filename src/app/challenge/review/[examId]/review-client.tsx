@@ -58,11 +58,15 @@ function ChoiceReview({
   letter,
   picked,
   correct,
+  isOpen,
+  onSelect,
 }: {
   question: QuestionRow;
   letter: ChoiceLetter;
   picked: string | null;
   correct: string | null;
+  isOpen: boolean;
+  onSelect: () => void;
 }) {
   const isPicked = picked === letter;
   const isCorrect = correct === letter;
@@ -73,24 +77,33 @@ function ChoiceReview({
       : "border-gray-200 bg-white";
 
   return (
-    <div className={`rounded-lg border p-4 shadow-sm ${stateClass}`}>
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="font-medium text-gray-950">
-          <span className="mr-2 font-semibold">{letter}.</span>
-          {question.choices?.[letter] ?? ""}
-        </p>
-        <div className="flex gap-2 text-xs font-semibold">
-          {isPicked && (
-            <span className={isCorrect ? "text-green-700" : "text-red-700"}>
-              내 답
-            </span>
-          )}
-          {isCorrect && <span className="text-green-700">정답</span>}
+    <div className={`rounded-lg border shadow-sm ${stateClass}`}>
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-expanded={isOpen}
+        className="w-full p-4 text-left"
+      >
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <span className="font-medium text-gray-950">
+            <span className="mr-2 font-semibold">{letter}.</span>
+            {question.choices?.[letter] ?? ""}
+          </span>
+          <span className="flex gap-2 text-xs font-semibold">
+            {isPicked && (
+              <span className={isCorrect ? "text-green-700" : "text-red-700"}>
+                내 답
+              </span>
+            )}
+            {isCorrect && <span className="text-green-700">정답</span>}
+          </span>
         </div>
-      </div>
-      <p className="mt-3 border-t border-gray-200 pt-3 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
-        {explanationFor(question, letter, correct)}
-      </p>
+      </button>
+      {isOpen && (
+        <p className="mx-4 mb-4 border-t border-gray-200 pt-3 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
+          {explanationFor(question, letter, correct)}
+        </p>
+      )}
     </div>
   );
 }
@@ -111,6 +124,9 @@ export default function ReviewClient({
   questions: ReviewQuestion[];
 }) {
   const [index, setIndex] = useState(0);
+  const [openChoiceByQuestion, setOpenChoiceByQuestion] = useState<
+    Record<string, ChoiceLetter>
+  >({});
   const item = questions[index];
   const total = questions.length;
 
@@ -120,6 +136,10 @@ export default function ReviewClient({
 
   function goTo(nextIndex: number) {
     setIndex(Math.min(total - 1, Math.max(0, nextIndex)));
+  }
+
+  function selectExplanation(questionId: string, letter: ChoiceLetter) {
+    setOpenChoiceByQuestion((prev) => ({ ...prev, [questionId]: letter }));
   }
 
   const resultLabel = !item?.picked
@@ -134,7 +154,7 @@ export default function ReviewClient({
       : "text-red-700";
 
   return (
-    <main className="mx-auto max-w-3xl p-6 space-y-6">
+    <main className="mx-auto max-w-6xl p-6 space-y-6">
       <header className="space-y-4 border-b border-gray-200 pb-4">
         <div className="flex items-center justify-between gap-4">
           <Link
@@ -182,14 +202,20 @@ export default function ReviewClient({
           {!item.question ? (
             <MissingQuestion item={item} />
           ) : (
-            <>
+            <div
+              className={
+                item.question.passage
+                  ? "grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:items-start"
+                  : "mx-auto max-w-3xl"
+              }
+            >
               {item.question.passage && (
-                <section className="rounded-lg border border-gray-100 bg-white p-4 text-sm leading-6 shadow-sm whitespace-pre-wrap">
+                <section className="rounded-lg border border-gray-100 bg-white p-5 text-sm leading-6 shadow-sm whitespace-pre-wrap">
                   {item.question.passage}
                 </section>
               )}
 
-              <section className="space-y-4">
+              <section className="space-y-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm lg:sticky lg:top-6">
                 <p className="font-semibold leading-7 text-gray-950">{item.question.stem}</p>
                 <div className="space-y-3">
                   {CHOICE_LETTERS.map((letter) => (
@@ -199,11 +225,13 @@ export default function ReviewClient({
                       letter={letter}
                       picked={item.picked}
                       correct={item.correct}
+                      isOpen={openChoiceByQuestion[item.questionId] === letter}
+                      onSelect={() => selectExplanation(item.questionId, letter)}
                     />
                   ))}
                 </div>
               </section>
-            </>
+            </div>
           )}
         </>
       ) : (
