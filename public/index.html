@@ -86,55 +86,164 @@
             pointer-events: none;
         }
 
-        /* ── Panel-specific colors ── */
+        /* ── Section grid / panel colors ── */
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            align-items: start;
+            margin-bottom: 3rem;
+        }
+        .section-card {
+            height: 100%;
+            padding: 1.25rem;
+        }
+        .section-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: .85rem;
+            border-bottom: 2px solid var(--section-accent, #3b82f6);
+        }
+        .section-card-header.is-static {
+            margin-bottom: 1.1rem;
+        }
+        .section-title {
+            color: #374151;
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+        .section-caption {
+            margin-top: .35rem;
+            color: #6b7280;
+            font-size: .88rem;
+            line-height: 1.45;
+        }
+        .section-action-row {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            flex-shrink: 0;
+        }
+        .compact-copy {
+            color: #374151;
+            font-size: .95rem;
+            line-height: 1.65;
+        }
+        .compact-list {
+            display: grid;
+            gap: .85rem;
+            color: #374151;
+            font-size: .92rem;
+            line-height: 1.5;
+        }
+        .news-group {
+            display: grid;
+            gap: .65rem;
+        }
+        .news-label {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            border-radius: 999px;
+            padding: .25rem .65rem;
+            font-size: .75rem;
+            font-weight: 800;
+        }
+        .news-label-ec {
+            background: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #fecdd3;
+        }
+        .news-label-admission {
+            background: #ccfbf1;
+            color: #0f766e;
+            border: 1px solid #99f6e4;
+        }
+        .news-label-english {
+            background: #e0e7ff;
+            color: #4f46e5;
+            border: 1px solid #c7d2fe;
+        }
+        .news-item {
+            display: flex;
+            gap: .65rem;
+            align-items: flex-start;
+        }
+        .news-dot {
+            width: .45rem;
+            height: .45rem;
+            margin-top: .5rem;
+            border-radius: 999px;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+        .sections-grid a {
+            overflow-wrap: anywhere;
+        }
+
+        #panel-seoul,
+        #panel-outside {
+            --section-accent: #3b82f6;
+            background: linear-gradient(160deg, #f8fbff 0%, #eff6ff 40%, #dbeafe 100%);
+        }
+        #panel-gov-approved {
+            --section-accent: #22c55e;
+            background: linear-gradient(160deg, #f7fff9 0%, #f0fdf4 40%, #dcfce7 100%);
+        }
+        #panel-hagwon {
+            --section-accent: #a855f7;
+            background: linear-gradient(160deg, #fbf7ff 0%, #f5f3ff 40%, #ede9fe 100%);
+        }
+        #panel-eng-k {
+            --section-accent: #f97316;
+            background: linear-gradient(160deg, #fffaf5 0%, #fff7ed 40%, #ffedd5 100%);
+        }
+        #panel-dsat {
+            --section-accent: #d946ef;
+            background: linear-gradient(160deg, #fdf4ff 0%, #fae8ff 40%, #f5d0fe 100%);
+        }
+        #panel-education-news {
+            --section-accent: #14b8a6;
+            background: linear-gradient(160deg, #fff8f8 0%, #f4fefb 46%, #eef1ff 100%);
+        }
         #panel-prediction {
+            --section-accent: #f59e0b;
             background: linear-gradient(160deg, #fffdf5 0%, #fef9e7 40%, #fef3c7 100%);
         }
+        #panel-seoul::before,
+        #panel-outside::before,
+        #panel-gov-approved::before,
+        #panel-hagwon::before,
+        #panel-eng-k::before,
+        #panel-dsat::before,
+        #panel-education-news::before,
         #panel-prediction::before {
             background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
         }
-        #panel-prediction::after {
-            background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
+        #panel-seoul::after,
+        #panel-outside::after {
+            background: radial-gradient(circle, #93c5fd 0%, #bfdbfe 60%, transparent 100%);
         }
-
-        #panel-ec {
-            background: linear-gradient(160deg, #fff8f8 0%, #fff1f2 40%, #ffe4e6 100%);
+        #panel-gov-approved::after {
+            background: radial-gradient(circle, #86efac 0%, #bbf7d0 60%, transparent 100%);
         }
-        #panel-ec::before {
-            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
+        #panel-hagwon::after {
+            background: radial-gradient(circle, #c084fc 0%, #ddd6fe 60%, transparent 100%);
         }
-        #panel-ec::after {
-            background: radial-gradient(circle, #fda4af 0%, #fecdd3 60%, transparent 100%);
-        }
-
-        #panel-admission-news {
-            background: linear-gradient(160deg, #f4fefb 0%, #e6faf5 40%, #ccfbf1 100%);
-        }
-        #panel-admission-news::before {
-            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
-        }
-        #panel-admission-news::after {
-            background: radial-gradient(circle, #5eead4 0%, #99f6e4 60%, transparent 100%);
-        }
-
-        #panel-eng-news {
-            background: linear-gradient(160deg, #f8f9ff 0%, #eef1ff 40%, #e0e7ff 100%);
-        }
-        #panel-eng-news::before {
-            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
-        }
-        #panel-eng-news::after {
-            background: radial-gradient(circle, #a5b4fc 0%, #c7d2fe 60%, transparent 100%);
-        }
-
-        #panel-dsat {
-            background: linear-gradient(160deg, #fdf4ff 0%, #fae8ff 40%, #f5d0fe 100%);
-        }
-        #panel-dsat::before {
-            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
+        #panel-eng-k::after {
+            background: radial-gradient(circle, #fdba74 0%, #fed7aa 60%, transparent 100%);
         }
         #panel-dsat::after {
             background: radial-gradient(circle, #e879f9 0%, #f5d0fe 60%, transparent 100%);
+        }
+        #panel-education-news::after {
+            background: radial-gradient(circle, #5eead4 0%, #c7d2fe 60%, transparent 100%);
+        }
+        #panel-prediction::after {
+            background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
         }
 
         /* ── Toast notifications ── */
@@ -268,6 +377,7 @@
         }
         .foldable-section.is-open {
             display: grid;
+            margin-top: 1rem;
             animation: sectionReveal .3s ease-out;
         }
         @keyframes sectionReveal {
@@ -323,6 +433,15 @@
             }
         }
 
+        @media (min-width: 768px) {
+            .sections-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .section-card {
+                padding: 1.5rem;
+            }
+        }
+
         /* ── Mobile overrides ── */
         @media (max-width: 768px) {
             .panel-bg {
@@ -332,6 +451,15 @@
                 width: 80%;
                 height: 60%;
                 opacity: .35;
+            }
+            .section-card-header {
+                gap: .75rem;
+            }
+            .section-title {
+                font-size: 1.18rem;
+            }
+            .section-caption {
+                font-size: .82rem;
             }
         }
     </style>
@@ -418,476 +546,300 @@
     </div>
 
 
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 서울 소재 국제학교
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-6 flex items-center"
-        onclick="toggleSection('seoul-container', this)">
-        서울 소재 국제학교
-        <button
-            onclick="event.stopPropagation(); openSchoolTipsModal()"
-            class="ml-3 inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
-                   text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
-        >
-            <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>이용 가이드
-        </button>
-        <i class="fa-solid fa-chevron-down chevron-icon"></i>
-    </h2>
-    <div id="seoul-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 미국 대입 예측 모델
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-amber-500 pb-2 mb-6">
-        미국 대입 예측 모델
-    </h2>
-    <div id="panel-prediction" class="panel-bg bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12">
-        <div class="space-y-5">
-            <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 mt-0.5">
-                    <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
-                        <i class="fa-solid fa-chart-column text-lg"></i>
-                    </span>
-                </div>
+    <div class="sections-grid">
+        <!-- ════════════════════════════════════════════════════
+             SECTION 1: 서울 소재 국제학교
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-seoul" class="panel-bg section-card">
+            <div class="section-card-header section-toggle" onclick="toggleSection('seoul-container', this)">
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-3">내 프로필로 합격 확률 확인하기</h3>
-                    <div class="space-y-2.5 text-sm md:text-base text-gray-700 leading-relaxed">
-                        <p>
-                            지난 10년간 세계 각국에서 쌓인 <strong>5만 건 이상의 미국 대입 데이터</strong>를
-                            기반으로 제작한 통계 예측 모델을 소개합니다.
-                        </p>
-                        <p>
-                            성적, 활동, 배경 등 나의 프로필을 입력하면 해당 대학에 최근 합격한 학생들의
-                            프로필과 통계적으로 비교하여 <strong>예상 합격 확률</strong>을 알려줍니다.
-                        </p>
-                        <p>
-                            나와 비슷한 배경의 합격자들이 공통으로 갖춘 요소를 분석하여
-                            <strong>합격 가능성을 높이기 위해 무엇을 준비해야 하는지</strong> 알 수 있습니다.
-                        </p>
-                        <p>
-                            본 서비스는 특정 컨설팅 프로그램 등록을 유도하지 않아
-                            <strong>더욱 객관적이고 정확한 리포트</strong>를 제공할 수 있습니다.
-                        </p>
-                    </div>
-                    <div class="mt-5">
-                        <div class="inline-flex items-center px-5 py-2.5 bg-amber-50 text-amber-600
-                                    text-sm font-semibold rounded-lg border border-amber-200">
-                            <i class="fa-solid fa-calendar-check mr-2"></i>4월 말 정식 오픈
-                        </div>
-                    </div>
+                    <h2 class="section-title">서울 소재 국제학교</h2>
+                    <p class="section-caption">서울권 국제학교 리뷰와 연락처를 확인하세요.</p>
+                </div>
+                <div class="section-action-row">
+                    <button
+                        onclick="event.stopPropagation(); openSchoolTipsModal()"
+                        class="inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
+                               text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
+                    >
+                        <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>가이드
+                    </button>
+                    <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </div>
             </div>
-        </div>
-    </div>
+            <div id="seoul-container" class="foldable-section grid-cols-1 gap-4"></div>
+        </section>
 
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 교육부 인가 국제학교
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-green-500 pb-2 mb-6 flex items-center"
-        onclick="toggleSection('gov-approved-container', this)">
-        교육부 인가 국제학교
-        <i class="fa-solid fa-chevron-down chevron-icon"></i>
-    </h2>
-    <div id="gov-approved-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 다가오는 EC 일정
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-rose-500 pb-2 mb-6">
-        다가오는 EC 일정
-    </h2>
-    <div id="panel-ec" class="panel-bg bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12">
-        <div class="space-y-6">
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm">1</span>
-                </div>
+        <!-- ════════════════════════════════════════════════════
+             SECTION 2: 교육부 인가 국제학교
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-gov-approved" class="panel-bg section-card">
+            <div class="section-card-header section-toggle" onclick="toggleSection('gov-approved-container', this)">
                 <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <h2 class="section-title">교육부 인가 국제학교</h2>
+                    <p class="section-caption">인가 학교를 따로 모아 빠르게 비교할 수 있습니다.</p>
+                </div>
+                <i class="fa-solid fa-chevron-down chevron-icon"></i>
+            </div>
+            <div id="gov-approved-container" class="foldable-section grid-cols-1 gap-4"></div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 3: 지방 소재 국제학교
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-outside" class="panel-bg section-card">
+            <div class="section-card-header section-toggle" onclick="toggleSection('outside-container', this)">
+                <div>
+                    <h2 class="section-title">지방 소재 국제학교</h2>
+                    <p class="section-caption">수도권 외 지역 학교 리뷰를 한곳에서 확인하세요.</p>
+                </div>
+                <div class="section-action-row">
+                    <button
+                        onclick="event.stopPropagation(); openSchoolTipsModal()"
+                        class="inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
+                               text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
+                    >
+                        <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>가이드
+                    </button>
+                    <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                </div>
+            </div>
+            <div id="outside-container" class="foldable-section grid-cols-1 gap-4"></div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 4: 학원 / 컨설팅
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-hagwon" class="panel-bg section-card">
+            <div class="section-card-header section-toggle" onclick="toggleSection('hagwon-container', this)">
+                <div>
+                    <h2 class="section-title">학원 / 컨설팅</h2>
+                    <p class="section-caption">SAT, 입시 컨설팅, 유학원 리뷰를 비교하세요.</p>
+                </div>
+                <div class="section-action-row">
+                    <button
+                        onclick="event.stopPropagation(); openHagwonTipsModal()"
+                        class="inline-flex items-center px-3 py-1 bg-purple-50 hover:bg-purple-100
+                               text-purple-600 text-xs font-semibold rounded-full border border-purple-200 transition-colors"
+                    >
+                        <i class="fa-solid fa-lightbulb mr-1.5 text-purple-400"></i>가이드
+                    </button>
+                    <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                </div>
+            </div>
+            <div id="hagwon-container" class="foldable-section grid-cols-1 gap-4"></div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 5: 영어 유치원
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-eng-k" class="panel-bg section-card">
+            <div class="section-card-header section-toggle" onclick="toggleSection('eng-k-container', this)">
+                <div>
+                    <h2 class="section-title">영어 유치원</h2>
+                    <p class="section-caption">유아 영어교육 기관 리뷰를 간단히 확인하세요.</p>
+                </div>
+                <i class="fa-solid fa-chevron-down chevron-icon"></i>
+            </div>
+            <div id="eng-k-container" class="foldable-section grid-cols-1 gap-4"></div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 6: 디지털 SAT 실전 모의고사
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-dsat" class="panel-bg section-card">
+            <div class="section-card-header is-static">
+                <div>
+                    <h2 class="section-title">DSAT 실전 모의고사</h2>
+                    <p class="section-caption">R/W 섹션 연습과 상세 해설을 한 번에 제공합니다.</p>
+                </div>
+                <span class="flex items-center justify-center w-10 h-10 bg-fuchsia-100 text-fuchsia-600 rounded-full shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-laptop-file text-lg"></i>
+                </span>
+            </div>
+            <div class="compact-copy space-y-3">
+                <p>
+                    디지털 SAT 분석을 바탕으로 설계한 <strong>R/W 섹션 모의고사</strong>와
+                    직관적인 해설을 제공합니다.
+                </p>
+                <p>
+                    검증되지 않은 준비 과정에 시간을 쓰기보다 바로 연습하고 약점을 확인할 수 있습니다.
+                </p>
+                <a href="/challenge"
+                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-fuchsia-50
+                          text-fuchsia-600 text-sm font-semibold rounded-lg border-2 border-fuchsia-500
+                          hover:border-fuchsia-600 transition-colors">
+                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 7: 이번 주 교육 뉴스
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-education-news" class="panel-bg section-card">
+            <div class="section-card-header is-static">
+                <div>
+                    <h2 class="section-title">이번 주 교육 뉴스</h2>
+                    <p class="section-caption">EC 일정, 미국 대입, 영어교육 이슈를 한 섹션에 모았습니다.</p>
+                </div>
+                <span class="flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm flex-shrink-0">
+                    <i class="fa-regular fa-newspaper text-lg"></i>
+                </span>
+            </div>
+            <div class="compact-list">
+                <div class="news-group">
+                    <span class="news-label news-label-ec">EC 일정</span>
+                    <p class="news-item text-rose-600">
+                        <span class="news-dot"></span>
                         <a href="https://aihackathon.usaii.org/" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            USAII Global AI Hackathon 2026
-                        </a>의 사전 등록이 현재 진행 중이며, 본 등록은 4월 중 개시됩니다.
+                            USAII Global AI Hackathon 2026 사전 등록 진행 중
+                        </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        9~12학년 학생이라면 코딩 경험 없이도 참가할 수 있는 온라인 AI 해커톤으로,
-                        2~5인 팀을 구성해 실생활 문제를 해결하는 AI 솔루션을 개발합니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm">2</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-rose-600">
+                        <span class="news-dot"></span>
                         <a href="https://tcr.org/submit" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            The Concord Review (Fall Issue Submission)
-                        </a>의 논문 제출 마감일은 5월 1일입니다.
+                            The Concord Review Fall Issue 논문 제출 마감 5월 1일
+                        </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        고등학생의 역사 연구 논문을 게재하는 유일한 계간지로
-                        합격률이 약 5%에 불과할 만큼 경쟁이 치열합니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm">3</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-rose-600">
+                        <span class="news-dot"></span>
                         <a href="https://legacyproject.org/7gen/ltalcontest.html" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            "Listen to a Life" Writing Contest
-                        </a>의 작품 제출 기한은 4월 17일까지입니다.
+                            Listen to a Life Writing Contest 작품 제출 기한 4월 17일
+                        </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        50세 이상의 어른을 인터뷰한 뒤 300단어 분량의 에세이를 작성하는
-                        8~18세 대상 대회입니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm">4</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-rose-600">
+                        <span class="news-dot"></span>
                         <a href="https://www.jsr.org/hs/index.php/path" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            Journal of Student Research (JSR) — Spring Issue
-                        </a>의 논문 제출 마감일은 5월 1일입니다.
+                            Journal of Student Research Spring Issue 제출 마감 5월 1일
+                        </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        전공 분야에 상관없이 고등학생들의 독창적인 학술 연구 논문을
-                        심사하고 출판하는 학생 연구 저널입니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm">5</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-rose-600">
+                        <span class="news-dot"></span>
                         <a href="https://berkeley.mt/" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            Berkeley Math Tournament (BmMT)
-                        </a>가 4월 12일에 개최됩니다.
-                    </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        매년 4천 명 이상이 참여하는 UC 버클리 주최 수학 대회로
-                        관련 스펙을 쌓으려는 저학년 학생들에게 적합합니다.
+                            Berkeley Math Tournament 개최 일정 안내
+                        </a>
                     </p>
                 </div>
-            </div>
-        </div>
-    </div>
 
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 지방 소재 국제학교
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-6 flex items-center"
-        onclick="toggleSection('outside-container', this)">
-        지방 소재 국제학교
-        <button
-            onclick="event.stopPropagation(); openSchoolTipsModal()"
-            class="ml-3 inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
-                   text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
-        >
-            <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>이용 가이드
-        </button>
-        <i class="fa-solid fa-chevron-down chevron-icon"></i>
-    </h2>
-    <div id="outside-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 미국 대입 최신 뉴스
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-teal-500 pb-2 mb-6">
-        미국 대입 최신 뉴스
-    </h2>
-    <div id="panel-admission-news" class="panel-bg bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12">
-        <div class="space-y-6">
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm">1</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                <div class="news-group">
+                    <span class="news-label news-label-admission">미국 대입</span>
+                    <p class="news-item text-teal-600">
+                        <span class="news-dot"></span>
                         <a href="https://www.washingtonpost.com/business/2026/03/22/trump-legal-immigration-visas/?utm_source=chatgpt.com"
                            target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            미국 유학생 비자 발급 건수가 30% 이상 급감하며 합법적인 비자 취득이 엄격하게 제한되고 있습니다.
+                            미국 유학생 비자 발급 건수 30% 이상 급감
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        국제 학생에게는 명문대 합격보다 비자 발급과 실제 미국 입국이
-                        더 까다로운 당면 과제가 될 전망입니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm">2</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-teal-600">
+                        <span class="news-dot"></span>
                         <a href="https://www.reuters.com/world/trump-administration-launches-more-probes-into-harvard-2026-03-23/?utm_source=chatgpt.com"
                            target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            미국 교육부가 하버드 대학의 입시 내 인종 요소 반영 여부를 확인하기 위해
-                            두 건의 연방 조사에 착수했습니다.
+                            미국 교육부, 하버드 입시 관련 연방 조사 착수
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        대표적인 명문대가 조사를 받으면서 다른 대학들도 에세이 등
-                        다양성 평가에서 한층 방어적인 태도를 취할 것으로 보입니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm">3</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-teal-600">
+                        <span class="news-dot"></span>
                         <a href="https://www.reuters.com/legal/government/democratic-led-states-sue-over-trump-demand-colleges-supply-race-data-2026-03-11/?utm_source=chatgpt.com"
                            target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            연방 정부가 인종 요소 배제 증명을 위해 7년 치 합격 데이터를 요구하자,
-                            17개 주가 반발해 소송을 제기했습니다.
+                            17개 주, 7년 치 합격 데이터 요구에 반발 소송
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        이는 당분간 미국 명문대 입시 환경이 학생 선발 자체보다
-                        정책 준수와 법적 분쟁 회피 중심으로 경직될 단서임을 시사합니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm">4</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-teal-600">
+                        <span class="news-dot"></span>
                         <a href="https://www.reuters.com/legal/government/litigation-funding-deal-threatens-class-action-over-us-college-financial-aid-2026-03-19/?utm_source=chatgpt.com"
                            target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            미국 명문대들이 재정 지원(Financial Aid) 경쟁을 제한하고
-                            부유층 지원자를 우대했다는 혐의의 반독점 소송이 계속되고 있습니다.
+                            명문대 재정 지원 관련 반독점 소송 계속
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        재정 지원이 제한적인 국제 학생들에게 최상위권 대학 진학에 따른
-                        학비 부담 리스크가 여전히 매우 큼을 보여줍니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm">5</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
+                    <p class="news-item text-teal-600">
+                        <span class="news-dot"></span>
                         <a href="https://www.sfchronicle.com/college-admissions/article/usc-early-decision-application-22080242.php?utm_source=chatgpt.com"
                            target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            서던캘리포니아대학(USC)이 구속력 있는 얼리 디시전(ED) 전형을 신설하여
-                            신입생의 35~40%를 선발할 계획입니다.
+                            USC, 구속력 있는 Early Decision 전형 신설
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        정시(RD) 문호가 좁아짐에 따라, 합격 후 대학별 재정 지원 규모를
-                        비교해야 하는 유학생들의 입시 부담이 가중될 전망입니다.
-                    </p>
                 </div>
-            </div>
-        </div>
-    </div>
 
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 학원 / 컨설팅
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-purple-500 pb-2 mb-6 flex items-center"
-        onclick="toggleSection('hagwon-container', this)">
-        학원 / 컨설팅
-        <button
-            onclick="event.stopPropagation(); openHagwonTipsModal()"
-            class="ml-3 inline-flex items-center px-3 py-1 bg-purple-50 hover:bg-purple-100
-                   text-purple-600 text-xs font-semibold rounded-full border border-purple-200 transition-colors"
-        >
-            <i class="fa-solid fa-lightbulb mr-1.5 text-purple-400"></i>이용 가이드
-        </button>
-        <i class="fa-solid fa-chevron-down chevron-icon"></i>
-    </h2>
-    <div id="hagwon-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 영어 교육 최신 뉴스
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-indigo-500 pb-2 mb-6">
-        영어 교육 최신 뉴스
-    </h2>
-    <div id="panel-eng-news" class="panel-bg bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12">
-        <div class="space-y-6">
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full font-bold text-sm shadow-sm">1</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
-                        <a href="https://www.yna.co.kr/view/AKR20260312127600530"
-                           target="_blank"
+                <div class="news-group">
+                    <span class="news-label news-label-english">영어 교육</span>
+                    <p class="news-item text-indigo-600">
+                        <span class="news-dot"></span>
+                        <a href="https://www.yna.co.kr/view/AKR20260312127600530" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            유아 대상 학원의 입학 및 반 배정 목적 시험을 전면 금지하는
-                            이른바 '4세·7세 고시 금지법'이 국회를 통과했습니다.
+                            유아 대상 학원 입학·반 배정 시험 금지법 통과
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        공포 6개월 뒤 시행됨에 따라 다가오는 하반기 모집부터
-                        영어유치원 입학 전형 방식이 전면적으로 개편될 전망입니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full font-bold text-sm shadow-sm">2</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
-                        <a href="https://www.korea.kr/news/policyNewsView.do?newsId=156748552"
-                           target="_blank"
+                    <p class="news-item text-indigo-600">
+                        <span class="news-dot"></span>
+                        <a href="https://www.korea.kr/news/policyNewsView.do?newsId=156748552" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            작년 초중고 전체 사교육비 총액은 감소했으나,
-                            사교육 참여 학생 1인당 월평균 지출액은 오히려 증가했습니다.
+                            사교육 참여 학생 1인당 월평균 지출액 증가
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        전체적인 사교육 참여율 하락에도 불구하고 상위권 조기 경쟁
-                        집단 내부의 비용 투자는 심화되고 있음을 보여줍니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full font-bold text-sm shadow-sm">3</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
-                        <a href="https://www.hani.co.kr/arti/society/schooling/1249340.html"
-                           target="_blank"
+                    <p class="news-item text-indigo-600">
+                        <span class="news-dot"></span>
+                        <a href="https://www.hani.co.kr/arti/society/schooling/1249340.html" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            서울 강남·서초 지역 유·초·중 학부모의 과반수가 자녀의
-                            영어유치원 등원 경험이 있는 것으로 집계되었습니다.
+                            강남·서초 학부모 과반, 영어유치원 등원 경험
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        특정 학군을 중심으로 조기 영어 교육 압박이 강하게 유지되고 있으며,
-                        교육청의 관련 단속도 한층 강화될 예정입니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full font-bold text-sm shadow-sm">4</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
-                        <a href="https://home.ebs.co.kr/ebsnews/menu1/newsAllView/60703788/N?eduNewsYn=N"
-                           target="_blank"
+                    <p class="news-item text-indigo-600">
+                        <span class="news-dot"></span>
+                        <a href="https://home.ebs.co.kr/ebsnews/menu1/newsAllView/60703788/N?eduNewsYn=N" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            정부가 오는 7월부터 특별활동비와 교재비를 모두 포함하는
-                            영유아 사교육비 첫 본조사를 실시합니다.
+                            정부, 7월부터 영유아 사교육비 본조사 실시
                         </a>
                     </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        영유아 교육비 통계가 공식화됨에 따라 유아 대상 어학원 비용 구조가
-                        투명해지고 규제 압박이 거세질 수 있습니다.
-                    </p>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <span class="flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full font-bold text-sm shadow-sm">5</span>
-                </div>
-                <div>
-                    <p class="text-base font-medium mb-1.5 leading-relaxed">
-                        <a href="https://www.khan.co.kr/article/202603280900011"
-                           target="_blank"
+                    <p class="news-item text-indigo-600">
+                        <span class="news-dot"></span>
+                        <a href="https://www.khan.co.kr/article/202603280900011" target="_blank"
                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            자체 레벨테스트가 법으로 금지되자 공인어학성적이나 포트폴리오를
-                            요구하는 학원의 우회 선발 움직임이 포착되었습니다.
+                            공인어학성적·포트폴리오 요구 우회 선발 움직임
                         </a>
-                    </p>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        단순 지필고사 대신 외부 시험과 영상 준비가 추가로 요구되며
-                        조기 입학 경쟁 양상이 더욱 복잡해질 우려가 큽니다.
                     </p>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 영어 유치원
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-orange-500 pb-2 mb-6 flex items-center"
-        onclick="toggleSection('eng-k-container', this)">
-        영어 유치원
-        <i class="fa-solid fa-chevron-down chevron-icon"></i>
-    </h2>
-    <div id="eng-k-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 디지털 SAT 실전 모의고사 (NEW)
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-fuchsia-500 pb-2 mb-6">
-        DSAT 실전 모의고사
-    </h2>
-    <div id="panel-dsat" class="panel-bg bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12">
-        <div class="space-y-5">
-            <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 mt-0.5">
-                    <span class="flex items-center justify-center w-10 h-10 bg-fuchsia-100 text-fuchsia-600 rounded-full shadow-sm">
-                        <i class="fa-solid fa-laptop-file text-lg"></i>
-                    </span>
-                </div>
+        <!-- ════════════════════════════════════════════════════
+             SECTION 8: 미국 대입 예측 모델
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-prediction" class="panel-bg section-card">
+            <div class="section-card-header is-static">
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-3">고품질 모의고사 패키지</h3>
-                    <div class="space-y-2.5 text-sm md:text-base text-gray-700 leading-relaxed">
-                        <p>
-                            디지털 SAT에 대한 꼼꼼한 분석을 바탕으로 정교하게 설계한 <strong>R/W 섹션 모의고사</strong>를 선보입니다.
-                        </p>
-                        <p>
-                            세계 최고 전문가들이 직접 집필한 <strong>직관적이고 상세한 해설</strong>을 제공합니다.
-                        </p>
-                        <p>
-                            검증되지 않은 학원에 시간과 비용을 낭비하는 대신 본 패키지로 <strong>디지털 SAT를 마스터</strong>하세요.
-                        </p>
-                    </div>
-                    <div class="mt-5">
-                        <a href="/challenge"
-                           class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-fuchsia-50
-                                  text-fuchsia-600 text-sm font-semibold rounded-lg border-2 border-fuchsia-500
-                                  hover:border-fuchsia-600 transition-colors">
-                            자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                        </a>
-                    </div>
+                    <h2 class="section-title">미국 대입 예측 모델</h2>
+                    <p class="section-caption">프로필 기반 합격 가능성과 준비 포인트를 확인합니다.</p>
+                </div>
+                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-chart-column text-lg"></i>
+                </span>
+            </div>
+            <div class="compact-copy space-y-3">
+                <p>
+                    지난 10년간 쌓인 <strong>5만 건 이상의 미국 대입 데이터</strong>를 바탕으로
+                    나의 성적, 활동, 배경을 합격자 프로필과 비교합니다.
+                </p>
+                <p>
+                    특정 컨설팅 등록을 유도하지 않고, 합격 가능성을 높이기 위해 무엇을 준비해야 하는지
+                    객관적인 리포트로 제공합니다.
+                </p>
+                <div class="inline-flex items-center px-5 py-2.5 bg-amber-50 text-amber-600
+                            text-sm font-semibold rounded-lg border border-amber-200">
+                    <i class="fa-solid fa-calendar-check mr-2"></i>4월 말 정식 오픈
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
 
@@ -1896,8 +1848,8 @@ function openSection(containerId) {
     if (!container) return;
     if (!container.classList.contains('is-open')) {
         container.classList.add('is-open');
-        // Find the matching header (the h2 with the matching onclick) and rotate its chevron.
-        const allHeaders = document.querySelectorAll('h2.section-toggle');
+        // Find the matching section header and rotate its chevron.
+        const allHeaders = document.querySelectorAll('.section-toggle');
         allHeaders.forEach(function(h) {
             const attr = h.getAttribute('onclick') || '';
             if (attr.indexOf("'" + containerId + "'") !== -1) {
