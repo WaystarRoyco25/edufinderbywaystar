@@ -98,38 +98,6 @@
             height: 100%;
             padding: 1.25rem;
         }
-        .category-card {
-            display: block;
-            color: inherit;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .category-card .section-card-header {
-            border-bottom: 0;
-            padding-bottom: 0;
-        }
-        .category-card:hover .category-arrow {
-            transform: translateX(4px);
-            color: #1d4ed8;
-        }
-        .category-count {
-            display: inline-flex;
-            align-items: center;
-            width: fit-content;
-            margin-top: .85rem;
-            padding: .35rem .75rem;
-            border-radius: 999px;
-            background: rgba(255,255,255,.78);
-            border: 1px solid rgba(255,255,255,.9);
-            color: #374151;
-            font-size: .82rem;
-            font-weight: 800;
-            box-shadow: 0 2px 8px rgba(0,0,0,.04);
-        }
-        .category-arrow {
-            color: #9ca3af;
-            transition: transform .2s ease, color .2s ease;
-        }
         .section-card-header {
             display: flex;
             align-items: flex-start;
@@ -216,7 +184,6 @@
             overflow-wrap: anywhere;
         }
 
-        #panel-international,
         #panel-seoul,
         #panel-outside {
             --section-accent: #3b82f6;
@@ -246,7 +213,18 @@
             --section-accent: #f59e0b;
             background: linear-gradient(160deg, #fffdf5 0%, #fef9e7 40%, #fef3c7 100%);
         }
-        #panel-international::before,
+        #review-page-panel.category-international {
+            --section-accent: #3b82f6;
+            background: linear-gradient(160deg, #f8fbff 0%, #eff6ff 40%, #dbeafe 100%);
+        }
+        #review-page-panel.category-hagwon {
+            --section-accent: #a855f7;
+            background: linear-gradient(160deg, #fbf7ff 0%, #f5f3ff 40%, #ede9fe 100%);
+        }
+        #review-page-panel.category-english-kindergarten {
+            --section-accent: #f97316;
+            background: linear-gradient(160deg, #fffaf5 0%, #fff7ed 40%, #ffedd5 100%);
+        }
         #panel-seoul::before,
         #panel-outside::before,
         #panel-gov-approved::before,
@@ -257,7 +235,9 @@
         #panel-prediction::before {
             background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
         }
-        #panel-international::after,
+        #review-page-panel::before {
+            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
+        }
         #panel-seoul::after,
         #panel-outside::after {
             background: radial-gradient(circle, #93c5fd 0%, #bfdbfe 60%, transparent 100%);
@@ -279,6 +259,15 @@
         }
         #panel-prediction::after {
             background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
+        }
+        #review-page-panel.category-international::after {
+            background: radial-gradient(circle, #93c5fd 0%, #bfdbfe 60%, transparent 100%);
+        }
+        #review-page-panel.category-hagwon::after {
+            background: radial-gradient(circle, #c084fc 0%, #ddd6fe 60%, transparent 100%);
+        }
+        #review-page-panel.category-english-kindergarten::after {
+            background: radial-gradient(circle, #fdba74 0%, #fed7aa 60%, transparent 100%);
         }
 
         /* ── Toast notifications ── */
@@ -581,194 +570,38 @@
     </div>
 
 
-    <div class="sections-grid">
-        <!-- ════════════════════════════════════════════════════
-             SECTION 1: 국제학교
-             ════════════════════════════════════════════════════ -->
-        <a id="panel-international"
-           href="/reviews.html?category=international"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="panel-bg section-card category-card">
-            <div class="section-card-header">
-                <div>
-                    <h2 class="section-title">국제학교</h2>
-                    <p class="section-caption">서울·인가·지방 국제학교 리뷰와 연락처를 한곳에서 확인하세요.</p>
-                    <span class="category-count">
-                        <i class="fa-solid fa-building-columns mr-1.5 text-blue-500"></i>
-                        <span id="international-count">0</span>개 등록 기관
-                    </span>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow text-base"></i>
-                </span>
-            </div>
+    <div class="mb-4">
+        <a href="/"
+           class="inline-flex items-center px-4 py-2 bg-white hover:bg-gray-50
+                  text-gray-600 text-sm font-semibold rounded-lg border border-gray-200
+                  shadow-sm transition-colors">
+            <i class="fa-solid fa-arrow-left mr-2 text-xs"></i>홈으로
         </a>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 2: 학원 / 컨설팅
-             ════════════════════════════════════════════════════ -->
-        <a id="panel-hagwon"
-           href="/reviews.html?category=hagwon"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="panel-bg section-card category-card">
-            <div class="section-card-header">
-                <div>
-                    <h2 class="section-title">학원 / 컨설팅</h2>
-                    <p class="section-caption">SAT, 입시 컨설팅, 유학원 리뷰를 비교하세요.</p>
-                    <span class="category-count">
-                        <i class="fa-solid fa-graduation-cap mr-1.5 text-purple-500"></i>
-                        <span id="hagwon-count">0</span>개 등록 기관
-                    </span>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow text-base"></i>
-                </span>
-            </div>
-        </a>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 3: 영어 유치원
-             ════════════════════════════════════════════════════ -->
-        <a id="panel-eng-k"
-           href="/reviews.html?category=english-kindergarten"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="panel-bg section-card category-card">
-            <div class="section-card-header">
-                <div>
-                    <h2 class="section-title">영어 유치원</h2>
-                    <p class="section-caption">유아 영어교육 기관 리뷰를 간단히 확인하세요.</p>
-                    <span class="category-count">
-                        <i class="fa-solid fa-child-reaching mr-1.5 text-orange-500"></i>
-                        <span id="english-kindergarten-count">0</span>개 등록 기관
-                    </span>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-orange-100 text-orange-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow text-base"></i>
-                </span>
-            </div>
-        </a>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 4: 디지털 SAT 실전 모의고사
-             ════════════════════════════════════════════════════ -->
-        <section id="panel-dsat" class="panel-bg section-card">
-            <div class="section-card-header is-static">
-                <div>
-                    <h2 class="section-title">DSAT 실전 모의고사</h2>
-                    <p class="section-caption">R/W 섹션 연습과 상세 해설을 한 번에 제공합니다.</p>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-fuchsia-100 text-fuchsia-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-laptop-file text-lg"></i>
-                </span>
-            </div>
-            <div class="compact-copy space-y-3">
-                <p>
-                    디지털 SAT 분석을 바탕으로 설계한 <strong>R/W 섹션 모의고사</strong>와
-                    직관적인 해설을 제공합니다.
-                </p>
-                <p>
-                    검증되지 않은 준비 과정에 시간을 쓰기보다 바로 연습하고 약점을 확인할 수 있습니다.
-                </p>
-                <a href="/challenge"
-                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-fuchsia-50
-                          text-fuchsia-600 text-sm font-semibold rounded-lg border-2 border-fuchsia-500
-                          hover:border-fuchsia-600 transition-colors">
-                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                </a>
-            </div>
-        </section>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 7: 이번 주 교육 뉴스
-             ════════════════════════════════════════════════════ -->
-        <section id="panel-education-news" class="panel-bg section-card">
-            <div class="section-card-header is-static">
-                <div>
-                    <h2 class="section-title">이번 주 교육 뉴스</h2>
-                    <p class="section-caption">미국 대입 관련 주요 이슈를 모았습니다.</p>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-regular fa-newspaper text-lg"></i>
-                </span>
-            </div>
-            <div class="compact-list">
-                <div class="news-group">
-                    <p class="news-item text-teal-600">
-                        <span class="news-dot"></span>
-                        <a href="https://www.washingtonpost.com/business/2026/03/22/trump-legal-immigration-visas/?utm_source=chatgpt.com"
-                           target="_blank"
-                           class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            미국 유학생 비자 발급 건수 30% 이상 급감
-                        </a>
-                    </p>
-                    <p class="news-item text-teal-600">
-                        <span class="news-dot"></span>
-                        <a href="https://www.reuters.com/world/trump-administration-launches-more-probes-into-harvard-2026-03-23/?utm_source=chatgpt.com"
-                           target="_blank"
-                           class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            미국 교육부, 하버드 입시 관련 연방 조사 착수
-                        </a>
-                    </p>
-                    <p class="news-item text-teal-600">
-                        <span class="news-dot"></span>
-                        <a href="https://www.reuters.com/legal/government/democratic-led-states-sue-over-trump-demand-colleges-supply-race-data-2026-03-11/?utm_source=chatgpt.com"
-                           target="_blank"
-                           class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            17개 주, 7년 치 합격 데이터 요구에 반발 소송
-                        </a>
-                    </p>
-                    <p class="news-item text-teal-600">
-                        <span class="news-dot"></span>
-                        <a href="https://www.reuters.com/legal/government/litigation-funding-deal-threatens-class-action-over-us-college-financial-aid-2026-03-19/?utm_source=chatgpt.com"
-                           target="_blank"
-                           class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            명문대 재정 지원 관련 반독점 소송 계속
-                        </a>
-                    </p>
-                    <p class="news-item text-teal-600">
-                        <span class="news-dot"></span>
-                        <a href="https://www.sfchronicle.com/college-admissions/article/usc-early-decision-application-22080242.php?utm_source=chatgpt.com"
-                           target="_blank"
-                           class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                            USC, 구속력 있는 Early Decision 전형 신설
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 8: 미국 대입 예측 모델
-             ════════════════════════════════════════════════════ -->
-        <section id="panel-prediction" class="panel-bg section-card">
-            <div class="section-card-header is-static">
-                <div>
-                    <h2 class="section-title">미국 대입 예측 모델</h2>
-                    <p class="section-caption">프로필 기반 합격 가능성과 준비 포인트를 확인합니다.</p>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-chart-column text-lg"></i>
-                </span>
-            </div>
-            <div class="compact-copy space-y-3">
-                <p>
-                    지난 10년간 쌓인 <strong>5만 건 이상의 미국 대입 데이터</strong>를 바탕으로
-                    나의 성적, 활동, 배경을 합격자 프로필과 비교합니다.
-                </p>
-                <p>
-                    특정 컨설팅 등록을 유도하지 않고, 합격 가능성을 높이기 위해 무엇을 준비해야 하는지
-                    객관적인 리포트로 제공합니다.
-                </p>
-                <div class="inline-flex items-center px-5 py-2.5 bg-amber-50 text-amber-600
-                            text-sm font-semibold rounded-lg border border-amber-200">
-                    <i class="fa-solid fa-calendar-check mr-2"></i>4월 말 정식 오픈
-                </div>
-            </div>
-        </section>
     </div>
+
+    <section id="review-page-panel" class="panel-bg section-card">
+        <div class="section-card-header is-static">
+            <div>
+                <h2 id="review-page-title" class="section-title">기관 리뷰</h2>
+                <p id="review-page-caption" class="section-caption">기관을 선택해 리뷰를 남겨주세요.</p>
+                <span class="mt-3 inline-flex items-center px-3 py-1 bg-white/75 text-gray-700 text-xs font-bold rounded-full border border-white/80 shadow-sm">
+                    <i id="review-page-count-icon" class="fa-solid fa-building-columns mr-1.5 text-blue-500"></i>
+                    <span id="review-page-count">0</span>개 등록 기관
+                </span>
+            </div>
+            <div class="section-action-row">
+                <button
+                    id="review-page-guide-button"
+                    onclick="openCurrentGuideModal()"
+                    class="hidden inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
+                           text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
+                >
+                    <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>가이드
+                </button>
+            </div>
+        </div>
+        <div id="review-list-container" class="grid grid-cols-1 gap-4 mt-4"></div>
+    </section>
 
 
 </main>
@@ -1291,6 +1124,42 @@ const internationalSchools = Array.from(new Set([
     ...outsideSeoul
 ]));
 
+const CATEGORY_CONFIG = {
+    international: {
+        title: '국제학교',
+        caption: '서울·인가·지방 국제학교 리뷰와 연락처를 한곳에서 확인하세요.',
+        list: internationalSchools,
+        panelClass: 'category-international',
+        guide: 'school',
+        icon: 'fa-solid fa-building-columns',
+        iconColor: 'text-blue-500',
+        guideClass: 'bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-200',
+        guideIconColor: 'text-blue-400'
+    },
+    hagwon: {
+        title: '학원 / 컨설팅',
+        caption: 'SAT, 입시 컨설팅, 유학원 리뷰를 비교하세요.',
+        list: hagwons,
+        panelClass: 'category-hagwon',
+        guide: 'hagwon',
+        icon: 'fa-solid fa-graduation-cap',
+        iconColor: 'text-purple-500',
+        guideClass: 'bg-purple-50 hover:bg-purple-100 text-purple-600 border-purple-200',
+        guideIconColor: 'text-purple-400'
+    },
+    'english-kindergarten': {
+        title: '영어 유치원',
+        caption: '유아 영어교육 기관 리뷰를 간단히 확인하세요.',
+        list: englishKindergartens,
+        panelClass: 'category-english-kindergarten',
+        guide: null,
+        icon: 'fa-solid fa-child-reaching',
+        iconColor: 'text-orange-500',
+        guideClass: '',
+        guideIconColor: ''
+    }
+};
+
 const schoolContactInfo = {
     "Daegu International School": { address: "대구광역시 동구 팔공로50길 22", phone: "053-980-2100" },
     "Chadwick International School Songdo": { address: "인천광역시 연수구 아트센터대로97번길 45", phone: "032-250-5000" },
@@ -1346,6 +1215,7 @@ let currentUserId = null;
 let pendingEmail = "";
 let ratingsData = {};
 let myReviewedSchools = [];
+let currentCategoryKey = 'international';
 
 function safeNumber(value) {
     const n = Number(value);
@@ -1364,6 +1234,47 @@ function getTopReason(obj) {
         }
     }
     return topKey;
+}
+
+function getRequestedCategoryKey() {
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get('category');
+    return CATEGORY_CONFIG[requested] ? requested : 'international';
+}
+
+function getCurrentCategory() {
+    return CATEGORY_CONFIG[currentCategoryKey] || CATEGORY_CONFIG.international;
+}
+
+function configureReviewPage() {
+    currentCategoryKey = getRequestedCategoryKey();
+    const config = getCurrentCategory();
+    document.title = config.title + ' 리뷰 | EduFinder';
+    document.getElementById('review-page-title').textContent = config.title;
+    document.getElementById('review-page-caption').textContent = config.caption;
+    document.getElementById('review-page-count').textContent = String(config.list.length);
+
+    const panel = document.getElementById('review-page-panel');
+    panel.classList.remove('category-international', 'category-hagwon', 'category-english-kindergarten');
+    panel.classList.add(config.panelClass);
+
+    const countIcon = document.getElementById('review-page-count-icon');
+    countIcon.className = config.icon + ' mr-1.5 ' + config.iconColor;
+
+    const guideButton = document.getElementById('review-page-guide-button');
+    if (config.guide) {
+        guideButton.className = 'inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border transition-colors ' + config.guideClass;
+        const guideIcon = guideButton.querySelector('i');
+        if (guideIcon) guideIcon.className = 'fa-solid fa-lightbulb mr-1.5 ' + config.guideIconColor;
+    } else {
+        guideButton.className = 'hidden';
+    }
+}
+
+function openCurrentGuideModal() {
+    const config = getCurrentCategory();
+    if (config.guide === 'school') openSchoolTipsModal();
+    if (config.guide === 'hagwon') openHagwonTipsModal();
 }
 
 function updateAuthUI() {
@@ -1737,22 +1648,12 @@ async function submitFinalRating() {
 }
 
 async function renderAll() {
+    configureReviewPage();
     updateAuthUI();
-    updateCategoryCounts();
     await fetchRatingsFromDB();
     if (currentUser) await fetchMyReviews();
-}
-
-function updateCategoryCounts() {
-    const counts = {
-        'international-count': internationalSchools.length,
-        'hagwon-count': hagwons.length,
-        'english-kindergarten-count': englishKindergartens.length
-    };
-    Object.entries(counts).forEach(function([id, count]) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = String(count);
-    });
+    renderSchools(getCurrentCategory().list, 'review-list-container');
+    focusRequestedInstitution();
 }
 
 function openFeedbackModal() {
@@ -1857,6 +1758,32 @@ function openReviewPageInNewTab(url) {
     link.remove();
 }
 
+function focusRequestedInstitution() {
+    const requested = new URLSearchParams(window.location.search).get('school');
+    if (!requested) return;
+    const match = getCurrentCategory().list.find(name => normalizeForSearch(name) === normalizeForSearch(requested));
+    if (!match) return;
+    requestAnimationFrame(function() {
+        setTimeout(function() {
+            const container = document.getElementById('review-list-container');
+            if (!container) return;
+            const card = container.querySelector('[data-school="' + cssEscape(match) + '"]');
+            if (!card) return;
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.classList.remove('search-highlight');
+            void card.offsetWidth;
+            card.classList.add('search-highlight');
+            setTimeout(function() { card.classList.remove('search-highlight'); }, 2500);
+        }, 80);
+    });
+}
+
+// CSS.escape polyfill-ish — just escape the double-quote, since school names
+// don't contain backslashes and the bracket selector only needs " escaped.
+function cssEscape(value) {
+    return String(value).replace(/"/g, '\\"');
+}
+
 function openNotFoundModal(query) {
     document.getElementById('search-not-found-query').textContent = '"' + query + '"';
     document.getElementById('search-not-found-modal').classList.remove('hidden');
@@ -1878,7 +1805,7 @@ document.getElementById('institution-search-input').addEventListener('keydown', 
 Object.assign(window, {
     closeAuthModal, closeFeedbackModal, closeHagwonTipsModal, closeNotFoundModal,
     closeReviewModal, closeSchoolTipsModal, dismissToast, hoverStars, initiateRating,
-    logout, openFeedbackModal, openHagwonTipsModal, openSchoolTipsModal, performSearch,
+    logout, openCurrentGuideModal, openFeedbackModal, openHagwonTipsModal, openSchoolTipsModal, performSearch,
     resetStars, sendAuthCode, setNewPassword, signInWithPassword, submitFeedback,
     submitFinalRating, switchToOtpEmail, switchToPassword, toggleSection, verifyAuthCode
 });
