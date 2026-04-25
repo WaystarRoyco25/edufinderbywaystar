@@ -27,6 +27,13 @@ type PublicQuestion = {
   passage: string;
   stem: string;
   choices: Record<string, string>;
+  // v2 structural extras — null/undefined for legacy archive rows.
+  table_json: unknown;
+  underlined_text: string | null;
+  text_1: string | null;
+  text_2: string | null;
+  highlighted_word: string | null;
+  notes_bullets: string[] | null;
 };
 
 type FullQuestion = PublicQuestion & { correct_answer: string };
@@ -172,7 +179,9 @@ async function resumeExistingModule(
 
   const { data: rawQs, error: qErr } = await admin
     .from("questions")
-    .select("id, question_type, passage, stem, choices")
+    .select(
+      "id, question_type, passage, stem, choices, table_json, underlined_text, text_1, text_2, highlighted_word, notes_bullets"
+    )
     .in("id", mod.question_ids);
   if (qErr) return { error: qErr.message, status: 500 };
 
@@ -256,7 +265,9 @@ async function createNewModule(
 
     const { data: winnerRows, error: winnerErr } = await admin
       .from("questions")
-      .select("id, question_type, passage, stem, choices, correct_answer")
+      .select(
+        "id, question_type, passage, stem, choices, correct_answer, table_json, underlined_text, text_1, text_2, highlighted_word, notes_bullets"
+      )
       .in("id", winnerIds);
     if (winnerErr) return { error: winnerErr.message, status: 500 };
 
@@ -329,6 +340,12 @@ async function createNewModule(
     passage: q.passage,
     stem: q.stem,
     choices: q.choices,
+    table_json: (q as unknown as { table_json?: unknown }).table_json ?? null,
+    underlined_text: (q as unknown as { underlined_text?: string | null }).underlined_text ?? null,
+    text_1: (q as unknown as { text_1?: string | null }).text_1 ?? null,
+    text_2: (q as unknown as { text_2?: string | null }).text_2 ?? null,
+    highlighted_word: (q as unknown as { highlighted_word?: string | null }).highlighted_word ?? null,
+    notes_bullets: (q as unknown as { notes_bullets?: string[] | null }).notes_bullets ?? null,
   }));
 
   return {

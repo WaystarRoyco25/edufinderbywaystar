@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import QuestionTable, { type QuestionTableData } from "../../module/question-table";
 
 export type ChoiceLetter = "A" | "B" | "C" | "D";
 
@@ -20,6 +21,13 @@ export type QuestionRow = {
   explanation_b: string | null;
   explanation_c: string | null;
   explanation_d: string | null;
+  // v2 structural extras; legacy rows have null/undefined.
+  table_json?: QuestionTableData | null;
+  underlined_text?: string | null;
+  text_1?: string | null;
+  text_2?: string | null;
+  highlighted_word?: string | null;
+  notes_bullets?: string[] | null;
 };
 
 export type ReviewQuestion = {
@@ -211,6 +219,7 @@ export default function ReviewClient({
             >
               {item.question.passage && (
                 <section className="rounded-lg border border-gray-100 bg-white p-5 text-sm leading-6 shadow-sm whitespace-pre-wrap">
+                  {item.question.table_json ? <QuestionTable table={item.question.table_json} /> : null}
                   {item.question.passage}
                 </section>
               )}

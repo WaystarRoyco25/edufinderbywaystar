@@ -4,12 +4,21 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import QuestionTable, { type QuestionTableData } from "./question-table";
+
 type Question = {
   id: string;
   question_type: string;
   passage: string;
   stem: string;
   choices: Record<"A" | "B" | "C" | "D", string>;
+  // New v2 structural fields — legacy archive rows have these as null/undefined.
+  table_json?: QuestionTableData | null;
+  underlined_text?: string | null;
+  text_1?: string | null;
+  text_2?: string | null;
+  highlighted_word?: string | null;
+  notes_bullets?: string[] | null;
 };
 
 type TakingResponse = {
@@ -410,6 +419,7 @@ export default function ModuleClient() {
       >
         {q.passage && (
           <section className="rounded-lg border border-gray-100 bg-white p-5 text-sm leading-6 shadow-sm whitespace-pre-wrap">
+            {q.table_json ? <QuestionTable table={q.table_json} /> : null}
             {q.passage}
           </section>
         )}

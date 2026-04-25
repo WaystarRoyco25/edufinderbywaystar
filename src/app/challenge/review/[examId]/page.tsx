@@ -189,7 +189,7 @@ export default async function ReviewPage({ params }: PageProps) {
   const { data: rawQuestions, error: qErr } = await admin
     .from("questions")
     .select(
-      "id, question_type, passage, stem, choices, correct_answer, explanation_correct, explanation_a, explanation_b, explanation_c, explanation_d",
+      "id, question_type, passage, stem, choices, correct_answer, explanation_correct, explanation_a, explanation_b, explanation_c, explanation_d, table_json, underlined_text, text_1, text_2, highlighted_word, notes_bullets",
     )
     .in("id", questionIds);
 

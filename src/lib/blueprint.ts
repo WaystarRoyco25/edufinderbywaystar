@@ -27,31 +27,43 @@ function randInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/**
+ * Weights re-derived from the December 2025 Asia + US SAT papers.
+ * Must stay in sync with factory/pool/blueprint.py.
+ */
 export function rollModuleBlueprint(): TypeCode[] {
   const slots: TypeCode[] = [];
 
   // Reading — 15 slots
-  const vocabTotal = weightedPick([4, 5], [60, 40]);
-  let csVoc = weightedPick([3, 4], [70, 30]);
-  csVoc = Math.min(csVoc, vocabTotal);
-  const csWim = vocabTotal - csVoc;
+  const vocabTotal = weightedPick([3, 4, 5], [15, 60, 25]);
+  const csWimShare = vocabTotal >= 1 ? weightedPick([0, 1], [90, 10]) : 0;
+  const csWim = Math.min(csWimShare, vocabTotal);
+  const csVoc = vocabTotal - csWim;
 
-  const iiLog = weightedPick([2, 3], [50, 50]);
+  const iiLog = weightedPick([1, 2], [40, 60]);
 
-  const evidenceTotal = weightedPick([2, 3, 4], [20, 50, 30]);
-  const iiDat = randInt(1, Math.min(2, evidenceTotal));
-  const iiQuo = randInt(0, Math.max(0, evidenceTotal - iiDat));
-  const iiStr = evidenceTotal - iiDat - iiQuo;
+  const evidenceTotal = weightedPick([2, 3, 4], [35, 50, 15]);
+  // Guarantee ≥1 II-DAT, capped at 2.
+  const iiDat = Math.min(2, Math.max(1, randInt(1, 2)));
+  const iiDatFinal = Math.min(iiDat, evidenceTotal);
+  const remainingEvidence = evidenceTotal - iiDatFinal;
+  const iiQuo = remainingEvidence > 0
+    ? Math.min(weightedPick([0, 1], [60, 40]), remainingEvidence)
+    : 0;
+  const iiStr = remainingEvidence - iiQuo;
 
   const analysisTotal = 15 - vocabTotal - iiLog - evidenceTotal;
-  if (analysisTotal < 0) throw new Error("Reading budget exceeded");
+  if (analysisTotal < 0) {
+    // Defensive reroll — weighted picks can occasionally overshoot.
+    return rollModuleBlueprint();
+  }
 
   const analysisCounts: Record<string, number> = {
     "CS-PUR": 0, "CS-STR": 0, "CS-FUN": 0, "CS-DUL": 0, "II-DET": 0,
   };
   const analysisCodes = ["CS-PUR", "CS-STR", "CS-FUN", "CS-DUL", "II-DET"] as const;
   for (let i = 0; i < analysisTotal; i++) {
-    const chosen = weightedPick([...analysisCodes], [20, 20, 20, 10, 30]);
+    const chosen = weightedPick([...analysisCodes], [25, 10, 20, 10, 35]);
     analysisCounts[chosen] += 1;
   }
 
@@ -60,7 +72,7 @@ export function rollModuleBlueprint(): TypeCode[] {
   for (const code of analysisCodes) {
     for (let i = 0; i < analysisCounts[code]; i++) slots.push(code);
   }
-  for (let i = 0; i < iiDat; i++) slots.push("II-DAT");
+  for (let i = 0; i < iiDatFinal; i++) slots.push("II-DAT");
   for (let i = 0; i < iiQuo; i++) slots.push("II-QUO");
   for (let i = 0; i < iiStr; i++) slots.push("II-STR");
   for (let i = 0; i < iiLog; i++) slots.push("II-LOG");
@@ -68,7 +80,8 @@ export function rollModuleBlueprint(): TypeCode[] {
   // Writing — 12 slots
   const seMix = weightedPick([5, 6], [50, 50]);
   const eiTotal = 12 - seMix;
-  const eiTrn = randInt(2, Math.min(5, eiTotal - 1));
+  const eiTrnRoll = weightedPick([2, 3, 4], [25, 45, 30]);
+  const eiTrn = Math.min(eiTrnRoll, eiTotal - 2); // guarantee ei_syn >= 2
   const eiSyn = eiTotal - eiTrn;
 
   for (let i = 0; i < seMix; i++) slots.push("SE-MIX");
