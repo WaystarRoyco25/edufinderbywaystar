@@ -241,6 +241,88 @@
             to   { opacity: 0; transform: translateY(-12px) scale(.96); }
         }
 
+        /* ── Foldable section header ── */
+        .section-toggle {
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: color .15s ease;
+        }
+        .section-toggle:hover {
+            color: #111827;
+        }
+        .chevron-icon {
+            margin-left: auto;
+            color: #9ca3af;
+            font-size: 1rem;
+            transition: transform .3s ease, color .15s ease;
+        }
+        .section-toggle:hover .chevron-icon {
+            color: #4b5563;
+        }
+        .chevron-icon.is-open {
+            transform: rotate(180deg);
+        }
+        .foldable-section {
+            display: none;
+        }
+        .foldable-section.is-open {
+            display: grid;
+            animation: sectionReveal .3s ease-out;
+        }
+        @keyframes sectionReveal {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Search bar ── */
+        .search-wrap {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.03);
+            transition: box-shadow .2s ease, border-color .2s ease;
+        }
+        .search-wrap:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59,130,246,.12), 0 4px 16px rgba(0,0,0,.04);
+        }
+        #institution-search-input {
+            outline: none;
+        }
+        #institution-search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        /* ── Search highlight effect ── */
+        .search-highlight {
+            animation: searchHighlight 2.4s ease-out;
+            position: relative;
+            z-index: 5;
+        }
+        @keyframes searchHighlight {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, .55), 0 4px 6px rgba(0,0,0,.1);
+                border-color: #3b82f6;
+                transform: scale(1);
+            }
+            18% {
+                box-shadow: 0 0 0 8px rgba(59, 130, 246, .35), 0 12px 28px rgba(59,130,246,.18);
+                border-color: #3b82f6;
+                transform: scale(1.015);
+            }
+            55% {
+                box-shadow: 0 0 0 12px rgba(59, 130, 246, 0), 0 12px 28px rgba(59,130,246,.10);
+                border-color: #3b82f6;
+                transform: scale(1.005);
+            }
+            100% {
+                box-shadow: 0 4px 6px rgba(0,0,0,.05);
+                border-color: rgba(229,231,235,1);
+                transform: scale(1);
+            }
+        }
+
         /* ── Mobile overrides ── */
         @media (max-width: 768px) {
             .panel-bg {
@@ -267,7 +349,7 @@
         <div id="auth-status" class="text-sm font-medium"></div>
     </div>
     <div class="container mx-auto px-4 text-center mt-4">
-        <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">EduFinder</h1>
+        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto mb-3 h-auto w-full max-w-xs md:max-w-md">
         <p class="text-blue-100 text-lg md:text-xl font-light">
             Honest Reviews from Real Parents and Students in Korea.
         </p>
@@ -291,7 +373,7 @@
     <!-- ════════════════════════════════════════════════════════
          REVIEW GUIDELINES NOTICE
          ════════════════════════════════════════════════════════ -->
-    <div class="bg-blue-50 border-l-4 border-blue-500 p-5 mb-10 rounded-r-lg shadow-sm">
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-5 mb-6 rounded-r-lg shadow-sm">
         <h3 class="text-lg font-bold text-blue-800 mb-3">
             <i class="fa-solid fa-circle-info mr-2"></i>리뷰 작성 전 읽어주세요!
         </h3>
@@ -311,19 +393,47 @@
 
 
     <!-- ════════════════════════════════════════════════════════
+         SEARCH BAR
+         ════════════════════════════════════════════════════════ -->
+    <div class="search-wrap p-2 mb-10">
+        <div class="relative flex items-center">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400 pointer-events-none"></i>
+            <input
+                type="text"
+                id="institution-search-input"
+                placeholder="학교 / 학원 / 영어유치원 이름으로 바로 찾기"
+                autocomplete="off"
+                class="w-full pl-11 pr-28 py-3 bg-transparent text-sm md:text-base text-gray-800 border-0"
+            >
+            <button
+                onclick="performSearch()"
+                class="absolute right-2 px-4 py-2 bg-blue-600 hover:bg-blue-700
+                       text-white text-sm font-semibold rounded-lg transition-colors
+                       inline-flex items-center gap-1.5"
+            >
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                <span class="hidden sm:inline">검색</span>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
          SECTION: 서울 소재 국제학교
          ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-6 flex items-center">
+    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-6 flex items-center"
+        onclick="toggleSection('seoul-container', this)">
         서울 소재 국제학교
         <button
-            onclick="openSchoolTipsModal()"
+            onclick="event.stopPropagation(); openSchoolTipsModal()"
             class="ml-3 inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
                    text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
         >
             <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>이용 가이드
         </button>
+        <i class="fa-solid fa-chevron-down chevron-icon"></i>
     </h2>
-    <div id="seoul-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+    <div id="seoul-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
 
 
     <!-- ════════════════════════════════════════════════════════
@@ -375,10 +485,12 @@
     <!-- ════════════════════════════════════════════════════════
          SECTION: 교육부 인가 국제학교
          ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-green-500 pb-2 mb-6">
+    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-green-500 pb-2 mb-6 flex items-center"
+        onclick="toggleSection('gov-approved-container', this)">
         교육부 인가 국제학교
+        <i class="fa-solid fa-chevron-down chevron-icon"></i>
     </h2>
-    <div id="gov-approved-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+    <div id="gov-approved-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
 
 
     <!-- ════════════════════════════════════════════════════════
@@ -481,17 +593,19 @@
     <!-- ════════════════════════════════════════════════════════
          SECTION: 지방 소재 국제학교
          ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-6 flex items-center">
+    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-6 flex items-center"
+        onclick="toggleSection('outside-container', this)">
         지방 소재 국제학교
         <button
-            onclick="openSchoolTipsModal()"
+            onclick="event.stopPropagation(); openSchoolTipsModal()"
             class="ml-3 inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
                    text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
         >
             <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>이용 가이드
         </button>
+        <i class="fa-solid fa-chevron-down chevron-icon"></i>
     </h2>
-    <div id="outside-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+    <div id="outside-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
 
 
     <!-- ════════════════════════════════════════════════════════
@@ -603,17 +717,19 @@
     <!-- ════════════════════════════════════════════════════════
          SECTION: 학원 / 컨설팅
          ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-purple-500 pb-2 mb-6 flex items-center">
+    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-purple-500 pb-2 mb-6 flex items-center"
+        onclick="toggleSection('hagwon-container', this)">
         학원 / 컨설팅
         <button
-            onclick="openHagwonTipsModal()"
+            onclick="event.stopPropagation(); openHagwonTipsModal()"
             class="ml-3 inline-flex items-center px-3 py-1 bg-purple-50 hover:bg-purple-100
                    text-purple-600 text-xs font-semibold rounded-full border border-purple-200 transition-colors"
         >
             <i class="fa-solid fa-lightbulb mr-1.5 text-purple-400"></i>이용 가이드
         </button>
+        <i class="fa-solid fa-chevron-down chevron-icon"></i>
     </h2>
-    <div id="hagwon-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+    <div id="hagwon-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
 
 
     <!-- ════════════════════════════════════════════════════════
@@ -726,10 +842,12 @@
     <!-- ════════════════════════════════════════════════════════
          SECTION: 영어 유치원
          ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-orange-500 pb-2 mb-6">
+    <h2 class="section-toggle text-2xl font-bold text-gray-700 border-b-2 border-orange-500 pb-2 mb-6 flex items-center"
+        onclick="toggleSection('eng-k-container', this)">
         영어 유치원
+        <i class="fa-solid fa-chevron-down chevron-icon"></i>
     </h2>
-    <div id="eng-k-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+    <div id="eng-k-container" class="foldable-section grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
 
 
     <!-- ════════════════════════════════════════════════════════
@@ -1139,6 +1257,33 @@
 
 
 <!-- ════════════════════════════════════════════════════════════
+     MODAL: Search Not Found
+     ════════════════════════════════════════════════════════════ -->
+<div id="search-not-found-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md">
+        <div class="text-center py-2">
+            <div class="flex items-center justify-center w-14 h-14 bg-orange-100 text-orange-500 rounded-full mx-auto mb-4">
+                <i class="fa-solid fa-magnifying-glass text-2xl"></i>
+            </div>
+            <p class="text-base font-semibold text-gray-800 mb-1.5">검색 결과가 없습니다</p>
+            <p class="text-sm text-gray-500 mb-1">
+                <span id="search-not-found-query" class="font-medium text-gray-700"></span>와(과) 일치하는
+            </p>
+            <p class="text-sm text-gray-500 mb-5">
+                기관을 본 페이지에서 찾을 수 없습니다.
+            </p>
+            <button
+                onclick="closeNotFoundModal()"
+                class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+            >
+                닫기
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════
      JAVASCRIPT
      ════════════════════════════════════════════════════════════ -->
 <script type="module">
@@ -1510,6 +1655,7 @@ function renderSchools(schoolList, containerId) {
         }
         const card = document.createElement('div');
         card.className = "bg-white rounded-lg shadow-md p-6 flex flex-col justify-between hover:shadow-lg transition-shadow border border-gray-100";
+        card.dataset.school = school;
 
         const topSection = document.createElement('div');
         const title = document.createElement('h3');
@@ -1735,14 +1881,125 @@ function closeHagwonTipsModal() { document.getElementById('hagwon-tips-modal').c
 function openSchoolTipsModal() { document.getElementById('school-tips-modal').classList.remove('hidden'); }
 function closeSchoolTipsModal() { document.getElementById('school-tips-modal').classList.add('hidden'); }
 
+// ── Foldable section toggle ────────────────────────────────
+function toggleSection(containerId, headerEl) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const chevron = headerEl ? headerEl.querySelector('.chevron-icon') : null;
+    const willOpen = !container.classList.contains('is-open');
+    container.classList.toggle('is-open', willOpen);
+    if (chevron) chevron.classList.toggle('is-open', willOpen);
+}
+
+function openSection(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (!container.classList.contains('is-open')) {
+        container.classList.add('is-open');
+        // Find the matching header (the h2 with the matching onclick) and rotate its chevron.
+        const allHeaders = document.querySelectorAll('h2.section-toggle');
+        allHeaders.forEach(function(h) {
+            const attr = h.getAttribute('onclick') || '';
+            if (attr.indexOf("'" + containerId + "'") !== -1) {
+                const chevron = h.querySelector('.chevron-icon');
+                if (chevron) chevron.classList.add('is-open');
+            }
+        });
+    }
+}
+
+// ── Search ────────────────────────────────────────────────
+const SEARCH_INDEX = [
+    { list: insideSeoul,         containerId: 'seoul-container' },
+    { list: governmentApproved,  containerId: 'gov-approved-container' },
+    { list: outsideSeoul,        containerId: 'outside-container' },
+    { list: hagwons,             containerId: 'hagwon-container' },
+    { list: englishKindergartens, containerId: 'eng-k-container' }
+];
+
+function normalizeForSearch(s) {
+    return String(s).toLowerCase().replace(/\s+/g, '').trim();
+}
+
+function findInstitution(query) {
+    const q = normalizeForSearch(query);
+    if (!q) return null;
+    // Pass 1: exact-name match (case/space-insensitive).
+    for (const section of SEARCH_INDEX) {
+        const exact = section.list.find(name => normalizeForSearch(name) === q);
+        if (exact) return { name: exact, containerId: section.containerId };
+    }
+    // Pass 2: substring match.
+    for (const section of SEARCH_INDEX) {
+        const partial = section.list.find(name => normalizeForSearch(name).includes(q));
+        if (partial) return { name: partial, containerId: section.containerId };
+    }
+    return null;
+}
+
+function performSearch() {
+    const input = document.getElementById('institution-search-input');
+    const raw = input.value.trim();
+    if (!raw) {
+        showToast('검색어를 입력해주세요.', 'warning');
+        return;
+    }
+    const result = findInstitution(raw);
+    if (!result) {
+        openNotFoundModal(raw);
+        return;
+    }
+    // Open the relevant section, then scroll to the card.
+    openSection(result.containerId);
+    // Wait one frame so the section actually renders before measuring its position.
+    requestAnimationFrame(function() {
+        setTimeout(function() {
+            const container = document.getElementById(result.containerId);
+            if (!container) return;
+            const card = container.querySelector('[data-school="' + cssEscape(result.name) + '"]');
+            if (!card) return;
+            // Smooth-scroll to the card. Works on desktop and mobile.
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Brief highlight pulse.
+            card.classList.remove('search-highlight');
+            // Reflow to re-trigger animation if the same card is searched again.
+            void card.offsetWidth;
+            card.classList.add('search-highlight');
+            setTimeout(function() { card.classList.remove('search-highlight'); }, 2500);
+        }, 80);
+    });
+}
+
+// CSS.escape polyfill-ish — just escape the double-quote, since school names
+// don't contain backslashes and the bracket selector only needs " escaped.
+function cssEscape(value) {
+    return String(value).replace(/"/g, '\\"');
+}
+
+function openNotFoundModal(query) {
+    document.getElementById('search-not-found-query').textContent = '"' + query + '"';
+    document.getElementById('search-not-found-modal').classList.remove('hidden');
+}
+function closeNotFoundModal() {
+    document.getElementById('search-not-found-modal').classList.add('hidden');
+}
+
+// Submit search on Enter key.
+document.getElementById('institution-search-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        performSearch();
+    }
+});
+
 // Expose handlers on window so inline onclick/onmouseover attributes can
 // reach them from this ES module.
 Object.assign(window, {
-    closeAuthModal, closeFeedbackModal, closeHagwonTipsModal, closeReviewModal,
-    closeSchoolTipsModal, dismissToast, hoverStars, initiateRating, logout,
-    openFeedbackModal, openHagwonTipsModal, openSchoolTipsModal, resetStars,
-    sendAuthCode, setNewPassword, signInWithPassword, submitFeedback,
-    submitFinalRating, switchToOtpEmail, switchToPassword, verifyAuthCode
+    closeAuthModal, closeFeedbackModal, closeHagwonTipsModal, closeNotFoundModal,
+    closeReviewModal, closeSchoolTipsModal, dismissToast, hoverStars, initiateRating,
+    logout, openFeedbackModal, openHagwonTipsModal, openSchoolTipsModal, performSearch,
+    resetStars, sendAuthCode, setNewPassword, signInWithPassword, submitFeedback,
+    submitFinalRating, switchToOtpEmail, switchToPassword, toggleSection, verifyAuthCode
 });
 
 renderAll();
