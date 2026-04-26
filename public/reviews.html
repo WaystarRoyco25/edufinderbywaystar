@@ -496,15 +496,12 @@
 <!-- ════════════════════════════════════════════════════════════
      HEADER
      ════════════════════════════════════════════════════════════ -->
-<header class="bg-blue-600 text-white py-10 shadow-md relative">
+<header class="bg-blue-600 text-white py-8 shadow-md relative">
     <div class="absolute top-4 right-4">
         <div id="auth-status" class="text-sm font-medium"></div>
     </div>
-    <div class="container mx-auto px-4 text-center mt-4">
-        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto mb-3 h-auto w-full max-w-xs md:max-w-md">
-        <p class="text-blue-100 text-lg md:text-xl font-light">
-            Honest Reviews from Real Parents and Students in Korea.
-        </p>
+    <div class="container mx-auto px-4 text-center mt-2">
+        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
         <div class="mt-4">
             <button
                 onclick="openFeedbackModal()"
@@ -553,7 +550,7 @@
             <input
                 type="text"
                 id="institution-search-input"
-                placeholder="학교 / 학원 / 영어유치원 이름으로 바로 찾기"
+                placeholder="관심 있는 학교 / 학원 / 유치원을 검색해 보세요."
                 autocomplete="off"
                 class="w-full pl-11 pr-28 py-3 bg-transparent text-sm md:text-base text-gray-800 border-0"
             >
@@ -586,7 +583,7 @@
                 <p id="review-page-caption" class="section-caption">기관을 선택해 리뷰를 남겨주세요.</p>
                 <span class="mt-3 inline-flex items-center px-3 py-1 bg-white/75 text-gray-700 text-xs font-bold rounded-full border border-white/80 shadow-sm">
                     <i id="review-page-count-icon" class="fa-solid fa-building-columns mr-1.5 text-blue-500"></i>
-                    <span id="review-page-count">0</span>개 등록 기관
+                    <span id="review-page-count">0</span>개 등록
                 </span>
             </div>
             <div class="section-action-row">
@@ -1127,7 +1124,7 @@ const internationalSchools = Array.from(new Set([
 const CATEGORY_CONFIG = {
     international: {
         title: '국제학교',
-        caption: '서울·인가·지방 국제학교 리뷰와 연락처를 한곳에서 확인하세요.',
+        caption: '국내 국제학교 핵심 정보 및 별점을 한눈에 확인하세요.',
         list: internationalSchools,
         panelClass: 'category-international',
         guide: 'school',
@@ -1138,7 +1135,7 @@ const CATEGORY_CONFIG = {
     },
     hagwon: {
         title: '학원 / 컨설팅',
-        caption: 'SAT, 입시 컨설팅, 유학원 리뷰를 비교하세요.',
+        caption: '진짜 학생과 학부모가 남긴 유학원 리뷰를 읽어보세요.',
         list: hagwons,
         panelClass: 'category-hagwon',
         guide: 'hagwon',
@@ -1149,7 +1146,7 @@ const CATEGORY_CONFIG = {
     },
     'english-kindergarten': {
         title: '영어 유치원',
-        caption: '유아 영어교육 기관 리뷰를 간단히 확인하세요.',
+        caption: '우리 아이 영어 교육, 바르게 시작하세요.',
         list: englishKindergartens,
         panelClass: 'category-english-kindergarten',
         guide: null,
@@ -1744,18 +1741,11 @@ function performSearch() {
     }
     const url = '/reviews.html?category=' + encodeURIComponent(result.category) +
         '&school=' + encodeURIComponent(result.name);
-    openReviewPageInNewTab(url);
+    navigateToReviewPage(url);
 }
 
-function openReviewPageInNewTab(url) {
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+function navigateToReviewPage(url) {
+    window.location.href = url;
 }
 
 function focusRequestedInstitution() {
