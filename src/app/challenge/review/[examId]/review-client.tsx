@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import QuestionTable, { type QuestionTableData } from "../../module/question-table";
+import ScoreCommentaryModal from "./score-commentary";
 
 export type ChoiceLetter = "A" | "B" | "C" | "D";
 
@@ -135,6 +136,7 @@ export default function ReviewClient({
   const [openChoiceByQuestion, setOpenChoiceByQuestion] = useState<
     Record<string, ChoiceLetter>
   >({});
+  const [showCommentary, setShowCommentary] = useState(true);
   const item = questions[index];
   const total = questions.length;
 
@@ -162,6 +164,7 @@ export default function ReviewClient({
       : "text-red-700";
 
   return (
+    <>
     <main className="mx-auto max-w-6xl p-6 space-y-6">
       <header className="space-y-4 border-b border-gray-200 pb-4">
         <div className="flex items-center justify-between gap-4">
@@ -275,5 +278,13 @@ export default function ReviewClient({
         )}
       </footer>
     </main>
+    {showCommentary && (
+      <ScoreCommentaryModal
+        score={summary.totalScore}
+        total={summary.totalMax}
+        onDismiss={() => setShowCommentary(false)}
+      />
+    )}
+    </>
   );
 }
