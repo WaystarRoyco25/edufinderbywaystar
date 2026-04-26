@@ -514,7 +514,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 auth-gate-active">
+<body class="bg-gray-100 text-gray-800">
 
 <!-- Toast notification container -->
 <div id="toast-container" class="toast-container"></div>
@@ -577,6 +577,7 @@
              ════════════════════════════════════════════════════ -->
         <a id="panel-international"
            href="/reviews.html?category=international"
+           data-auth-required="true"
            class="panel-bg section-card category-card">
             <div class="section-card-header">
                 <div>
@@ -598,6 +599,7 @@
              ════════════════════════════════════════════════════ -->
         <a id="panel-hagwon"
            href="/reviews.html?category=hagwon"
+           data-auth-required="true"
            class="panel-bg section-card category-card">
             <div class="section-card-header">
                 <div>
@@ -619,6 +621,7 @@
              ════════════════════════════════════════════════════ -->
         <a id="panel-eng-k"
            href="/reviews.html?category=english-kindergarten"
+           data-auth-required="true"
            class="panel-bg section-card category-card">
             <div class="section-card-header">
                 <div>
@@ -657,6 +660,7 @@
                     검증되지 않은 준비 과정에 시간을 쓰기보다 바로 연습하고 약점을 확인할 수 있습니다.
                 </p>
                 <a href="/challenge"
+                   data-auth-required="true"
                    class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-fuchsia-50
                           text-fuchsia-600 text-sm font-semibold rounded-lg border-2 border-fuchsia-500
                           hover:border-fuchsia-600 transition-colors">
@@ -770,11 +774,22 @@
      MODAL: Auth (로그인 / 회원가입)
      ════════════════════════════════════════════════════════════ -->
 <div id="auth-modal"
-     class="fixed inset-0 z-50 flex items-center justify-center px-6 py-8 overflow-y-auto"
+     class="fixed inset-0 z-50 hidden flex items-center justify-center px-6 py-8 overflow-y-auto"
      role="dialog"
      aria-modal="true"
+     aria-hidden="true"
      aria-labelledby="auth-modal-title">
     <div class="w-full max-w-sm bg-white rounded-lg shadow-md p-6 space-y-4 border border-gray-100">
+        <div class="flex justify-end -mb-2">
+            <button
+                type="button"
+                onclick="closeAuthModal()"
+                class="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                aria-label="Close login"
+            >
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
         <p id="auth-message" class="hidden text-sm"></p>
 
         <!-- ── STEP 1: 이메일 + 비밀번호 로그인 ───────────────── -->
@@ -1357,9 +1372,9 @@ let currentUser = null;
 let currentUserId = null;
 let currentUserHasPassword = false;
 let pendingEmail = "";
+let pendingAuthRedirect = "";
 let ratingsData = {};
 let myReviewedSchools = [];
-let authStateInitialized = false;
 
 function safeNumber(value) {
     const n = Number(value);
@@ -1461,19 +1476,41 @@ function setAuthGateActive(active) {
 
 function openAuthModal(options = {}) {
     const shouldReset = options.reset !== false;
+    if (options.nextUrl) pendingAuthRedirect = options.nextUrl;
     if (shouldReset) {
         resetAuthFields();
-        showAuthStep('password');
+        if (currentUser && !currentUserHasPassword) {
+            pendingEmail = currentUser;
+            document.getElementById('auth-login-email').value = currentUser;
+            document.getElementById('auth-otp-email-input').value = currentUser;
+            showAuthStep('set-password');
+        } else {
+            showAuthStep('password');
+        }
     }
     setAuthGateActive(true);
 }
 
 function closeAuthModal() {
-    if (!currentUser || !currentUserHasPassword) {
-        setAuthGateActive(true);
+    pendingAuthRedirect = "";
+    setAuthGateActive(false);
+}
+
+function completeAuthFlow(successMessage) {
+    const nextUrl = pendingAuthRedirect;
+    pendingAuthRedirect = "";
+    setAuthGateActive(false);
+    if (successMessage) showToast(successMessage, "success", 3500);
+    if (nextUrl) window.location.href = nextUrl;
+}
+
+function requestProtectedNavigation(url) {
+    if (!url) return;
+    if (currentUser && currentUserHasPassword) {
+        window.location.href = url;
         return;
     }
-    setAuthGateActive(false);
+    openAuthModal({ nextUrl: url, reset: true });
 }
 
 function switchToPassword() { showAuthStep('password'); }
@@ -1504,8 +1541,7 @@ async function signInWithPassword() {
     currentUser = data.user?.email || email;
     currentUserId = data.user?.id || currentUserId;
     currentUserHasPassword = true;
-    closeAuthModal();
-    showToast("로그인되었습니다.", "success");
+    completeAuthFlow("로그인되었습니다.");
 }
 
 async function sendAuthCode() {
@@ -1540,8 +1576,7 @@ async function verifyAuthCode() {
         currentUser = data.user?.email || pendingEmail;
         currentUserId = data.user?.id || currentUserId;
         currentUserHasPassword = true;
-        closeAuthModal();
-        showToast("로그인되었습니다.", "success");
+        completeAuthFlow("로그인되었습니다.");
         return;
     }
     document.getElementById('auth-new-password').value = '';
@@ -1562,11 +1597,14 @@ async function setNewPassword() {
     });
     if (error) { showAuthMessage("Could not set your password: " + error.message); return; }
     currentUserHasPassword = true;
-    closeAuthModal();
-    showToast("비밀번호가 설정되었습니다. 이제 EduFinder와 SAT Factory를 자유롭게 이용하실 수 있습니다.", "success", 5000);
+    completeAuthFlow("비밀번호가 설정되었습니다. 이제 EduFinder와 SAT Factory를 자유롭게 이용하실 수 있습니다.");
 }
 
-async function logout() { await supabaseClient.auth.signOut(); }
+async function logout() {
+    pendingAuthRedirect = "";
+    await supabaseClient.auth.signOut();
+    setAuthGateActive(false);
+}
 
 document.getElementById('auth-code-input').addEventListener('input', function() {
     const val = this.value.replace(/\D/g, '');
@@ -1580,22 +1618,24 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         currentUserId = session.user.id;
         currentUserHasPassword = Boolean(session.user.user_metadata?.password_set);
         if (currentUserHasPassword) {
-            closeAuthModal();
+            if (pendingAuthRedirect) completeAuthFlow();
+            else setAuthGateActive(false);
         } else {
-            pendingEmail = session.user.email || pendingEmail;
-            document.getElementById('auth-login-email').value = pendingEmail;
-            document.getElementById('auth-otp-email-input').value = pendingEmail;
-            setAuthGateActive(true);
-            showAuthStep('set-password');
+            const modalIsOpen = document.body.classList.contains('auth-gate-active');
+            if (pendingAuthRedirect || modalIsOpen) {
+                pendingEmail = session.user.email || pendingEmail;
+                document.getElementById('auth-login-email').value = pendingEmail;
+                document.getElementById('auth-otp-email-input').value = pendingEmail;
+                setAuthGateActive(true);
+                showAuthStep('set-password');
+            }
         }
     } else {
         currentUser = null;
         currentUserId = null;
         currentUserHasPassword = false;
         myReviewedSchools = [];
-        openAuthModal({ reset: authStateInitialized });
     }
-    authStateInitialized = true;
     renderAll();
 });
 
@@ -1947,7 +1987,7 @@ function performSearch() {
 }
 
 function navigateToReviewPage(url) {
-    window.location.href = url;
+    requestProtectedNavigation(url);
 }
 
 function openNotFoundModal(query) {
@@ -1966,13 +2006,20 @@ document.getElementById('institution-search-input').addEventListener('keydown', 
     }
 });
 
+document.querySelectorAll('a[data-auth-required="true"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        requestProtectedNavigation(link.getAttribute('href'));
+    });
+});
+
 // Expose handlers on window so inline onclick/onmouseover attributes can
 // reach them from this ES module.
 Object.assign(window, {
     closeAuthModal, closeFeedbackModal, closeHagwonTipsModal, closeNotFoundModal,
     closeReviewModal, closeSchoolTipsModal, dismissToast, hoverStars, initiateRating,
     logout, openFeedbackModal, openHagwonTipsModal, openSchoolTipsModal, performSearch,
-    resetStars, sendAuthCode, setNewPassword, signInWithPassword, submitFeedback,
+    requestProtectedNavigation, resetStars, sendAuthCode, setNewPassword, signInWithPassword, submitFeedback,
     submitFinalRating, switchToOtpEmail, switchToPassword, toggleSection, verifyAuthCode
 });
 
