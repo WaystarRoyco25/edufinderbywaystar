@@ -17,6 +17,21 @@
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
+        body.auth-gate-active {
+            overflow: hidden;
+        }
+        body.auth-gate-active > :not(#auth-modal):not(#toast-container) {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+            transition: filter .2s ease;
+        }
+        #auth-modal {
+            background: rgba(17, 24, 39, .28);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+
         /* ── Star rating ── */
         .star {
             cursor: pointer;
@@ -499,7 +514,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-100 text-gray-800 auth-gate-active">
 
 <!-- Toast notification container -->
 <div id="toast-container" class="toast-container"></div>
@@ -754,115 +769,143 @@
 <!-- ════════════════════════════════════════════════════════════
      MODAL: Auth (로그인 / 회원가입)
      ════════════════════════════════════════════════════════════ -->
-<div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md">
+<div id="auth-modal"
+     class="fixed inset-0 z-50 flex items-center justify-center px-6 py-8 overflow-y-auto"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="auth-modal-title">
+    <div class="w-full max-w-sm bg-white rounded-lg shadow-md p-6 space-y-4 border border-gray-100">
+        <p id="auth-message" class="hidden text-sm"></p>
 
         <!-- ── STEP 1: 이메일 + 비밀번호 로그인 ───────────────── -->
-        <div id="auth-step-password">
-            <h3 class="text-xl font-bold mb-2">로그인</h3>
-            <p class="text-gray-500 text-sm mb-4">EduFinder 계정으로 로그인해주세요.</p>
+        <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-4">
+            <h1 id="auth-modal-title" class="text-2xl font-bold tracking-wide">Log In</h1>
+            <p class="text-sm text-gray-500">Log in with your EduFinder account.</p>
 
             <input
                 type="email"
                 id="auth-login-email"
-                placeholder="이메일 주소"
-                class="w-full px-4 py-2 border rounded-md mb-3 focus:outline-none focus:border-blue-500"
+                required
+                placeholder="Email address"
+                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
             >
             <input
                 type="password"
                 id="auth-login-password"
-                placeholder="비밀번호"
-                class="w-full px-4 py-2 border rounded-md mb-4 focus:outline-none focus:border-blue-500"
+                required
+                placeholder="Password"
+                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
             >
-
-            <div class="flex justify-end space-x-3 mb-3">
-                <button onclick="closeAuthModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium">
-                    취소
-                </button>
-                <button onclick="signInWithPassword()" class="px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700">
-                    로그인
-                </button>
-            </div>
 
             <button
-                onclick="switchToOtpEmail()"
-                class="w-full text-sm text-gray-600 underline hover:text-gray-800 pt-2 border-t border-gray-100"
+                type="submit"
+                class="w-full rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
             >
-                처음이신가요? / 비밀번호를 잊으셨나요? 6자리 인증번호로 로그인
+                Log In
             </button>
-        </div>
+
+            <button
+                type="button"
+                onclick="switchToOtpEmail()"
+                class="w-full text-sm text-gray-600 hover:text-gray-800"
+            >
+                New here? Forgot your password? Sign in with a 6-digit email code.
+            </button>
+        </form>
 
         <!-- ── STEP 2: 이메일 입력 (OTP 발송) ───────────────── -->
-        <div id="auth-step-otp-email" class="hidden">
-            <h3 class="text-xl font-bold mb-2">이메일 인증</h3>
-            <p class="text-gray-500 text-sm mb-4">이메일로 6자리 인증번호를 보내드립니다.</p>
+        <form id="auth-step-otp-email" onsubmit="sendAuthCode(); return false;" class="hidden space-y-4">
+            <h1 class="text-2xl font-bold tracking-wide">Email Verification</h1>
+            <p class="text-sm text-gray-500">We will send a 6-digit verification code to your email.</p>
 
             <input
                 type="email"
                 id="auth-otp-email-input"
-                placeholder="이메일 주소 입력"
-                class="w-full px-4 py-2 border rounded-md mb-4 focus:outline-none focus:border-blue-500"
+                required
+                placeholder="Email address"
+                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
             >
 
-            <div class="flex justify-end space-x-3">
-                <button onclick="switchToPassword()" class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium">
-                    뒤로
+            <div class="flex gap-2">
+                <button
+                    type="button"
+                    onclick="switchToPassword()"
+                    class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
+                >
+                    Cancel
                 </button>
-                <button onclick="sendAuthCode()" class="px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700">
-                    인증번호 전송
+                <button
+                    type="submit"
+                    class="flex-1 rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
+                >
+                    Send Code
                 </button>
             </div>
-        </div>
+        </form>
 
         <!-- ── STEP 3: 6자리 코드 입력 ───────────────── -->
-        <div id="auth-step-otp-code" class="hidden">
-            <h3 class="text-xl font-bold mb-2">인증번호 입력</h3>
-            <p class="text-sm text-blue-600 mb-4 font-medium" id="sent-email-label"></p>
+        <div id="auth-step-otp-code" class="hidden space-y-4">
+            <h1 class="text-2xl font-bold tracking-wide">Enter Verification Code</h1>
+            <p class="text-sm text-blue-600 font-medium" id="sent-email-label"></p>
 
             <input
                 type="text"
                 id="auth-code-input"
-                placeholder="인증번호 6자리 입력"
-                class="w-full px-4 py-2 border rounded-md mb-4 focus:outline-none focus:border-blue-500 tracking-widest text-center"
+                inputmode="numeric"
                 maxlength="6"
+                placeholder="Enter the 6-digit code"
+                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500 tracking-widest text-center"
             >
 
-            <div class="flex justify-end space-x-3">
-                <button onclick="switchToOtpEmail()" class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium">
-                    뒤로
+            <div class="flex gap-2">
+                <button
+                    type="button"
+                    onclick="switchToOtpEmail()"
+                    class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
+                >
+                    Back
                 </button>
-                <button onclick="verifyAuthCode()" class="px-4 py-2 bg-green-600 text-white rounded-md font-medium hover:bg-green-700">
-                    인증하기
+                <button
+                    type="button"
+                    onclick="verifyAuthCode()"
+                    class="flex-1 rounded-lg bg-green-600 px-3 py-2 text-white font-semibold shadow hover:bg-green-700 disabled:opacity-60 transition"
+                >
+                    Verify
                 </button>
             </div>
         </div>
 
         <!-- ── STEP 4: 비밀번호 설정 ───────────────── -->
-        <div id="auth-step-set-password" class="hidden">
-            <h3 class="text-xl font-bold mb-2">비밀번호 설정</h3>
-            <p class="text-gray-500 text-sm mb-4">
-                다음 로그인부터 사용할 비밀번호를 설정해주세요. (최소 8자)
+        <form id="auth-step-set-password" onsubmit="setNewPassword(); return false;" class="hidden space-y-4">
+            <h1 class="text-2xl font-bold tracking-wide">Set Password</h1>
+            <p class="text-sm text-gray-500">
+                Set the password you will use for future logins. Minimum 8 characters.
             </p>
 
             <input
                 type="password"
                 id="auth-new-password"
-                placeholder="비밀번호 (최소 8자)"
-                class="w-full px-4 py-2 border rounded-md mb-3 focus:outline-none focus:border-blue-500"
+                required
+                minlength="8"
+                placeholder="Password (minimum 8 characters)"
+                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
             >
             <input
                 type="password"
                 id="auth-new-password-confirm"
-                placeholder="비밀번호 확인"
-                class="w-full px-4 py-2 border rounded-md mb-4 focus:outline-none focus:border-blue-500"
+                required
+                minlength="8"
+                placeholder="Confirm password"
+                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
             >
 
-            <div class="flex justify-end space-x-3">
-                <button onclick="setNewPassword()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700">
-                    비밀번호 설정 및 로그인
-                </button>
-            </div>
-        </div>
+            <button
+                type="submit"
+                class="w-full rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
+            >
+                Set Password and Log In
+            </button>
+        </form>
 
     </div>
 </div>
@@ -1312,9 +1355,11 @@ let pendingRating = 0;
 let selectedReasons = [];
 let currentUser = null;
 let currentUserId = null;
+let currentUserHasPassword = false;
 let pendingEmail = "";
 let ratingsData = {};
 let myReviewedSchools = [];
+let authStateInitialized = false;
 
 function safeNumber(value) {
     const n = Number(value);
@@ -1357,23 +1402,79 @@ function updateAuthUI() {
 
 const AUTH_STEPS = ['password', 'otp-email', 'otp-code', 'set-password'];
 function showAuthStep(name) {
+    clearAuthMessage();
     AUTH_STEPS.forEach(s => {
         const el = document.getElementById('auth-step-' + s);
         if (el) el.classList.toggle('hidden', s !== name);
     });
+    setTimeout(function() {
+        const focusedInput = document.querySelector('#auth-step-' + name + ':not(.hidden) input');
+        if (focusedInput) focusedInput.focus();
+    }, 0);
 }
 
-function openAuthModal() {
+function clearAuthMessage() {
+    const el = document.getElementById('auth-message');
+    el.textContent = '';
+    el.className = 'hidden text-sm';
+}
+
+function showAuthMessage(message, type = 'error') {
+    const el = document.getElementById('auth-message');
+    const colorClass = type === 'success'
+        ? 'text-green-700'
+        : type === 'info'
+            ? 'text-blue-600 font-medium'
+            : 'text-red-600';
+    el.textContent = String(message);
+    el.className = 'text-sm ' + colorClass;
+}
+
+function resetAuthFields() {
     document.getElementById('auth-login-email').value = '';
     document.getElementById('auth-login-password').value = '';
     document.getElementById('auth-otp-email-input').value = '';
     document.getElementById('auth-code-input').value = '';
     document.getElementById('auth-new-password').value = '';
     document.getElementById('auth-new-password-confirm').value = '';
-    showAuthStep('password');
-    document.getElementById('auth-modal').classList.remove('hidden');
 }
-function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+
+function setAuthGateActive(active) {
+    document.body.classList.toggle('auth-gate-active', active);
+    const modal = document.getElementById('auth-modal');
+    modal.classList.toggle('hidden', !active);
+    modal.setAttribute('aria-hidden', active ? 'false' : 'true');
+    document.querySelectorAll('body > :not(#auth-modal):not(#toast-container):not(script)').forEach(function(el) {
+        if (active) el.setAttribute('inert', '');
+        else el.removeAttribute('inert');
+    });
+    if (active) {
+        setTimeout(function() {
+            const activeStep = AUTH_STEPS
+                .map(function(step) { return document.getElementById('auth-step-' + step); })
+                .find(function(el) { return el && !el.classList.contains('hidden'); });
+            const focusedInput = activeStep ? activeStep.querySelector('input') : null;
+            if (focusedInput) focusedInput.focus();
+        }, 0);
+    }
+}
+
+function openAuthModal(options = {}) {
+    const shouldReset = options.reset !== false;
+    if (shouldReset) {
+        resetAuthFields();
+        showAuthStep('password');
+    }
+    setAuthGateActive(true);
+}
+
+function closeAuthModal() {
+    if (!currentUser || !currentUserHasPassword) {
+        setAuthGateActive(true);
+        return;
+    }
+    setAuthGateActive(false);
+}
 
 function switchToPassword() { showAuthStep('password'); }
 function switchToOtpEmail() {
@@ -1387,11 +1488,12 @@ function switchToOtpEmail() {
 async function signInWithPassword() {
     const email = document.getElementById('auth-login-email').value.trim();
     const password = document.getElementById('auth-login-password').value;
-    if (!email || !email.includes('@')) { showToast("유효한 이메일 주소를 입력해주세요.", "warning"); return; }
-    if (!password) { showToast("비밀번호를 입력해주세요.", "warning"); return; }
+    clearAuthMessage();
+    if (!email || !email.includes('@')) { showAuthMessage("Please enter a valid email address."); return; }
+    if (!password) { showAuthMessage("Please enter your password."); return; }
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) {
-        showToast("이메일 또는 비밀번호가 일치하지 않습니다.", "error");
+        showAuthMessage("The email or password is incorrect.");
         return;
     }
     // Backfill the password_set flag in case this legacy account somehow
@@ -1399,17 +1501,21 @@ async function signInWithPassword() {
     if (!data.user?.user_metadata?.password_set) {
         await supabaseClient.auth.updateUser({ data: { password_set: true } });
     }
+    currentUser = data.user?.email || email;
+    currentUserId = data.user?.id || currentUserId;
+    currentUserHasPassword = true;
     closeAuthModal();
     showToast("로그인되었습니다.", "success");
 }
 
 async function sendAuthCode() {
     const email = document.getElementById('auth-otp-email-input').value.trim();
-    if (!email || !email.includes('@')) { showToast("유효한 이메일 주소를 입력해주세요.", "warning"); return; }
+    clearAuthMessage();
+    if (!email || !email.includes('@')) { showAuthMessage("Please enter a valid email address."); return; }
     pendingEmail = email;
     const { error } = await supabaseClient.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true } });
-    if (error) { showToast("오류가 발생했습니다: " + error.message, "error"); return; }
-    document.getElementById('sent-email-label').innerText = email + ' (으)로 인증번호가 전송되었습니다.';
+    if (error) { showAuthMessage("An error occurred: " + error.message); return; }
+    document.getElementById('sent-email-label').innerText = 'A verification code has been sent to ' + email + '.';
     document.getElementById('auth-code-input').value = '';
     showAuthStep('otp-code');
 }
@@ -1420,16 +1526,20 @@ async function verifyAuthCode() {
     const code = document.getElementById('auth-code-input').value;
     if (code.length < 6) return;
     _verifying = true;
+    clearAuthMessage();
     const { data, error } = await supabaseClient.auth.verifyOtp({ email: pendingEmail, token: code, type: 'email' });
     _verifying = false;
     if (error) {
         document.getElementById('auth-code-input').value = '';
-        showToast("인증번호가 일치하지 않거나 만료되었습니다.", "error");
+        showAuthMessage("The verification code is incorrect or has expired.");
         return;
     }
     // Verified. If this user already has a password, we're done.
     // Otherwise, force them to set one before closing the modal.
     if (data.user?.user_metadata?.password_set) {
+        currentUser = data.user?.email || pendingEmail;
+        currentUserId = data.user?.id || currentUserId;
+        currentUserHasPassword = true;
         closeAuthModal();
         showToast("로그인되었습니다.", "success");
         return;
@@ -1437,19 +1547,21 @@ async function verifyAuthCode() {
     document.getElementById('auth-new-password').value = '';
     document.getElementById('auth-new-password-confirm').value = '';
     showAuthStep('set-password');
-    showToast("인증 완료! 비밀번호를 설정해주세요.", "info");
+    showAuthMessage("Verification complete. Set a password to continue.", "info");
 }
 
 async function setNewPassword() {
     const password = document.getElementById('auth-new-password').value;
     const confirm  = document.getElementById('auth-new-password-confirm').value;
-    if (password.length < 8) { showToast("비밀번호는 최소 8자 이상이어야 합니다.", "warning"); return; }
-    if (password !== confirm) { showToast("비밀번호가 일치하지 않습니다.", "warning"); return; }
+    clearAuthMessage();
+    if (password.length < 8) { showAuthMessage("Your password must be at least 8 characters long."); return; }
+    if (password !== confirm) { showAuthMessage("The passwords do not match."); return; }
     const { error } = await supabaseClient.auth.updateUser({
         password: password,
         data: { password_set: true }
     });
-    if (error) { showToast("비밀번호 설정에 실패했습니다: " + error.message, "error"); return; }
+    if (error) { showAuthMessage("Could not set your password: " + error.message); return; }
+    currentUserHasPassword = true;
     closeAuthModal();
     showToast("비밀번호가 설정되었습니다. 이제 EduFinder와 SAT Factory를 자유롭게 이용하실 수 있습니다.", "success", 5000);
 }
@@ -1463,8 +1575,27 @@ document.getElementById('auth-code-input').addEventListener('input', function() 
 });
 
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    if (session) { currentUser = session.user.email; currentUserId = session.user.id; }
-    else { currentUser = null; currentUserId = null; myReviewedSchools = []; }
+    if (session) {
+        currentUser = session.user.email;
+        currentUserId = session.user.id;
+        currentUserHasPassword = Boolean(session.user.user_metadata?.password_set);
+        if (currentUserHasPassword) {
+            closeAuthModal();
+        } else {
+            pendingEmail = session.user.email || pendingEmail;
+            document.getElementById('auth-login-email').value = pendingEmail;
+            document.getElementById('auth-otp-email-input').value = pendingEmail;
+            setAuthGateActive(true);
+            showAuthStep('set-password');
+        }
+    } else {
+        currentUser = null;
+        currentUserId = null;
+        currentUserHasPassword = false;
+        myReviewedSchools = [];
+        openAuthModal({ reset: authStateInitialized });
+    }
+    authStateInitialized = true;
     renderAll();
 });
 
