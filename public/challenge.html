@@ -130,11 +130,6 @@
                class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
                 <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
             </a>
-            <a href="/challenge/login"
-               class="inline-flex items-center px-4 py-2 bg-white text-blue-600 text-sm font-semibold
-                      rounded-lg shadow hover:bg-blue-50 transition">
-                <i class="fa-solid fa-right-to-bracket mr-2 text-xs"></i>로그인
-            </a>
         </div>
     </div>
 </header>
@@ -439,10 +434,11 @@
                     <span>시험별 PDF 다운로드</span>
                 </li>
             </ul>
-            <div class="inline-flex items-center justify-center px-5 py-2.5 bg-gray-100 text-gray-600
-                        text-sm font-semibold rounded-lg border border-gray-200">
-                <i class="fa-solid fa-calendar-check mr-2"></i>4월 말 정식 출시
-            </div>
+            <a href="/challenge/login?next=/challenge/dashboard"
+               class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white
+                      text-sm font-semibold rounded-lg shadow hover:bg-blue-700 transition">
+                <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>3-Set 선택하기
+            </a>
         </div>
 
         <!-- Pro (recommended) -->
@@ -490,10 +486,10 @@
                             text-sm font-semibold rounded-lg border border-fuchsia-200">
                     <i class="fa-solid fa-calendar-check mr-2"></i>4월 말 정식 출시
                 </div>
-                <a href="/challenge/login"
+                <a href="/challenge/login?next=/challenge/dashboard"
                    class="inline-flex items-center justify-center px-5 py-2.5 bg-fuchsia-600 text-white
                           text-sm font-semibold rounded-lg shadow hover:bg-fuchsia-700 transition">
-                    <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>지금 응시하기
+                    <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>5-Set 선택하기
                 </a>
             </div>
         </div>
