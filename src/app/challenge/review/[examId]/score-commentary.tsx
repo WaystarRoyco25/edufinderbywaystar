@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 
-type Bucket = {
+export type ScoreCommentaryBucket = {
   range: string;
   body: string[];
 };
 
-const BUCKETS: Bucket[] = [
+const BUCKETS: ScoreCommentaryBucket[] = [
   {
     range: "Equivalent SAT score ≈ 200–380",
     body: [
@@ -54,7 +54,7 @@ const BUCKETS: Bucket[] = [
   },
 ];
 
-function pickBucket(score: number): Bucket {
+export function getScoreCommentaryBucket(score: number): ScoreCommentaryBucket {
   if (score <= 14) return BUCKETS[0];
   if (score <= 27) return BUCKETS[1];
   if (score <= 42) return BUCKETS[2];
@@ -79,7 +79,7 @@ export default function ScoreCommentaryModal({
     };
   }, []);
 
-  const bucket = pickBucket(score);
+  const bucket = getScoreCommentaryBucket(score);
   const pct = total > 0 ? Math.round((score / total) * 100) : 0;
 
   return (

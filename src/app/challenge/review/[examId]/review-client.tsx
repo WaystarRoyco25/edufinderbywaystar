@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import QuestionTable, { type QuestionTableData } from "../../module/question-table";
+import ExportPdfButton from "./export-pdf-button";
 import ScoreCommentaryModal from "./score-commentary";
 
 export type ChoiceLetter = "A" | "B" | "C" | "D";
@@ -241,6 +242,9 @@ export default function ReviewClient({
                       onSelect={() => selectExplanation(item.questionId, letter)}
                     />
                   ))}
+                </div>
+                <div className="border-t border-gray-100 pt-4">
+                  <ExportPdfButton summary={summary} questions={questions} />
                 </div>
               </section>
             </div>
