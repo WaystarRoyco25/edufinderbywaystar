@@ -779,8 +779,8 @@
      aria-modal="true"
      aria-hidden="true"
      aria-labelledby="auth-modal-title">
-    <div class="w-full max-w-sm bg-white rounded-lg shadow-md p-6 space-y-4 border border-gray-100">
-        <div class="flex justify-end -mb-2">
+    <div class="w-full max-w-sm bg-white rounded-lg shadow-md p-5 space-y-3 border border-gray-100">
+        <div class="flex justify-end -mb-4">
             <button
                 type="button"
                 onclick="closeAuthModal()"
@@ -793,8 +793,8 @@
         <p id="auth-message" class="hidden text-sm"></p>
 
         <!-- ── STEP 1: 이메일 + 비밀번호 로그인 ───────────────── -->
-        <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-4">
-            <h1 id="auth-modal-title" class="text-2xl font-bold tracking-wide">Log In</h1>
+        <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-3">
+            <h1 id="auth-modal-title" class="text-xl font-bold tracking-wide">Log In</h1>
             <p class="text-sm text-gray-500">Log in with your EduFinder account.</p>
 
             <input
@@ -829,8 +829,8 @@
         </form>
 
         <!-- ── STEP 2: 이메일 입력 (OTP 발송) ───────────────── -->
-        <form id="auth-step-otp-email" onsubmit="sendAuthCode(); return false;" class="hidden space-y-4">
-            <h1 class="text-2xl font-bold tracking-wide">Email Verification</h1>
+        <form id="auth-step-otp-email" onsubmit="sendAuthCode(); return false;" class="hidden space-y-3">
+            <h1 class="text-xl font-bold tracking-wide">Email Verification</h1>
             <p class="text-sm text-gray-500">We will send a 6-digit verification code to your email.</p>
 
             <input
@@ -859,8 +859,8 @@
         </form>
 
         <!-- ── STEP 3: 6자리 코드 입력 ───────────────── -->
-        <div id="auth-step-otp-code" class="hidden space-y-4">
-            <h1 class="text-2xl font-bold tracking-wide">Enter Verification Code</h1>
+        <div id="auth-step-otp-code" class="hidden space-y-3">
+            <h1 class="text-xl font-bold tracking-wide">Enter Verification Code</h1>
             <p class="text-sm text-blue-600 font-medium" id="sent-email-label"></p>
 
             <input
@@ -891,8 +891,8 @@
         </div>
 
         <!-- ── STEP 4: 비밀번호 설정 ───────────────── -->
-        <form id="auth-step-set-password" onsubmit="setNewPassword(); return false;" class="hidden space-y-4">
-            <h1 class="text-2xl font-bold tracking-wide">Set Password</h1>
+        <form id="auth-step-set-password" onsubmit="setNewPassword(); return false;" class="hidden space-y-3">
+            <h1 class="text-xl font-bold tracking-wide">Set Password</h1>
             <p class="text-sm text-gray-500">
                 Set the password you will use for future logins. Minimum 8 characters.
             </p>
