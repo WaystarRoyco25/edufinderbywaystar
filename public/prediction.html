@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미국 대입 예측 모델 — EduFinder</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+    <style>
+        body {
+            font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* ── Hero stat cards (matched with challenge.html) ── */
+        .stat-number { font-variant-numeric: tabular-nums; }
+        .stat-card {
+            background: rgba(255,255,255,.10);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 16px;
+            padding: 20px 14px;
+            text-align: center;
+        }
+        .stat-card .stat-number {
+            font-size: clamp(1.9rem, 4.5vw, 2.5rem);
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        .stat-card .stat-unit {
+            font-size: .8rem;
+            font-weight: 600;
+            color: rgba(255,255,255,.85);
+            margin-top: 4px;
+        }
+        .stat-card .stat-label {
+            font-size: .7rem;
+            color: rgba(255,255,255,.65);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        /* ── 3D bubble panels (reused from main site) ── */
+        .panel-bg {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,.6);
+            box-shadow:
+                0 8px 32px rgba(0,0,0,.08),
+                0 2px 8px rgba(0,0,0,.04),
+                inset 0 2px 4px rgba(255,255,255,.8),
+                inset 0 -2px 6px rgba(0,0,0,.03);
+        }
+        .panel-bg > * { position: relative; z-index: 2; }
+        .panel-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 50%;
+            border-radius: 20px 20px 0 0;
+            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .panel-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30%; right: -10%;
+            width: 60%; height: 80%;
+            border-radius: 50%;
+            z-index: 0;
+            filter: blur(40px);
+            opacity: .45;
+            pointer-events: none;
+        }
+        .panel-amber {
+            background: linear-gradient(160deg, #fffdf5 0%, #fef9e7 40%, #fef3c7 100%);
+        }
+        .panel-amber::after {
+            background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
+        }
+        .panel-blue {
+            background: linear-gradient(160deg, #f0f7ff 0%, #e0ecff 40%, #dbeafe 100%);
+        }
+        .panel-blue::after {
+            background: radial-gradient(circle, #60a5fa 0%, #bfdbfe 60%, transparent 100%);
+        }
+        .panel-rose {
+            background: linear-gradient(160deg, #fff7f7 0%, #ffe4e6 40%, #fecdd3 100%);
+        }
+        .panel-rose::after {
+            background: radial-gradient(circle, #fb7185 0%, #fecdd3 60%, transparent 100%);
+        }
+        .panel-teal {
+            background: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 40%, #99f6e4 100%);
+        }
+        .panel-teal::after {
+            background: radial-gradient(circle, #2dd4bf 0%, #99f6e4 60%, transparent 100%);
+        }
+
+        /* ── Process step connector line ── */
+        .step-line {
+            position: absolute;
+            left: 19px;
+            top: 44px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #fde68a 0%, #e5e7eb 100%);
+        }
+
+        /* ── Subtle fade-up on scroll ── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Hero gradient (amber-tinted variant of challenge.html blue) ── */
+        .hero-bg {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 60%, #92400e 100%);
+        }
+
+        /* ── Modal styles ── */
+        #report-modal.is-open {
+            display: flex;
+        }
+        body.modal-open {
+            overflow: hidden;
+        }
+        .modal-overlay {
+            background: rgba(17, 24, 39, .55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            border: 1px solid #e5e7eb;
+            border-radius: .5rem;
+            padding: .55rem .75rem;
+            font-size: .9rem;
+            color: #1f2937;
+            background: white;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, .15);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+        .form-label {
+            display: block;
+            font-size: .8rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: .35rem;
+        }
+        .form-hint {
+            font-size: .72rem;
+            color: #9ca3af;
+            margin-top: .3rem;
+        }
+        .form-section {
+            border-top: 1px solid #f3f4f6;
+            padding-top: 1.25rem;
+            margin-top: 1.25rem;
+        }
+        .form-section:first-of-type {
+            border-top: 0;
+            padding-top: 0;
+            margin-top: 0;
+        }
+        .form-section-title {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .92rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: .9rem;
+        }
+        .form-section-title .form-section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: #fef3c7;
+            color: #b45309;
+            font-size: .75rem;
+        }
+        .school-row {
+            display: grid;
+            grid-template-columns: 32px 1fr;
+            gap: .65rem;
+            align-items: center;
+            margin-bottom: .55rem;
+        }
+        .school-row .school-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: #fef3c7;
+            color: #b45309;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .panel-bg { border-radius: 16px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+
+<!-- ════════════════════════════════════════════════════════════
+     TOP NAV (link back to main site)
+     ════════════════════════════════════════════════════════════ -->
+<header class="hero-bg text-white py-4 shadow-md">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between">
+            <a href="/"
+               class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
+                <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
+            </a>
+        </div>
+    </div>
+</header>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════════════════════════ -->
+<section class="hero-bg text-white py-14 md:py-20 shadow-md">
+    <div class="container mx-auto px-4 text-center">
+        <p class="text-amber-100 text-sm mb-3 font-light">EduFinder 제공</p>
+        <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">
+            미국 대입 예측 모델
+        </h1>
+        <p class="text-amber-50 text-base md:text-lg font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+            5만 건 이상의 합격 데이터로 분석한 나만의 입시 리포트
+        </p>
+
+        <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
+            <div class="stat-card">
+                <div class="stat-number" data-target="50000" data-suffix="+">0</div>
+                <div class="stat-unit">건 이상</div>
+                <div class="stat-label">분석된 미국 대입 데이터</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="10" data-suffix="+">0</div>
+                <div class="stat-unit">년 이상</div>
+                <div class="stat-label">컨설턴트 평균 경력</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="24" data-suffix="/7">0</div>
+                <div class="stat-unit">상시 응답</div>
+                <div class="stat-label">맞춤 AI 컨설팅 챗봇</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<main class="container mx-auto px-4 py-10 md:py-12">
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: 무엇을 분석하는가
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-amber-500 pb-2 mb-4 fade-up">
+        나의 프로필을 합격자 데이터와 정밀 비교합니다
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        성적, 시험 점수, 교과 외 활동, 지원 스토리까지.
+        실제 합격자들의 프로필과 같은 기준으로 분석해 가능성과 보완점을 한눈에 보여드립니다.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-6 fade-up">
+        <!-- Academic -->
+        <div class="panel-bg panel-amber p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-graduation-cap text-base"></i>
+                </span>
+                <div>
+                    <h4 class="font-bold text-gray-800">학업 성취</h4>
+                    <p class="text-xs text-gray-500">GPA · SAT · AP · IB</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed">
+                내신 추이, 표준화 시험 점수, 심화 과목 성적까지 종합해
+                지원 학교의 합격자 분포 안에서 어디에 위치하는지 정확히 알려드립니다.
+            </p>
+        </div>
+
+        <!-- Extracurricular -->
+        <div class="panel-bg panel-blue p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-people-group text-base"></i>
+                </span>
+                <div>
+                    <h4 class="font-bold text-gray-800">교과 외 활동</h4>
+                    <p class="text-xs text-gray-500">EC · Leadership · Awards</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed">
+                활동의 깊이와 일관성, 리더십 경험, 수상 이력까지 분석하여
+                지원 전공·학교가 선호하는 프로필 유형과 얼마나 부합하는지 확인합니다.
+            </p>
+        </div>
+
+        <!-- Personal -->
+        <div class="panel-bg panel-rose p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-id-badge text-base"></i>
+                </span>
+                <div>
+                    <h4 class="font-bold text-gray-800">개인 배경</h4>
+                    <p class="text-xs text-gray-500">국적 · 학교 · 환경 변수</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed">
+                국제학생/내국인 트랙, 출신 고교, 학년별 환경까지 고려한
+                현실적인 합격 가능성을 추정합니다.
+            </p>
+        </div>
+
+        <!-- School fit -->
+        <div class="panel-bg panel-teal p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-bullseye text-base"></i>
+                </span>
+                <div>
+                    <h4 class="font-bold text-gray-800">지원 학교 적합도</h4>
+                    <p class="text-xs text-gray-500">최대 5개 학교 비교</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed">
+                현재 노리는 5개 학교를 한꺼번에 비교해
+                Reach / Target / Safety 분포를 직관적으로 확인할 수 있습니다.
+            </p>
+        </div>
+    </div>
+
+    <!-- Methodology callout -->
+    <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12 fade-up">
+        <div class="flex items-start gap-4">
+            <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
+                <i class="fa-solid fa-microscope text-base"></i>
+            </span>
+            <div>
+                <h4 class="text-base font-bold text-gray-800 mb-2">특정 컨설팅 등록을 유도하지 않습니다</h4>
+                <p class="text-sm md:text-base text-gray-700 leading-relaxed">
+                    본 리포트는 광고나 제휴 학원으로 안내하기 위해 만들어진 도구가 아닙니다.
+                    오직 5만 건 이상의 합격 데이터와 입학 사정관 출신 컨설턴트의 기준에 근거하여,
+                    합격 가능성을 높이기 위해 무엇을 더 준비해야 하는지를 객관적으로 보여드립니다.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: 4단계 리포트 진행 과정
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-rose-500 pb-2 mb-6 fade-up">
+        4단계로 완성하는 입시 리포트
+    </h2>
+
+    <div class="bg-white rounded-lg shadow-md p-6 md:p-8 border border-gray-100 mb-12 fade-up">
+        <div class="relative flex gap-4 items-start pb-8">
+            <div class="step-line"></div>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">1</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">정보 입력</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    GPA, SAT, AP/IB, 교과 외 활동, 그리고 현재 노리는 5개 학교까지
+                    한 번의 입력으로 끝냅니다. 짧으면 5분, 길어도 10분이면 충분합니다.
+                </p>
+            </div>
+        </div>
+        <div class="relative flex gap-4 items-start pb-8">
+            <div class="step-line"></div>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">2</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">예측 모델 분석</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    5만 건 이상의 합격 데이터와 비교해
+                    학교별 합격 가능성, 강점, 보완해야 할 영역을 자동으로 산출합니다.
+                </p>
+            </div>
+        </div>
+        <div class="relative flex gap-4 items-start pb-8">
+            <div class="step-line"></div>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">3</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">맞춤 리포트 수령</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    학교별 합격 가능성 점수, Reach/Target/Safety 분류,
+                    프로필 보완 우선순위까지 한 부의 리포트로 정리해 드립니다.
+                </p>
+            </div>
+        </div>
+        <div class="relative flex gap-4 items-start">
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">4</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">AI 컨설팅 챗봇과 후속 상담</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    리포트를 받은 직후 떠오르는 궁금증은 전용 AI 챗봇에 바로 물어보세요.
+                    리포트당 최대 10개의 질문을 자유롭게 이어서 할 수 있습니다.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: AI 컨설팅 챗봇 (강조)
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-4 fade-up">
+        리포트가 끝이 아닙니다 — AI 컨설팅 챗봇이 이어서 답합니다
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        리포트를 읽다 보면 새로운 궁금증이 떠오르기 마련입니다.
+        대입 컨설팅에 특화되어 정교하게 튜닝된 AI 챗봇이 그 자리에서 답해 드립니다.
+    </p>
+
+    <div class="panel-bg panel-blue p-6 md:p-8 mb-12 fade-up">
+        <div class="flex flex-col md:flex-row items-start gap-6">
+            <div class="flex-shrink-0">
+                <span class="flex items-center justify-center w-16 h-16 bg-white/80 text-blue-600 rounded-2xl shadow-sm">
+                    <i class="fa-solid fa-comments text-3xl"></i>
+                </span>
+            </div>
+            <div class="flex-1">
+                <div class="flex items-center gap-2 mb-3 flex-wrap">
+                    <span class="inline-flex items-center bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                        <i class="fa-solid fa-bolt mr-1.5 text-[10px]"></i>리포트 1부당 질문 10개 포함
+                    </span>
+                    <span class="inline-flex items-center bg-white/80 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">
+                        대입 전용 튜닝 모델
+                    </span>
+                </div>
+                <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2">
+                    "이 리포트, 결국 어떻게 활용해야 하죠?"라는 질문에 즉답합니다.
+                </h3>
+                <p class="text-sm md:text-base text-gray-700 leading-relaxed mb-4">
+                    학교별 합격 가능성을 본 다음에는 대부분 같은 고민이 따라옵니다 —
+                    "어디부터 손봐야 할지", "EC를 더 늘리는 게 나을지, 시험 점수를 올리는 게 나을지",
+                    "이 점수로 ED를 어디에 써야 할지." 일반 챗봇이 두루뭉술하게 답하는 영역을,
+                    대입 컨설팅에 특화된 본 챗봇은 리포트 데이터에 근거해 구체적으로 짚어 드립니다.
+                </p>
+
+                <div class="grid sm:grid-cols-2 gap-3">
+                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
+                            <p class="text-sm font-bold text-gray-800">리포트 데이터 기반</p>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            내가 입력한 GPA·SAT·EC를 챗봇이 그대로 참조해 답합니다.
+                        </p>
+                    </div>
+                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
+                            <p class="text-sm font-bold text-gray-800">컨설팅 도메인 학습</p>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            ED/EA 전략, 전공 적합도, 추천서 운영 등 전문 영역에 강합니다.
+                        </p>
+                    </div>
+                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
+                            <p class="text-sm font-bold text-gray-800">리포트당 10개 질문</p>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            궁금한 순간에 바로 물어보고, 답을 따라 다음 질문으로 이어가세요.
+                        </p>
+                    </div>
+                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
+                            <p class="text-sm font-bold text-gray-800">한국어·영어 자유롭게</p>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            학생도 학부모도 편한 언어로 질문할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION: 가격 & CTA
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-fuchsia-500 pb-2 mb-4 fade-up">
+        한 번의 결제로 끝나는 합리적인 가격
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        5만 건 이상의 데이터에 기반한 예측 리포트와 AI 컨설팅 챗봇 10개 질문이 모두 포함됩니다.
+    </p>
+
+    <div class="bg-white rounded-lg shadow-md p-6 md:p-8 border-2 border-amber-500 mb-12 fade-up">
+        <div class="grid md:grid-cols-[1fr_auto] gap-8 items-center">
+            <div>
+                <p class="text-xs font-bold text-amber-600 uppercase tracking-wide mb-1">대입 예측 리포트</p>
+                <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-4">나만의 합격 가능성 리포트 1부</h3>
+                <ul class="space-y-2.5 text-sm text-gray-700 mb-2">
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
+                        <span>5개 학교 합격 가능성 분석 (Reach / Target / Safety 분류 포함)</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
+                        <span>GPA · SAT · AP/IB · EC 항목별 강·약점 진단</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
+                        <span>합격 가능성을 높이기 위한 우선순위 액션 플랜</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
+                        <span>대입 전용 AI 컨설팅 챗봇과 최대 10개의 후속 질문</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
+                        <span>리포트 PDF 다운로드 제공</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="md:text-right md:border-l md:border-gray-100 md:pl-8 flex flex-col items-start md:items-end">
+                <p class="text-5xl md:text-6xl font-bold text-amber-600 leading-none mb-2">
+                    <span class="text-2xl align-top">$</span>59
+                </p>
+                <p class="text-xs text-gray-500 mb-5">리포트 1부 · 일회성 결제</p>
+                <button
+                    type="button"
+                    onclick="openReportModal()"
+                    class="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white
+                           text-sm md:text-base font-semibold rounded-lg shadow hover:bg-amber-700 transition">
+                    <i class="fa-solid fa-file-pen mr-2 text-xs"></i>리포트 작성 시작하기
+                </button>
+                <p class="text-[11px] text-gray-400 mt-3">버튼을 누르면 정보 입력 창이 열립니다.</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     MODAL: 리포트 정보 입력
+     ════════════════════════════════════════════════════════════ -->
+<div id="report-modal"
+     class="fixed inset-0 z-50 hidden items-start md:items-center justify-center px-4 py-8 overflow-y-auto modal-overlay"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="report-modal-title">
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-file-pen text-base"></i>
+                </span>
+                <div>
+                    <h3 id="report-modal-title" class="text-lg font-bold text-gray-800">대입 예측 리포트 정보 입력</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">정확한 분석을 위해 가능한 한 자세히 입력해 주세요.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeReportModal()"
+                    class="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                    aria-label="닫기">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Modal body / form -->
+        <form id="report-form" class="overflow-y-auto p-5 md:p-6" onsubmit="submitReportForm(event)">
+
+            <!-- ── 개인 정보 ── -->
+            <div class="form-section">
+                <p class="form-section-title">
+                    <span class="form-section-icon"><i class="fa-solid fa-user"></i></span>
+                    개인 정보
+                </p>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label" for="rf-name">이름</label>
+                        <input id="rf-name" name="name" type="text" required class="form-input" placeholder="홍길동">
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-email">이메일</label>
+                        <input id="rf-email" name="email" type="email" required class="form-input" placeholder="student@example.com">
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-grade">현재 학년</label>
+                        <select id="rf-grade" name="grade" required class="form-select">
+                            <option value="">선택</option>
+                            <option>9학년 (Freshman)</option>
+                            <option>10학년 (Sophomore)</option>
+                            <option>11학년 (Junior)</option>
+                            <option>12학년 (Senior)</option>
+                            <option>Gap Year / 재수</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-school">재학 중인 학교</label>
+                        <input id="rf-school" name="school" type="text" required class="form-input" placeholder="예: Seoul International School">
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-citizenship">시민권 / 트랙</label>
+                        <select id="rf-citizenship" name="citizenship" required class="form-select">
+                            <option value="">선택</option>
+                            <option>한국 국적 · 국제학생 트랙</option>
+                            <option>미국 시민권 · 영주권</option>
+                            <option>이중국적</option>
+                            <option>기타</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-intended-major">희망 전공</label>
+                        <input id="rf-intended-major" name="intendedMajor" type="text" required class="form-input" placeholder="예: Computer Science">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── 학업 성취 ── -->
+            <div class="form-section">
+                <p class="form-section-title">
+                    <span class="form-section-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                    학업 성취 (GPA · SAT)
+                </p>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label" for="rf-gpa">GPA (Unweighted)</label>
+                        <input id="rf-gpa" name="gpaUnweighted" type="text" required class="form-input" placeholder="예: 3.92">
+                        <p class="form-hint">4.0 만점 기준으로 입력해 주세요.</p>
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-gpa-weighted">GPA (Weighted)</label>
+                        <input id="rf-gpa-weighted" name="gpaWeighted" type="text" class="form-input" placeholder="선택사항 · 예: 4.42">
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-sat">SAT 총점</label>
+                        <input id="rf-sat" name="satTotal" type="text" class="form-input" placeholder="예: 1520 (미응시 시 비워 두세요)">
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-sat-section">SAT R&amp;W / Math 점수</label>
+                        <input id="rf-sat-section" name="satSection" type="text" class="form-input" placeholder="예: 740 / 780">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── AP / IB ── -->
+            <div class="form-section">
+                <p class="form-section-title">
+                    <span class="form-section-icon"><i class="fa-solid fa-book"></i></span>
+                    AP 또는 IB
+                </p>
+                <div class="grid gap-4">
+                    <div>
+                        <label class="form-label" for="rf-ap-ib-track">학사 트랙</label>
+                        <select id="rf-ap-ib-track" name="apIbTrack" class="form-select">
+                            <option value="">선택</option>
+                            <option>AP만 응시</option>
+                            <option>IB Diploma</option>
+                            <option>AP + IB 병행</option>
+                            <option>해당 없음</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-ap-ib-detail">응시 과목 &amp; 성적</label>
+                        <textarea id="rf-ap-ib-detail" name="apIbDetail" class="form-textarea"
+                                  placeholder="예) AP Calculus BC: 5, AP Physics 1: 4, AP US History: 4&#10;IB HL Math AA: 7, IB HL English Lit: 6"></textarea>
+                        <p class="form-hint">한 줄에 한 과목씩 입력해 주시면 더 정밀한 분석이 가능합니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── EC ── -->
+            <div class="form-section">
+                <p class="form-section-title">
+                    <span class="form-section-icon"><i class="fa-solid fa-people-group"></i></span>
+                    교과 외 활동 (Extracurriculars)
+                </p>
+                <div>
+                    <label class="form-label" for="rf-ec">주요 활동을 자유롭게 적어주세요</label>
+                    <textarea id="rf-ec" name="extracurriculars" required class="form-textarea" rows="5"
+                              placeholder="예) 학교 토론부 회장 (3년) — 전국 대회 준우승&#10;창업 동아리 공동 설립 — 누적 사용자 5,000명 앱 출시&#10;지역 노인 복지관 영어 멘토링 (주 3시간, 2년)"></textarea>
+                    <p class="form-hint">활동명, 역할, 기간, 성과를 함께 적어주시면 정확도가 올라갑니다.</p>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label class="form-label" for="rf-awards">수상 / 인증 (선택)</label>
+                        <textarea id="rf-awards" name="awards" class="form-textarea" rows="3"
+                                  placeholder="예) AMC 12 — Distinction&#10;HMUN Best Delegate&#10;USACO Gold"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label" for="rf-leadership">리더십 포지션 (선택)</label>
+                        <textarea id="rf-leadership" name="leadership" class="form-textarea" rows="3"
+                                  placeholder="예) Student Council 부회장&#10;교내 신문 편집장"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── 5 schools ── -->
+            <div class="form-section">
+                <p class="form-section-title">
+                    <span class="form-section-icon"><i class="fa-solid fa-bullseye"></i></span>
+                    현재 노리는 학교 5곳
+                </p>
+                <p class="text-xs text-gray-500 mb-3">
+                    Reach / Target / Safety 가 골고루 섞여 있어도 좋습니다. 정확히 5개를 적어주세요.
+                </p>
+                <div class="school-row">
+                    <span class="school-num">1</span>
+                    <input name="school1" type="text" required class="form-input" placeholder="예: Massachusetts Institute of Technology">
+                </div>
+                <div class="school-row">
+                    <span class="school-num">2</span>
+                    <input name="school2" type="text" required class="form-input" placeholder="예: Stanford University">
+                </div>
+                <div class="school-row">
+                    <span class="school-num">3</span>
+                    <input name="school3" type="text" required class="form-input" placeholder="예: University of California, Berkeley">
+                </div>
+                <div class="school-row">
+                    <span class="school-num">4</span>
+                    <input name="school4" type="text" required class="form-input" placeholder="예: Carnegie Mellon University">
+                </div>
+                <div class="school-row">
+                    <span class="school-num">5</span>
+                    <input name="school5" type="text" required class="form-input" placeholder="예: Georgia Institute of Technology">
+                </div>
+            </div>
+
+            <!-- ── 추가 메모 ── -->
+            <div class="form-section">
+                <p class="form-section-title">
+                    <span class="form-section-icon"><i class="fa-solid fa-pen-clip"></i></span>
+                    추가로 알려주실 내용 (선택)
+                </p>
+                <textarea name="notes" class="form-textarea" rows="3"
+                          placeholder="예) 11학년 1학기에 가족 사정으로 학업이 잠시 흔들렸습니다.&#10;ED1 으로 Stanford를 강하게 고려 중입니다."></textarea>
+            </div>
+
+        </form>
+
+        <!-- Modal footer -->
+        <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between p-5 md:p-6 border-t border-gray-100 flex-shrink-0 bg-gray-50 rounded-b-2xl">
+            <p class="text-xs text-gray-500">
+                <i class="fa-solid fa-lock mr-1.5 text-gray-400"></i>
+                입력한 정보는 리포트 생성 외 다른 용도로 사용되지 않습니다.
+            </p>
+            <div class="flex gap-2 justify-end">
+                <button type="button" onclick="closeReportModal()"
+                        class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 transition">
+                    취소
+                </button>
+                <button type="submit" form="report-form"
+                        class="px-5 py-2.5 rounded-lg bg-amber-600 text-white text-sm font-semibold shadow hover:bg-amber-700 transition inline-flex items-center">
+                    <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>제출하고 결제 ($59)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER (matches main site)
+     ════════════════════════════════════════════════════════════ -->
+<footer class="bg-gray-800 text-white text-center py-6">
+    <p>&copy; 2026 EduFinder by Waystar</p>
+</footer>
+
+
+<script>
+function animateCounters() {
+    document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target, 10);
+        const duration = 1600;
+        const start = performance.now();
+        function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(target * ease);
+            el.textContent = current.toLocaleString('en-US');
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                el.textContent = target.toLocaleString('en-US') + (el.dataset.suffix || '');
+            }
+        }
+        requestAnimationFrame(tick);
+    });
+}
+
+const observer = new IntersectionObserver(
+    (entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    },
+    { threshold: 0.1 }
+);
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(animateCounters, 400);
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+});
+
+/* ── Report modal controls ── */
+function openReportModal() {
+    const modal = document.getElementById('report-modal');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    setTimeout(() => {
+        const first = document.getElementById('rf-name');
+        if (first) first.focus();
+    }, 50);
+}
+
+function closeReportModal() {
+    const modal = document.getElementById('report-modal');
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+document.getElementById('report-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'report-modal') closeReportModal();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('report-modal');
+        if (modal.classList.contains('is-open')) closeReportModal();
+    }
+});
+
+function submitReportForm(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const payload = Object.fromEntries(formData.entries());
+    console.log('Report request payload:', payload);
+    alert('정보가 접수되었습니다. 결제 페이지로 이동하면 리포트 생성이 시작됩니다. ($59)');
+    closeReportModal();
+}
+</script>
+
+</body>
+</html>
