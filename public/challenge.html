@@ -161,9 +161,9 @@
                 <div class="stat-label">집필진 평균 경력</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" data-target="4" data-suffix="">0</div>
-                <div class="stat-unit">콘텐츠 도메인</div>
-                <div class="stat-label">전 영역 커버</div>
+                <div class="stat-number" data-target="2000" data-suffix="">0</div>
+                <div class="stat-unit">문제 이상</div>
+                <div class="stat-label">난이도별 구비</div>
             </div>
         </div>
     </div>
@@ -204,8 +204,8 @@
                 </div>
             </div>
             <div class="mt-3 pt-3 border-t border-blue-200/60 text-center">
-                <p class="text-xl font-bold text-blue-600">1,000<span class="text-base">+</span></p>
-                <p class="text-xs text-gray-500 mt-1">표준 난이도 문제은행</p>
+                <p class="text-xl font-bold text-blue-600">4개 평가 항목</p>
+                <p class="text-xs text-gray-500 mt-1">골고루 커버</p>
             </div>
         </div>
 
@@ -229,8 +229,8 @@
                 </div>
             </div>
             <div class="mt-3 pt-3 border-t border-amber-200/60 text-center">
-                <p class="text-xl font-bold text-amber-600">1,000<span class="text-base">+</span></p>
-                <p class="text-xs text-gray-500 mt-1">고난이도 문제은행</p>
+                <p class="text-xl font-bold text-amber-600">4개 평가 항목</p>
+                <p class="text-xs text-gray-500 mt-1">골고루 커버</p>
             </div>
         </div>
     </div>
@@ -351,11 +351,13 @@
                     <span>시험별 PDF 다운로드</span>
                 </li>
             </ul>
-            <a href="/challenge/login?next=/challenge/dashboard"
-               class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white
-                      text-sm font-semibold rounded-lg shadow hover:bg-blue-700 transition">
-                <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>3-Set 선택하기
-            </a>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="/challenge/login?next=/challenge/dashboard"
+                   class="inline-flex w-40 items-center justify-center px-5 py-2.5 bg-blue-600 text-white
+                          text-sm font-semibold rounded-lg shadow hover:bg-blue-700 transition">
+                    <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>3-Set 선택하기
+                </a>
+            </div>
         </div>
 
         <!-- Pro (recommended) -->
@@ -400,7 +402,7 @@
             </ul>
             <div class="flex flex-wrap items-center justify-center gap-3">
                 <a href="/challenge/login?next=/challenge/dashboard"
-                   class="inline-flex items-center justify-center px-5 py-2.5 bg-fuchsia-600 text-white
+                   class="inline-flex w-40 items-center justify-center px-5 py-2.5 bg-fuchsia-600 text-white
                           text-sm font-semibold rounded-lg shadow hover:bg-fuchsia-700 transition">
                     <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>5-Set 선택하기
                 </a>
@@ -429,9 +431,9 @@ function animateCounters() {
             const elapsed = now - start;
             const progress = Math.min(elapsed / duration, 1);
             const ease = 1 - Math.pow(1 - progress, 3);
-            el.textContent = Math.round(target * ease);
+            el.textContent = Math.round(target * ease).toLocaleString('en-US');
             if (progress < 1) requestAnimationFrame(tick);
-            else el.textContent = target + (el.dataset.suffix || '');
+            else el.textContent = target.toLocaleString('en-US') + (el.dataset.suffix || '');
         }
         requestAnimationFrame(tick);
     });
