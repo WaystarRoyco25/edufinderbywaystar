@@ -4,9 +4,10 @@
 --
 -- Security model:
 --   1. The Next.js server, using the service-role key, owns all module
---      creation, progress writes, grading, and review reads.
---   2. Browser clients never read `questions`, `modules`, or answer keys
---      directly through the public Supabase key.
+--      creation, progress writes, grading, review reads, and prediction
+--      report draft writes.
+--   2. Browser clients never read `questions`, `modules`, report drafts, or
+--      answer keys directly through the public Supabase key.
 --   3. Answer keys live in `module_answer_keys`, separate from the attempt
 --      metadata table, with no client RLS policies.
 -- =======================================================================
@@ -44,6 +45,41 @@ CREATE TABLE IF NOT EXISTS module_answer_keys (
     answer_key JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- --- PREDICTION REPORT DRAFTS ------------------------------------------
+CREATE TABLE IF NOT EXISTS prediction_report_drafts (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted')),
+    submitted_at TIMESTAMPTZ
+);
+
+ALTER TABLE prediction_report_drafts
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now(),
+    ADD COLUMN IF NOT EXISTS payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'draft',
+    ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.table_constraints
+        WHERE table_schema = 'public'
+          AND table_name = 'prediction_report_drafts'
+          AND constraint_name = 'prediction_report_drafts_status_check'
+    ) THEN
+        ALTER TABLE prediction_report_drafts
+            ADD CONSTRAINT prediction_report_drafts_status_check
+            CHECK (status IN ('draft', 'submitted'));
+    END IF;
+END $$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS prediction_report_drafts_user_id_idx
+    ON prediction_report_drafts(user_id);
 
 -- Migrate existing answer keys out of `modules` before dropping the column.
 DO $$
@@ -88,3 +124,12 @@ DROP POLICY IF EXISTS "module answer keys insert own" ON module_answer_keys;
 DROP POLICY IF EXISTS "module answer keys update own" ON module_answer_keys;
 DROP POLICY IF EXISTS "module answer keys delete own" ON module_answer_keys;
 REVOKE ALL ON module_answer_keys FROM anon, authenticated;
+
+-- `prediction_report_drafts`: server routes own draft reads/writes with the
+-- service-role key after checking the authenticated user.
+ALTER TABLE prediction_report_drafts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "prediction drafts select own" ON prediction_report_drafts;
+DROP POLICY IF EXISTS "prediction drafts insert own" ON prediction_report_drafts;
+DROP POLICY IF EXISTS "prediction drafts update own" ON prediction_report_drafts;
+DROP POLICY IF EXISTS "prediction drafts delete own" ON prediction_report_drafts;
+REVOKE ALL ON prediction_report_drafts FROM anon, authenticated;

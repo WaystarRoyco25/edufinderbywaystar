@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>미국 대입 예측 모델 — EduFinder</title>
+    <title>The Insight! Report — EduFinder</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -235,53 +235,55 @@
 <body class="bg-gray-100 text-gray-800">
 
 
-<!-- ════════════════════════════════════════════════════════════
-     TOP NAV (link back to main site)
-     ════════════════════════════════════════════════════════════ -->
-<header class="hero-bg text-white py-4 shadow-md">
-    <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between">
-            <a href="/"
-               class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
-                <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
-            </a>
-        </div>
-    </div>
-</header>
-
-
-<!-- ════════════════════════════════════════════════════════════
-     HERO
-     ════════════════════════════════════════════════════════════ -->
-<section class="hero-bg text-white py-14 md:py-20 shadow-md">
-    <div class="container mx-auto px-4 text-center">
-        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-60 mb-4">
-        <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">
-            미국 대입 예측 모델
-        </h1>
-        <p class="text-amber-50 text-base md:text-lg font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-            5만 건 이상 합격 데이터로 분석한 입시 리포트
-        </p>
-
-        <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
-            <div class="stat-card">
-                <div class="stat-number" data-target="50000" data-suffix="">0</div>
-                <div class="stat-unit">건 이상</div>
-                <div class="stat-label">분석된 미국 대입 데이터</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" data-target="10" data-suffix="">0</div>
-                <div class="stat-unit">년 이상</div>
-                <div class="stat-label">컨설턴트 평균 경력</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" data-target="24" data-suffix="/7">0</div>
-                <div class="stat-unit">상시 응답</div>
-                <div class="stat-label">AI 컨설팅 챗봇</div>
+<div class="hero-bg text-white shadow-md">
+    <!-- ════════════════════════════════════════════════════════════
+         TOP NAV (link back to main site)
+         ════════════════════════════════════════════════════════════ -->
+    <header class="py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="/"
+                   class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
+                    <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
+                </a>
             </div>
         </div>
-    </div>
-</section>
+    </header>
+
+
+    <!-- ════════════════════════════════════════════════════════════
+         HERO
+         ════════════════════════════════════════════════════════════ -->
+    <section class="py-14 md:py-20">
+        <div class="container mx-auto px-4 text-center">
+            <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-60 mb-4">
+            <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">
+                The Insight! Report
+            </h1>
+            <p class="text-amber-50 text-base md:text-lg font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+                5만 건 이상 합격 데이터로 분석한 입시 리포트
+            </p>
+
+            <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
+                <div class="stat-card">
+                    <div class="stat-number" data-target="50000" data-suffix="">0</div>
+                    <div class="stat-unit">건 이상</div>
+                    <div class="stat-label">분석된 미국 대입 데이터</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="10" data-suffix="">0</div>
+                    <div class="stat-unit">년 이상</div>
+                    <div class="stat-label">컨설턴트 평균 경력</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="24" data-suffix="/7">0</div>
+                    <div class="stat-unit">상시 응답</div>
+                    <div class="stat-label">AI 컨설팅 챗봇</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
 
 <main class="container mx-auto px-4 py-10 md:py-12">
@@ -459,9 +461,6 @@
                     <span class="inline-flex items-center bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                         <i class="fa-solid fa-bolt mr-1.5 text-[10px]"></i>리포트 1부당 질문 10개 포함
                     </span>
-                    <span class="inline-flex items-center bg-white/80 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">
-                        대입 전용 튜닝 모델
-                    </span>
                 </div>
                 <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2">
                     "이 리포트, 어떻게 활용해야 하죠?"라는 질문에 답합니다.
@@ -529,7 +528,7 @@
         <div class="grid md:grid-cols-[1fr_auto] gap-8 items-center">
             <div>
                 <p class="text-xs font-bold text-amber-600 uppercase tracking-wide mb-1">대입 예측 리포트</p>
-                <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-4">나만의 합격 가능성 리포트 1부</h3>
+                <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-4">The Insight! Report</h3>
                 <ul class="space-y-2.5 text-sm text-gray-700 mb-2">
                     <li class="flex items-start gap-2">
                         <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
@@ -559,13 +558,14 @@
                 </p>
                 <p class="text-xs text-gray-500 mb-5">리포트 1부 · 일회성 결제</p>
                 <button
+                    id="report-start-button"
                     type="button"
-                    onclick="openReportModal()"
+                    onclick="handleReportStart()"
                     class="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white
                            text-sm md:text-base font-semibold rounded-lg shadow hover:bg-amber-700 transition">
                     <i class="fa-solid fa-file-pen mr-2 text-xs"></i>리포트 작성 시작하기
                 </button>
-                <p class="text-[11px] text-gray-400 mt-3">버튼을 누르면 정보 입력 창이 열립니다.</p>
+                <p class="text-[11px] text-gray-400 mt-3">로그인 후 정보 입력 창이 열립니다.</p>
             </div>
         </div>
     </div>
@@ -775,7 +775,7 @@
 
         <!-- Modal footer -->
         <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between p-5 md:p-6 border-t border-gray-100 flex-shrink-0 bg-gray-50 rounded-b-2xl">
-            <p class="text-xs text-gray-500">
+            <p id="report-save-status" class="text-xs text-gray-500" aria-live="polite">
                 <i class="fa-solid fa-lock mr-1.5 text-gray-400"></i>
                 입력한 정보는 리포트 생성 외 다른 용도로 사용되지 않습니다.
             </p>
@@ -803,6 +803,37 @@
 
 
 <script>
+const REPORT_LOGIN_NEXT = '/prediction?start=1';
+const REPORT_DRAFT_ENDPOINT = '/prediction/api/draft';
+const REPORT_FIELD_NAMES = [
+    'name',
+    'email',
+    'grade',
+    'school',
+    'citizenship',
+    'intendedMajor',
+    'gpaUnweighted',
+    'gpaWeighted',
+    'satTotal',
+    'satSection',
+    'apIbTrack',
+    'apIbDetail',
+    'extracurriculars',
+    'awards',
+    'leadership',
+    'school1',
+    'school2',
+    'school3',
+    'school4',
+    'school5',
+    'notes'
+];
+
+let reportDraftReady = false;
+let reportSaveTimer = null;
+let lastSavedDraftJson = '';
+let skipNextCloseSave = false;
+
 function animateCounters() {
     document.querySelectorAll('.stat-number[data-target]').forEach(el => {
         const target = parseInt(el.dataset.target, 10);
@@ -839,7 +870,155 @@ const observer = new IntersectionObserver(
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(animateCounters, 400);
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    const form = document.getElementById('report-form');
+    if (form) {
+        form.addEventListener('input', queueReportDraftSave);
+        form.addEventListener('change', queueReportDraftSave);
+    }
+
+    if (new URLSearchParams(window.location.search).get('start') === '1') {
+        setTimeout(handleReportStart, 100);
+    }
 });
+
+function setReportSaveStatus(message) {
+    const status = document.getElementById('report-save-status');
+    if (!status) return;
+    status.textContent = message;
+}
+
+function redirectToReportLogin() {
+    window.location.href = '/challenge/login?next=' + encodeURIComponent(REPORT_LOGIN_NEXT);
+}
+
+function clearReportStartParam() {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('start')) return;
+    url.searchParams.delete('start');
+    const next = url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') + url.hash;
+    window.history.replaceState({}, '', next);
+}
+
+function collectReportPayload() {
+    const form = document.getElementById('report-form');
+    const payload = {};
+    if (!form) return payload;
+
+    REPORT_FIELD_NAMES.forEach(name => {
+        const field = form.elements.namedItem(name);
+        if (field && typeof field.value === 'string') {
+            payload[name] = field.value;
+        }
+    });
+    return payload;
+}
+
+function fillReportForm(payload) {
+    const form = document.getElementById('report-form');
+    if (!form || !payload || typeof payload !== 'object') return;
+
+    REPORT_FIELD_NAMES.forEach(name => {
+        const field = form.elements.namedItem(name);
+        if (field && typeof field.value === 'string' && typeof payload[name] === 'string') {
+            field.value = payload[name];
+        }
+    });
+}
+
+async function loadReportDraft() {
+    const response = await fetch(REPORT_DRAFT_ENDPOINT, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+    });
+
+    if (response.status === 401) {
+        redirectToReportLogin();
+        return null;
+    }
+
+    if (!response.ok) {
+        throw new Error('Could not load draft.');
+    }
+
+    return response.json();
+}
+
+async function saveReportDraft(status = 'draft') {
+    const payload = collectReportPayload();
+    const body = JSON.stringify({ payload, status });
+
+    if (status === 'draft' && body === lastSavedDraftJson) {
+        setReportSaveStatus('저장됨');
+        return true;
+    }
+
+    const response = await fetch(REPORT_DRAFT_ENDPOINT, {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body
+    });
+
+    if (response.status === 401) {
+        redirectToReportLogin();
+        return false;
+    }
+
+    if (!response.ok) {
+        setReportSaveStatus('저장 실패');
+        return false;
+    }
+
+    lastSavedDraftJson = body;
+    setReportSaveStatus(status === 'submitted' ? '제출 내용 저장됨' : '저장됨');
+    return true;
+}
+
+function queueReportDraftSave() {
+    if (!reportDraftReady) return;
+    window.clearTimeout(reportSaveTimer);
+    setReportSaveStatus('저장 중...');
+    reportSaveTimer = window.setTimeout(() => {
+        saveReportDraft('draft').catch(() => setReportSaveStatus('저장 실패'));
+    }, 700);
+}
+
+async function handleReportStart() {
+    const button = document.getElementById('report-start-button');
+    if (button) {
+        button.disabled = true;
+        button.classList.add('opacity-70', 'cursor-wait');
+    }
+
+    try {
+        const data = await loadReportDraft();
+        if (!data) return;
+
+        const savedPayload = data.draft && data.draft.payload ? data.draft.payload : {};
+        fillReportForm(savedPayload);
+        lastSavedDraftJson = data.draft
+            ? JSON.stringify({ payload: collectReportPayload(), status: data.draft.status || 'draft' })
+            : '';
+        reportDraftReady = true;
+        setReportSaveStatus(data.draft ? '이전 작성 내용 불러옴' : '저장 준비 완료');
+        openReportModal();
+        clearReportStartParam();
+        await saveReportDraft('draft');
+    } catch (error) {
+        console.error(error);
+        alert('로그인 또는 저장된 작성 내용을 확인하는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.classList.remove('opacity-70', 'cursor-wait');
+        }
+    }
+}
 
 /* ── Report modal controls ── */
 function openReportModal() {
@@ -858,6 +1037,10 @@ function closeReportModal() {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('modal-open');
+    if (reportDraftReady && !skipNextCloseSave) {
+        saveReportDraft('draft').catch(() => setReportSaveStatus('저장 실패'));
+    }
+    skipNextCloseSave = false;
 }
 
 document.getElementById('report-modal').addEventListener('click', (e) => {
@@ -871,12 +1054,17 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-function submitReportForm(event) {
+async function submitReportForm(event) {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const payload = Object.fromEntries(formData.entries());
-    console.log('Report request payload:', payload);
-    alert('정보가 접수되었습니다. 결제 페이지로 이동하면 리포트 생성이 시작됩니다. ($59)');
+    window.clearTimeout(reportSaveTimer);
+    reportDraftReady = true;
+    const saved = await saveReportDraft('submitted');
+    if (!saved) {
+        alert('작성 내용 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        return;
+    }
+    alert('정보가 저장되었습니다. 결제 페이지로 이동하면 리포트 생성이 시작됩니다. ($59)');
+    skipNextCloseSave = true;
     closeReportModal();
 }
 </script>

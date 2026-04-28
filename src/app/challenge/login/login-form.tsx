@@ -8,16 +8,19 @@ type Step = "password" | "otp-email" | "otp-code" | "set-password";
 
 const DEFAULT_NEXT = "/challenge/dashboard";
 
-function safeChallengeNext(value: string | null): string {
+function safeAuthNext(value: string | null): string {
   if (!value) return DEFAULT_NEXT;
 
   try {
     const parsed = new URL(value, "https://edufinder.local");
     const isSameOrigin = parsed.origin === "https://edufinder.local";
-    const isChallengePath =
-      parsed.pathname === "/challenge" || parsed.pathname.startsWith("/challenge/");
+    const isAllowedPath =
+      parsed.pathname === "/prediction" ||
+      parsed.pathname === "/prediction.html" ||
+      parsed.pathname === "/challenge" ||
+      parsed.pathname.startsWith("/challenge/");
 
-    if (!isSameOrigin || !isChallengePath) return DEFAULT_NEXT;
+    if (!isSameOrigin || !isAllowedPath) return DEFAULT_NEXT;
     return `${parsed.pathname}${parsed.search}${parsed.hash}`;
   } catch {
     return DEFAULT_NEXT;
@@ -27,7 +30,7 @@ function safeChallengeNext(value: string | null): string {
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = safeChallengeNext(searchParams.get("next"));
+  const next = safeAuthNext(searchParams.get("next"));
 
   const [step, setStep] = useState<Step>("password");
   const [email, setEmail] = useState("");
