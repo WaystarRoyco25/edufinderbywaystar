@@ -15,6 +15,8 @@ const MISSING_EXPLANATION = "No explanation is available yet.";
 type ExportPdfButtonProps = {
   summary: ReviewSummary;
   questions: ReviewQuestion[];
+  className?: string;
+  buttonClassName?: string;
 };
 
 type AssetUrls = {
@@ -87,6 +89,7 @@ function renderChoiceExplanation(
 ): string {
   const isPicked = picked === letter;
   const isCorrect = correct === letter;
+  const shouldShowExplanation = isPicked || isCorrect;
   const stateClass = isCorrect ? " is-correct" : isPicked ? " is-picked" : "";
   const badges = [
     isPicked ? '<span class="badge picked">Your answer</span>' : "",
@@ -99,18 +102,20 @@ function renderChoiceExplanation(
         <p><strong>${letter}.</strong> ${escapeHtml(question.choices?.[letter])}</p>
         <div>${badges}</div>
       </header>
-      <p class="explanation">${renderMultiline(explanationFor(question, letter, correct))}</p>
+      ${
+        shouldShowExplanation
+          ? `<p class="explanation">${renderMultiline(explanationFor(question, letter, correct))}</p>`
+          : ""
+      }
     </section>
   `;
 }
 
-function renderQuestion(item: ReviewQuestion): string {
-  const result = !item.picked
-    ? "Unanswered"
-    : item.picked === item.correct
-      ? "Correct"
-      : "Incorrect";
+function isMissedQuestion(item: ReviewQuestion): boolean {
+  return item.picked !== item.correct;
+}
 
+function renderQuestion(item: ReviewQuestion): string {
   if (!item.question) {
     return `
       <article class="question-card">
@@ -135,13 +140,8 @@ function renderQuestion(item: ReviewQuestion): string {
       <header class="question-header">
         <div>
           <p class="eyebrow">Module ${item.moduleNumber} &middot; Question ${item.number} &middot; ${escapeHtml(question.question_type)}</p>
-          <h2>${result}</h2>
+          <h2>Missed Question</h2>
         </div>
-        <p class="answer-line">
-          Your answer <strong>${escapeHtml(item.picked ?? "Unanswered")}</strong>
-          <span>&middot;</span>
-          Correct answer <strong>${escapeHtml(item.correct ?? "-")}</strong>
-        </p>
       </header>
 
       <div class="question-layout">
@@ -156,14 +156,10 @@ function renderQuestion(item: ReviewQuestion): string {
             <p>${renderMultiline(question.stem)}</p>
           </section>
           <section class="choices">
-            <h3>Answer Explanations</h3>
+            <h3>Answer Choices</h3>
             ${choices}
           </section>
         </div>
-        <aside class="notes">
-          <p>Notes</p>
-          <div></div>
-        </aside>
       </div>
     </article>
   `;
@@ -179,7 +175,9 @@ function buildExportHtml(
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date());
-  const questionHtml = questions.map(renderQuestion).join("");
+  const missedQuestions = questions.filter(isMissedQuestion);
+  const hasMissedQuestions = missedQuestions.length > 0;
+  const questionHtml = missedQuestions.map(renderQuestion).join("");
 
   return `<!doctype html>
 <html lang="en">
@@ -205,8 +203,8 @@ function buildExportHtml(
       color: #1f2937;
       background: #ffffff;
       font-family: "Pretendard", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 10.5pt;
-      line-height: 1.55;
+      font-size: 9.3pt;
+      line-height: 1.38;
     }
 
     .watermark {
@@ -230,7 +228,10 @@ function buildExportHtml(
     .cover {
       display: grid;
       gap: 0.24in;
-      break-after: avoid-page;
+    }
+
+    .cover.has-questions {
+      break-after: page;
     }
 
     .brand-header {
@@ -238,8 +239,8 @@ function buildExportHtml(
       align-items: center;
       justify-content: space-between;
       gap: 0.3in;
-      min-height: 1.05in;
-      padding: 0.24in 0.3in;
+      min-height: 0.9in;
+      padding: 0.2in 0.26in;
       border-radius: 10px;
       background: #2563eb;
       color: #ffffff;
@@ -265,14 +266,14 @@ function buildExportHtml(
     }
 
     h1 {
-      font-size: 22pt;
+      font-size: 21pt;
       line-height: 1.15;
       letter-spacing: 0;
       color: #111827;
     }
 
     h2 {
-      font-size: 15pt;
+      font-size: 13.5pt;
       line-height: 1.25;
       letter-spacing: 0;
       color: #111827;
@@ -338,56 +339,44 @@ function buildExportHtml(
     }
 
     .questions {
-      margin-top: 0.26in;
+      margin-top: 0;
     }
 
     .question-card {
-      margin-top: 0.22in;
-      padding: 0.22in;
+      margin: 0;
+      min-height: 9.85in;
+      padding: 0.18in;
+      break-after: page;
       break-inside: avoid-page;
+      page-break-after: always;
       page-break-inside: avoid;
+    }
+
+    .question-card:last-child {
+      break-after: auto;
+      page-break-after: auto;
     }
 
     .question-header {
       display: flex;
       justify-content: space-between;
       gap: 0.2in;
-      padding-bottom: 0.12in;
+      padding-bottom: 0.1in;
       border-bottom: 1px solid #e5e7eb;
     }
 
-    .answer-line {
-      color: #475569;
-      font-size: 9pt;
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .answer-line strong {
-      color: #111827;
-    }
-
-    .answer-line span {
-      margin: 0 0.05in;
-      color: #94a3b8;
-    }
-
     .question-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 1.75in;
-      gap: 0.22in;
-      align-items: start;
-      margin-top: 0.16in;
+      margin-top: 0.12in;
     }
 
     .passage,
     .stem,
     .choices {
-      margin-bottom: 0.16in;
+      margin-bottom: 0.12in;
     }
 
     .passage {
-      padding: 0.15in;
+      padding: 0.12in;
       border-radius: 8px;
       background: #f8fafc;
       color: #334155;
@@ -432,7 +421,7 @@ function buildExportHtml(
 
     .choice {
       margin-top: 0.1in;
-      padding: 0.12in;
+      padding: 0.1in;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
       background: #ffffff;
@@ -461,8 +450,8 @@ function buildExportHtml(
     }
 
     .choice .explanation {
-      margin-top: 0.08in;
-      padding-top: 0.08in;
+      margin-top: 0.06in;
+      padding-top: 0.06in;
       border-top: 1px solid rgba(148, 163, 184, 0.45);
       color: #334155;
     }
@@ -482,32 +471,6 @@ function buildExportHtml(
 
     .badge.picked {
       color: #b91c1c;
-    }
-
-    .notes {
-      min-height: 3.2in;
-      padding: 0.12in;
-      border: 1px dashed #bfdbfe;
-      border-radius: 8px;
-      background: rgba(239, 246, 255, 0.52);
-    }
-
-    .notes p {
-      margin-bottom: 0.08in;
-      color: #2563eb;
-      font-size: 8pt;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .notes div {
-      min-height: 2.8in;
-      background-image: repeating-linear-gradient(
-        to bottom,
-        transparent 0,
-        transparent 0.27in,
-        rgba(37, 99, 235, 0.22) 0.28in
-      );
     }
 
     .missing {
@@ -534,14 +497,14 @@ function buildExportHtml(
 <body>
   <img class="watermark" src="${assets.watermark}" alt="">
   <main class="packet">
-    <section class="cover">
+    <section class="cover${hasMissedQuestions ? " has-questions" : ""}">
       <header class="brand-header">
         <img src="${assets.logo}" alt="EduFinder by Waystar">
         <p>Challenge! Series<br>Practice Test Review Packet<br>Generated ${escapeHtml(generatedAt)}</p>
       </header>
 
       <div>
-        <h1>Practice Test Review</h1>
+        <h1>Missed Question Review</h1>
         <p class="eyebrow">Started ${escapeHtml(summary.startedAt)}</p>
       </div>
 
@@ -558,9 +521,11 @@ function buildExportHtml(
       </section>
     </section>
 
-    <section class="questions">
-      ${questionHtml}
-    </section>
+    ${
+      questionHtml
+        ? `<section class="questions">${questionHtml}</section>`
+        : ""
+    }
   </main>
 </body>
 </html>`;
@@ -604,6 +569,8 @@ async function waitForPrintAssets(doc: Document): Promise<void> {
 export default function ExportPdfButton({
   summary,
   questions,
+  className = "",
+  buttonClassName = "w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60",
 }: ExportPdfButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -663,12 +630,12 @@ export default function ExportPdfButton({
   }
 
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 ${className}`}>
       <button
         type="button"
         onClick={() => void handleExport()}
         disabled={isExporting}
-        className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className={buttonClassName}
       >
         {isExporting ? "Preparing PDF..." : "Export as PDF"}
       </button>

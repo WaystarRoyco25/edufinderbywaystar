@@ -10,6 +10,8 @@ export type ChoiceLetter = "A" | "B" | "C" | "D";
 
 const CHOICE_LETTERS: ChoiceLetter[] = ["A", "B", "C", "D"];
 const MISSING_EXPLANATION = "No explanation is available yet.";
+const REVIEW_ACTION_BUTTON_CLASS =
+  "flex h-10 w-full items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-48";
 
 export type QuestionRow = {
   id: string;
@@ -80,6 +82,7 @@ function ChoiceReview({
 }) {
   const isPicked = picked === letter;
   const isCorrect = correct === letter;
+  const isAnsweredIncorrectly = picked !== correct;
   const stateClass = isCorrect
     ? "border-green-600 bg-green-50"
     : isPicked
@@ -100,12 +103,14 @@ function ChoiceReview({
             {question.choices?.[letter] ?? ""}
           </span>
           <span className="flex gap-2 text-xs font-semibold">
-            {isPicked && (
+            {isAnsweredIncorrectly && isPicked && (
               <span className={isCorrect ? "text-green-700" : "text-red-700"}>
                 Your Answer
               </span>
             )}
-            {isCorrect && <span className="text-green-700">Correct Answer</span>}
+            {isAnsweredIncorrectly && isCorrect && (
+              <span className="text-green-700">Correct Answer</span>
+            )}
           </span>
         </div>
       </button>
@@ -153,17 +158,6 @@ export default function ReviewClient({
     setOpenChoiceByQuestion((prev) => ({ ...prev, [questionId]: letter }));
   }
 
-  const resultLabel = !item?.picked
-    ? "Unanswered"
-    : item.picked === item.correct
-      ? "Correct"
-      : "Incorrect";
-  const resultClass = !item?.picked
-    ? "text-gray-600"
-    : item.picked === item.correct
-      ? "text-green-700"
-      : "text-red-700";
-
   return (
     <>
     <main className="mx-auto max-w-6xl p-6 space-y-6">
@@ -206,9 +200,6 @@ export default function ReviewClient({
               Module {item.moduleNumber} · Question {item.number}
               {item.question ? ` · ${item.question.question_type}` : ""}
             </div>
-            <div className={resultClass}>
-              {resultLabel} · Your answer {item.picked ?? "Unanswered"} · Correct answer {item.correct ?? "-"}
-            </div>
           </div>
 
           {!item.question ? (
@@ -243,8 +234,22 @@ export default function ReviewClient({
                     />
                   ))}
                 </div>
-                <div className="border-t border-gray-100 pt-4">
-                  <ExportPdfButton summary={summary} questions={questions} />
+                <div className="flex justify-end border-t border-gray-100 pt-4">
+                  {index < total - 1 ? (
+                    <button
+                      onClick={() => goTo(index + 1)}
+                      className={REVIEW_ACTION_BUTTON_CLASS}
+                    >
+                      Next Explanation
+                    </button>
+                  ) : (
+                    <Link
+                      href="/challenge/dashboard"
+                      className={REVIEW_ACTION_BUTTON_CLASS}
+                    >
+                      Back to Dashboard
+                    </Link>
+                  )}
                 </div>
               </section>
             </div>
@@ -256,7 +261,7 @@ export default function ReviewClient({
         </section>
       )}
 
-      <footer className="flex items-center justify-between border-t border-gray-200 pt-4">
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 pt-4">
         <button
           onClick={() => goTo(index - 1)}
           disabled={index === 0}
@@ -265,21 +270,12 @@ export default function ReviewClient({
           Previous
         </button>
 
-        {index < total - 1 ? (
-          <button
-            onClick={() => goTo(index + 1)}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
-          >
-            Next Explanation
-          </button>
-        ) : (
-          <Link
-            href="/challenge/dashboard"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
-          >
-            Back to Dashboard
-          </Link>
-        )}
+        <ExportPdfButton
+          summary={summary}
+          questions={questions}
+          className="w-full sm:w-48"
+          buttonClassName={REVIEW_ACTION_BUTTON_CLASS}
+        />
       </footer>
     </main>
     {showCommentary && (
