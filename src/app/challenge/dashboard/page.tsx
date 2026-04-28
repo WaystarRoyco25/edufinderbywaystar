@@ -130,7 +130,7 @@ export default async function DashboardPage() {
       <div>
         <Link
           href="/challenge/module?new=1"
-          className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
+          className="inline-block rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
         >
           Start a New Practice Test
         </Link>
@@ -141,7 +141,7 @@ export default async function DashboardPage() {
 
       {inProgress.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-xl font-bold text-gray-800 border-b-2 border-[#3b82f6] pb-2">
             In Progress
           </h2>
           <ul className="space-y-2">
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
       )}
 
       <section className="space-y-3">
-        <h2 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">
+        <h2 className="text-xl font-bold text-gray-800 border-b-2 border-[#3b82f6] pb-2">
           Completed Practice Tests
         </h2>
         {completed.length === 0 ? (
@@ -217,7 +217,7 @@ export default async function DashboardPage() {
                     )}
                     <Link
                       href={`/challenge/review/${m1.id}`}
-                      className="mt-2 inline-block rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition"
+                      className="mt-2 inline-block rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-blue-50 hover:text-[#3b82f6] hover:border-blue-200 transition"
                     >
                       Review Explanations
                     </Link>
@@ -263,7 +263,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
     return (
       <Link
         href={`/challenge/module?parent=${m1.module.id}`}
-        className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-sm text-white font-semibold shadow hover:bg-blue-700 transition"
+        className="whitespace-nowrap rounded-lg bg-[#3b82f6] px-3 py-2 text-sm text-white font-semibold shadow hover:bg-[#3b82f6] transition"
       >
         Start Module 2
       </Link>
@@ -274,7 +274,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
     return (
       <Link
         href={`/challenge/module?id=${m1.module.id}`}
-        className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-sm text-white font-semibold shadow hover:bg-blue-700 transition"
+        className="whitespace-nowrap rounded-lg bg-[#3b82f6] px-3 py-2 text-sm text-white font-semibold shadow hover:bg-[#3b82f6] transition"
       >
         {label}
       </Link>
@@ -285,7 +285,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
     return (
       <Link
         href={`/challenge/module?id=${m2!.module.id}`}
-        className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-sm text-white font-semibold shadow hover:bg-blue-700 transition"
+        className="whitespace-nowrap rounded-lg bg-[#3b82f6] px-3 py-2 text-sm text-white font-semibold shadow hover:bg-[#3b82f6] transition"
       >
         {label}
       </Link>

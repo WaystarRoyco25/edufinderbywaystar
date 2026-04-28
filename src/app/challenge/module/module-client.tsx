@@ -329,7 +329,7 @@ export default function ModuleClient() {
             {next && (
               <Link
                 href={`/challenge/module?parent=${next.parent_module_id}`}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
+                className="rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
               >
                 Start Module 2
               </Link>
@@ -361,7 +361,7 @@ export default function ModuleClient() {
           </div>
           <Link
             href="/challenge/dashboard"
-            className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
+            className="inline-block rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
           >
             Back to Dashboard
           </Link>
@@ -432,7 +432,7 @@ export default function ModuleClient() {
                 key={letter}
                 className={`block cursor-pointer rounded-lg border p-3 transition-shadow hover:shadow ${
                   picked === letter
-                    ? "border-blue-500 bg-blue-50"
+                    ? "border-[#3b82f6] bg-blue-50"
                     : "border-gray-200 bg-white"
                 }`}
               >
@@ -463,7 +463,7 @@ export default function ModuleClient() {
         {index < current.questions.length - 1 ? (
           <button
             onClick={() => goTo(index + 1)}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
+            className="rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
           >
             Next
           </button>

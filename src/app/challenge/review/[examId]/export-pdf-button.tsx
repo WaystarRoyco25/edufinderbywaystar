@@ -242,9 +242,9 @@ function buildExportHtml(
       min-height: 0.9in;
       padding: 0.2in 0.26in;
       border-radius: 10px;
-      background: #2563eb;
+      background: #3b82f6;
       color: #ffffff;
-      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.16);
+      box-shadow: 0 12px 30px rgba(59, 130, 246, 0.16);
     }
 
     .brand-header img {
@@ -283,7 +283,7 @@ function buildExportHtml(
       margin-bottom: 0.08in;
       font-size: 9.5pt;
       text-transform: uppercase;
-      color: #2563eb;
+      color: #3b82f6;
     }
 
     .summary-grid {
@@ -328,7 +328,7 @@ function buildExportHtml(
 
     .commentary .range {
       margin-bottom: 0.1in;
-      color: #2563eb;
+      color: #3b82f6;
       font-size: 9pt;
       font-weight: 800;
       text-transform: uppercase;
@@ -570,7 +570,7 @@ export default function ExportPdfButton({
   summary,
   questions,
   className = "",
-  buttonClassName = "w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60",
+  buttonClassName = "w-full rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-[#3b82f6] disabled:cursor-not-allowed disabled:opacity-60",
 }: ExportPdfButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);

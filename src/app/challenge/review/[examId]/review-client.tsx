@@ -11,7 +11,7 @@ export type ChoiceLetter = "A" | "B" | "C" | "D";
 const CHOICE_LETTERS: ChoiceLetter[] = ["A", "B", "C", "D"];
 const MISSING_EXPLANATION = "No explanation is available yet.";
 const REVIEW_ACTION_BUTTON_CLASS =
-  "flex h-10 w-full items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-48";
+  "flex h-10 w-full items-center justify-center rounded-lg bg-[#3b82f6] px-4 text-sm font-semibold text-white shadow transition hover:bg-[#3b82f6] disabled:cursor-not-allowed disabled:opacity-60 sm:w-48";
 
 export type QuestionRow = {
   id: string;

@@ -91,7 +91,7 @@ export default function ScoreCommentaryModal({
     >
       <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg border border-gray-100 bg-white shadow-2xl">
         <header className="border-b border-gray-100 px-6 py-5 sm:px-8 sm:py-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#3b82f6]">
             {bucket.range}
           </p>
           <h2
@@ -123,7 +123,7 @@ export default function ScoreCommentaryModal({
           <button
             type="button"
             onClick={onDismiss}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-700"
+            className="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#3b82f6]"
           >
             Continue to Explanations
           </button>

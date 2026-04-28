@@ -7,7 +7,7 @@ export default function ChallengeLayout({
 }>) {
   return (
     <>
-      <header className="bg-blue-600 text-white py-4 shadow-md">
+      <header className="bg-[#3b82f6] text-white py-4 shadow-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <Link

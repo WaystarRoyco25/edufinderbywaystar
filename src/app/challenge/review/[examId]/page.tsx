@@ -134,7 +134,7 @@ function LockedReview({ m1, m2 }: { m1: ModuleRow; m2: ModuleRow | null }) {
           {nextHref && (
             <Link
               href={nextHref}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
+              className="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#3b82f6] transition"
             >
               {lockedLabel(m1, m2)}
             </Link>

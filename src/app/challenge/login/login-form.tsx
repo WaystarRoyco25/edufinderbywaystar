@@ -180,7 +180,7 @@ export default function LoginForm() {
               placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
             />
             <input
               type="password"
@@ -188,7 +188,7 @@ export default function LoginForm() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
             />
 
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -197,7 +197,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
+              className="w-full rounded-lg bg-[#3b82f6] px-3 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] disabled:opacity-60 transition"
             >
               {loading ? "..." : "Log In"}
             </button>
@@ -229,7 +229,7 @@ export default function LoginForm() {
               placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
             />
 
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -248,7 +248,7 @@ export default function LoginForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
+                className="flex-1 rounded-lg bg-[#3b82f6] px-3 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] disabled:opacity-60 transition"
               >
                 {loading ? "..." : "Send Code"}
               </button>
@@ -259,7 +259,7 @@ export default function LoginForm() {
         {step === "otp-code" && (
           <div className="space-y-4">
             <h1 className="text-2xl font-bold tracking-wide">Enter Verification Code</h1>
-            <p className="text-sm text-blue-600 font-medium">{info}</p>
+            <p className="text-sm text-[#3b82f6] font-medium">{info}</p>
 
             <input
               type="text"
@@ -273,7 +273,7 @@ export default function LoginForm() {
                 setCode(v);
                 if (v.length === 6) void verifyCode(v);
               }}
-              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500 tracking-widest text-center"
+              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6] tracking-widest text-center"
             />
 
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -316,7 +316,7 @@ export default function LoginForm() {
               placeholder="Password (minimum 8 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
             />
             <input
               type="password"
@@ -325,7 +325,7 @@ export default function LoginForm() {
               placeholder="Confirm password"
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
-              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
             />
 
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -333,7 +333,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-blue-600 px-3 py-2 text-white font-semibold shadow hover:bg-blue-700 disabled:opacity-60 transition"
+              className="w-full rounded-lg bg-[#3b82f6] px-3 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] disabled:opacity-60 transition"
             >
               {loading ? "..." : "Set Password and Log In"}
             </button>
