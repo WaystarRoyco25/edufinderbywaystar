@@ -251,8 +251,8 @@
             background: linear-gradient(160deg, #fffaf5 0%, #fff7ed 40%, #ffedd5 100%);
         }
         #panel-dsat {
-            --section-accent: #d946ef;
-            background: linear-gradient(160deg, #fdf4ff 0%, #fae8ff 40%, #f5d0fe 100%);
+            --section-accent: #e11d48;
+            background: linear-gradient(160deg, #fff8f8 0%, #fff1f2 42%, #ffe4e6 100%);
         }
         #panel-education-news {
             --section-accent: #14b8a6;
@@ -288,7 +288,7 @@
             background: radial-gradient(circle, #fdba74 0%, #fed7aa 60%, transparent 100%);
         }
         #panel-dsat::after {
-            background: radial-gradient(circle, #e879f9 0%, #f5d0fe 60%, transparent 100%);
+            background: radial-gradient(circle, #fb7185 0%, #fecdd3 60%, transparent 100%);
         }
         #panel-education-news::after {
             background: radial-gradient(circle, #5eead4 0%, #c7d2fe 60%, transparent 100%);
@@ -491,6 +491,12 @@
             .section-card {
                 padding: 1.5rem;
             }
+            #panel-education-news {
+                grid-column: 1 / -1;
+                justify-self: center;
+                width: 100%;
+                max-width: calc((100% - 1.5rem) / 2);
+            }
         }
 
         /* ── Mobile overrides ── */
@@ -529,16 +535,6 @@
     </div>
     <div class="container mx-auto px-4 text-center mt-2">
         <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
-        <div class="mt-4">
-            <button
-                onclick="openFeedbackModal()"
-                class="inline-flex items-center px-4 py-2 bg-white/15 hover:bg-white/25
-                       text-blue-100 hover:text-white text-sm font-medium rounded-lg
-                       backdrop-blur-sm transition-all duration-200 border border-white/20"
-            >
-                <i class="fa-regular fa-envelope mr-2"></i>문의 및 건의하기
-            </button>
-        </div>
     </div>
 </header>
 
@@ -574,7 +570,7 @@
 
     <div class="sections-grid">
         <!-- ════════════════════════════════════════════════════
-             SECTION 1: 국제학교
+             SECTION 1: 국제학교 / 영어 유치원
              ════════════════════════════════════════════════════ -->
         <a id="panel-international"
            href="/reviews.html?category=international"
@@ -582,8 +578,8 @@
            class="panel-bg section-card category-card">
             <div class="section-card-header">
                 <div>
-                    <h2 class="section-title">국제학교</h2>
-                    <p class="section-caption">국내 국제학교 핵심 정보 및 별점을 한눈에 확인하세요.</p>
+                    <h2 class="section-title">국제학교 / 영어 유치원</h2>
+                    <p class="section-caption">핵심 정보 및 별점을 한눈에 확인하세요.</p>
                     <span class="category-count">
                         <i class="fa-solid fa-building-columns mr-1.5 text-[#3b82f6]"></i>
                         <span id="international-count">0</span>개 등록
@@ -618,29 +614,7 @@
         </a>
 
         <!-- ════════════════════════════════════════════════════
-             SECTION 3: 영어 유치원
-             ════════════════════════════════════════════════════ -->
-        <a id="panel-eng-k"
-           href="/reviews.html?category=english-kindergarten"
-           data-auth-required="true"
-           class="panel-bg section-card category-card">
-            <div class="section-card-header">
-                <div>
-                    <h2 class="section-title">영어 유치원</h2>
-                    <p class="section-caption">우리 아이 영어 교육, 바르게 시작하세요.</p>
-                    <span class="category-count">
-                        <i class="fa-solid fa-child-reaching mr-1.5 text-orange-500"></i>
-                        <span id="english-kindergarten-count">0</span>개 등록
-                    </span>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-orange-100 text-orange-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow text-base"></i>
-                </span>
-            </div>
-        </a>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 4: 디지털 SAT 실전 모의고사
+             SECTION 3: 디지털 SAT 실전 모의고사
              ════════════════════════════════════════════════════ -->
         <section id="panel-dsat" class="panel-bg section-card">
             <div class="section-card-header is-static">
@@ -648,7 +622,7 @@
                     <h2 class="section-title">The Challenge! Series</h2>
                     <p class="section-caption">Digital SAT 공부는 이걸로 끝납니다.</p>
                 </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-fuchsia-100 text-fuchsia-600 rounded-full shadow-sm flex-shrink-0">
+                <span class="flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full shadow-sm flex-shrink-0">
                     <i class="fa-solid fa-laptop-file text-lg"></i>
                 </span>
             </div>
@@ -661,16 +635,47 @@
                     꾸준한 연습을 통해 매일 발전하는 스스로를 확인할 수 있습니다.
                 </p>
                 <a href="/challenge"
-                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-fuchsia-50
-                          text-fuchsia-600 text-sm font-semibold rounded-lg border-2 border-fuchsia-500
-                          hover:border-fuchsia-600 transition-colors">
+                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-rose-50
+                          text-rose-600 text-sm font-semibold rounded-lg border-2 border-rose-500
+                          hover:border-rose-600 transition-colors">
                     자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
                 </a>
             </div>
         </section>
 
         <!-- ════════════════════════════════════════════════════
-             SECTION 7: 이번 주 교육 뉴스
+             SECTION 4: 미국 대입 예측 모델
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-prediction" class="panel-bg section-card">
+            <div class="section-card-header is-static">
+                <div>
+                    <h2 class="section-title">The Insight! Report</h2>
+                    <p class="section-caption">빅데이터와 AI로 입시를 혁신합니다.</p>
+                </div>
+                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-chart-column text-lg"></i>
+                </span>
+            </div>
+            <div class="compact-copy space-y-3">
+                <p>
+                    지난 10년간 쌓인 <strong>5만 건 이상의 미국 대입 데이터</strong>를 바탕으로
+                    나의 성적, 활동, 배경을 객관적으로 분석합니다.
+                </p>
+                <p>
+                    EduFinder 10년 노하우를 담은 AI 챗봇이 언제 어디서나
+                    리포트 속 질문에 자세히 답변합니다.
+                </p>
+                <a href="/prediction"
+                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-amber-50
+                          text-amber-600 text-sm font-semibold rounded-lg border-2 border-amber-500
+                          hover:border-amber-600 transition-colors">
+                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 5: 이번 주 교육 뉴스
              ════════════════════════════════════════════════════ -->
         <section id="panel-education-news" class="panel-bg section-card">
             <div class="section-card-header is-static">
@@ -727,39 +732,18 @@
                 </div>
             </div>
         </section>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 8: 미국 대입 예측 모델
-             ════════════════════════════════════════════════════ -->
-        <section id="panel-prediction" class="panel-bg section-card">
-            <div class="section-card-header is-static">
-                <div>
-                    <h2 class="section-title">The Insight! Report</h2>
-                    <p class="section-caption">빅데이터와 AI로 입시를 혁신합니다.</p>
-                </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-chart-column text-lg"></i>
-                </span>
-            </div>
-            <div class="compact-copy space-y-3">
-                <p>
-                    지난 10년간 쌓인 <strong>5만 건 이상의 미국 대입 데이터</strong>를 바탕으로
-                    나의 성적, 활동, 배경을 객관적으로 분석합니다.
-                </p>
-                <p>
-                    EduFinder 10년 노하우를 담은 AI 챗봇이 언제 어디서나
-                    리포트 속 질문에 자세히 답변합니다.
-                </p>
-                <a href="/prediction"
-                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-amber-50
-                          text-amber-600 text-sm font-semibold rounded-lg border-2 border-amber-500
-                          hover:border-amber-600 transition-colors">
-                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                </a>
-            </div>
-        </section>
     </div>
 
+    <div class="mt-10 flex justify-center">
+        <button
+            onclick="openFeedbackModal()"
+            class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-blue-50
+                   text-[#3b82f6] text-sm font-semibold rounded-lg border border-blue-200
+                   shadow-sm transition-colors"
+        >
+            <i class="fa-regular fa-envelope mr-2"></i>문의 및 건의하기
+        </button>
+    </div>
 
 </main>
 
@@ -1887,9 +1871,8 @@ async function renderAll() {
 
 function updateCategoryCounts() {
     const counts = {
-        'international-count': internationalSchools.length,
-        'hagwon-count': hagwons.length,
-        'english-kindergarten-count': englishKindergartens.length
+        'international-count': internationalSchools.length + englishKindergartens.length,
+        'hagwon-count': hagwons.length
     };
     Object.entries(counts).forEach(function([id, count]) {
         const el = document.getElementById(id);
@@ -1947,8 +1930,8 @@ function openSection(containerId) {
 // ── Search ────────────────────────────────────────────────
 const SEARCH_INDEX = [
     { list: internationalSchools, category: 'international' },
+    { list: englishKindergartens, category: 'international' },
     { list: hagwons, category: 'hagwon' },
-    { list: englishKindergartens, category: 'english-kindergarten' }
 ];
 
 function normalizeForSearch(s) {

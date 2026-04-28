@@ -1122,11 +1122,20 @@ const internationalSchools = Array.from(new Set([
     ...outsideSeoul
 ]));
 
+const internationalAndEnglishKindergartens = [
+    ...internationalSchools,
+    ...englishKindergartens
+];
+
 const CATEGORY_CONFIG = {
     international: {
-        title: '국제학교',
-        caption: '국내 국제학교 핵심 정보 및 별점을 한눈에 확인하세요.',
-        list: internationalSchools,
+        title: '국제학교 / 영어 유치원',
+        caption: '핵심 정보 및 별점을 한눈에 확인하세요.',
+        list: internationalAndEnglishKindergartens,
+        listSections: [
+            { title: '국제학교', list: internationalSchools },
+            { title: '영어 유치원', list: englishKindergartens }
+        ],
         panelClass: 'category-international',
         guide: 'school',
         icon: 'fa-solid fa-building-columns',
@@ -1144,17 +1153,6 @@ const CATEGORY_CONFIG = {
         iconColor: 'text-purple-500',
         guideClass: 'bg-purple-50 hover:bg-purple-100 text-purple-600 border-purple-200',
         guideIconColor: 'text-purple-400'
-    },
-    'english-kindergarten': {
-        title: '영어 유치원',
-        caption: '우리 아이 영어 교육, 바르게 시작하세요.',
-        list: englishKindergartens,
-        panelClass: 'category-english-kindergarten',
-        guide: null,
-        icon: 'fa-solid fa-child-reaching',
-        iconColor: 'text-orange-500',
-        guideClass: '',
-        guideIconColor: ''
     }
 };
 
@@ -1237,6 +1235,7 @@ function getTopReason(obj) {
 function getRequestedCategoryKey() {
     const params = new URLSearchParams(window.location.search);
     const requested = params.get('category');
+    if (requested === 'english-kindergarten') return 'international';
     return CATEGORY_CONFIG[requested] ? requested : 'international';
 }
 
@@ -1431,16 +1430,27 @@ async function fetchMyReviews() {
     if (data) myReviewedSchools = data.map(row => row.school_name);
 }
 
-function renderSchools(schoolList, containerId) {
+function renderSchools(schoolList, containerId, listSections = null) {
     const container = document.getElementById(containerId);
     container.replaceChildren();
-    const sorted = [...schoolList].sort((a, b) => {
-        const votesA = ratingsData[a] ? safeNumber(ratingsData[a].votes) : 0;
-        const votesB = ratingsData[b] ? safeNumber(ratingsData[b].votes) : 0;
-        if (votesB !== votesA) return votesB - votesA;
-        return a.localeCompare(b);
-    });
-    sorted.forEach(school => {
+    const sections = Array.isArray(listSections) && listSections.length
+        ? listSections
+        : [{ title: '', list: schoolList }];
+
+    sections.forEach((section, sectionIndex) => {
+        const sorted = [...section.list].sort((a, b) => {
+            const votesA = ratingsData[a] ? safeNumber(ratingsData[a].votes) : 0;
+            const votesB = ratingsData[b] ? safeNumber(ratingsData[b].votes) : 0;
+            if (votesB !== votesA) return votesB - votesA;
+            return a.localeCompare(b);
+        });
+        if (section.title) {
+            const heading = document.createElement('div');
+            heading.className = (sectionIndex > 0 ? 'pt-5 ' : '') + 'px-1 text-sm font-extrabold text-gray-500';
+            heading.textContent = section.title;
+            container.appendChild(heading);
+        }
+        sorted.forEach(school => {
         let avg = 0, votes = 0, topStrength = null, topWeakness = null;
         if (ratingsData[school]) {
             votes = safeNumber(ratingsData[school].votes);
@@ -1579,6 +1589,7 @@ function renderSchools(schoolList, containerId) {
 
         container.appendChild(card);
     });
+    });
 }
 
 function hoverStars(el, rating) {
@@ -1650,7 +1661,8 @@ async function renderAll() {
     updateAuthUI();
     await fetchRatingsFromDB();
     if (currentUser) await fetchMyReviews();
-    renderSchools(getCurrentCategory().list, 'review-list-container');
+    const category = getCurrentCategory();
+    renderSchools(category.list, 'review-list-container', category.listSections);
     focusRequestedInstitution();
 }
 
@@ -1704,8 +1716,8 @@ function openSection(containerId) {
 // ── Search ────────────────────────────────────────────────
 const SEARCH_INDEX = [
     { list: internationalSchools, category: 'international' },
+    { list: englishKindergartens, category: 'international' },
     { list: hagwons, category: 'hagwon' },
-    { list: englishKindergartens, category: 'english-kindergarten' }
 ];
 
 function normalizeForSearch(s) {
