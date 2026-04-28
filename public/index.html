@@ -582,7 +582,7 @@
                     <p class="section-caption">핵심 정보 및 별점을 한눈에 확인하세요.</p>
                     <span class="category-count">
                         <i class="fa-solid fa-building-columns mr-1.5 text-[#3b82f6]"></i>
-                        <span id="international-count">0</span>개 등록
+                        <span id="international-count">0</span>개 리뷰
                     </span>
                 </div>
                 <span class="flex items-center justify-center w-10 h-10 bg-blue-100 text-[#3b82f6] rounded-full shadow-sm flex-shrink-0">
@@ -604,7 +604,7 @@
                     <p class="section-caption">진짜 학생과 학부모가 남긴 유학원 리뷰를 읽어보세요.</p>
                     <span class="category-count">
                         <i class="fa-solid fa-graduation-cap mr-1.5 text-purple-500"></i>
-                        <span id="hagwon-count">0</span>개 등록
+                        <span id="hagwon-count">0</span>개 리뷰
                     </span>
                 </div>
                 <span class="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full shadow-sm flex-shrink-0">
@@ -1304,6 +1304,11 @@ const internationalSchools = Array.from(new Set([
     ...outsideSeoul
 ]));
 
+const internationalAndEnglishKindergartens = [
+    ...internationalSchools,
+    ...englishKindergartens
+];
+
 const schoolContactInfo = {
     "Daegu International School": { address: "대구광역시 동구 팔공로50길 22", phone: "053-980-2100" },
     "Chadwick International School Songdo": { address: "인천광역시 연수구 아트센터대로97번길 45", phone: "032-250-5000" },
@@ -1864,15 +1869,21 @@ async function submitFinalRating() {
 
 async function renderAll() {
     updateAuthUI();
-    updateCategoryCounts();
     await fetchRatingsFromDB();
+    updateCategoryCounts();
     if (currentUser) await fetchMyReviews();
+}
+
+function getReviewCountForSchools(schoolList) {
+    return Array.from(new Set(schoolList)).reduce(function(total, school) {
+        return total + safeNumber(ratingsData[school]?.votes);
+    }, 0);
 }
 
 function updateCategoryCounts() {
     const counts = {
-        'international-count': internationalSchools.length + englishKindergartens.length,
-        'hagwon-count': hagwons.length
+        'international-count': getReviewCountForSchools(internationalAndEnglishKindergartens),
+        'hagwon-count': getReviewCountForSchools(hagwons)
     };
     Object.entries(counts).forEach(function([id, count]) {
         const el = document.getElementById(id);
@@ -1881,6 +1892,11 @@ function updateCategoryCounts() {
 }
 
 function openFeedbackModal() {
+    if (!currentUser || !currentUserId || !currentUserHasPassword) {
+        showToast('문의 및 건의는 로그인 후 남길 수 있습니다.', 'info');
+        openAuthModal({ reset: true });
+        return;
+    }
     document.getElementById('feedback-form-step').classList.remove('hidden');
     document.getElementById('feedback-done-step').classList.add('hidden');
     document.getElementById('feedback-text').value = '';
@@ -1888,9 +1904,23 @@ function openFeedbackModal() {
 }
 function closeFeedbackModal() { document.getElementById('feedback-modal').classList.add('hidden'); }
 async function submitFeedback() {
+    if (!currentUser || !currentUserId || !currentUserHasPassword) {
+        closeFeedbackModal();
+        showToast('문의 및 건의는 로그인 후 남길 수 있습니다.', 'info');
+        openAuthModal({ reset: true });
+        return;
+    }
     const message = document.getElementById('feedback-text').value.trim();
     if (!message) { showToast('내용을 입력해주세요.', 'warning'); return; }
-    try { await supabaseClient.from('feedback').insert([{ message: message }]); } catch (ex) {}
+    const { error } = await supabaseClient.from('feedback').insert([{
+        message: message,
+        user_id: currentUserId,
+        user_email: currentUser
+    }]);
+    if (error) {
+        showToast('문의 접수 중 오류가 발생했습니다: ' + error.message, 'error');
+        return;
+    }
     document.getElementById('feedback-form-step').classList.add('hidden');
     document.getElementById('feedback-done-step').classList.remove('hidden');
 }

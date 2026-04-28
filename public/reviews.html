@@ -1667,6 +1667,11 @@ async function renderAll() {
 }
 
 function openFeedbackModal() {
+    if (!currentUser || !currentUserId) {
+        showToast('문의 및 건의는 로그인 후 남길 수 있습니다.', 'info');
+        openAuthModal();
+        return;
+    }
     document.getElementById('feedback-form-step').classList.remove('hidden');
     document.getElementById('feedback-done-step').classList.add('hidden');
     document.getElementById('feedback-text').value = '';
@@ -1674,9 +1679,23 @@ function openFeedbackModal() {
 }
 function closeFeedbackModal() { document.getElementById('feedback-modal').classList.add('hidden'); }
 async function submitFeedback() {
+    if (!currentUser || !currentUserId) {
+        closeFeedbackModal();
+        showToast('문의 및 건의는 로그인 후 남길 수 있습니다.', 'info');
+        openAuthModal();
+        return;
+    }
     const message = document.getElementById('feedback-text').value.trim();
     if (!message) { showToast('내용을 입력해주세요.', 'warning'); return; }
-    try { await supabaseClient.from('feedback').insert([{ message: message }]); } catch (ex) {}
+    const { error } = await supabaseClient.from('feedback').insert([{
+        message: message,
+        user_id: currentUserId,
+        user_email: currentUser
+    }]);
+    if (error) {
+        showToast('문의 접수 중 오류가 발생했습니다: ' + error.message, 'error');
+        return;
+    }
     document.getElementById('feedback-form-step').classList.add('hidden');
     document.getElementById('feedback-done-step').classList.remove('hidden');
 }
