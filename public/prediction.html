@@ -239,6 +239,79 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ── Auth modal (sign-in / sign-up popup) ── */
+        body.auth-gate-active { overflow: hidden; }
+        body.auth-gate-active > :not(#auth-modal):not(#toast-container) {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+            transition: filter .2s ease;
+        }
+        #auth-modal {
+            background: rgba(17, 24, 39, .35);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+        .auth-input {
+            width: 100%;
+            border-radius: .6rem;
+            border: 1px solid #e5e7eb;
+            padding: .85rem 1rem;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #111827;
+            background: #fff;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217,119,6,.18);
+        }
+        .auth-input.code-input {
+            letter-spacing: .5em;
+            text-align: center;
+            font-size: 1.15rem;
+        }
+        .auth-primary-btn {
+            width: 100%;
+            border-radius: .7rem;
+            background: #d97706;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: .9rem 1rem;
+            box-shadow: 0 4px 14px rgba(217,119,6,.25);
+            transition: background .15s ease, transform .05s ease;
+        }
+        .auth-primary-btn:hover { background: #b45309; }
+        .auth-primary-btn:active { transform: translateY(1px); }
+        .auth-primary-btn:disabled { opacity: .6; cursor: not-allowed; }
+        .auth-primary-btn.is-verify { background: #16a34a; box-shadow: 0 4px 14px rgba(22,163,74,.25); }
+        .auth-primary-btn.is-verify:hover { background: #15803d; }
+        .auth-secondary-btn {
+            flex: 1;
+            border-radius: .7rem;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            font-weight: 600;
+            padding: .85rem 1rem;
+            font-size: .95rem;
+            transition: background .15s ease;
+        }
+        .auth-secondary-btn:hover { background: #f9fafb; }
+        .auth-helper-link {
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: .9rem;
+            color: #d97706;
+            font-weight: 600;
+            padding: .6rem 0 .1rem;
+        }
+        .auth-helper-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -931,6 +1004,93 @@
 
 
 <!-- ════════════════════════════════════════════════════════════
+     AUTH MODAL: sign-in / sign-up popup with blurred backdrop
+     ════════════════════════════════════════════════════════════ -->
+<div id="auth-modal"
+     class="fixed inset-0 z-50 hidden flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto"
+     role="dialog"
+     aria-modal="true"
+     aria-hidden="true"
+     aria-labelledby="auth-modal-title">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- Header with horizontal EduFinder logo on amber background -->
+        <div class="relative bg-[#d97706] px-6 pt-7 pb-6 text-center">
+            <button type="button" onclick="closeAuthModal()"
+                    class="absolute top-3 right-3 text-white/80 hover:text-white transition-colors p-1.5"
+                    aria-label="Close">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+            <img src="/EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-48">
+        </div>
+
+        <!-- Body / forms -->
+        <div class="px-6 pt-6 pb-7 space-y-4">
+            <p id="auth-message" class="hidden text-sm"></p>
+
+            <!-- STEP 1: email + password login -->
+            <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 id="auth-modal-title" class="text-2xl font-bold text-gray-900">Log in</h2>
+                    <p class="text-sm text-gray-500 mt-1">Use your EduFinder account to continue.</p>
+                </div>
+                <input type="email" id="auth-login-email" required
+                       placeholder="Email address" class="auth-input">
+                <input type="password" id="auth-login-password" required
+                       placeholder="Password" class="auth-input">
+                <button type="submit" class="auth-primary-btn">Log in</button>
+                <button type="button" onclick="switchToOtpEmail()" class="auth-helper-link">
+                    Click here to reset your password or create a new account.
+                </button>
+            </form>
+
+            <!-- STEP 2: enter email for OTP -->
+            <form id="auth-step-otp-email" onsubmit="sendAuthCode(); return false;" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 class="text-2xl font-bold text-gray-900">Email Verification</h2>
+                    <p class="text-sm text-gray-500 mt-1">We will send a 6-digit code to your email.</p>
+                </div>
+                <input type="email" id="auth-otp-email-input" required
+                       placeholder="Email address" class="auth-input">
+                <div class="flex gap-2.5">
+                    <button type="button" onclick="switchToPassword()" class="auth-secondary-btn">Cancel</button>
+                    <button type="submit" class="auth-primary-btn" style="flex:1;width:auto;">Send Code</button>
+                </div>
+            </form>
+
+            <!-- STEP 3: enter 6-digit OTP -->
+            <div id="auth-step-otp-code" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 class="text-2xl font-bold text-gray-900">Enter Code</h2>
+                    <p id="sent-email-label" class="text-sm text-[#d97706] mt-1 font-medium"></p>
+                </div>
+                <input type="text" id="auth-code-input" inputmode="numeric" maxlength="6"
+                       placeholder="6-digit code" class="auth-input code-input">
+                <div class="flex gap-2.5">
+                    <button type="button" onclick="switchToOtpEmail()" class="auth-secondary-btn">Back</button>
+                    <button type="button" onclick="verifyAuthCode()"
+                            class="auth-primary-btn is-verify" style="flex:1;width:auto;">Verify</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: set password (legacy / first-time users) -->
+            <form id="auth-step-set-password" onsubmit="setNewPassword(); return false;" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 class="text-2xl font-bold text-gray-900">Set Password</h2>
+                    <p class="text-sm text-gray-500 mt-1">Choose the password you'll use from now on. Min 8 characters.</p>
+                </div>
+                <input type="password" id="auth-new-password" required minlength="8"
+                       placeholder="New password (min 8)" class="auth-input">
+                <input type="password" id="auth-new-password-confirm" required minlength="8"
+                       placeholder="Confirm password" class="auth-input">
+                <button type="submit" class="auth-primary-btn">Set Password and Log In</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════
      FOOTER (matches main site)
      ════════════════════════════════════════════════════════════ -->
 <footer class="bg-gray-800 text-white text-center py-6">
@@ -1045,6 +1205,10 @@ function setReportSaveStatus(message) {
 }
 
 function redirectToReportLogin() {
+    if (typeof window.openAuthModal === 'function') {
+        window.openAuthModal({ resumeReport: true, reset: true });
+        return;
+    }
     window.location.href = '/challenge/login?next=' + encodeURIComponent(REPORT_LOGIN_NEXT);
 }
 
@@ -1223,6 +1387,215 @@ async function submitReportForm(event) {
     skipNextCloseSave = true;
     closeReportModal();
 }
+</script>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     AUTH MODAL JS (Supabase popup auth flow)
+     ════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { createBrowserClient } from 'https://esm.sh/@supabase/ssr@0.10.2';
+
+const supabaseUrl = 'https://hpcrvibjhfmqwivwqcoo.supabase.co';
+const supabaseAnonKey = 'sb_publishable_9IEmL6Tsc8jA_42d6SB6nA_Zu0L_cbL';
+const supabaseClient = createBrowserClient(supabaseUrl, supabaseAnonKey);
+
+let currentUser = null;
+let currentUserHasPassword = false;
+let pendingEmail = '';
+let resumeReportAfterAuth = false;
+
+const AUTH_STEPS = ['password', 'otp-email', 'otp-code', 'set-password'];
+
+function showAuthStep(name) {
+    clearAuthMessage();
+    AUTH_STEPS.forEach(s => {
+        const el = document.getElementById('auth-step-' + s);
+        if (el) el.classList.toggle('hidden', s !== name);
+    });
+    setTimeout(() => {
+        const active = document.getElementById('auth-step-' + name);
+        const input = active ? active.querySelector('input') : null;
+        if (input) input.focus();
+    }, 0);
+}
+
+function clearAuthMessage() {
+    const el = document.getElementById('auth-message');
+    if (!el) return;
+    el.textContent = '';
+    el.className = 'hidden text-sm';
+}
+
+function showAuthMessage(message, type = 'error') {
+    const el = document.getElementById('auth-message');
+    if (!el) return;
+    const colorClass = type === 'success'
+        ? 'text-green-700'
+        : type === 'info'
+            ? 'text-[#d97706] font-medium'
+            : 'text-red-600';
+    el.textContent = String(message);
+    el.className = 'text-sm ' + colorClass;
+}
+
+function resetAuthFields() {
+    ['auth-login-email','auth-login-password','auth-otp-email-input','auth-code-input','auth-new-password','auth-new-password-confirm']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+function setAuthGateActive(active) {
+    document.body.classList.toggle('auth-gate-active', active);
+    const modal = document.getElementById('auth-modal');
+    modal.classList.toggle('hidden', !active);
+    modal.setAttribute('aria-hidden', active ? 'false' : 'true');
+    document.querySelectorAll('body > :not(#auth-modal):not(script)').forEach(el => {
+        if (active) el.setAttribute('inert', '');
+        else el.removeAttribute('inert');
+    });
+}
+
+function openAuthModal(options = {}) {
+    if (options.resumeReport) resumeReportAfterAuth = true;
+    if (options.reset !== false) {
+        resetAuthFields();
+        if (currentUser && !currentUserHasPassword) {
+            pendingEmail = currentUser;
+            const a = document.getElementById('auth-login-email'); if (a) a.value = currentUser;
+            const b = document.getElementById('auth-otp-email-input'); if (b) b.value = currentUser;
+            showAuthStep('set-password');
+        } else {
+            showAuthStep('password');
+        }
+    }
+    setAuthGateActive(true);
+}
+
+function closeAuthModal() {
+    resumeReportAfterAuth = false;
+    setAuthGateActive(false);
+}
+
+function completeAuthFlow() {
+    const shouldResume = resumeReportAfterAuth;
+    resumeReportAfterAuth = false;
+    setAuthGateActive(false);
+    if (shouldResume && typeof window.handleReportStart === 'function') {
+        setTimeout(() => window.handleReportStart(), 50);
+    }
+}
+
+function switchToPassword() { showAuthStep('password'); }
+function switchToOtpEmail() {
+    const existing =
+        (document.getElementById('auth-login-email')?.value) ||
+        (document.getElementById('auth-otp-email-input')?.value) || '';
+    const t = document.getElementById('auth-otp-email-input'); if (t) t.value = existing;
+    showAuthStep('otp-email');
+}
+
+async function signInWithPassword() {
+    const email = document.getElementById('auth-login-email').value.trim();
+    const password = document.getElementById('auth-login-password').value;
+    clearAuthMessage();
+    if (!email || !email.includes('@')) { showAuthMessage('Please enter a valid email address.'); return; }
+    if (!password) { showAuthMessage('Please enter your password.'); return; }
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) { showAuthMessage('The email or password is incorrect.'); return; }
+    if (!data.user?.user_metadata?.password_set) {
+        await supabaseClient.auth.updateUser({ data: { password_set: true } });
+    }
+    currentUser = data.user?.email || email;
+    currentUserHasPassword = true;
+    completeAuthFlow();
+}
+
+async function sendAuthCode() {
+    const email = document.getElementById('auth-otp-email-input').value.trim();
+    clearAuthMessage();
+    if (!email || !email.includes('@')) { showAuthMessage('Please enter a valid email address.'); return; }
+    pendingEmail = email;
+    const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+    if (error) { showAuthMessage('An error occurred: ' + error.message); return; }
+    document.getElementById('sent-email-label').textContent = 'A 6-digit code was sent to ' + email + '.';
+    document.getElementById('auth-code-input').value = '';
+    showAuthStep('otp-code');
+}
+
+let _verifying = false;
+async function verifyAuthCode() {
+    if (_verifying) return;
+    const code = document.getElementById('auth-code-input').value;
+    if (code.length < 6) return;
+    _verifying = true;
+    clearAuthMessage();
+    const { data, error } = await supabaseClient.auth.verifyOtp({ email: pendingEmail, token: code, type: 'email' });
+    _verifying = false;
+    if (error) {
+        document.getElementById('auth-code-input').value = '';
+        showAuthMessage('The verification code is incorrect or has expired.');
+        return;
+    }
+    if (data.user?.user_metadata?.password_set) {
+        currentUser = data.user?.email || pendingEmail;
+        currentUserHasPassword = true;
+        completeAuthFlow();
+        return;
+    }
+    document.getElementById('auth-new-password').value = '';
+    document.getElementById('auth-new-password-confirm').value = '';
+    showAuthStep('set-password');
+    showAuthMessage('Verification complete. Set a password to continue.', 'info');
+}
+
+async function setNewPassword() {
+    const password = document.getElementById('auth-new-password').value;
+    const confirm = document.getElementById('auth-new-password-confirm').value;
+    clearAuthMessage();
+    if (password.length < 8) { showAuthMessage('Your password must be at least 8 characters long.'); return; }
+    if (password !== confirm) { showAuthMessage('The passwords do not match.'); return; }
+    const { error } = await supabaseClient.auth.updateUser({ password, data: { password_set: true } });
+    if (error) { showAuthMessage('Could not set your password: ' + error.message); return; }
+    currentUserHasPassword = true;
+    completeAuthFlow();
+}
+
+document.getElementById('auth-code-input').addEventListener('input', function () {
+    const v = this.value.replace(/\D/g, '');
+    this.value = v;
+    if (v.length === 6) verifyAuthCode();
+});
+
+document.getElementById('auth-modal').addEventListener('click', e => {
+    if (e.target.id === 'auth-modal') closeAuthModal();
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.body.classList.contains('auth-gate-active')) closeAuthModal();
+});
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session) {
+        currentUser = session.user.email || null;
+        currentUserHasPassword = Boolean(session.user.user_metadata?.password_set);
+        if (currentUserHasPassword && resumeReportAfterAuth) {
+            completeAuthFlow();
+        } else if (!currentUserHasPassword && document.body.classList.contains('auth-gate-active')) {
+            pendingEmail = session.user.email || pendingEmail;
+            const a = document.getElementById('auth-login-email'); if (a) a.value = pendingEmail;
+            const b = document.getElementById('auth-otp-email-input'); if (b) b.value = pendingEmail;
+            showAuthStep('set-password');
+        }
+    } else {
+        currentUser = null;
+        currentUserHasPassword = false;
+    }
+});
+
+Object.assign(window, {
+    closeAuthModal, openAuthModal,
+    switchToPassword, switchToOtpEmail, signInWithPassword,
+    sendAuthCode, verifyAuthCode, setNewPassword
+});
 </script>
 
 </body>

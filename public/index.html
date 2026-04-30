@@ -28,10 +28,69 @@
             transition: filter .2s ease;
         }
         #auth-modal {
-            background: rgba(17, 24, 39, .28);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
+            background: rgba(17, 24, 39, .35);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
         }
+        .auth-input {
+            width: 100%;
+            border-radius: .6rem;
+            border: 1px solid #e5e7eb;
+            padding: .85rem 1rem;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #111827;
+            background: #fff;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+        }
+        .auth-input.code-input {
+            letter-spacing: .5em;
+            text-align: center;
+            font-size: 1.15rem;
+        }
+        .auth-primary-btn {
+            width: 100%;
+            border-radius: .7rem;
+            background: #3b82f6;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: .9rem 1rem;
+            box-shadow: 0 4px 14px rgba(59,130,246,.25);
+            transition: background .15s ease, transform .05s ease;
+        }
+        .auth-primary-btn:hover { background: #2563eb; }
+        .auth-primary-btn:active { transform: translateY(1px); }
+        .auth-primary-btn:disabled { opacity: .6; cursor: not-allowed; }
+        .auth-primary-btn.is-verify { background: #16a34a; box-shadow: 0 4px 14px rgba(22,163,74,.25); }
+        .auth-primary-btn.is-verify:hover { background: #15803d; }
+        .auth-secondary-btn {
+            flex: 1;
+            border-radius: .7rem;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            font-weight: 600;
+            padding: .85rem 1rem;
+            font-size: .95rem;
+            transition: background .15s ease;
+        }
+        .auth-secondary-btn:hover { background: #f9fafb; }
+        .auth-helper-link {
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: .9rem;
+            color: #3b82f6;
+            font-weight: 600;
+            padding: .6rem 0 .1rem;
+        }
+        .auth-helper-link:hover { text-decoration: underline; }
 
         /* ── Star rating ── */
         .star {
@@ -760,154 +819,85 @@
      MODAL: Auth (로그인 / 회원가입)
      ════════════════════════════════════════════════════════════ -->
 <div id="auth-modal"
-     class="fixed inset-0 z-50 hidden flex items-center justify-center px-6 py-8 overflow-y-auto"
+     class="fixed inset-0 z-50 hidden flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto"
      role="dialog"
      aria-modal="true"
      aria-hidden="true"
      aria-labelledby="auth-modal-title">
-    <div class="w-full max-w-sm bg-white rounded-lg shadow-md p-5 space-y-3 border border-gray-100">
-        <div class="flex justify-end -mb-4">
-            <button
-                type="button"
-                onclick="closeAuthModal()"
-                class="text-gray-400 hover:text-gray-600 transition-colors p-1"
-                aria-label="Close login"
-            >
-                <i class="fa-solid fa-xmark text-lg"></i>
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- Header with horizontal EduFinder logo on blue background -->
+        <div class="relative bg-[#3b82f6] px-6 pt-7 pb-6 text-center">
+            <button type="button" onclick="closeAuthModal()"
+                    class="absolute top-3 right-3 text-white/80 hover:text-white transition-colors p-1.5"
+                    aria-label="Close login">
+                <i class="fa-solid fa-xmark text-base"></i>
             </button>
-        </div>
-        <p id="auth-message" class="hidden text-sm"></p>
-
-        <!-- ── STEP 1: 이메일 + 비밀번호 로그인 ───────────────── -->
-        <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-3">
-            <h1 id="auth-modal-title" class="text-xl font-bold tracking-wide">Log In</h1>
-            <p class="text-sm text-gray-500">Log in with your EduFinder account.</p>
-
-            <input
-                type="email"
-                id="auth-login-email"
-                required
-                placeholder="Email address"
-                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
-            >
-            <input
-                type="password"
-                id="auth-login-password"
-                required
-                placeholder="Password"
-                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
-            >
-
-            <button
-                type="submit"
-                class="w-full rounded-lg bg-[#3b82f6] px-3 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] disabled:opacity-60 transition"
-            >
-                Log In
-            </button>
-
-            <button
-                type="button"
-                onclick="switchToOtpEmail()"
-                class="w-full text-sm text-gray-600 hover:text-gray-800"
-            >
-                New here? Forgot your password? Sign in with a 6-digit email code.
-            </button>
-        </form>
-
-        <!-- ── STEP 2: 이메일 입력 (OTP 발송) ───────────────── -->
-        <form id="auth-step-otp-email" onsubmit="sendAuthCode(); return false;" class="hidden space-y-3">
-            <h1 class="text-xl font-bold tracking-wide">Email Verification</h1>
-            <p class="text-sm text-gray-500">We will send a 6-digit verification code to your email.</p>
-
-            <input
-                type="email"
-                id="auth-otp-email-input"
-                required
-                placeholder="Email address"
-                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
-            >
-
-            <div class="flex gap-2">
-                <button
-                    type="button"
-                    onclick="switchToPassword()"
-                    class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="submit"
-                    class="flex-1 rounded-lg bg-[#3b82f6] px-3 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] disabled:opacity-60 transition"
-                >
-                    Send Code
-                </button>
-            </div>
-        </form>
-
-        <!-- ── STEP 3: 6자리 코드 입력 ───────────────── -->
-        <div id="auth-step-otp-code" class="hidden space-y-3">
-            <h1 class="text-xl font-bold tracking-wide">Enter Verification Code</h1>
-            <p class="text-sm text-[#3b82f6] font-medium" id="sent-email-label"></p>
-
-            <input
-                type="text"
-                id="auth-code-input"
-                inputmode="numeric"
-                maxlength="6"
-                placeholder="Enter the 6-digit code"
-                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6] tracking-widest text-center"
-            >
-
-            <div class="flex gap-2">
-                <button
-                    type="button"
-                    onclick="switchToOtpEmail()"
-                    class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
-                >
-                    Back
-                </button>
-                <button
-                    type="button"
-                    onclick="verifyAuthCode()"
-                    class="flex-1 rounded-lg bg-green-600 px-3 py-2 text-white font-semibold shadow hover:bg-green-700 disabled:opacity-60 transition"
-                >
-                    Verify
-                </button>
-            </div>
+            <img src="/EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-48">
         </div>
 
-        <!-- ── STEP 4: 비밀번호 설정 ───────────────── -->
-        <form id="auth-step-set-password" onsubmit="setNewPassword(); return false;" class="hidden space-y-3">
-            <h1 class="text-xl font-bold tracking-wide">Set Password</h1>
-            <p class="text-sm text-gray-500">
-                Set the password you will use for future logins. Minimum 8 characters.
-            </p>
+        <!-- Body / forms -->
+        <div class="px-6 pt-6 pb-7 space-y-4">
+            <p id="auth-message" class="hidden text-sm"></p>
 
-            <input
-                type="password"
-                id="auth-new-password"
-                required
-                minlength="8"
-                placeholder="Password (minimum 8 characters)"
-                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
-            >
-            <input
-                type="password"
-                id="auth-new-password-confirm"
-                required
-                minlength="8"
-                placeholder="Confirm password"
-                class="w-full rounded-md border px-4 py-2 focus:outline-none focus:border-[#3b82f6]"
-            >
+            <!-- STEP 1: email + password login -->
+            <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h1 id="auth-modal-title" class="text-2xl font-bold text-gray-900">Log in</h1>
+                    <p class="text-sm text-gray-500 mt-1">Use your EduFinder account to continue.</p>
+                </div>
+                <input type="email" id="auth-login-email" required
+                       placeholder="Email address" class="auth-input">
+                <input type="password" id="auth-login-password" required
+                       placeholder="Password" class="auth-input">
+                <button type="submit" class="auth-primary-btn">Log in</button>
+                <button type="button" onclick="switchToOtpEmail()" class="auth-helper-link">
+                    Click here to reset your password or create a new account.
+                </button>
+            </form>
 
-            <button
-                type="submit"
-                class="w-full rounded-lg bg-[#3b82f6] px-3 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] disabled:opacity-60 transition"
-            >
-                Set Password and Log In
-            </button>
-        </form>
+            <!-- STEP 2: enter email for OTP -->
+            <form id="auth-step-otp-email" onsubmit="sendAuthCode(); return false;" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h1 class="text-2xl font-bold text-gray-900">Email Verification</h1>
+                    <p class="text-sm text-gray-500 mt-1">We will send a 6-digit code to your email.</p>
+                </div>
+                <input type="email" id="auth-otp-email-input" required
+                       placeholder="Email address" class="auth-input">
+                <div class="flex gap-2.5">
+                    <button type="button" onclick="switchToPassword()" class="auth-secondary-btn">Cancel</button>
+                    <button type="submit" class="auth-primary-btn" style="flex:1;width:auto;">Send Code</button>
+                </div>
+            </form>
 
+            <!-- STEP 3: enter 6-digit OTP -->
+            <div id="auth-step-otp-code" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h1 class="text-2xl font-bold text-gray-900">Enter Code</h1>
+                    <p id="sent-email-label" class="text-sm text-[#3b82f6] mt-1 font-medium"></p>
+                </div>
+                <input type="text" id="auth-code-input" inputmode="numeric" maxlength="6"
+                       placeholder="6-digit code" class="auth-input code-input">
+                <div class="flex gap-2.5">
+                    <button type="button" onclick="switchToOtpEmail()" class="auth-secondary-btn">Back</button>
+                    <button type="button" onclick="verifyAuthCode()"
+                            class="auth-primary-btn is-verify" style="flex:1;width:auto;">Verify</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: set password (legacy / first-time users) -->
+            <form id="auth-step-set-password" onsubmit="setNewPassword(); return false;" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h1 class="text-2xl font-bold text-gray-900">Set Password</h1>
+                    <p class="text-sm text-gray-500 mt-1">Choose the password you'll use from now on. Min 8 characters.</p>
+                </div>
+                <input type="password" id="auth-new-password" required minlength="8"
+                       placeholder="New password (min 8)" class="auth-input">
+                <input type="password" id="auth-new-password-confirm" required minlength="8"
+                       placeholder="Confirm password" class="auth-input">
+                <button type="submit" class="auth-primary-btn">Set Password and Log In</button>
+            </form>
+        </div>
     </div>
 </div>
 
