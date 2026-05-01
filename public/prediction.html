@@ -207,14 +207,151 @@
             color: #b45309;
             font-size: .75rem;
         }
-        .school-row {
+        .conversation-shell {
             display: grid;
-            grid-template-columns: 32px 1fr;
+            gap: 1.1rem;
+        }
+        .conversation-progress-track {
+            height: 7px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            overflow: hidden;
+        }
+        .conversation-progress-fill {
+            height: 100%;
+            width: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            transition: width .25s ease;
+        }
+        .advisor-thread {
+            display: grid;
+            grid-template-columns: 40px minmax(0, 1fr);
+            gap: .8rem;
+            align-items: start;
+        }
+        .advisor-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: #fef3c7;
+            color: #b45309;
+            box-shadow: 0 2px 8px rgba(180, 83, 9, .12);
+        }
+        .advisor-bubble {
+            border: 1px solid #f3f4f6;
+            border-radius: 1rem;
+            background: #fffaf0;
+            padding: .9rem 1rem;
+            box-shadow: 0 6px 18px rgba(17, 24, 39, .04);
+        }
+        .advisor-name {
+            font-size: .72rem;
+            font-weight: 800;
+            color: #b45309;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            margin-bottom: .25rem;
+        }
+        .conversation-step {
+            display: none;
+        }
+        .conversation-step.is-active {
+            display: block;
+            animation: conversationFade .22s ease;
+        }
+        @keyframes conversationFade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .conversation-step-card {
+            border: 1px solid #f3f4f6;
+            border-radius: 1rem;
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 10px 24px rgba(17, 24, 39, .04);
+        }
+        .question-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            border-radius: 999px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: .72rem;
+            font-weight: 800;
+            padding: .32rem .65rem;
+            margin-bottom: .65rem;
+        }
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .55rem;
+        }
+        .choice-grid.is-three {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .choice-option {
+            min-height: 50px;
+            border: 1px solid #e5e7eb;
+            border-radius: .75rem;
+            background: #fff;
+            color: #374151;
+            padding: .7rem .75rem;
+            text-align: left;
+            font-size: .84rem;
+            font-weight: 650;
+            line-height: 1.25;
+            transition: border-color .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+        }
+        .choice-option:hover {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .choice-option.is-selected {
+            border-color: #d97706;
+            background: #fef3c7;
+            color: #78350f;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, .12);
+        }
+        .field-error {
+            display: none;
+            font-size: .72rem;
+            color: #dc2626;
+            margin-top: .35rem;
+        }
+        .field-invalid .field-error {
+            display: block;
+        }
+        .field-invalid .form-input,
+        .field-invalid .form-textarea {
+            border-color: #f87171;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, .14);
+        }
+        .field-invalid .choice-grid {
+            border-radius: .85rem;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, .14);
+        }
+        .school-list {
+            display: grid;
+            gap: .75rem;
+        }
+        .school-entry {
+            display: grid;
+            grid-template-columns: 32px minmax(0, 1fr);
             gap: .65rem;
             align-items: start;
-            margin-bottom: .8rem;
+            padding-bottom: .75rem;
+            border-bottom: 1px solid #f3f4f6;
         }
-        .school-row .school-num {
+        .school-entry:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+        .school-num {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -224,19 +361,48 @@
             background: #fef3c7;
             color: #b45309;
             font-size: .72rem;
-            font-weight: 700;
-            margin-top: .28rem;
+            font-weight: 800;
+            margin-top: .35rem;
         }
         .school-fields {
             display: grid;
             grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, .9fr);
             gap: .55rem;
         }
-
+        .conversation-review {
+            display: grid;
+            gap: .55rem;
+            margin-top: 1rem;
+        }
+        .review-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-top: 1px solid #f3f4f6;
+            padding-top: .55rem;
+            font-size: .8rem;
+        }
+        .review-row:first-child {
+            border-top: 0;
+            padding-top: 0;
+        }
         @media (max-width: 768px) {
             .panel-bg { border-radius: 16px; }
             .school-fields {
                 grid-template-columns: 1fr;
+            }
+            .choice-grid,
+            .choice-grid.is-three {
+                grid-template-columns: 1fr;
+            }
+            .advisor-thread {
+                grid-template-columns: 34px minmax(0, 1fr);
+                gap: .65rem;
+            }
+            .advisor-avatar {
+                width: 34px;
+                height: 34px;
             }
         }
 
@@ -480,8 +646,8 @@
             <div class="pt-1">
                 <h3 class="text-base font-bold text-gray-800 mb-1">Tell us about you</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">
-                    Share your GPA, your classes, your test scores, your activities, and the five schools on your mind.
-                    It takes five to ten minutes.
+                    A guided intake asks one focused question at a time, then saves your GPA, classes, scores,
+                    activities, and school list as one report draft.
                 </p>
             </div>
         </div>
@@ -647,7 +813,7 @@
                            text-sm md:text-base font-semibold rounded-lg shadow hover:bg-amber-700 transition">
                     <i class="fa-solid fa-file-pen mr-2 text-xs"></i>Start your report
                 </button>
-                <p class="text-[11px] text-gray-400 mt-3">You log in, then the form opens.</p>
+                <p class="text-[11px] text-gray-400 mt-3">You log in, then a guided intake opens.</p>
             </div>
         </div>
     </div>
@@ -662,18 +828,19 @@
      class="fixed inset-0 z-50 hidden items-start md:items-center justify-center px-4 py-8 overflow-y-auto modal-overlay"
      role="dialog"
      aria-modal="true"
+     aria-hidden="true"
      aria-labelledby="report-modal-title">
-    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+    <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
 
         <!-- Modal header -->
         <div class="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 flex-shrink-0">
             <div class="flex items-center gap-3">
                 <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-file-pen text-base"></i>
+                    <i class="fa-solid fa-comments text-base"></i>
                 </span>
                 <div>
-                    <h3 id="report-modal-title" class="text-lg font-bold text-gray-800">Tell us about your application</h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Try to be as accurate as you can with your current grades and activities.</p>
+                    <h3 id="report-modal-title" class="text-lg font-bold text-gray-800">Your admissions intake</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">One focused question at a time. Your draft saves as you go.</p>
                 </div>
             </div>
             <button type="button" onclick="closeReportModal()"
@@ -684,302 +851,392 @@
         </div>
 
         <!-- Modal body / form -->
-        <form id="report-form" class="overflow-y-auto p-5 md:p-6" onsubmit="submitReportForm(event)">
-
-            <!-- ── 개인 정보 ── -->
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="form-section-icon"><i class="fa-solid fa-user"></i></span>
-                    About you
-                </p>
-                <div class="grid sm:grid-cols-2 gap-4">
+        <form id="report-form" class="overflow-y-auto p-5 md:p-6" onsubmit="submitReportForm(event)" novalidate>
+            <div class="conversation-shell">
+                <div class="flex items-center justify-between gap-4">
                     <div>
-                        <label class="form-label" for="rf-name">Name</label>
-                        <input id="rf-name" name="name" type="text" required class="form-input" placeholder="Jane Doe">
+                        <p id="conversation-step-label" class="text-xs font-bold text-amber-600 uppercase tracking-wide">Step 1 of 7</p>
+                        <h4 id="conversation-step-title" class="text-lg font-bold text-gray-900">Applicant context</h4>
                     </div>
-                    <div>
-                        <label class="form-label" for="rf-email">Email</label>
-                        <input id="rf-email" name="email" type="email" required class="form-input" placeholder="student@example.com">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-grade">Current grade</label>
-                        <select id="rf-grade" name="grade" required class="form-select">
-                            <option value="">Select</option>
-                            <option>9th grade (Freshman)</option>
-                            <option>10th grade (Sophomore)</option>
-                            <option>11th grade (Junior)</option>
-                            <option>12th grade (Senior)</option>
-                            <option>Gap year / retake</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-grad-year">Graduation year</label>
-                        <input id="rf-grad-year" name="graduationYear" type="text" class="form-input" placeholder="e.g. 2028">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-school">Current school</label>
-                        <input id="rf-school" name="school" type="text" required class="form-input" placeholder="e.g. Seoul International School">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-citizenship">Citizenship / how you'll apply</label>
-                        <select id="rf-citizenship" name="citizenship" required class="form-select">
-                            <option value="">Select</option>
-                            <option>Korean — applying as international</option>
-                            <option>US citizen or permanent resident</option>
-                            <option>Dual citizen</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-intended-major">Intended major</label>
-                        <input id="rf-intended-major" name="intendedMajor" type="text" required class="form-input" placeholder="e.g. Computer Science">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-application-type">Application type</label>
-                        <select id="rf-application-type" name="applicationType" class="form-select">
-                            <option value="">Select</option>
-                            <option>First-year</option>
-                            <option>Transfer</option>
-                            <option>Still deciding</option>
-                        </select>
+                    <div class="w-32 md:w-44 conversation-progress-track" aria-hidden="true">
+                        <div id="conversation-progress-fill" class="conversation-progress-fill"></div>
                     </div>
                 </div>
+
+                <div class="advisor-thread">
+                    <span class="advisor-avatar"><i class="fa-solid fa-user-graduate"></i></span>
+                    <div class="advisor-bubble">
+                        <p class="advisor-name">EduFinder advisor</p>
+                        <p id="conversation-step-prompt" class="text-sm text-gray-700 leading-relaxed">
+                            First, I need the basic context admissions readers will see before anything else.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="conversation-step is-active"
+                         data-title="Applicant context"
+                         data-prompt="First, I need the basic context admissions readers will see before anything else.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-user"></i> Start here</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">Who are we building this report for?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Give us the identity, school context, and application direction.</p>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="field-group" data-field-label="Name">
+                                <label class="form-label" for="rf-name">Name</label>
+                                <input id="rf-name" name="name" type="text" data-report-required="true" class="form-input" placeholder="Jane Doe">
+                                <p class="field-error">Enter the student's name.</p>
+                            </div>
+                            <div class="field-group" data-field-label="Email">
+                                <label class="form-label" for="rf-email">Email</label>
+                                <input id="rf-email" name="email" type="email" data-report-required="true" class="form-input" placeholder="student@example.com">
+                                <p class="field-error">Enter an email address.</p>
+                            </div>
+                            <div class="field-group" data-field-label="Current school">
+                                <label class="form-label" for="rf-school">Current school</label>
+                                <input id="rf-school" name="school" type="text" data-report-required="true" class="form-input" placeholder="e.g. Seoul International School">
+                                <p class="field-error">Enter the current school.</p>
+                            </div>
+                            <div>
+                                <label class="form-label" for="rf-grad-year">Graduation year</label>
+                                <input id="rf-grad-year" name="graduationYear" type="text" class="form-input" placeholder="e.g. 2028">
+                            </div>
+                        </div>
+
+                        <div class="field-group mt-4" data-field-label="Current grade">
+                            <input id="rf-grade" name="grade" type="hidden" data-report-required="true">
+                            <label class="form-label">Current grade</label>
+                            <div class="choice-grid is-three" data-choice-group data-field="grade">
+                                <button type="button" class="choice-option" data-value="9th grade (Freshman)">9th grade</button>
+                                <button type="button" class="choice-option" data-value="10th grade (Sophomore)">10th grade</button>
+                                <button type="button" class="choice-option" data-value="11th grade (Junior)">11th grade</button>
+                                <button type="button" class="choice-option" data-value="12th grade (Senior)">12th grade</button>
+                                <button type="button" class="choice-option" data-value="Gap year / retake">Gap year / retake</button>
+                            </div>
+                            <p class="field-error">Choose the current grade.</p>
+                        </div>
+
+                        <div class="field-group mt-4" data-field-label="Citizenship">
+                            <input id="rf-citizenship" name="citizenship" type="hidden" data-report-required="true">
+                            <label class="form-label">Citizenship / how you'll apply</label>
+                            <div class="choice-grid" data-choice-group data-field="citizenship">
+                                <button type="button" class="choice-option" data-value="Korean — applying as international">Korean - international</button>
+                                <button type="button" class="choice-option" data-value="US citizen or permanent resident">US citizen / permanent resident</button>
+                                <button type="button" class="choice-option" data-value="Dual citizen">Dual citizen</button>
+                                <button type="button" class="choice-option" data-value="Other">Other</button>
+                            </div>
+                            <p class="field-error">Choose how the student will apply.</p>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                            <div class="field-group" data-field-label="Intended major">
+                                <label class="form-label" for="rf-intended-major">Intended major</label>
+                                <input id="rf-intended-major" name="intendedMajor" type="text" data-report-required="true" class="form-input" placeholder="e.g. Computer Science">
+                                <p class="field-error">Enter an intended major, or write undecided.</p>
+                            </div>
+                            <div>
+                                <input id="rf-application-type" name="applicationType" type="hidden">
+                                <label class="form-label">Application type</label>
+                                <div class="choice-grid" data-choice-group data-field="applicationType">
+                                    <button type="button" class="choice-option" data-value="First-year">First-year</button>
+                                    <button type="button" class="choice-option" data-value="Transfer">Transfer</button>
+                                    <button type="button" class="choice-option" data-value="Still deciding">Still deciding</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Academic signal"
+                         data-prompt="Now let us translate the transcript into a fair comparison point. Exact numbers help, but honest estimates are fine for a draft.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-chart-line"></i> Transcript</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">How strong is the academic record right now?</h5>
+                        <p class="text-sm text-gray-600 mb-4">This is where we capture grades, trend, rank, and class difficulty.</p>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="field-group" data-field-label="GPA / average">
+                                <label class="form-label" for="rf-gpa">GPA / current average</label>
+                                <input id="rf-gpa" name="gpaUnweighted" type="text" data-report-required="true" class="form-input" placeholder="e.g. 3.92">
+                                <p class="form-hint">Use a 4.0 scale if you can. If not, pick the grading scale below.</p>
+                                <p class="field-error">Enter the GPA or current average.</p>
+                            </div>
+                            <div>
+                                <label class="form-label" for="rf-gpa-weighted">GPA (weighted)</label>
+                                <input id="rf-gpa-weighted" name="gpaWeighted" type="text" class="form-input" placeholder="Optional - e.g. 4.42">
+                            </div>
+                            <div>
+                                <label class="form-label" for="rf-class-rank">Class rank or percentile</label>
+                                <input id="rf-class-rank" name="classRank" type="text" class="form-input" placeholder="e.g. Top 10% / 8th of 120 / not given">
+                            </div>
+                        </div>
+
+                        <div class="field-group mt-4" data-field-label="Grading scale">
+                            <input id="rf-grading-scale" name="gradingScale" type="hidden" data-report-required="true">
+                            <label class="form-label">Grading scale</label>
+                            <div class="choice-grid is-three" data-choice-group data-field="gradingScale">
+                                <button type="button" class="choice-option" data-value="4.0 GPA scale">4.0 GPA</button>
+                                <button type="button" class="choice-option" data-value="4.3 / 4.5 GPA scale">4.3 / 4.5 GPA</button>
+                                <button type="button" class="choice-option" data-value="100-point scale">100-point</button>
+                                <button type="button" class="choice-option" data-value="IB 1–7 scale">IB 1-7</button>
+                                <button type="button" class="choice-option" data-value="A-Level / GCSE">A-Level / GCSE</button>
+                                <button type="button" class="choice-option" data-value="Other / not sure">Other / not sure</button>
+                            </div>
+                            <p class="field-error">Choose the grading scale.</p>
+                        </div>
+
+                        <div class="field-group mt-4" data-field-label="Course rigor">
+                            <input id="rf-course-rigor" name="courseRigor" type="hidden" data-report-required="true">
+                            <label class="form-label">How hard are the classes you're taking?</label>
+                            <div class="choice-grid" data-choice-group data-field="courseRigor">
+                                <button type="button" class="choice-option" data-value="The hardest classes my school offers">Hardest available</button>
+                                <button type="button" class="choice-option" data-value="On the harder side">On the harder side</button>
+                                <button type="button" class="choice-option" data-value="Mostly standard classes">Mostly standard</button>
+                                <button type="button" class="choice-option" data-value="My school doesn't offer many advanced classes">Few advanced options</button>
+                                <button type="button" class="choice-option" data-value="Not sure yet">Not sure yet</button>
+                            </div>
+                            <p class="field-error">Choose the closest class rigor description.</p>
+                        </div>
+
+                        <div class="mt-4">
+                            <input id="rf-grade-trend" name="gradeTrend" type="hidden">
+                            <label class="form-label">Recent grade trend</label>
+                            <div class="choice-grid is-three" data-choice-group data-field="gradeTrend">
+                                <button type="button" class="choice-option" data-value="Going up">Going up</button>
+                                <button type="button" class="choice-option" data-value="Steady and high">Steady and high</button>
+                                <button type="button" class="choice-option" data-value="About the same">About the same</button>
+                                <button type="button" class="choice-option" data-value="Going down or uneven">Down or uneven</button>
+                                <button type="button" class="choice-option" data-value="Hard to tell yet">Hard to tell</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Testing picture"
+                         data-prompt="Test scores can matter differently by school and strategy. Tell us what exists now, and leave anything unknown blank.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-clipboard-check"></i> Scores</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What should we know about testing?</h5>
+                        <p class="text-sm text-gray-600 mb-4">SAT, ACT, English proficiency, and the submission plan all affect the final read.</p>
+
+                        <div>
+                            <input id="rf-testing-plan" name="testingPlan" type="hidden">
+                            <label class="form-label">Test submission plan</label>
+                            <div class="choice-grid" data-choice-group data-field="testingPlan">
+                                <button type="button" class="choice-option" data-value="I'll submit SAT or ACT">I'll submit SAT or ACT</button>
+                                <button type="button" class="choice-option" data-value="I'll apply Test Optional">Test Optional</button>
+                                <button type="button" class="choice-option" data-value="Still deciding">Still deciding</button>
+                                <button type="button" class="choice-option" data-value="Haven't taken one yet">Haven't taken one yet</button>
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="form-label" for="rf-sat">SAT total</label>
+                                <input id="rf-sat" name="satTotal" type="text" class="form-input" placeholder="e.g. 1520">
+                            </div>
+                            <div>
+                                <label class="form-label" for="rf-sat-section">SAT R&amp;W / Math scores</label>
+                                <input id="rf-sat-section" name="satSection" type="text" class="form-input" placeholder="e.g. 740 / 780">
+                            </div>
+                            <div>
+                                <label class="form-label" for="rf-act">ACT composite</label>
+                                <input id="rf-act" name="actTotal" type="text" class="form-input" placeholder="e.g. 34">
+                            </div>
+                            <div>
+                                <label class="form-label" for="rf-english-test">English proficiency test</label>
+                                <input id="rf-english-test" name="englishTest" type="text" class="form-input" placeholder="e.g. TOEFL 112 / IELTS 8.0">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Courses and curriculum"
+                         data-prompt="Next, I need the shape of the curriculum: what your school offers, what you took, and what you plan to take.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-book-open"></i> Curriculum</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What classes should anchor the comparison?</h5>
+                        <p class="text-sm text-gray-600 mb-4">List recent, current, and planned classes. Advanced courses and grades are especially useful.</p>
+
+                        <div>
+                            <input id="rf-ap-ib-track" name="apIbTrack" type="hidden">
+                            <label class="form-label">Curriculum</label>
+                            <div class="choice-grid is-three" data-choice-group data-field="apIbTrack">
+                                <button type="button" class="choice-option" data-value="US Curriculum / AP / Honors">US / AP / Honors</button>
+                                <button type="button" class="choice-option" data-value="IB Diploma">IB Diploma</button>
+                                <button type="button" class="choice-option" data-value="Both AP and IB">AP and IB</button>
+                                <button type="button" class="choice-option" data-value="A-Level / IGCSE">A-Level / IGCSE</button>
+                                <button type="button" class="choice-option" data-value="Korean high school">Korean high school</button>
+                                <button type="button" class="choice-option" data-value="Other / not sure">Other / not sure</button>
+                            </div>
+                        </div>
+
+                        <div class="field-group mt-4" data-field-label="Main classes">
+                            <label class="form-label" for="rf-current-courses">Main classes you're taking now or took recently</label>
+                            <textarea id="rf-current-courses" name="currentCourses" data-report-required="true" class="form-textarea" rows="4"
+                                      placeholder="e.g. 10th grade: Honors Chemistry, AP World History, Precalculus&#10;11th grade (planned): AP Calculus BC, AP Physics C, AP English Lang"></textarea>
+                            <p class="form-hint">Include advanced courses, honors, AP, IB, A-Level, or school-specific tracks.</p>
+                            <p class="field-error">List the main classes from this year, last year, or planned next year.</p>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="form-label" for="rf-ap-ib-detail">Advanced classes and grades</label>
+                            <textarea id="rf-ap-ib-detail" name="apIbDetail" class="form-textarea" rows="4"
+                                      placeholder="e.g. AP Calculus BC: 5, AP Physics 1: 4&#10;IB HL Math AA: 7, IB HL English Lit: 6&#10;A-Level Math: A*, Physics: A"></textarea>
+                            <p class="form-hint">It is more accurate if you split them into finished, in progress, and planned.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Activities and evidence"
+                         data-prompt="Admissions readers look for pattern, depth, initiative, and proof. This is where your non-classroom story becomes visible.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-people-group"></i> Activities</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What have you done outside class?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Use natural language. We will parse role, time, impact, leadership, and awards from what you share.</p>
+
+                        <div class="field-group" data-field-label="Top activities">
+                            <label class="form-label" for="rf-ec">Your top 3 to 5 activities</label>
+                            <textarea id="rf-ec" name="extracurriculars" data-report-required="true" class="form-textarea" rows="6"
+                                      placeholder="e.g. School debate / President / 10th-11th grade / 4 hrs a week / 2nd at nationals&#10;Startup club / Co-founder / 11th grade / Launched an app with 5,000 users&#10;English mentoring / Volunteer / 9th-11th grade / 3 hrs a week"></textarea>
+                            <p class="form-hint">Add the activity name, role, years, hours, and measurable results where possible.</p>
+                            <p class="field-error">Describe at least a few meaningful activities.</p>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="form-label" for="rf-awards">Awards or recognition</label>
+                                <textarea id="rf-awards" name="awards" class="form-textarea" rows="4"
+                                          placeholder="e.g. AMC 12 - Distinction (national)&#10;HMUN Best Delegate&#10;USACO Gold"></textarea>
+                            </div>
+                            <div>
+                                <label class="form-label" for="rf-leadership">Leadership roles</label>
+                                <textarea id="rf-leadership" name="leadership" class="form-textarea" rows="4"
+                                          placeholder="e.g. Student Council Vice President&#10;School newspaper Editor-in-Chief"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Target schools"
+                         data-prompt="Now we need the school list. Add the schools you care about most; five gives us the strongest Reach, Target, and Safety split.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-bullseye"></i> School list</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">Which colleges should the report compare?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Start with at least one. Add major or college and application round where you know them.</p>
+
+                        <div class="school-list">
+                            <div class="school-entry field-group" data-field-label="First school">
+                                <span class="school-num">1</span>
+                                <div>
+                                    <div class="school-fields">
+                                        <input name="school1" type="text" data-report-required="true" class="form-input" aria-label="School 1 name" placeholder="School name">
+                                        <input name="school1Program" type="text" class="form-input" aria-label="School 1 major or college" placeholder="Major / college">
+                                        <select name="school1Round" class="form-select" aria-label="School 1 round">
+                                            <option value="">Round undecided</option>
+                                            <option>ED / REA / SCEA</option>
+                                            <option>EA</option>
+                                            <option>RD</option>
+                                            <option>Rolling</option>
+                                        </select>
+                                    </div>
+                                    <p class="field-error">Enter at least one school.</p>
+                                </div>
+                            </div>
+                            <div class="school-entry">
+                                <span class="school-num">2</span>
+                                <div class="school-fields">
+                                    <input name="school2" type="text" class="form-input" aria-label="School 2 name" placeholder="School name">
+                                    <input name="school2Program" type="text" class="form-input" aria-label="School 2 major or college" placeholder="Major / college">
+                                    <select name="school2Round" class="form-select" aria-label="School 2 round">
+                                        <option value="">Round undecided</option>
+                                        <option>ED / REA / SCEA</option>
+                                        <option>EA</option>
+                                        <option>RD</option>
+                                        <option>Rolling</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="school-entry">
+                                <span class="school-num">3</span>
+                                <div class="school-fields">
+                                    <input name="school3" type="text" class="form-input" aria-label="School 3 name" placeholder="School name">
+                                    <input name="school3Program" type="text" class="form-input" aria-label="School 3 major or college" placeholder="Major / college">
+                                    <select name="school3Round" class="form-select" aria-label="School 3 round">
+                                        <option value="">Round undecided</option>
+                                        <option>ED / REA / SCEA</option>
+                                        <option>EA</option>
+                                        <option>RD</option>
+                                        <option>Rolling</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="school-entry">
+                                <span class="school-num">4</span>
+                                <div class="school-fields">
+                                    <input name="school4" type="text" class="form-input" aria-label="School 4 name" placeholder="School name">
+                                    <input name="school4Program" type="text" class="form-input" aria-label="School 4 major or college" placeholder="Major / college">
+                                    <select name="school4Round" class="form-select" aria-label="School 4 round">
+                                        <option value="">Round undecided</option>
+                                        <option>ED / REA / SCEA</option>
+                                        <option>EA</option>
+                                        <option>RD</option>
+                                        <option>Rolling</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="school-entry">
+                                <span class="school-num">5</span>
+                                <div class="school-fields">
+                                    <input name="school5" type="text" class="form-input" aria-label="School 5 name" placeholder="School name">
+                                    <input name="school5Program" type="text" class="form-input" aria-label="School 5 major or college" placeholder="Major / college">
+                                    <select name="school5Round" class="form-select" aria-label="School 5 round">
+                                        <option value="">Round undecided</option>
+                                        <option>ED / REA / SCEA</option>
+                                        <option>EA</option>
+                                        <option>RD</option>
+                                        <option>Rolling</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Final context"
+                         data-prompt="Last question. Tell us anything a professional advisor would want to know before reading your profile.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-pen-clip"></i> Final note</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">Is there any context the numbers do not show?</h5>
+                        <p class="text-sm text-gray-600 mb-4">This can include grade dips, school limitations, family context, special constraints, or a preference for Early Decision.</p>
+
+                        <label class="form-label" for="rf-notes">Anything else we should know</label>
+                        <textarea id="rf-notes" name="notes" class="form-textarea" rows="4"
+                                  placeholder="e.g. My grades dipped for a semester in 11th grade because of a family situation.&#10;I'm thinking about Stanford for ED1."></textarea>
+
+                        <div class="conversation-review">
+                            <div class="review-row">
+                                <span class="font-semibold text-gray-700">Profile</span>
+                                <span id="review-profile" class="text-gray-500 text-right">Not started</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="font-semibold text-gray-700">Academics</span>
+                                <span id="review-academics" class="text-gray-500 text-right">Not started</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="font-semibold text-gray-700">Schools</span>
+                                <span id="review-schools" class="text-gray-500 text-right">Not started</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-
-            <!-- ── 학업 성취 ── -->
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="form-section-icon"><i class="fa-solid fa-graduation-cap"></i></span>
-                    Grades and tests
-                </p>
-                <div class="grid sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="form-label" for="rf-gpa">GPA / current average</label>
-                        <input id="rf-gpa" name="gpaUnweighted" type="text" required class="form-input" placeholder="e.g. 3.92">
-                        <p class="form-hint">Use a 4.0 scale if you can; otherwise pick your grading scale below.</p>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-gpa-weighted">GPA (weighted)</label>
-                        <input id="rf-gpa-weighted" name="gpaWeighted" type="text" class="form-input" placeholder="Optional · e.g. 4.42">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-grading-scale">Grading scale</label>
-                        <select id="rf-grading-scale" name="gradingScale" required class="form-select">
-                            <option value="">Select</option>
-                            <option>4.0 GPA scale</option>
-                            <option>4.3 / 4.5 GPA scale</option>
-                            <option>100-point scale</option>
-                            <option>IB 1–7 scale</option>
-                            <option>A-Level / GCSE</option>
-                            <option>Other / not sure</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-grade-trend">Recent grade trend</label>
-                        <select id="rf-grade-trend" name="gradeTrend" class="form-select">
-                            <option value="">Select</option>
-                            <option>Going up</option>
-                            <option>Steady and high</option>
-                            <option>About the same</option>
-                            <option>Going down or uneven</option>
-                            <option>Hard to tell yet</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-class-rank">Class rank or percentile (optional)</label>
-                        <input id="rf-class-rank" name="classRank" type="text" class="form-input" placeholder="e.g. Top 10% / 8th of 120 / not given by school">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-course-rigor">How hard are the classes you're taking?</label>
-                        <select id="rf-course-rigor" name="courseRigor" required class="form-select">
-                            <option value="">Select</option>
-                            <option>The hardest classes my school offers</option>
-                            <option>On the harder side</option>
-                            <option>Mostly standard classes</option>
-                            <option>My school doesn't offer many advanced classes</option>
-                            <option>Not sure yet</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-sat">SAT total</label>
-                        <input id="rf-sat" name="satTotal" type="text" class="form-input" placeholder="e.g. 1520 (leave blank if you haven't taken it)">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-sat-section">SAT R&amp;W / Math scores</label>
-                        <input id="rf-sat-section" name="satSection" type="text" class="form-input" placeholder="e.g. 740 / 780">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-act">ACT composite</label>
-                        <input id="rf-act" name="actTotal" type="text" class="form-input" placeholder="e.g. 34">
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-english-test">English proficiency test (optional)</label>
-                        <input id="rf-english-test" name="englishTest" type="text" class="form-input" placeholder="e.g. TOEFL 112 / IELTS 8.0 / Duolingo 145">
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="form-label" for="rf-testing-plan">Test submission plan</label>
-                        <select id="rf-testing-plan" name="testingPlan" class="form-select">
-                            <option value="">Select</option>
-                            <option>I'll submit SAT or ACT</option>
-                            <option>I'll apply Test Optional</option>
-                            <option>Still deciding</option>
-                            <option>Haven't taken one yet</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="form-label" for="rf-current-courses">Main classes you're taking now or took recently</label>
-                        <textarea id="rf-current-courses" name="currentCourses" required class="form-textarea" rows="3"
-                                  placeholder="e.g. 10th grade: Honors Chemistry, AP World History, Precalculus&#10;11th grade (planned): AP Calculus BC, AP Physics C, AP English Lang"></textarea>
-                        <p class="form-hint">List the main classes from this year and last, including any advanced ones.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── Curriculum ── -->
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="form-section-icon"><i class="fa-solid fa-book"></i></span>
-                    Curriculum and advanced classes
-                </p>
-                <div class="grid gap-4">
-                    <div>
-                        <label class="form-label" for="rf-ap-ib-track">Curriculum</label>
-                        <select id="rf-ap-ib-track" name="apIbTrack" class="form-select">
-                            <option value="">Select</option>
-                            <option>US Curriculum / AP / Honors</option>
-                            <option>IB Diploma</option>
-                            <option>Both AP and IB</option>
-                            <option>A-Level / IGCSE</option>
-                            <option>Korean high school</option>
-                            <option>Other / not sure</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-ap-ib-detail">Advanced classes &amp; grades</label>
-                        <textarea id="rf-ap-ib-detail" name="apIbDetail" class="form-textarea"
-                                  placeholder="e.g. AP Calculus BC: 5, AP Physics 1: 4, AP US History: 4&#10;IB HL Math AA: 7, IB HL English Lit: 6&#10;A-Level Math: A*, Physics: A"></textarea>
-                        <p class="form-hint">It's more accurate if you split them into finished, in progress, and planned.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── EC ── -->
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="form-section-icon"><i class="fa-solid fa-people-group"></i></span>
-                    Activities (extracurriculars)
-                </p>
-                <div>
-                    <label class="form-label" for="rf-ec">Your top 3 to 5 activities</label>
-                    <textarea id="rf-ec" name="extracurriculars" required class="form-textarea" rows="5"
-                              placeholder="e.g. School debate / President / 10th–11th grade / 4 hrs a week / 2nd at nationals&#10;Startup club / Co-founder / 11th grade / Launched an app with 5,000 users&#10;English mentoring / Volunteer / 9th–11th grade / 3 hrs a week"></textarea>
-                    <p class="form-hint">Add the name, your role, the years, hours per week, and any results.</p>
-                </div>
-                <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <label class="form-label" for="rf-awards">Awards or recognition (optional)</label>
-                        <textarea id="rf-awards" name="awards" class="form-textarea" rows="3"
-                                  placeholder="e.g. AMC 12 — Distinction (national)&#10;HMUN Best Delegate (conference)&#10;USACO Gold"></textarea>
-                    </div>
-                    <div>
-                        <label class="form-label" for="rf-leadership">Leadership roles (optional)</label>
-                        <textarea id="rf-leadership" name="leadership" class="form-textarea" rows="3"
-                                  placeholder="e.g. Student Council Vice President&#10;School newspaper Editor-in-Chief"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── 5 schools ── -->
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="form-section-icon"><i class="fa-solid fa-bullseye"></i></span>
-                    The 5 schools you're applying to
-                </p>
-                <p class="text-xs text-gray-500 mb-3">
-                    Add each school, the major or college you're after, and the round you have in mind. The round can be undecided.
-                </p>
-                <div class="school-row">
-                    <span class="school-num">1</span>
-                    <div class="school-fields">
-                        <input name="school1" type="text" required class="form-input" aria-label="School 1 name" placeholder="School name">
-                        <input name="school1Program" type="text" class="form-input" aria-label="School 1 major or college" placeholder="Major / college">
-                        <select name="school1Round" class="form-select" aria-label="School 1 round">
-                            <option value="">Round undecided</option>
-                            <option>ED / REA / SCEA</option>
-                            <option>EA</option>
-                            <option>RD</option>
-                            <option>Rolling</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="school-row">
-                    <span class="school-num">2</span>
-                    <div class="school-fields">
-                        <input name="school2" type="text" required class="form-input" aria-label="School 2 name" placeholder="School name">
-                        <input name="school2Program" type="text" class="form-input" aria-label="School 2 major or college" placeholder="Major / college">
-                        <select name="school2Round" class="form-select" aria-label="School 2 round">
-                            <option value="">Round undecided</option>
-                            <option>ED / REA / SCEA</option>
-                            <option>EA</option>
-                            <option>RD</option>
-                            <option>Rolling</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="school-row">
-                    <span class="school-num">3</span>
-                    <div class="school-fields">
-                        <input name="school3" type="text" required class="form-input" aria-label="School 3 name" placeholder="School name">
-                        <input name="school3Program" type="text" class="form-input" aria-label="School 3 major or college" placeholder="Major / college">
-                        <select name="school3Round" class="form-select" aria-label="School 3 round">
-                            <option value="">Round undecided</option>
-                            <option>ED / REA / SCEA</option>
-                            <option>EA</option>
-                            <option>RD</option>
-                            <option>Rolling</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="school-row">
-                    <span class="school-num">4</span>
-                    <div class="school-fields">
-                        <input name="school4" type="text" required class="form-input" aria-label="School 4 name" placeholder="School name">
-                        <input name="school4Program" type="text" class="form-input" aria-label="School 4 major or college" placeholder="Major / college">
-                        <select name="school4Round" class="form-select" aria-label="School 4 round">
-                            <option value="">Round undecided</option>
-                            <option>ED / REA / SCEA</option>
-                            <option>EA</option>
-                            <option>RD</option>
-                            <option>Rolling</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="school-row">
-                    <span class="school-num">5</span>
-                    <div class="school-fields">
-                        <input name="school5" type="text" required class="form-input" aria-label="School 5 name" placeholder="School name">
-                        <input name="school5Program" type="text" class="form-input" aria-label="School 5 major or college" placeholder="Major / college">
-                        <select name="school5Round" class="form-select" aria-label="School 5 round">
-                            <option value="">Round undecided</option>
-                            <option>ED / REA / SCEA</option>
-                            <option>EA</option>
-                            <option>RD</option>
-                            <option>Rolling</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── 추가 메모 ── -->
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="form-section-icon"><i class="fa-solid fa-pen-clip"></i></span>
-                    Anything else we should know (optional)
-                </p>
-                <textarea name="notes" class="form-textarea" rows="3"
-                          placeholder="e.g. My grades dipped for a semester in 11th grade because of a family situation.&#10;I'm thinking about Stanford for ED1."></textarea>
-            </div>
-
         </form>
 
         <!-- Modal footer -->
@@ -988,13 +1245,21 @@
                 <i class="fa-solid fa-lock mr-1.5 text-gray-400"></i>
                 What you share here is only used to make your report.
             </p>
-            <div class="flex gap-2 justify-end">
+            <div class="flex flex-wrap gap-2 justify-end">
                 <button type="button" onclick="closeReportModal()"
                         class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 transition">
-                    Cancel
+                    Save draft and close
                 </button>
-                <button type="submit" form="report-form"
+                <button id="report-back-button" type="button" onclick="goToPreviousConversationStep()"
+                        class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-100 transition">
+                    Back
+                </button>
+                <button id="report-next-button" type="button" onclick="advanceConversation()"
                         class="px-5 py-2.5 rounded-lg bg-amber-600 text-white text-sm font-semibold shadow hover:bg-amber-700 transition inline-flex items-center">
+                    Continue<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </button>
+                <button id="report-submit-button" type="submit" form="report-form"
+                        class="hidden px-5 py-2.5 rounded-lg bg-amber-600 text-white text-sm font-semibold shadow hover:bg-amber-700 transition items-center">
                     <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>Save and go to checkout
                 </button>
             </div>
@@ -1149,6 +1414,7 @@ let reportDraftReady = false;
 let reportSaveTimer = null;
 let lastSavedDraftJson = '';
 let skipNextCloseSave = false;
+let reportConversationStep = 0;
 
 function animateCounters() {
     document.querySelectorAll('.stat-number[data-target]').forEach(el => {
@@ -1189,9 +1455,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const form = document.getElementById('report-form');
     if (form) {
-        form.addEventListener('input', queueReportDraftSave);
-        form.addEventListener('change', queueReportDraftSave);
+        form.addEventListener('input', handleReportFieldChange);
+        form.addEventListener('change', handleReportFieldChange);
     }
+    initConversationControls();
+    updateConversationProgress();
 
     if (new URLSearchParams(window.location.search).get('start') === '1') {
         setTimeout(handleReportStart, 100);
@@ -1244,6 +1512,217 @@ function fillReportForm(payload) {
             field.value = payload[name];
         }
     });
+    syncConversationFromFields();
+    updateConversationReview();
+}
+
+function getConversationSteps() {
+    return Array.from(document.querySelectorAll('.conversation-step'));
+}
+
+function getReportField(name) {
+    const form = document.getElementById('report-form');
+    return form ? form.elements.namedItem(name) : null;
+}
+
+function getReportFieldValue(name) {
+    const field = getReportField(name);
+    return field && typeof field.value === 'string' ? field.value.trim() : '';
+}
+
+function getReportFieldWrapper(field) {
+    return field ? (field.closest('.field-group') || field.parentElement) : null;
+}
+
+function initConversationControls() {
+    document.querySelectorAll('[data-choice-group]').forEach(group => {
+        group.querySelectorAll('.choice-option').forEach(button => {
+            button.setAttribute('aria-pressed', 'false');
+        });
+        group.addEventListener('click', event => {
+            const button = event.target.closest('.choice-option');
+            if (!button || !group.contains(button)) return;
+            const field = getReportField(group.dataset.field);
+            if (!field) return;
+            field.value = button.dataset.value || '';
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+            syncChoiceGroup(group);
+            clearReportFieldError(field);
+            updateConversationReview();
+        });
+    });
+    syncConversationFromFields();
+}
+
+function syncChoiceGroup(group) {
+    const field = getReportField(group.dataset.field);
+    const value = field && typeof field.value === 'string' ? field.value : '';
+    group.querySelectorAll('.choice-option').forEach(button => {
+        const selected = button.dataset.value === value;
+        button.classList.toggle('is-selected', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+}
+
+function syncConversationFromFields() {
+    document.querySelectorAll('[data-choice-group]').forEach(syncChoiceGroup);
+}
+
+function updateConversationProgress() {
+    const steps = getConversationSteps();
+    if (!steps.length) return;
+    reportConversationStep = Math.max(0, Math.min(reportConversationStep, steps.length - 1));
+
+    steps.forEach((step, index) => {
+        step.classList.toggle('is-active', index === reportConversationStep);
+    });
+
+    const activeStep = steps[reportConversationStep];
+    const label = document.getElementById('conversation-step-label');
+    const title = document.getElementById('conversation-step-title');
+    const prompt = document.getElementById('conversation-step-prompt');
+    const fill = document.getElementById('conversation-progress-fill');
+    const backButton = document.getElementById('report-back-button');
+    const nextButton = document.getElementById('report-next-button');
+    const submitButton = document.getElementById('report-submit-button');
+    const isLast = reportConversationStep === steps.length - 1;
+
+    if (label) label.textContent = 'Step ' + (reportConversationStep + 1) + ' of ' + steps.length;
+    if (title) title.textContent = activeStep.dataset.title || '';
+    if (prompt) prompt.textContent = activeStep.dataset.prompt || '';
+    if (fill) fill.style.width = (((reportConversationStep + 1) / steps.length) * 100) + '%';
+    if (backButton) {
+        backButton.disabled = reportConversationStep === 0;
+        backButton.classList.toggle('opacity-50', reportConversationStep === 0);
+        backButton.classList.toggle('cursor-not-allowed', reportConversationStep === 0);
+    }
+    if (nextButton) nextButton.classList.toggle('hidden', isLast);
+    if (submitButton) {
+        submitButton.classList.toggle('hidden', !isLast);
+        submitButton.classList.toggle('inline-flex', isLast);
+    }
+    updateConversationReview();
+}
+
+function focusActiveConversationField() {
+    const activeStep = getConversationSteps()[reportConversationStep];
+    if (!activeStep) return;
+    const target = activeStep.querySelector('input:not([type="hidden"]), textarea, select, .choice-option');
+    if (target) target.focus();
+}
+
+function goToConversationStep(nextStep) {
+    const steps = getConversationSteps();
+    if (!steps.length) return;
+    reportConversationStep = Math.max(0, Math.min(nextStep, steps.length - 1));
+    updateConversationProgress();
+    setTimeout(focusActiveConversationField, 40);
+}
+
+function goToPreviousConversationStep() {
+    goToConversationStep(reportConversationStep - 1);
+}
+
+function isReportFieldFilled(field) {
+    if (!field || typeof field.value !== 'string') return false;
+    const value = field.value.trim();
+    if (!value) return false;
+    if (field.type === 'email') return value.includes('@');
+    return true;
+}
+
+function clearReportFieldError(field) {
+    const wrapper = getReportFieldWrapper(field);
+    if (wrapper) wrapper.classList.remove('field-invalid');
+}
+
+function markReportFieldError(field) {
+    const wrapper = getReportFieldWrapper(field);
+    if (wrapper) wrapper.classList.add('field-invalid');
+}
+
+function validateConversationStep(stepIndex) {
+    const step = getConversationSteps()[stepIndex];
+    if (!step) return true;
+    const requiredFields = Array.from(step.querySelectorAll('[data-report-required="true"]'));
+    const missing = requiredFields.filter(field => !isReportFieldFilled(field));
+
+    requiredFields.forEach(field => {
+        if (missing.includes(field)) markReportFieldError(field);
+        else clearReportFieldError(field);
+    });
+
+    if (!missing.length) return true;
+
+    const firstMissing = missing[0];
+    const label = getReportFieldWrapper(firstMissing)?.dataset.fieldLabel || 'this question';
+    setReportSaveStatus('Please complete ' + label + ' before continuing.');
+    focusReportField(firstMissing);
+    return false;
+}
+
+function validateFullConversation() {
+    const steps = getConversationSteps();
+    for (let index = 0; index < steps.length; index += 1) {
+        if (!validateConversationStep(index)) {
+            reportConversationStep = index;
+            updateConversationProgress();
+            setTimeout(() => {
+                const firstInvalid = steps[index].querySelector('.field-invalid [data-report-required="true"]');
+                if (firstInvalid) focusReportField(firstInvalid);
+            }, 40);
+            return false;
+        }
+    }
+    return true;
+}
+
+function focusReportField(field) {
+    const wrapper = getReportFieldWrapper(field);
+    const target = field.type === 'hidden'
+        ? wrapper?.querySelector('.choice-option, input:not([type="hidden"]), textarea, select')
+        : field;
+    if (target && typeof target.focus === 'function') target.focus();
+}
+
+function findFirstIncompleteConversationStep() {
+    const steps = getConversationSteps();
+    for (let index = 0; index < steps.length; index += 1) {
+        const requiredFields = Array.from(steps[index].querySelectorAll('[data-report-required="true"]'));
+        if (requiredFields.some(field => !isReportFieldFilled(field))) return index;
+    }
+    return Math.max(steps.length - 1, 0);
+}
+
+function advanceConversation() {
+    if (!validateConversationStep(reportConversationStep)) return;
+    goToConversationStep(reportConversationStep + 1);
+    queueReportDraftSave();
+}
+
+function handleReportFieldChange(event) {
+    if (event && event.target) clearReportFieldError(event.target);
+    updateConversationReview();
+    queueReportDraftSave();
+}
+
+function updateConversationReview() {
+    const profile = document.getElementById('review-profile');
+    const academics = document.getElementById('review-academics');
+    const schools = document.getElementById('review-schools');
+    if (!profile && !academics && !schools) return;
+
+    const profileParts = [getReportFieldValue('name'), getReportFieldValue('grade'), getReportFieldValue('intendedMajor')]
+        .filter(Boolean);
+    const academicParts = [getReportFieldValue('gpaUnweighted'), getReportFieldValue('gradingScale'), getReportFieldValue('courseRigor')]
+        .filter(Boolean);
+    const schoolParts = [1, 2, 3, 4, 5]
+        .map(index => getReportFieldValue('school' + index))
+        .filter(Boolean);
+
+    if (profile) profile.textContent = profileParts.length ? profileParts.join(' / ') : 'Not started';
+    if (academics) academics.textContent = academicParts.length ? academicParts.join(' / ') : 'Not started';
+    if (schools) schools.textContent = schoolParts.length ? schoolParts.join(', ') : 'Not started';
 }
 
 async function loadReportDraft() {
@@ -1325,6 +1804,8 @@ async function handleReportStart() {
             ? JSON.stringify({ payload: collectReportPayload(), status: data.draft.status || 'draft' })
             : '';
         reportDraftReady = true;
+        reportConversationStep = findFirstIncompleteConversationStep();
+        updateConversationProgress();
         setReportSaveStatus(data.draft ? 'We loaded your earlier draft' : 'Ready to save');
         openReportModal();
         clearReportStartParam();
@@ -1346,10 +1827,8 @@ function openReportModal() {
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('modal-open');
-    setTimeout(() => {
-        const first = document.getElementById('rf-name');
-        if (first) first.focus();
-    }, 50);
+    updateConversationProgress();
+    setTimeout(focusActiveConversationField, 50);
 }
 
 function closeReportModal() {
@@ -1376,6 +1855,7 @@ document.addEventListener('keydown', (e) => {
 
 async function submitReportForm(event) {
     event.preventDefault();
+    if (!validateFullConversation()) return;
     window.clearTimeout(reportSaveTimer);
     reportDraftReady = true;
     const saved = await saveReportDraft('submitted');
