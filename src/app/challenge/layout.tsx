@@ -22,7 +22,7 @@ export default function ChallengeLayout({
 
       <div className="flex-1 flex flex-col bg-gray-100">{children}</div>
 
-      <footer className="bg-gray-800 text-white text-center py-6">
+      <footer className="bg-[#1f2937] text-white text-center py-6">
         <p>&copy; 2026 EduFinder by Waystar</p>
       </footer>
     </>
