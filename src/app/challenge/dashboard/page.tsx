@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import CompletedProgressChart, { type ProgressExam } from "./completed-progress-chart";
 import SignOutButton from "./sign-out-button";
 
 type ModuleRow = {
@@ -68,6 +69,34 @@ function minutesLeft(m: ModuleRow, now: number): number {
   return Math.max(0, Math.ceil(diff / 60000));
 }
 
+function formatShortDate(d: Date): string {
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function scoreSummary(e: Exam): ProgressExam {
+  const m1 = e.m1.module;
+  const m2 = e.m2!.module;
+  const score = (m1.score ?? 0) + (m2.score ?? 0);
+  const total = (m1.total ?? 0) + (m2.total ?? 0);
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+
+  return {
+    id: m1.id,
+    displayDate: formatDate(e.createdAt),
+    shortDate: formatShortDate(e.createdAt),
+    module1Score: m1.score ?? 0,
+    module1Total: m1.total ?? 0,
+    module2Score: m2.score ?? 0,
+    module2Total: m2.total ?? 0,
+    score,
+    total,
+    pct,
+  };
+}
+
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -117,9 +146,12 @@ export default async function DashboardPage() {
 
   const inProgress = exams.filter((e) => e.status !== "completed");
   const completed = exams.filter((e) => e.status === "completed");
+  const latestCompleted = completed
+    .slice(0, 3)
+    .map((exam) => scoreSummary(exam));
 
   return (
-    <main className="mx-auto max-w-3xl p-6 space-y-8">
+    <main className="mx-auto w-full max-w-6xl p-6 space-y-8">
       <header className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-wide">Dashboard</h1>
         <SignOutButton />
@@ -139,95 +171,99 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {inProgress.length > 0 && (
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:items-start">
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-gray-800 border-b-2 border-[#3b82f6] pb-2">
+            Completed Practice Tests
+          </h2>
+
+          <CompletedProgressChart exams={latestCompleted} />
+
+          {latestCompleted.length === 0 ? (
+            <p className="rounded-lg border border-gray-100 bg-white p-4 text-sm text-gray-500 shadow-sm">
+              You have not completed a practice test yet. Use the button above to start.
+            </p>
+          ) : (
+            <ul className="divide-y divide-gray-100 rounded-lg border border-gray-100 bg-white shadow-sm">
+              {latestCompleted.map((exam, i) => {
+                const prev = latestCompleted[i + 1];
+                const delta = prev ? exam.score - prev.score : null;
+                return (
+                  <li
+                    key={exam.id}
+                    className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="text-sm">
+                      <div className="font-medium text-gray-800">{exam.displayDate}</div>
+                      <div className="text-gray-500">
+                        Module 1: {exam.module1Score}/{exam.module1Total} · Module 2:{" "}
+                        {exam.module2Score}/{exam.module2Total}
+                      </div>
+                    </div>
+                    <div className="text-left text-sm sm:text-right">
+                      <div className="text-base font-semibold">
+                        {exam.score} / {exam.total}{" "}
+                        <span className="text-gray-500 font-normal">({exam.pct}%)</span>
+                      </div>
+                      {delta !== null && (
+                        <div
+                          className={
+                            delta > 0
+                              ? "text-green-700"
+                              : delta < 0
+                                ? "text-red-600"
+                                : "text-gray-500"
+                          }
+                        >
+                          {delta > 0 ? `+${delta}` : delta} points vs. previous
+                        </div>
+                      )}
+                      <Link
+                        href={`/challenge/review/${exam.id}`}
+                        className="mt-2 inline-block rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-blue-50 hover:text-[#3b82f6] hover:border-blue-200 transition"
+                      >
+                        Review Explanations
+                      </Link>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-gray-800 border-b-2 border-[#3b82f6] pb-2">
             In Progress
           </h2>
-          <ul className="space-y-2">
-            {inProgress.map((e) => (
-              <li
-                key={e.m1.module.id}
-                className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm space-y-2"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="text-sm">
-                    <div className="font-semibold text-gray-800">
-                      Practice test started on {formatDate(e.createdAt)}
-                    </div>
-                    <div className="text-gray-600">
-                      {statusLabel(e, now)}
-                    </div>
-                  </div>
-                  <InProgressAction exam={e} />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <section className="space-y-3">
-        <h2 className="text-xl font-bold text-gray-800 border-b-2 border-[#3b82f6] pb-2">
-          Completed Practice Tests
-        </h2>
-        {completed.length === 0 ? (
-          <p className="text-sm text-gray-500">
-            You have not completed a practice test yet. Use the button above to start.
-          </p>
-        ) : (
-          <ul className="divide-y divide-gray-100 rounded-lg border border-gray-100 bg-white shadow-sm">
-            {completed.map((e, i) => {
-              const m1 = e.m1.module;
-              const m2 = e.m2!.module;
-              const score = (m1.score ?? 0) + (m2.score ?? 0);
-              const total = (m1.total ?? 0) + (m2.total ?? 0);
-              const pct = total > 0 ? Math.round((score / total) * 100) : 0;
-              // Show a per-exam delta so the timeline view actually feels
-              // like a timeline: "Test 4 · +3 points vs. previous", etc.
-              const prev = completed[i + 1];
-              const prevScore = prev
-                ? (prev.m1.module.score ?? 0) + (prev.m2!.module.score ?? 0)
-                : null;
-              const delta = prevScore !== null ? score - prevScore : null;
-              return (
-                <li key={m1.id} className="flex items-center justify-between gap-3 p-3">
-                  <div className="text-sm">
-                    <div className="font-medium">{formatDate(e.createdAt)}</div>
-                    <div className="text-gray-500">
-                      Module 1: {m1.score}/{m1.total} · Module 2: {m2.score}/{m2.total}
-                    </div>
-                  </div>
-                  <div className="text-right text-sm">
-                    <div className="text-base font-semibold">
-                      {score} / {total} <span className="text-gray-500 font-normal">({pct}%)</span>
-                    </div>
-                    {delta !== null && (
-                      <div
-                        className={
-                          delta > 0
-                            ? "text-green-700"
-                            : delta < 0
-                              ? "text-red-600"
-                              : "text-gray-500"
-                        }
-                      >
-                        {delta > 0 ? `+${delta}` : delta} points vs. previous
+          {inProgress.length === 0 ? (
+            <p className="rounded-lg border border-gray-100 bg-white p-4 text-sm text-gray-500 shadow-sm">
+              No practice test is currently in progress.
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {inProgress.map((e) => (
+                <li
+                  key={e.m1.module.id}
+                  className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm space-y-2"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="text-sm">
+                      <div className="font-semibold text-gray-800">
+                        Practice test started on {formatDate(e.createdAt)}
                       </div>
-                    )}
-                    <Link
-                      href={`/challenge/review/${m1.id}`}
-                      className="mt-2 inline-block rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-blue-50 hover:text-[#3b82f6] hover:border-blue-200 transition"
-                    >
-                      Review Explanations
-                    </Link>
+                      <div className="text-gray-600">
+                        {statusLabel(e, now)}
+                      </div>
+                    </div>
+                    <InProgressAction exam={e} />
                   </div>
                 </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
     </main>
   );
 }
