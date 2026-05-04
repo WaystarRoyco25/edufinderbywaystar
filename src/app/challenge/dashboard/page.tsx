@@ -178,58 +178,6 @@ export default async function DashboardPage() {
           </h2>
 
           <CompletedProgressChart exams={latestCompleted} />
-
-          {latestCompleted.length === 0 ? (
-            <p className="rounded-lg border border-gray-100 bg-white p-4 text-sm text-gray-500 shadow-sm">
-              You have not completed a practice test yet. Use the button above to start.
-            </p>
-          ) : (
-            <ul className="divide-y divide-gray-100 rounded-lg border border-gray-100 bg-white shadow-sm">
-              {latestCompleted.map((exam, i) => {
-                const prev = latestCompleted[i + 1];
-                const delta = prev ? exam.score - prev.score : null;
-                return (
-                  <li
-                    key={exam.id}
-                    className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div className="text-sm">
-                      <div className="font-medium text-gray-800">{exam.displayDate}</div>
-                      <div className="text-gray-500">
-                        Module 1: {exam.module1Score}/{exam.module1Total} · Module 2:{" "}
-                        {exam.module2Score}/{exam.module2Total}
-                      </div>
-                    </div>
-                    <div className="text-left text-sm sm:text-right">
-                      <div className="text-base font-semibold">
-                        {exam.score} / {exam.total}{" "}
-                        <span className="text-gray-500 font-normal">({exam.pct}%)</span>
-                      </div>
-                      {delta !== null && (
-                        <div
-                          className={
-                            delta > 0
-                              ? "text-green-700"
-                              : delta < 0
-                                ? "text-red-600"
-                                : "text-gray-500"
-                          }
-                        >
-                          {delta > 0 ? `+${delta}` : delta} points vs. previous
-                        </div>
-                      )}
-                      <Link
-                        href={`/challenge/review/${exam.id}`}
-                        className="mt-2 inline-block rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-blue-50 hover:text-[#3b82f6] hover:border-blue-200 transition"
-                      >
-                        Review Explanations
-                      </Link>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
         </section>
 
         <section className="space-y-3">

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 export type ProgressExam = {
@@ -19,20 +20,6 @@ type ChartPoint = ProgressExam & {
   x: number;
   y: number;
 };
-
-function deltaText(delta: number | null): string {
-  if (delta === null) return "First result shown";
-  if (delta > 0) return `+${delta} points vs. previous`;
-  if (delta < 0) return `${delta} points vs. previous`;
-  return "No change vs. previous";
-}
-
-function deltaClass(delta: number | null): string {
-  if (delta === null) return "text-gray-500";
-  if (delta > 0) return "text-green-700";
-  if (delta < 0) return "text-red-600";
-  return "text-gray-500";
-}
 
 function chartPath(points: ChartPoint[]): string {
   return points
@@ -65,8 +52,6 @@ export default function CompletedProgressChart({
   const rawSelectedIndex = points.findIndex((point) => point.id === selectedId);
   const selectedIndex = rawSelectedIndex >= 0 ? rawSelectedIndex : points.length - 1;
   const selected = points[selectedIndex];
-  const previous = selectedIndex > 0 ? points[selectedIndex - 1] : null;
-  const delta = selected && previous ? selected.score - previous.score : null;
 
   if (points.length === 0) {
     return (
@@ -177,7 +162,7 @@ export default function CompletedProgressChart({
       </div>
 
       {selected && (
-        <div className="mt-4 flex flex-col gap-2 border-t border-gray-100 pt-3 text-sm sm:flex-row sm:items-end sm:justify-between">
+        <div className="mt-4 flex flex-col gap-3 border-t border-gray-100 pt-3 text-sm sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-medium text-gray-800">{selected.displayDate}</p>
             <p className="text-gray-500">
@@ -185,7 +170,12 @@ export default function CompletedProgressChart({
               {selected.module2Score}/{selected.module2Total}
             </p>
           </div>
-          <p className={`font-medium ${deltaClass(delta)}`}>{deltaText(delta)}</p>
+          <Link
+            href={`/challenge/review/${selected.id}`}
+            className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-[#3b82f6]"
+          >
+            Review Explanations
+          </Link>
         </div>
       )}
     </div>
