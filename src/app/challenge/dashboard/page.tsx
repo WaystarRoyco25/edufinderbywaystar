@@ -147,7 +147,7 @@ export default async function DashboardPage() {
   const inProgress = exams.filter((e) => e.status !== "completed");
   const completed = exams.filter((e) => e.status === "completed");
   const latestCompleted = completed
-    .slice(0, 3)
+    .slice(0, 5)
     .map((exam) => scoreSummary(exam));
 
   return (

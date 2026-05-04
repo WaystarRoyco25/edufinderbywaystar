@@ -152,7 +152,7 @@ export default function CompletedProgressChart({
           })}
         </div>
 
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
           {points.map((point) => {
             const isSelected = selected?.id === point.id;
             return (
