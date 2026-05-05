@@ -855,8 +855,8 @@
             <div class="conversation-shell">
                 <div class="flex items-center justify-between gap-4">
                     <div>
-                        <p id="conversation-step-label" class="text-xs font-bold text-amber-600 uppercase tracking-wide">Step 1 of 7</p>
-                        <h4 id="conversation-step-title" class="text-lg font-bold text-gray-900">Applicant context</h4>
+                        <p id="conversation-step-label" class="text-xs font-bold text-amber-600 uppercase tracking-wide">Question 1 of 14</p>
+                        <h4 id="conversation-step-title" class="text-lg font-bold text-gray-900">Applicant basics</h4>
                     </div>
                     <div class="w-32 md:w-44 conversation-progress-track" aria-hidden="true">
                         <div id="conversation-progress-fill" class="conversation-progress-fill"></div>
@@ -868,18 +868,18 @@
                     <div class="advisor-bubble">
                         <p class="advisor-name">EduFinder advisor</p>
                         <p id="conversation-step-prompt" class="text-sm text-gray-700 leading-relaxed">
-                            First, I need the basic context admissions readers will see before anything else.
+                            First, who should this report belong to?
                         </p>
                     </div>
                 </div>
 
                 <section class="conversation-step is-active"
-                         data-title="Applicant context"
-                         data-prompt="First, I need the basic context admissions readers will see before anything else.">
+                         data-title="Applicant basics"
+                         data-prompt="First, who should this report belong to?">
                     <div class="conversation-step-card">
                         <span class="question-kicker"><i class="fa-solid fa-user"></i> Start here</span>
-                        <h5 class="text-base font-bold text-gray-900 mb-1">Who are we building this report for?</h5>
-                        <p class="text-sm text-gray-600 mb-4">Give us the identity, school context, and application direction.</p>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What name and email should we use?</h5>
+                        <p class="text-sm text-gray-600 mb-4">We use this to save the draft and attach the finished report to the right account.</p>
 
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="field-group" data-field-label="Name">
@@ -892,6 +892,19 @@
                                 <input id="rf-email" name="email" type="email" data-report-required="true" class="form-input" placeholder="student@example.com">
                                 <p class="field-error">Enter an email address.</p>
                             </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="School year"
+                         data-prompt="Now give me the school context admissions readers will see first.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-school"></i> School context</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">Where is the student in high school right now?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Current school, grade, and graduation timing anchor the rest of the read.</p>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
                             <div class="field-group" data-field-label="Current school">
                                 <label class="form-label" for="rf-school">Current school</label>
                                 <input id="rf-school" name="school" type="text" data-report-required="true" class="form-input" placeholder="e.g. Seoul International School">
@@ -915,8 +928,18 @@
                             </div>
                             <p class="field-error">Choose the current grade.</p>
                         </div>
+                    </div>
+                </section>
 
-                        <div class="field-group mt-4" data-field-label="Citizenship">
+                <section class="conversation-step"
+                         data-title="Application path"
+                         data-prompt="Next, how will colleges classify this application?">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-passport"></i> Application path</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">How will the student apply?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Citizenship and applicant type can affect pools, requirements, and strategy.</p>
+
+                        <div class="field-group" data-field-label="Citizenship">
                             <input id="rf-citizenship" name="citizenship" type="hidden" data-report-required="true">
                             <label class="form-label">Citizenship / how you'll apply</label>
                             <div class="choice-grid" data-choice-group data-field="citizenship">
@@ -928,32 +951,41 @@
                             <p class="field-error">Choose how the student will apply.</p>
                         </div>
 
-                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                            <div class="field-group" data-field-label="Intended major">
-                                <label class="form-label" for="rf-intended-major">Intended major</label>
-                                <input id="rf-intended-major" name="intendedMajor" type="text" data-report-required="true" class="form-input" placeholder="e.g. Computer Science">
-                                <p class="field-error">Enter an intended major, or write undecided.</p>
-                            </div>
-                            <div>
-                                <input id="rf-application-type" name="applicationType" type="hidden">
-                                <label class="form-label">Application type</label>
-                                <div class="choice-grid" data-choice-group data-field="applicationType">
-                                    <button type="button" class="choice-option" data-value="First-year">First-year</button>
-                                    <button type="button" class="choice-option" data-value="Transfer">Transfer</button>
-                                    <button type="button" class="choice-option" data-value="Still deciding">Still deciding</button>
-                                </div>
+                        <div class="mt-4">
+                            <input id="rf-application-type" name="applicationType" type="hidden">
+                            <label class="form-label">Application type</label>
+                            <div class="choice-grid" data-choice-group data-field="applicationType">
+                                <button type="button" class="choice-option" data-value="First-year">First-year</button>
+                                <button type="button" class="choice-option" data-value="Transfer">Transfer</button>
+                                <button type="button" class="choice-option" data-value="Still deciding">Still deciding</button>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <section class="conversation-step"
-                         data-title="Academic signal"
+                         data-title="Academic direction"
+                         data-prompt="What academic direction should the report compare against?">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-compass"></i> Direction</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What major or field is the student aiming for?</h5>
+                        <p class="text-sm text-gray-600 mb-4">If the student is undecided, write undecided and add any broad interests.</p>
+
+                        <div class="field-group" data-field-label="Intended major">
+                            <label class="form-label" for="rf-intended-major">Intended major</label>
+                            <input id="rf-intended-major" name="intendedMajor" type="text" data-report-required="true" class="form-input" placeholder="e.g. Computer Science">
+                            <p class="field-error">Enter an intended major, or write undecided.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="GPA snapshot"
                          data-prompt="Now let us translate the transcript into a fair comparison point. Exact numbers help, but honest estimates are fine for a draft.">
                     <div class="conversation-step-card">
                         <span class="question-kicker"><i class="fa-solid fa-chart-line"></i> Transcript</span>
-                        <h5 class="text-base font-bold text-gray-900 mb-1">How strong is the academic record right now?</h5>
-                        <p class="text-sm text-gray-600 mb-4">This is where we capture grades, trend, rank, and class difficulty.</p>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What is the current GPA or average?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Use the closest grading scale so the report can read the number correctly.</p>
 
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="field-group" data-field-label="GPA / average">
@@ -965,10 +997,6 @@
                             <div>
                                 <label class="form-label" for="rf-gpa-weighted">GPA (weighted)</label>
                                 <input id="rf-gpa-weighted" name="gpaWeighted" type="text" class="form-input" placeholder="Optional - e.g. 4.42">
-                            </div>
-                            <div>
-                                <label class="form-label" for="rf-class-rank">Class rank or percentile</label>
-                                <input id="rf-class-rank" name="classRank" type="text" class="form-input" placeholder="e.g. Top 10% / 8th of 120 / not given">
                             </div>
                         </div>
 
@@ -985,8 +1013,18 @@
                             </div>
                             <p class="field-error">Choose the grading scale.</p>
                         </div>
+                    </div>
+                </section>
 
-                        <div class="field-group mt-4" data-field-label="Course rigor">
+                <section class="conversation-step"
+                         data-title="Academic pattern"
+                         data-prompt="Now describe the pattern behind the numbers: course difficulty, rank, and recent momentum.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-chart-simple"></i> Academic pattern</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">How should we read the transcript trend?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Rigor and trajectory often matter as much as the raw average.</p>
+
+                        <div class="field-group" data-field-label="Course rigor">
                             <input id="rf-course-rigor" name="courseRigor" type="hidden" data-report-required="true">
                             <label class="form-label">How hard are the classes you're taking?</label>
                             <div class="choice-grid" data-choice-group data-field="courseRigor">
@@ -1010,16 +1048,69 @@
                                 <button type="button" class="choice-option" data-value="Hard to tell yet">Hard to tell</button>
                             </div>
                         </div>
+
+                        <div class="mt-4">
+                            <label class="form-label" for="rf-class-rank">Class rank or percentile</label>
+                            <input id="rf-class-rank" name="classRank" type="text" class="form-input" placeholder="e.g. Top 10% / 8th of 120 / not given">
+                        </div>
                     </div>
                 </section>
 
                 <section class="conversation-step"
-                         data-title="Testing picture"
-                         data-prompt="Test scores can matter differently by school and strategy. Tell us what exists now, and leave anything unknown blank.">
+                         data-title="Curriculum type"
+                         data-prompt="Next, what kind of curriculum does the school use?">
                     <div class="conversation-step-card">
-                        <span class="question-kicker"><i class="fa-solid fa-clipboard-check"></i> Scores</span>
-                        <h5 class="text-base font-bold text-gray-900 mb-1">What should we know about testing?</h5>
-                        <p class="text-sm text-gray-600 mb-4">SAT, ACT, English proficiency, and the submission plan all affect the final read.</p>
+                        <span class="question-kicker"><i class="fa-solid fa-book-open"></i> Curriculum</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">Which curriculum best matches the student's classes?</h5>
+                        <p class="text-sm text-gray-600 mb-4">This helps compare AP, IB, A-Level, Korean high school, and mixed tracks fairly.</p>
+
+                        <div>
+                            <input id="rf-ap-ib-track" name="apIbTrack" type="hidden">
+                            <label class="form-label">Curriculum</label>
+                            <div class="choice-grid is-three" data-choice-group data-field="apIbTrack">
+                                <button type="button" class="choice-option" data-value="US Curriculum / AP / Honors">US / AP / Honors</button>
+                                <button type="button" class="choice-option" data-value="IB Diploma">IB Diploma</button>
+                                <button type="button" class="choice-option" data-value="Both AP and IB">AP and IB</button>
+                                <button type="button" class="choice-option" data-value="A-Level / IGCSE">A-Level / IGCSE</button>
+                                <button type="button" class="choice-option" data-value="Korean high school">Korean high school</button>
+                                <button type="button" class="choice-option" data-value="Other / not sure">Other / not sure</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Courses"
+                         data-prompt="Now list the courses that should anchor the academic comparison.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-list-check"></i> Course list</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">Which classes matter most?</h5>
+                        <p class="text-sm text-gray-600 mb-4">List recent, current, and planned classes. Advanced courses and grades are especially useful.</p>
+
+                        <div class="field-group" data-field-label="Main classes">
+                            <label class="form-label" for="rf-current-courses">Main classes you're taking now or took recently</label>
+                            <textarea id="rf-current-courses" name="currentCourses" data-report-required="true" class="form-textarea" rows="4"
+                                      placeholder="e.g. 10th grade: Honors Chemistry, AP World History, Precalculus&#10;11th grade (planned): AP Calculus BC, AP Physics C, AP English Lang"></textarea>
+                            <p class="form-hint">Include advanced courses, honors, AP, IB, A-Level, or school-specific tracks.</p>
+                            <p class="field-error">List the main classes from this year, last year, or planned next year.</p>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="form-label" for="rf-ap-ib-detail">Advanced classes and grades</label>
+                            <textarea id="rf-ap-ib-detail" name="apIbDetail" class="form-textarea" rows="4"
+                                      placeholder="e.g. AP Calculus BC: 5, AP Physics 1: 4&#10;IB HL Math AA: 7, IB HL English Lit: 6&#10;A-Level Math: A*, Physics: A"></textarea>
+                            <p class="form-hint">It is more accurate if you split them into finished, in progress, and planned.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="conversation-step"
+                         data-title="Testing plan"
+                         data-prompt="Test scores can matter differently by school and strategy. Tell us the plan first.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-clipboard-check"></i> Testing</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What is the test submission plan?</h5>
+                        <p class="text-sm text-gray-600 mb-4">SAT, ACT, English proficiency, and test optional strategy can lead to different recommendations.</p>
 
                         <div>
                             <input id="rf-testing-plan" name="testingPlan" type="hidden">
@@ -1031,8 +1122,18 @@
                                 <button type="button" class="choice-option" data-value="Haven't taken one yet">Haven't taken one yet</button>
                             </div>
                         </div>
+                    </div>
+                </section>
 
-                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                <section class="conversation-step"
+                         data-title="Test scores"
+                         data-prompt="Now add any scores that exist. Leave anything unknown blank.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-square-poll-vertical"></i> Scores</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What scores should the report consider?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Official, practice, or expected scores are all useful as long as the wording is honest.</p>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="form-label" for="rf-sat">SAT total</label>
                                 <input id="rf-sat" name="satTotal" type="text" class="form-input" placeholder="e.g. 1520">
@@ -1054,49 +1155,11 @@
                 </section>
 
                 <section class="conversation-step"
-                         data-title="Courses and curriculum"
-                         data-prompt="Next, I need the shape of the curriculum: what your school offers, what you took, and what you plan to take.">
-                    <div class="conversation-step-card">
-                        <span class="question-kicker"><i class="fa-solid fa-book-open"></i> Curriculum</span>
-                        <h5 class="text-base font-bold text-gray-900 mb-1">What classes should anchor the comparison?</h5>
-                        <p class="text-sm text-gray-600 mb-4">List recent, current, and planned classes. Advanced courses and grades are especially useful.</p>
-
-                        <div>
-                            <input id="rf-ap-ib-track" name="apIbTrack" type="hidden">
-                            <label class="form-label">Curriculum</label>
-                            <div class="choice-grid is-three" data-choice-group data-field="apIbTrack">
-                                <button type="button" class="choice-option" data-value="US Curriculum / AP / Honors">US / AP / Honors</button>
-                                <button type="button" class="choice-option" data-value="IB Diploma">IB Diploma</button>
-                                <button type="button" class="choice-option" data-value="Both AP and IB">AP and IB</button>
-                                <button type="button" class="choice-option" data-value="A-Level / IGCSE">A-Level / IGCSE</button>
-                                <button type="button" class="choice-option" data-value="Korean high school">Korean high school</button>
-                                <button type="button" class="choice-option" data-value="Other / not sure">Other / not sure</button>
-                            </div>
-                        </div>
-
-                        <div class="field-group mt-4" data-field-label="Main classes">
-                            <label class="form-label" for="rf-current-courses">Main classes you're taking now or took recently</label>
-                            <textarea id="rf-current-courses" name="currentCourses" data-report-required="true" class="form-textarea" rows="4"
-                                      placeholder="e.g. 10th grade: Honors Chemistry, AP World History, Precalculus&#10;11th grade (planned): AP Calculus BC, AP Physics C, AP English Lang"></textarea>
-                            <p class="form-hint">Include advanced courses, honors, AP, IB, A-Level, or school-specific tracks.</p>
-                            <p class="field-error">List the main classes from this year, last year, or planned next year.</p>
-                        </div>
-
-                        <div class="mt-4">
-                            <label class="form-label" for="rf-ap-ib-detail">Advanced classes and grades</label>
-                            <textarea id="rf-ap-ib-detail" name="apIbDetail" class="form-textarea" rows="4"
-                                      placeholder="e.g. AP Calculus BC: 5, AP Physics 1: 4&#10;IB HL Math AA: 7, IB HL English Lit: 6&#10;A-Level Math: A*, Physics: A"></textarea>
-                            <p class="form-hint">It is more accurate if you split them into finished, in progress, and planned.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="conversation-step"
-                         data-title="Activities and evidence"
-                         data-prompt="Admissions readers look for pattern, depth, initiative, and proof. This is where your non-classroom story becomes visible.">
+                         data-title="Activities"
+                         data-prompt="Admissions readers look for pattern, depth, initiative, and proof. Start with the main activities.">
                     <div class="conversation-step-card">
                         <span class="question-kicker"><i class="fa-solid fa-people-group"></i> Activities</span>
-                        <h5 class="text-base font-bold text-gray-900 mb-1">What have you done outside class?</h5>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What has the student done outside class?</h5>
                         <p class="text-sm text-gray-600 mb-4">Use natural language. We will parse role, time, impact, leadership, and awards from what you share.</p>
 
                         <div class="field-group" data-field-label="Top activities">
@@ -1106,8 +1169,18 @@
                             <p class="form-hint">Add the activity name, role, years, hours, and measurable results where possible.</p>
                             <p class="field-error">Describe at least a few meaningful activities.</p>
                         </div>
+                    </div>
+                </section>
 
-                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                <section class="conversation-step"
+                         data-title="Recognition"
+                         data-prompt="Now add proof points: awards, recognition, and leadership roles.">
+                    <div class="conversation-step-card">
+                        <span class="question-kicker"><i class="fa-solid fa-medal"></i> Recognition</span>
+                        <h5 class="text-base font-bold text-gray-900 mb-1">What recognition or leadership should stand out?</h5>
+                        <p class="text-sm text-gray-600 mb-4">Awards and leadership help show level, selectivity, and responsibility.</p>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="form-label" for="rf-awards">Awards or recognition</label>
                                 <textarea id="rf-awards" name="awards" class="form-textarea" rows="4"
@@ -1587,7 +1660,7 @@ function updateConversationProgress() {
     const submitButton = document.getElementById('report-submit-button');
     const isLast = reportConversationStep === steps.length - 1;
 
-    if (label) label.textContent = 'Step ' + (reportConversationStep + 1) + ' of ' + steps.length;
+    if (label) label.textContent = 'Question ' + (reportConversationStep + 1) + ' of ' + steps.length;
     if (title) title.textContent = activeStep.dataset.title || '';
     if (prompt) prompt.textContent = activeStep.dataset.prompt || '';
     if (fill) fill.style.width = (((reportConversationStep + 1) / steps.length) * 100) + '%';
