@@ -560,9 +560,518 @@
                 font-size: .82rem;
             }
         }
+
+        /* ── Mature EduFinder review/map design ── */
+        :root {
+            --brand-blue: #3b82f6;
+            --brand-blue-hover: #2563eb;
+            --brand-blue-soft: #eff6ff;
+            --brand-navy: #1f2937;
+            --brand-navy-soft: #f3f4f6;
+            --surface: #ffffff;
+            --bg: #faf9f6;
+            --bg-warm: #f5f1ea;
+            --border: #e8e4dc;
+            --border-strong: #d6d2c8;
+            --text-primary: #1f2937;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --text-quaternary: #94a3b8;
+            --shadow-warm-xs: 0 1px 2px rgba(31, 41, 55, .04);
+            --shadow-warm-sm: 0 1px 3px rgba(31, 41, 55, .05), 0 1px 2px rgba(31, 41, 55, .04);
+            --shadow-warm-md: 0 4px 14px rgba(31, 41, 55, .06), 0 2px 4px rgba(31, 41, 55, .04);
+            --shadow-warm-lg: 0 12px 32px rgba(31, 41, 55, .08), 0 4px 10px rgba(31, 41, 55, .04);
+        }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .brand-header {
+            position: relative;
+            background: var(--brand-navy);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 100% 0%, rgba(59,130,246,.28) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 60% at 0% 100%, rgba(59,130,246,.12) 0%, transparent 60%);
+            overflow: hidden;
+        }
+        .brand-header::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.55) 50%, transparent 100%);
+        }
+        .brand-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .68rem;
+            font-weight: 700;
+            color: rgba(255,255,255,.72);
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+        .brand-eyebrow::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--brand-blue);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+        }
+        .auth-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .35rem .35rem .35rem .85rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.18);
+            color: rgba(255,255,255,.92);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .auth-status-pill .auth-user-label {
+            font-size: .8rem;
+            font-weight: 500;
+            letter-spacing: -.005em;
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .auth-status-pill .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .25rem .65rem;
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--brand-navy);
+            font-size: .72rem;
+            font-weight: 700;
+            transition: background .15s ease, color .15s ease;
+        }
+        .auth-status-pill .logout-btn:hover {
+            background: var(--brand-blue);
+            color: #fff;
+        }
+        .panel-bg {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-warm-sm);
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        }
+        .panel-bg:hover {
+            box-shadow: var(--shadow-warm-lg);
+            border-color: rgba(59, 130, 246, .35);
+        }
+        .panel-bg::before,
+        .panel-bg::after,
+        #review-page-panel::before,
+        #review-page-panel::after {
+            display: none;
+        }
+        #review-page-panel.category-international,
+        #review-page-panel.category-hagwon,
+        #review-page-panel.category-english-kindergarten {
+            background: var(--surface);
+        }
+        .section-card {
+            padding: 1.5rem;
+        }
+        .section-card-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+        .section-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .68rem;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            margin-bottom: .85rem;
+        }
+        .section-eyebrow::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 999px;
+            background: var(--brand-blue);
+        }
+        .section-eyebrow.is-navy::before {
+            background: var(--brand-navy);
+        }
+        .section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 12px;
+            flex-shrink: 0;
+            background: var(--brand-navy);
+            color: #ffffff;
+            font-size: 1.05rem;
+            box-shadow: 0 2px 6px rgba(31, 41, 55, .15);
+        }
+        .section-icon.is-blue {
+            background: var(--brand-blue);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, .25);
+        }
+        .section-title {
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -.015em;
+        }
+        .section-caption {
+            color: var(--text-tertiary);
+            letter-spacing: -.005em;
+        }
+        .search-wrap {
+            border-color: var(--border);
+            box-shadow: var(--shadow-warm-sm);
+        }
+        .search-wrap:focus-within {
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 4px rgba(59,130,246,.12), var(--shadow-warm-md);
+        }
+        #institution-search-input {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        #institution-search-input::placeholder {
+            color: var(--text-quaternary);
+            font-weight: 400;
+        }
+        .ghost-button {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            padding: .7rem 1.2rem;
+            border-radius: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border-strong);
+            color: var(--text-primary);
+            font-size: .88rem;
+            font-weight: 600;
+            transition: background .18s ease, border-color .18s ease, color .18s ease;
+        }
+        .ghost-button:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+            background: var(--brand-blue-soft);
+        }
+        .notice-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow-warm-sm);
+        }
+        .notice-panel-title {
+            color: var(--text-primary);
+            letter-spacing: -.01em;
+        }
+        .notice-panel li {
+            color: var(--text-secondary);
+        }
+        .review-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            margin-top: 1rem;
+        }
+        .count-pill,
+        .map-status-pill,
+        .distance-badge {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            font-size: .78rem;
+            font-weight: 700;
+            padding: .35rem .8rem;
+            letter-spacing: -.005em;
+        }
+        .map-status-pill {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .review-action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-strong);
+            background: #fff;
+            color: var(--brand-navy);
+            font-size: .82rem;
+            font-weight: 700;
+            padding: .55rem .85rem;
+            transition: background .18s ease, border-color .18s ease, color .18s ease, transform .05s ease;
+        }
+        .review-action-button:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+            background: var(--brand-blue-soft);
+        }
+        .review-action-button:active {
+            transform: translateY(1px);
+        }
+        .review-action-button:disabled {
+            opacity: .58;
+            cursor: not-allowed;
+        }
+        .review-map-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .map-panel {
+            position: relative;
+            min-height: 380px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            background: #edf2f7;
+            box-shadow: var(--shadow-warm-xs);
+        }
+        .naver-map {
+            width: 100%;
+            height: 100%;
+            min-height: 380px;
+        }
+        .map-panel-header {
+            position: absolute;
+            left: .75rem;
+            right: .75rem;
+            top: .75rem;
+            z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: .5rem;
+            pointer-events: none;
+        }
+        .map-panel-header > * {
+            pointer-events: auto;
+        }
+        .map-status {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            max-width: 100%;
+            border-radius: 999px;
+            background: rgba(255,255,255,.94);
+            border: 1px solid rgba(214,210,200,.8);
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-warm-sm);
+            padding: .48rem .75rem;
+            font-size: .78rem;
+            font-weight: 700;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .selected-institution-panel {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--bg);
+            padding: 1rem;
+            box-shadow: var(--shadow-warm-xs);
+        }
+        .selected-institution-panel.is-empty {
+            color: var(--text-tertiary);
+            font-size: .9rem;
+            line-height: 1.55;
+        }
+        .selected-title {
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.3;
+            letter-spacing: -.015em;
+        }
+        .selected-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .45rem;
+            margin-top: .65rem;
+        }
+        .selected-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: .76rem;
+            font-weight: 700;
+            padding: .32rem .62rem;
+        }
+        .institution-list {
+            display: grid;
+            gap: .8rem;
+            max-height: none;
+        }
+        .institution-section-heading {
+            padding: .55rem .25rem .1rem;
+            color: var(--text-tertiary);
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .institution-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            padding: 1rem;
+            box-shadow: var(--shadow-warm-xs);
+            cursor: pointer;
+            transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+        }
+        .institution-card:hover,
+        .institution-card.is-selected {
+            border-color: rgba(59,130,246,.48);
+            box-shadow: var(--shadow-warm-md);
+        }
+        .institution-card.is-selected {
+            transform: translateY(-1px);
+        }
+        .institution-card-title {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.35;
+            letter-spacing: -.015em;
+        }
+        .institution-card .score-value {
+            color: var(--brand-blue);
+        }
+        .institution-card .contact-line {
+            color: var(--text-tertiary);
+        }
+        .map-marker {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px 999px 999px 4px;
+            transform: rotate(-45deg);
+            background: var(--brand-navy);
+            border: 2px solid #fff;
+            box-shadow: 0 8px 18px rgba(31,41,55,.22);
+        }
+        .map-marker::after {
+            content: attr(data-rating);
+            transform: rotate(45deg);
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 800;
+        }
+        .map-marker.is-school {
+            background: var(--brand-blue);
+        }
+        .map-marker.is-selected {
+            width: 38px;
+            height: 38px;
+            background: #111827;
+            box-shadow: 0 10px 24px rgba(59,130,246,.35);
+        }
+        .info-window {
+            min-width: 220px;
+            max-width: 270px;
+            padding: .15rem;
+            color: var(--text-primary);
+            font-family: 'Pretendard', ui-sans-serif, system-ui, sans-serif;
+        }
+        .info-window-title {
+            font-size: .95rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: .35rem;
+        }
+        .info-window-meta {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            color: var(--text-secondary);
+            font-size: .78rem;
+            font-weight: 700;
+            margin-bottom: .45rem;
+        }
+        .info-window-reason {
+            color: var(--text-secondary);
+            font-size: .76rem;
+            line-height: 1.45;
+            margin-top: .25rem;
+        }
+        .route-summary {
+            margin-top: .75rem;
+            color: var(--text-secondary);
+            font-size: .82rem;
+            line-height: 1.5;
+        }
+        @media (min-width: 1024px) {
+            .review-map-layout {
+                grid-template-columns: minmax(420px, 1.1fr) minmax(340px, .9fr);
+                align-items: start;
+            }
+            .map-panel {
+                position: sticky;
+                top: 1rem;
+                min-height: 640px;
+            }
+            .naver-map {
+                min-height: 640px;
+            }
+            .institution-list {
+                max-height: 640px;
+                overflow-y: auto;
+                padding-right: .25rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .section-card {
+                padding: 1rem;
+            }
+            .map-panel,
+            .naver-map {
+                min-height: 340px;
+            }
+            .map-panel-header {
+                position: static;
+                padding: .75rem;
+                background: #fff;
+                border-bottom: 1px solid var(--border);
+            }
+            .naver-map {
+                height: 340px;
+            }
+            .auth-status-pill .auth-user-label {
+                max-width: 96px;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="text-gray-800">
 
 <!-- Toast notification container -->
 <div id="toast-container" class="toast-container"></div>
@@ -570,37 +1079,42 @@
 <!-- ════════════════════════════════════════════════════════════
      HEADER
      ════════════════════════════════════════════════════════════ -->
-<header class="bg-blue-600 text-white py-8 shadow-md relative">
-    <div class="absolute top-4 right-4">
-        <div id="auth-status" class="text-sm font-medium"></div>
-    </div>
-    <div class="container mx-auto px-4 text-center mt-2">
-        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
-        <div class="mt-4">
-            <button
-                onclick="openFeedbackModal()"
-                class="inline-flex items-center px-4 py-2 bg-white/15 hover:bg-white/25
-                       text-blue-100 hover:text-white text-sm font-medium rounded-lg
-                       backdrop-blur-sm transition-all duration-200 border border-white/20"
-            >
-                <i class="fa-regular fa-envelope mr-2"></i>문의 및 건의하기
-            </button>
+<header class="brand-header text-white relative">
+    <div class="container mx-auto px-4 pt-8 pb-10 md:pt-12 md:pb-14 relative">
+        <div class="absolute top-5 right-4 md:top-6 md:right-6">
+            <div id="auth-status" class="text-sm font-medium"></div>
+        </div>
+        <div class="text-center">
+            <span class="brand-eyebrow mb-5 md:mb-6">Edu-tech for the next generation</span>
+            <div class="mt-5">
+                <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
+            </div>
+            <div class="mt-6">
+                <button
+                    onclick="openFeedbackModal()"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/16
+                           text-white/85 hover:text-white text-sm font-semibold rounded-lg
+                           backdrop-blur-sm transition-all duration-200 border border-white/15"
+                >
+                    <i class="fa-regular fa-envelope"></i>문의 및 건의하기
+                </button>
+            </div>
         </div>
     </div>
 </header>
 
 
-<main class="container mx-auto px-4 py-8">
+<main class="container mx-auto px-4 py-10 md:py-12">
 
 
     <!-- ════════════════════════════════════════════════════════
          REVIEW GUIDELINES NOTICE
          ════════════════════════════════════════════════════════ -->
-    <div class="bg-blue-50 border-l-4 border-blue-500 p-5 mb-6 rounded-r-lg shadow-sm">
-        <h3 class="text-lg font-bold text-blue-800 mb-3">
+    <div class="notice-panel p-5 md:p-6 mb-8">
+        <h3 class="notice-panel-title text-lg font-bold mb-3">
             <i class="fa-solid fa-circle-info mr-2"></i>리뷰 작성 전 읽어주세요!
         </h3>
-        <ul class="text-gray-700 space-y-2 text-sm md:text-base leading-relaxed">
+        <ul class="space-y-2 text-sm md:text-base leading-relaxed">
             <li>
                 ⭐ 본 플랫폼에서 별점 <strong>3점</strong>은 '보통(좋지도 나쁘지도 않음)'을 의미합니다.
                 만족하셨다면 <strong>4~5점</strong>, 아쉬운 점이 있었다면 <strong>1~2점</strong>을 부여해 주세요.
@@ -618,19 +1132,20 @@
     <!-- ════════════════════════════════════════════════════════
          SEARCH BAR
          ════════════════════════════════════════════════════════ -->
-    <div class="search-wrap p-2 mb-10">
+    <div class="max-w-3xl mx-auto mb-10 md:mb-12 relative">
+    <div class="search-wrap p-2">
         <div class="relative flex items-center">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400 pointer-events-none"></i>
+            <i class="fa-solid fa-magnifying-glass absolute left-4 text-[#94a3b8] pointer-events-none"></i>
             <input
                 type="text"
                 id="institution-search-input"
                 placeholder="관심 있는 학교 / 학원 / 유치원을 검색해 보세요."
                 autocomplete="off"
-                class="w-full pl-11 pr-28 py-3 bg-transparent text-sm md:text-base text-gray-800 border-0"
+                class="w-full pl-11 pr-28 py-3 bg-transparent text-sm md:text-base border-0"
             >
             <button
                 onclick="performSearch()"
-                class="absolute right-2 px-4 py-2 bg-blue-600 hover:bg-blue-700
+                class="absolute right-2 px-4 py-2 bg-[#3b82f6] hover:bg-[#2563eb]
                        text-white text-sm font-semibold rounded-lg transition-colors
                        inline-flex items-center gap-1.5"
             >
@@ -639,39 +1154,67 @@
             </button>
         </div>
     </div>
+    </div>
 
 
     <div class="mb-4">
         <a href="/"
-           class="inline-flex items-center px-4 py-2 bg-white hover:bg-gray-50
-                  text-gray-600 text-sm font-semibold rounded-lg border border-gray-200
-                  shadow-sm transition-colors">
-            <i class="fa-solid fa-arrow-left mr-2 text-xs"></i>홈으로
+           class="ghost-button">
+            <i class="fa-solid fa-arrow-left text-xs"></i>홈으로
         </a>
     </div>
 
     <section id="review-page-panel" class="panel-bg section-card">
         <div class="section-card-header is-static">
             <div>
+                <span id="review-page-eyebrow" class="section-eyebrow">Reviews · Schools</span>
                 <h2 id="review-page-title" class="section-title">기관 리뷰</h2>
                 <p id="review-page-caption" class="section-caption">기관을 선택해 리뷰를 남겨주세요.</p>
-                <span class="mt-3 inline-flex items-center px-3 py-1 bg-white/75 text-gray-700 text-xs font-bold rounded-full border border-white/80 shadow-sm">
-                    <i id="review-page-count-icon" class="fa-solid fa-building-columns mr-1.5 text-blue-500"></i>
-                    <span id="review-page-count">0</span>개 등록
-                </span>
+                <div class="review-toolbar">
+                    <span class="count-pill">
+                        <i id="review-page-count-icon" class="fa-solid fa-building-columns mr-1.5 text-blue-500"></i>
+                        <span id="review-page-count">0</span>개 등록
+                    </span>
+                    <span id="map-location-count" class="map-status-pill">
+                        <i class="fa-solid fa-map-location-dot mr-1.5 text-[#3b82f6]"></i>
+                        지도 준비 중
+                    </span>
+                </div>
             </div>
             <div class="section-action-row">
+                <span id="review-page-section-icon" class="section-icon is-blue">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </span>
                 <button
                     id="review-page-guide-button"
                     onclick="openCurrentGuideModal()"
-                    class="hidden inline-flex items-center px-3 py-1 bg-blue-50 hover:bg-blue-100
-                           text-blue-600 text-xs font-semibold rounded-full border border-blue-200 transition-colors"
+                    class="review-action-button hidden"
                 >
-                    <i class="fa-solid fa-lightbulb mr-1.5 text-blue-400"></i>가이드
+                    <i class="fa-solid fa-lightbulb"></i>가이드
                 </button>
             </div>
         </div>
-        <div id="review-list-container" class="grid grid-cols-1 gap-4 mt-4"></div>
+        <div class="review-map-layout">
+            <div class="map-panel">
+                <div class="map-panel-header">
+                    <div id="map-status" class="map-status">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <span>NAVER 지도를 준비하고 있습니다.</span>
+                    </div>
+                    <button id="current-location-button" type="button" onclick="requestUserLocation()" class="review-action-button">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                        <span>내 위치 기준 거리</span>
+                    </button>
+                </div>
+                <div id="naver-map" class="naver-map" aria-label="기관 위치 지도"></div>
+            </div>
+            <div class="review-list-panel">
+                <div id="selected-institution-panel" class="selected-institution-panel is-empty">
+                    지도 또는 목록에서 기관을 선택하면 별점, 주요 이유, 위치 정보를 함께 확인할 수 있습니다.
+                </div>
+                <div id="review-list-container" class="institution-list mt-3"></div>
+            </div>
+        </div>
     </section>
 
 
@@ -1174,6 +1717,7 @@ const CATEGORY_CONFIG = {
     international: {
         title: '국제학교 / 영어 유치원',
         caption: '핵심 정보 및 별점을 한눈에 확인하세요.',
+        eyebrow: 'Reviews · Schools',
         list: internationalAndEnglishKindergartens,
         listSections: [
             { title: '국제학교', list: internationalSchools },
@@ -1189,6 +1733,7 @@ const CATEGORY_CONFIG = {
     hagwon: {
         title: '학원 / 컨설팅',
         caption: '진짜 학생과 학부모가 남긴 유학원 리뷰를 읽어보세요.',
+        eyebrow: 'Reviews · Hagwon',
         list: hagwons,
         panelClass: 'category-hagwon',
         guide: 'hagwon',
@@ -1255,6 +1800,22 @@ let pendingEmail = "";
 let ratingsData = {};
 let myReviewedSchools = [];
 let currentCategoryKey = 'international';
+let selectedInstitutionName = "";
+let naverMap = null;
+let activeInfoWindow = null;
+let userLocationMarker = null;
+let userLocation = null;
+let mapLoadPromise = null;
+let activeMapCategoryKey = "";
+let activeLocations = [];
+let locationCacheByCategory = {};
+let markersByInstitution = new Map();
+let routeSummaryCache = {};
+
+const DEFAULT_MAP_CENTER = { lat: 37.5666103, lng: 126.9783882 };
+const MAP_LOOKUP_ENDPOINT = '/api/naver/maps/lookup';
+const MAP_CONFIG_ENDPOINT = '/api/naver/maps/config';
+const MAP_ROUTE_ENDPOINT = '/api/naver/maps/route';
 
 function safeNumber(value) {
     const n = Number(value);
@@ -1275,6 +1836,546 @@ function getTopReason(obj) {
     return topKey;
 }
 
+function getRatingSummary(school) {
+    const stats = ratingsData[school];
+    const votes = stats ? safeNumber(stats.votes) : 0;
+    const avg = votes > 0 ? safeNumber(stats.totalScore) / votes : 0;
+    return {
+        avg,
+        avgLabel: avg > 0 ? avg.toFixed(1) : '-',
+        votes,
+        topStrength: stats ? getTopReason(stats.positiveReasons) : null,
+        topWeakness: stats ? getTopReason(stats.negativeReasons) : null
+    };
+}
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, function(ch) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
+    });
+}
+
+function setMapStatus(message, iconClass = 'fa-solid fa-circle-info') {
+    const status = document.getElementById('map-status');
+    if (!status) return;
+    status.replaceChildren();
+    const icon = document.createElement('i');
+    icon.className = iconClass;
+    const label = document.createElement('span');
+    label.textContent = message;
+    status.append(icon, label);
+}
+
+function updateMapLocationCount(locatedCount, totalCount) {
+    const label = document.getElementById('map-location-count');
+    if (!label) return;
+    label.replaceChildren();
+    const icon = document.createElement('i');
+    icon.className = 'fa-solid fa-map-location-dot mr-1.5 text-[#3b82f6]';
+    const text = document.createElement('span');
+    text.textContent = totalCount
+        ? locatedCount + '/' + totalCount + '개 위치 표시'
+        : '지도 준비 중';
+    label.append(icon, text);
+}
+
+async function loadNaverMapsSdk() {
+    if (window.naver && window.naver.maps) return;
+    if (mapLoadPromise) return mapLoadPromise;
+
+    mapLoadPromise = fetch(MAP_CONFIG_ENDPOINT)
+        .then(async function(response) {
+            const payload = await response.json().catch(function() { return null; });
+            if (!response.ok || !payload?.clientId) {
+                throw new Error(payload?.error || 'NAVER Maps client ID is not configured.');
+            }
+            return payload.clientId;
+        })
+        .then(function(clientId) {
+            return new Promise(function(resolve, reject) {
+                const callbackName = '__edufinderNaverMapReady';
+                window[callbackName] = function() {
+                    resolve();
+                };
+                const script = document.createElement('script');
+                script.async = true;
+                script.defer = true;
+                script.onerror = function() {
+                    reject(new Error('NAVER Maps SDK could not be loaded.'));
+                };
+                script.src = 'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=' +
+                    encodeURIComponent(clientId) +
+                    '&submodules=geocoder&callback=' + callbackName;
+                document.head.appendChild(script);
+            });
+        });
+
+    return mapLoadPromise;
+}
+
+function ensureMapInstance() {
+    if (naverMap || !window.naver?.maps) return;
+    naverMap = new naver.maps.Map('naver-map', {
+        center: new naver.maps.LatLng(DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng),
+        zoom: 10,
+        minZoom: 6,
+        mapDataControl: false,
+        scaleControl: true,
+        zoomControl: true,
+        zoomControlOptions: {
+            position: naver.maps.Position.TOP_RIGHT
+        }
+    });
+}
+
+function normalizeLocationCoordinate(item) {
+    let lat = Number(item.lat);
+    let lng = Number(item.lng);
+
+    if ((!Number.isFinite(lat) || !Number.isFinite(lng)) && item.mapx && item.mapy && window.naver?.maps?.TransCoord) {
+        const point = new naver.maps.Point(Number(item.mapx), Number(item.mapy));
+        const converted = naver.maps.TransCoord.fromTM128ToLatLng(point);
+        lat = Number(converted.lat());
+        lng = Number(converted.lng());
+    }
+
+    return {
+        ...item,
+        lat,
+        lng,
+        isLocated: Number.isFinite(lat) && Number.isFinite(lng)
+    };
+}
+
+async function getLocationsForCategory(category) {
+    const cacheKey = currentCategoryKey;
+    if (locationCacheByCategory[cacheKey]) return locationCacheByCategory[cacheKey];
+
+    const storageKey = 'edufinder:nmap:' + cacheKey + ':20260505a';
+    const stored = sessionStorage.getItem(storageKey);
+    if (stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            const normalized = parsed.map(normalizeLocationCoordinate);
+            locationCacheByCategory[cacheKey] = normalized;
+            return normalized;
+        } catch (_) {
+            sessionStorage.removeItem(storageKey);
+        }
+    }
+
+    const institutions = category.list.map(function(name) {
+        const contact = schoolContactInfo[name];
+        return {
+            name: name,
+            address: contact?.address || null,
+            category: currentCategoryKey
+        };
+    });
+
+    const response = await fetch(MAP_LOOKUP_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            category: currentCategoryKey,
+            institutions: institutions
+        })
+    });
+    const payload = await response.json().catch(function() { return null; });
+    if (!response.ok || !payload?.locations) {
+        throw new Error(payload?.error || '기관 위치를 불러올 수 없습니다.');
+    }
+
+    const normalized = payload.locations.map(normalizeLocationCoordinate);
+    locationCacheByCategory[cacheKey] = normalized;
+    sessionStorage.setItem(storageKey, JSON.stringify(payload.locations));
+    return normalized;
+}
+
+async function hydrateMapForCategory(category) {
+    try {
+        setMapStatus('NAVER 지도를 불러오고 있습니다.', 'fa-solid fa-circle-notch fa-spin');
+        await loadNaverMapsSdk();
+        ensureMapInstance();
+
+        setMapStatus('기관 위치를 확인하고 있습니다.', 'fa-solid fa-circle-notch fa-spin');
+        const allLocations = await getLocationsForCategory(category);
+        activeLocations = allLocations.filter(function(item) { return item.isLocated; });
+        activeMapCategoryKey = currentCategoryKey;
+        renderMapMarkers(activeLocations);
+        updateMapLocationCount(activeLocations.length, category.list.length);
+        updateDistanceLabels();
+        setTimeout(detectNaverMapAuthIssue, 1400);
+
+        if (activeLocations.length) {
+            setMapStatus('기관 좌표를 확인했습니다. 지도 인증 오류가 보이면 NAVER Web Service URL 등록을 확인해 주세요.', 'fa-solid fa-map-location-dot');
+        } else {
+            setMapStatus('확인된 좌표가 없습니다. 목록 리뷰는 계속 이용할 수 있습니다.', 'fa-solid fa-triangle-exclamation');
+        }
+
+        const target = getRequestedInstitutionName() || selectedInstitutionName;
+        if (target) selectInstitution(target, { pan: true, scroll: false });
+    } catch (error) {
+        console.error(error);
+        updateMapLocationCount(0, category.list.length);
+        setMapStatus('NAVER 지도 연결을 확인할 수 없습니다. 목록 리뷰는 계속 이용할 수 있습니다.', 'fa-solid fa-triangle-exclamation');
+    }
+}
+
+function detectNaverMapAuthIssue() {
+    const mapEl = document.getElementById('naver-map');
+    if (!mapEl) return;
+    const text = mapEl.textContent || '';
+    if (!text.includes('인증')) return;
+    setMapStatus('NAVER Web Service URL 등록을 확인해 주세요. 지도 인증이 거부되었습니다.', 'fa-solid fa-triangle-exclamation');
+}
+
+function clearMapMarkers() {
+    markersByInstitution.forEach(function(marker) {
+        marker.setMap(null);
+    });
+    markersByInstitution = new Map();
+    if (activeInfoWindow) activeInfoWindow.close();
+}
+
+function markerIconFor(name) {
+    const rating = getRatingSummary(name).avgLabel;
+    const isSelected = selectedInstitutionName === name;
+    const typeClass = currentCategoryKey === 'hagwon' ? 'is-hagwon' : 'is-school';
+    return {
+        content: '<span class="map-marker ' + typeClass + (isSelected ? ' is-selected' : '') +
+            '" data-rating="' + escapeHtml(rating) + '"></span>',
+        anchor: new naver.maps.Point(isSelected ? 19 : 16, isSelected ? 38 : 32)
+    };
+}
+
+function renderMapMarkers(locations) {
+    if (!naverMap || !window.naver?.maps) return;
+    clearMapMarkers();
+
+    locations.forEach(function(location) {
+        const marker = new naver.maps.Marker({
+            position: new naver.maps.LatLng(location.lat, location.lng),
+            map: naverMap,
+            title: location.name,
+            icon: markerIconFor(location.name),
+            zIndex: selectedInstitutionName === location.name ? 200 : 100
+        });
+        naver.maps.Event.addListener(marker, 'click', function() {
+            selectInstitution(location.name, { pan: true, scroll: true });
+        });
+        markersByInstitution.set(location.name, marker);
+    });
+
+    fitMapToLocations(locations);
+}
+
+function fitMapToLocations(locations) {
+    if (!naverMap || !locations.length) return;
+    if (locations.length === 1) {
+        naverMap.setCenter(new naver.maps.LatLng(locations[0].lat, locations[0].lng));
+        naverMap.setZoom(14);
+        return;
+    }
+    const bounds = new naver.maps.LatLngBounds(
+        new naver.maps.LatLng(locations[0].lat, locations[0].lng),
+        new naver.maps.LatLng(locations[0].lat, locations[0].lng)
+    );
+    locations.slice(1).forEach(function(location) {
+        bounds.extend(new naver.maps.LatLng(location.lat, location.lng));
+    });
+    naverMap.fitBounds(bounds);
+}
+
+function getLocationByName(name) {
+    return activeLocations.find(function(location) {
+        return normalizeForSearch(location.name) === normalizeForSearch(name);
+    });
+}
+
+function refreshMarkerIcons() {
+    markersByInstitution.forEach(function(marker, name) {
+        marker.setIcon(markerIconFor(name));
+        marker.setZIndex(selectedInstitutionName === name ? 200 : 100);
+    });
+}
+
+function buildInfoWindowContent(name, location) {
+    const summary = getRatingSummary(name);
+    const distanceText = getDistanceTextForLocation(location);
+    const lines = [];
+    if (summary.topStrength) lines.push('<div class="info-window-reason"><strong>장점</strong> ' + escapeHtml(summary.topStrength) + '</div>');
+    if (summary.topWeakness) lines.push('<div class="info-window-reason"><strong>단점</strong> ' + escapeHtml(summary.topWeakness) + '</div>');
+    if (!lines.length) lines.push('<div class="info-window-reason">아직 충분한 리뷰 이유가 모이지 않았습니다.</div>');
+
+    return '<div class="info-window">' +
+        '<div class="info-window-title">' + escapeHtml(name) + '</div>' +
+        '<div class="info-window-meta"><i class="fa-solid fa-star" style="color:#f59e0b"></i><span>' +
+        escapeHtml(summary.avgLabel) + ' / 5</span><span>(' + summary.votes + '개 리뷰)</span></div>' +
+        (distanceText ? '<div class="info-window-meta"><i class="fa-solid fa-location-arrow"></i><span>' + escapeHtml(distanceText) + '</span></div>' : '') +
+        lines.join('') +
+        '</div>';
+}
+
+function selectInstitution(name, options = {}) {
+    if (!name) return;
+    selectedInstitutionName = name;
+    updateSelectedCards();
+    refreshMarkerIcons();
+    renderSelectedInstitution(name);
+
+    const location = getLocationByName(name);
+    const marker = markersByInstitution.get(name);
+    if (location && marker && naverMap) {
+        if (options.pan) naverMap.panTo(new naver.maps.LatLng(location.lat, location.lng));
+        if (activeInfoWindow) activeInfoWindow.close();
+        activeInfoWindow = new naver.maps.InfoWindow({
+            content: buildInfoWindowContent(name, location),
+            borderWidth: 0,
+            backgroundColor: 'transparent',
+            anchorSize: new naver.maps.Size(12, 12),
+            pixelOffset: new naver.maps.Point(0, -8)
+        });
+        activeInfoWindow.open(naverMap, marker);
+    }
+    if (options.scroll) scrollInstitutionCardIntoView(name);
+}
+
+function updateSelectedCards() {
+    document.querySelectorAll('.institution-card').forEach(function(card) {
+        card.classList.toggle('is-selected', card.dataset.school === selectedInstitutionName);
+    });
+}
+
+function scrollInstitutionCardIntoView(name) {
+    const container = document.getElementById('review-list-container');
+    if (!container) return;
+    const card = container.querySelector('[data-school="' + cssEscape(name) + '"]');
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderSelectedInstitution(name) {
+    const panel = document.getElementById('selected-institution-panel');
+    if (!panel) return;
+    panel.replaceChildren();
+    if (!name) {
+        panel.className = 'selected-institution-panel is-empty';
+        panel.textContent = '지도 또는 목록에서 기관을 선택하면 별점, 주요 이유, 위치 정보를 함께 확인할 수 있습니다.';
+        return;
+    }
+
+    panel.className = 'selected-institution-panel';
+    const summary = getRatingSummary(name);
+    const location = getLocationByName(name);
+    const contact = schoolContactInfo[name];
+
+    const title = document.createElement('h3');
+    title.className = 'selected-title';
+    title.textContent = name;
+    panel.appendChild(title);
+
+    const meta = document.createElement('div');
+    meta.className = 'selected-meta';
+    const rating = document.createElement('span');
+    rating.innerHTML = '<i class="fa-solid fa-star text-amber-500"></i>' + summary.avgLabel + ' / 5 · ' + summary.votes + '개 리뷰';
+    meta.appendChild(rating);
+    const distanceText = location ? getDistanceTextForLocation(location) : '';
+    if (distanceText) {
+        const distance = document.createElement('span');
+        distance.innerHTML = '<i class="fa-solid fa-location-arrow text-[#3b82f6]"></i>' + distanceText;
+        meta.appendChild(distance);
+    }
+    if (governmentApproved.includes(name)) {
+        const approved = document.createElement('span');
+        approved.innerHTML = '<i class="fa-solid fa-check text-green-600"></i>교육부 인가';
+        meta.appendChild(approved);
+    }
+    panel.appendChild(meta);
+
+    const starLine = document.createElement('div');
+    starLine.className = 'mt-3 flex items-center gap-1';
+    const rounded = Math.round(summary.avg);
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('i');
+        star.className = 'fa-solid fa-star ' + (summary.avg > 0 && i <= rounded ? 'text-amber-400' : 'text-gray-300');
+        starLine.appendChild(star);
+    }
+    panel.appendChild(starLine);
+
+    const detail = document.createElement('div');
+    detail.className = 'mt-3 space-y-1.5 text-sm text-gray-600 leading-relaxed';
+    if (summary.topStrength) {
+        const row = document.createElement('p');
+        row.innerHTML = '<span class="font-bold text-gray-500">최대 장점</span> ' + escapeHtml(summary.topStrength);
+        detail.appendChild(row);
+    }
+    if (summary.topWeakness) {
+        const row = document.createElement('p');
+        row.innerHTML = '<span class="font-bold text-gray-500">최대 단점</span> ' + escapeHtml(summary.topWeakness);
+        detail.appendChild(row);
+    }
+    if (!summary.topStrength && !summary.topWeakness) {
+        const row = document.createElement('p');
+        row.textContent = '아직 충분한 리뷰 이유가 모이지 않았습니다.';
+        detail.appendChild(row);
+    }
+    const address = location?.roadAddress || location?.address || contact?.address;
+    if (address) {
+        const row = document.createElement('p');
+        row.className = 'pt-2 text-xs text-gray-500';
+        row.innerHTML = '<i class="fa-solid fa-location-dot mr-1.5 text-gray-400"></i>' + escapeHtml(address);
+        detail.appendChild(row);
+    }
+    panel.appendChild(detail);
+
+    const route = document.createElement('div');
+    route.id = 'selected-route-summary';
+    route.className = 'route-summary';
+    panel.appendChild(route);
+    refreshSelectedRouteSummary(name);
+}
+
+function requestUserLocation() {
+    const button = document.getElementById('current-location-button');
+    if (!navigator.geolocation) {
+        showToast('현재 브라우저에서 위치 정보를 사용할 수 없습니다.', 'warning');
+        return;
+    }
+    if (button) button.disabled = true;
+    setMapStatus('현재 위치 권한을 확인하고 있습니다.', 'fa-solid fa-location-crosshairs');
+    navigator.geolocation.getCurrentPosition(function(position) {
+        userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        if (button) button.disabled = false;
+        addUserLocationMarker();
+        updateDistanceLabels();
+        if (selectedInstitutionName) {
+            renderSelectedInstitution(selectedInstitutionName);
+            const selectedLocation = getLocationByName(selectedInstitutionName);
+            if (selectedLocation && naverMap) {
+                naverMap.panTo(new naver.maps.LatLng(selectedLocation.lat, selectedLocation.lng));
+            }
+        }
+        setMapStatus('현재 위치 기준 직선 거리를 표시하고 있습니다.', 'fa-solid fa-location-crosshairs');
+    }, function() {
+        if (button) button.disabled = false;
+        showToast('위치 권한을 허용하면 현재 위치 기준 거리를 볼 수 있습니다.', 'info');
+        setMapStatus('위치 권한이 없으면 기관 위치만 표시됩니다.', 'fa-solid fa-map-location-dot');
+    }, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000
+    });
+}
+
+function addUserLocationMarker() {
+    if (!userLocation || !naverMap || !window.naver?.maps) return;
+    if (userLocationMarker) userLocationMarker.setMap(null);
+    userLocationMarker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(userLocation.lat, userLocation.lng),
+        map: naverMap,
+        title: '내 위치',
+        icon: {
+            content: '<span style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#ffffff;border:5px solid #3b82f6;box-shadow:0 6px 16px rgba(59,130,246,.35);"></span>',
+            anchor: new naver.maps.Point(11, 11)
+        },
+        zIndex: 300
+    });
+}
+
+function haversineMeters(a, b) {
+    const toRad = function(deg) { return deg * Math.PI / 180; };
+    const earth = 6371000;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const lat1 = toRad(a.lat);
+    const lat2 = toRad(b.lat);
+    const h = Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+    return 2 * earth * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function formatDistance(meters) {
+    if (!Number.isFinite(meters)) return '';
+    if (meters < 1000) return Math.round(meters) + 'm';
+    if (meters < 10000) return (meters / 1000).toFixed(1) + 'km';
+    return Math.round(meters / 1000) + 'km';
+}
+
+function formatDuration(ms) {
+    if (!Number.isFinite(ms)) return '';
+    const minutes = Math.max(1, Math.round(ms / 60000));
+    if (minutes < 60) return minutes + '분';
+    const hours = Math.floor(minutes / 60);
+    const rest = minutes % 60;
+    return rest ? hours + '시간 ' + rest + '분' : hours + '시간';
+}
+
+function getDistanceTextForLocation(location) {
+    if (!userLocation || !location) return '';
+    return '직선 ' + formatDistance(haversineMeters(userLocation, location));
+}
+
+function updateDistanceLabels() {
+    document.querySelectorAll('[data-distance-for]').forEach(function(label) {
+        const location = getLocationByName(label.dataset.distanceFor);
+        const text = getDistanceTextForLocation(location);
+        if (text) {
+            label.textContent = '내 위치에서 ' + text;
+            label.classList.remove('hidden');
+        } else {
+            label.classList.add('hidden');
+        }
+    });
+}
+
+async function refreshSelectedRouteSummary(name) {
+    const el = document.getElementById('selected-route-summary');
+    const location = getLocationByName(name);
+    if (!el) return;
+    if (!location) {
+        el.textContent = '아직 지도 좌표를 확인하지 못한 기관입니다.';
+        return;
+    }
+    if (!userLocation) {
+        el.textContent = '현재 위치를 허용하면 직선 거리와 선택 기관의 차량 경로 요약을 볼 수 있습니다.';
+        return;
+    }
+
+    const routeKey = [
+        userLocation.lng.toFixed(5), userLocation.lat.toFixed(5),
+        location.lng.toFixed(5), location.lat.toFixed(5)
+    ].join(',');
+    if (routeSummaryCache[routeKey]) {
+        renderRouteSummary(el, routeSummaryCache[routeKey], location);
+        return;
+    }
+
+    el.textContent = '차량 경로를 확인하고 있습니다...';
+    const url = MAP_ROUTE_ENDPOINT +
+        '?start=' + encodeURIComponent(userLocation.lng + ',' + userLocation.lat) +
+        '&goal=' + encodeURIComponent(location.lng + ',' + location.lat);
+    try {
+        const response = await fetch(url);
+        const payload = await response.json().catch(function() { return null; });
+        if (!response.ok || !payload?.summary) throw new Error('No route');
+        routeSummaryCache[routeKey] = payload.summary;
+        renderRouteSummary(el, payload.summary, location);
+    } catch (_) {
+        el.textContent = '차량 경로는 확인할 수 없습니다. 내 위치에서 ' + getDistanceTextForLocation(location) + '입니다.';
+    }
+}
+
+function renderRouteSummary(el, summary, location) {
+    const distance = formatDistance(Number(summary.distance));
+    const duration = formatDuration(Number(summary.duration));
+    const straight = getDistanceTextForLocation(location);
+    el.textContent = '차량 약 ' + duration + ' · ' + distance + (straight ? ' · 내 위치에서 ' + straight : '');
+}
+
 function getRequestedCategoryKey() {
     const params = new URLSearchParams(window.location.search);
     const requested = params.get('category');
@@ -1290,6 +2391,9 @@ function configureReviewPage() {
     currentCategoryKey = getRequestedCategoryKey();
     const config = getCurrentCategory();
     document.title = config.title + ' 리뷰 | EduFinder';
+    const eyebrow = document.getElementById('review-page-eyebrow');
+    eyebrow.textContent = config.eyebrow;
+    eyebrow.className = currentCategoryKey === 'hagwon' ? 'section-eyebrow is-navy' : 'section-eyebrow';
     document.getElementById('review-page-title').textContent = config.title;
     document.getElementById('review-page-caption').textContent = config.caption;
     document.getElementById('review-page-count').textContent = String(config.list.length);
@@ -1301,11 +2405,18 @@ function configureReviewPage() {
     const countIcon = document.getElementById('review-page-count-icon');
     countIcon.className = config.icon + ' mr-1.5 ' + config.iconColor;
 
+    const sectionIcon = document.getElementById('review-page-section-icon');
+    sectionIcon.className = currentCategoryKey === 'hagwon' ? 'section-icon' : 'section-icon is-blue';
+    const sectionIconGlyph = sectionIcon.querySelector('i');
+    if (sectionIconGlyph) sectionIconGlyph.className = currentCategoryKey === 'hagwon'
+        ? 'fa-solid fa-graduation-cap'
+        : 'fa-solid fa-map-location-dot';
+
     const guideButton = document.getElementById('review-page-guide-button');
     if (config.guide) {
-        guideButton.className = 'inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border transition-colors ' + config.guideClass;
+        guideButton.className = 'review-action-button';
         const guideIcon = guideButton.querySelector('i');
-        if (guideIcon) guideIcon.className = 'fa-solid fa-lightbulb mr-1.5 ' + config.guideIconColor;
+        if (guideIcon) guideIcon.className = 'fa-solid fa-lightbulb';
     } else {
         guideButton.className = 'hidden';
     }
@@ -1321,19 +2432,23 @@ function updateAuthUI() {
     const el = document.getElementById('auth-status');
     el.replaceChildren();
     if (currentUser) {
+        const pill = document.createElement('div');
+        pill.className = 'auth-status-pill';
+
         const userLabel = document.createElement('span');
-        userLabel.className = 'mr-3 opacity-90';
+        userLabel.className = 'auth-user-label';
         const icon = document.createElement('i');
         icon.className = 'fa-regular fa-user mr-1';
         userLabel.append(icon, document.createTextNode(' ' + currentUser));
 
         const logoutButton = document.createElement('button');
         logoutButton.type = 'button';
-        logoutButton.className = 'bg-white text-blue-600 px-3 py-1 rounded shadow text-xs hover:bg-gray-100 transition';
+        logoutButton.className = 'logout-btn';
         logoutButton.textContent = '로그아웃';
         logoutButton.addEventListener('click', logout);
 
-        el.append(userLabel, logoutButton);
+        pill.append(userLabel, logoutButton);
+        el.appendChild(pill);
     }
 }
 
@@ -1508,25 +2623,27 @@ function renderSchools(schoolList, containerId, listSections = null) {
         });
         if (section.title) {
             const heading = document.createElement('div');
-            heading.className = (sectionIndex > 0 ? 'pt-5 ' : '') + 'px-1 text-sm font-extrabold text-gray-500';
+            heading.className = (sectionIndex > 0 ? 'pt-4 ' : '') + 'institution-section-heading';
             heading.textContent = section.title;
             container.appendChild(heading);
         }
         sorted.forEach(school => {
-        let avg = 0, votes = 0, topStrength = null, topWeakness = null;
-        if (ratingsData[school]) {
-            votes = safeNumber(ratingsData[school].votes);
-            if (votes > 0) avg = (ratingsData[school].totalScore / votes).toFixed(1);
-            topStrength = getTopReason(ratingsData[school].positiveReasons);
-            topWeakness = getTopReason(ratingsData[school].negativeReasons);
-        }
+        const summary = getRatingSummary(school);
+        const avg = summary.avgLabel;
+        const votes = summary.votes;
+        const topStrength = summary.topStrength;
+        const topWeakness = summary.topWeakness;
         const card = document.createElement('div');
-        card.className = "bg-white rounded-lg shadow-md p-6 flex flex-col justify-between hover:shadow-lg transition-shadow border border-gray-100";
+        card.className = "institution-card";
         card.dataset.school = school;
+        card.addEventListener('click', function(event) {
+            if (event.target.closest('a, button, .star')) return;
+            selectInstitution(school, { pan: true, scroll: false });
+        });
 
         const topSection = document.createElement('div');
         const title = document.createElement('h3');
-        title.className = "text-xl font-semibold text-gray-800 leading-tight break-keep";
+        title.className = "institution-card-title break-keep";
         title.textContent = school;
         topSection.appendChild(title);
 
@@ -1542,7 +2659,7 @@ function renderSchools(schoolList, containerId, listSections = null) {
         const contactData = schoolContactInfo[school];
         if (contactData) {
             const contact = document.createElement('div');
-            contact.className = "mt-3 space-y-1.5 text-xs text-gray-500";
+            contact.className = "mt-3 space-y-1.5 text-xs contact-line";
 
             const address = document.createElement('p');
             address.className = "flex items-start gap-1.5";
@@ -1583,13 +2700,18 @@ function renderSchools(schoolList, containerId, listSections = null) {
         const scoreRow = document.createElement('div');
         scoreRow.className = "flex items-center space-x-2 mt-4 mb-2";
         const scoreValue = document.createElement('span');
-        scoreValue.className = "text-3xl font-bold text-blue-600";
-        scoreValue.textContent = avg > 0 ? String(avg) : '-';
+        scoreValue.className = "score-value text-3xl font-bold";
+        scoreValue.textContent = avg;
         const scoreMeta = document.createElement('span');
         scoreMeta.className = "text-sm text-gray-500 mt-1";
         scoreMeta.textContent = '/ 5 (' + votes + '개 리뷰)';
         scoreRow.append(scoreValue, scoreMeta);
         card.appendChild(scoreRow);
+
+        const distanceBadge = document.createElement('span');
+        distanceBadge.className = 'distance-badge hidden mt-1';
+        distanceBadge.dataset.distanceFor = school;
+        card.appendChild(distanceBadge);
 
         if (topStrength || topWeakness) {
             const insights = document.createElement('div');
@@ -1645,8 +2767,17 @@ function renderSchools(schoolList, containerId, listSections = null) {
         card.appendChild(stars);
 
         const hint = document.createElement('p');
-        hint.className = "text-xs text-gray-400 mt-2";
-        hint.textContent = "별점을 클릭하여 리뷰를 남겨보세요.";
+        hint.className = "text-xs text-gray-400 mt-2 flex items-center justify-between gap-2";
+        const hintText = document.createElement('span');
+        hintText.textContent = "별점을 클릭하여 리뷰를 남겨보세요.";
+        const mapHint = document.createElement('button');
+        mapHint.type = 'button';
+        mapHint.className = 'text-[#3b82f6] hover:text-[#2563eb] font-bold';
+        mapHint.textContent = '지도에서 보기';
+        mapHint.addEventListener('click', function() {
+            selectInstitution(school, { pan: true, scroll: false });
+        });
+        hint.append(hintText, mapHint);
         card.appendChild(hint);
 
         container.appendChild(card);
@@ -1726,6 +2857,7 @@ async function renderAll() {
     const category = getCurrentCategory();
     renderSchools(category.list, 'review-list-container', category.listSections);
     focusRequestedInstitution();
+    void hydrateMapForCategory(category);
 }
 
 function openFeedbackModal() {
@@ -1842,10 +2974,15 @@ function navigateToReviewPage(url) {
     window.location.href = url;
 }
 
-function focusRequestedInstitution() {
+function getRequestedInstitutionName() {
     const requested = new URLSearchParams(window.location.search).get('school');
-    if (!requested) return;
+    if (!requested) return '';
     const match = getCurrentCategory().list.find(name => normalizeForSearch(name) === normalizeForSearch(requested));
+    return match || '';
+}
+
+function focusRequestedInstitution() {
+    const match = getRequestedInstitutionName();
     if (!match) return;
     requestAnimationFrame(function() {
         setTimeout(function() {
@@ -1857,6 +2994,7 @@ function focusRequestedInstitution() {
             card.classList.remove('search-highlight');
             void card.offsetWidth;
             card.classList.add('search-highlight');
+            selectInstitution(match, { pan: true, scroll: false });
             setTimeout(function() { card.classList.remove('search-highlight'); }, 2500);
         }, 80);
     });
@@ -1890,7 +3028,7 @@ Object.assign(window, {
     closeAuthModal, closeFeedbackModal, closeHagwonTipsModal, closeNotFoundModal,
     closeReviewModal, closeSchoolTipsModal, dismissToast, hoverStars, initiateRating,
     logout, openCurrentGuideModal, openFeedbackModal, openHagwonTipsModal, openSchoolTipsModal, performSearch,
-    resetStars, sendAuthCode, setNewPassword, signInWithPassword, submitFeedback,
+    requestUserLocation, resetStars, sendAuthCode, setNewPassword, signInWithPassword, submitFeedback,
     submitFinalRating, switchToOtpEmail, switchToPassword, toggleSection, verifyAuthCode
 });
 
