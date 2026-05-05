@@ -321,6 +321,10 @@
             --section-accent: #f59e0b;
             background: linear-gradient(160deg, #fffdf5 0%, #fef3c7 40%, #fde68a 100%);
         }
+        #panel-genius {
+            --section-accent: #7c3aed;
+            background: linear-gradient(160deg, #fbf6ff 0%, #f3e8ff 40%, #e9d5ff 100%);
+        }
         #panel-international::before,
         #panel-seoul::before,
         #panel-outside::before,
@@ -329,7 +333,8 @@
         #panel-eng-k::before,
         #panel-dsat::before,
         #panel-education-news::before,
-        #panel-prediction::before {
+        #panel-prediction::before,
+        #panel-genius::before {
             background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
         }
         #panel-international::after,
@@ -354,6 +359,9 @@
         }
         #panel-prediction::after {
             background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
+        }
+        #panel-genius::after {
+            background: radial-gradient(circle, #a855f7 0%, #ddd6fe 60%, transparent 100%);
         }
 
         /* ── Toast notifications ── */
@@ -550,7 +558,8 @@
             .section-card {
                 padding: 1.5rem;
             }
-            #panel-education-news {
+            #panel-education-news,
+            #panel-genius {
                 grid-column: 1 / -1;
                 justify-self: center;
                 width: 100%;
@@ -734,7 +743,38 @@
         </section>
 
         <!-- ════════════════════════════════════════════════════
-             SECTION 5: 이번 주 교육 뉴스
+             SECTION 5: Genius! Editor (대입 에세이 브레인스토밍)
+             ════════════════════════════════════════════════════ -->
+        <section id="panel-genius" class="panel-bg section-card">
+            <div class="section-card-header is-static">
+                <div>
+                    <h2 class="section-title">The Genius! Editor</h2>
+                    <p class="section-caption">대입 에세이를 위한 영감을 한 줄씩 길어 올립니다.</p>
+                </div>
+                <span class="flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-feather-pointed text-lg"></i>
+                </span>
+            </div>
+            <div class="compact-copy space-y-3">
+                <p>
+                    Common App 에세이부터 학교별 보충 에세이까지,
+                    <strong>날것의 감정과 대담한 꿈</strong>을 끌어내는 40여 개의 질문이 기다립니다.
+                </p>
+                <p>
+                    데이터가 아니라 문학적 상상력으로,
+                    당신만이 쓸 수 있는 첫 문장을 함께 찾아갑니다.
+                </p>
+                <a href="/genius"
+                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-violet-50
+                          text-violet-600 text-sm font-semibold rounded-lg border-2 border-violet-500
+                          hover:border-violet-600 transition-colors">
+                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 6: 이번 주 교육 뉴스
              ════════════════════════════════════════════════════ -->
         <section id="panel-education-news" class="panel-bg section-card">
             <div class="section-card-header is-static">

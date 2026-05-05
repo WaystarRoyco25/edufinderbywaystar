@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Genius! Editor — EduFinder</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+    <style>
+        body {
+            font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* ── Hero ─────────────────────────────────────────────── */
+        .hero-bg {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 60%, #4c1d95 100%);
+        }
+        .hero-quote {
+            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
+            font-style: italic;
+            color: rgba(255,255,255,.86);
+        }
+        .stat-card {
+            background: rgba(255,255,255,.10);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 16px;
+            padding: 20px 14px;
+            text-align: center;
+        }
+        .stat-card .stat-number {
+            font-size: clamp(1.9rem, 4.5vw, 2.5rem);
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        .stat-card .stat-unit {
+            font-size: .8rem;
+            font-weight: 600;
+            color: rgba(255,255,255,.85);
+            margin-top: 4px;
+        }
+        .stat-card .stat-label {
+            font-size: .7rem;
+            color: rgba(255,255,255,.65);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        /* ── Reusable bubble panels (matched with index/prediction) ── */
+        .panel-bg {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,.6);
+            box-shadow:
+                0 8px 32px rgba(0,0,0,.08),
+                0 2px 8px rgba(0,0,0,.04),
+                inset 0 2px 4px rgba(255,255,255,.8),
+                inset 0 -2px 6px rgba(0,0,0,.03);
+        }
+        .panel-bg > * { position: relative; z-index: 2; }
+        .panel-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 50%;
+            border-radius: 20px 20px 0 0;
+            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .panel-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30%; right: -10%;
+            width: 60%; height: 80%;
+            border-radius: 50%;
+            z-index: 0;
+            filter: blur(40px);
+            opacity: .45;
+            pointer-events: none;
+        }
+        .panel-violet {
+            background: linear-gradient(160deg, #fbf6ff 0%, #f3e8ff 40%, #e9d5ff 100%);
+        }
+        .panel-violet::after {
+            background: radial-gradient(circle, #a855f7 0%, #ddd6fe 60%, transparent 100%);
+        }
+        .panel-rose {
+            background: linear-gradient(160deg, #fff7f7 0%, #ffe4e6 40%, #fecdd3 100%);
+        }
+        .panel-rose::after {
+            background: radial-gradient(circle, #fb7185 0%, #fecdd3 60%, transparent 100%);
+        }
+        .panel-amber {
+            background: linear-gradient(160deg, #fffdf5 0%, #fef9e7 40%, #fef3c7 100%);
+        }
+        .panel-amber::after {
+            background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
+        }
+        .panel-teal {
+            background: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 40%, #99f6e4 100%);
+        }
+        .panel-teal::after {
+            background: radial-gradient(circle, #2dd4bf 0%, #99f6e4 60%, transparent 100%);
+        }
+
+        /* ── Process step connector (same style as prediction.html) ── */
+        .step-line {
+            position: absolute;
+            left: 19px;
+            top: 44px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #ddd6fe 0%, #e5e7eb 100%);
+        }
+
+        /* ── Studio shell ─────────────────────────────────────── */
+        .studio-shell {
+            background: linear-gradient(180deg, #faf5ff 0%, #ffffff 60%);
+            border-radius: 24px;
+            border: 1px solid #ede9fe;
+            box-shadow: 0 24px 48px rgba(76,29,149,.07), 0 4px 12px rgba(76,29,149,.04);
+            padding: 1.6rem;
+        }
+        @media (min-width: 768px) {
+            .studio-shell { padding: 2.2rem; }
+        }
+
+        .studio-progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #ede9fe;
+            overflow: hidden;
+        }
+        .studio-progress-fill {
+            height: 100%;
+            width: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #a855f7 0%, #6d28d9 100%);
+            transition: width .25s ease;
+        }
+        .studio-step { display: none; }
+        .studio-step.is-active {
+            display: block;
+            animation: studioFade .25s ease;
+        }
+        @keyframes studioFade {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .studio-section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            border-radius: 999px;
+            background: #ede9fe;
+            color: #6d28d9;
+            font-size: .72rem;
+            font-weight: 800;
+            padding: .35rem .75rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .studio-section-title {
+            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
+            font-size: clamp(1.6rem, 3.5vw, 2rem);
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1.2;
+            margin-top: .65rem;
+        }
+        .studio-section-blurb {
+            color: #6b7280;
+            font-size: .92rem;
+            line-height: 1.6;
+            margin-top: .55rem;
+        }
+        .prompt-card {
+            border: 1px solid #ede9fe;
+            border-radius: 16px;
+            background: #ffffff;
+            padding: 1.1rem 1.1rem 1rem;
+            box-shadow: 0 6px 16px rgba(76,29,149,.04);
+            margin-top: 1rem;
+        }
+        .prompt-card.is-touched {
+            border-color: #c4b5fd;
+            box-shadow: 0 8px 22px rgba(124,58,237,.10);
+        }
+        .prompt-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: #f5f3ff;
+            color: #6d28d9;
+            font-size: .72rem;
+            font-weight: 800;
+            margin-right: .55rem;
+        }
+        .prompt-text {
+            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
+            font-size: 1.05rem;
+            line-height: 1.45;
+            color: #111827;
+        }
+        .prompt-textarea {
+            width: 100%;
+            margin-top: .8rem;
+            border: 1px solid #ede9fe;
+            border-radius: 12px;
+            background: #faf5ff;
+            padding: .75rem .85rem;
+            font-size: .94rem;
+            line-height: 1.6;
+            color: #1f2937;
+            resize: vertical;
+            min-height: 96px;
+            transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+        }
+        .prompt-textarea:focus {
+            outline: none;
+            background: #ffffff;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168,85,247,.18);
+        }
+        .prompt-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .65rem;
+            margin-top: .55rem;
+            font-size: .72rem;
+            color: #9ca3af;
+        }
+        .prompt-meta .word-count.has-words { color: #6d28d9; font-weight: 600; }
+
+        .studio-step-footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .65rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.4rem;
+        }
+        .studio-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            padding: .7rem 1.15rem;
+            border-radius: 12px;
+            font-size: .9rem;
+            font-weight: 600;
+            transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+        }
+        .studio-btn-primary {
+            background: #6d28d9;
+            color: white;
+            box-shadow: 0 6px 18px rgba(109,40,217,.25);
+            border: 1px solid transparent;
+        }
+        .studio-btn-primary:hover { background: #5b21b6; }
+        .studio-btn-primary:active { transform: translateY(1px); }
+        .studio-btn-secondary {
+            background: white;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+        }
+        .studio-btn-secondary:hover { background: #f9fafb; color: #1f2937; }
+        .studio-btn-ghost {
+            background: transparent;
+            color: #6d28d9;
+            border: 1px solid transparent;
+        }
+        .studio-btn-ghost:hover { background: #ede9fe; }
+        .studio-btn-danger {
+            background: white;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .studio-btn-danger:hover { background: #fef2f2; }
+
+        .save-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .35rem .75rem;
+            border-radius: 999px;
+            background: #ecfdf5;
+            color: #047857;
+            font-size: .72rem;
+            font-weight: 700;
+            border: 1px solid #d1fae5;
+        }
+        .save-pill.is-idle {
+            background: #f9fafb;
+            color: #6b7280;
+            border-color: #e5e7eb;
+        }
+
+        .step-rail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem;
+            margin-top: 1rem;
+        }
+        .step-pill {
+            font-size: .7rem;
+            font-weight: 700;
+            color: #9ca3af;
+            background: #f9fafb;
+            border: 1px solid #f3f4f6;
+            border-radius: 999px;
+            padding: .3rem .6rem;
+            cursor: pointer;
+            transition: all .15s ease;
+        }
+        .step-pill:hover { color: #6d28d9; border-color: #ddd6fe; background: #faf5ff; }
+        .step-pill.is-current {
+            background: #6d28d9;
+            color: white;
+            border-color: #6d28d9;
+        }
+        .step-pill.is-complete {
+            color: #6d28d9;
+            background: #ede9fe;
+            border-color: #ddd6fe;
+        }
+
+        /* ── Comparison panel (Insight vs Genius) ─────────────── */
+        .compare-card h4 { color: #1f2937; }
+
+        /* ── Sparks summary (final step) ─────────────────────── */
+        .spark-bundle {
+            background: white;
+            border: 1px solid #ede9fe;
+            border-radius: 16px;
+            padding: 1.1rem;
+            margin-top: 1rem;
+            box-shadow: 0 6px 16px rgba(76,29,149,.04);
+        }
+        .spark-bundle h5 {
+            font-size: .8rem;
+            font-weight: 800;
+            color: #6d28d9;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .spark-quote {
+            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
+            border-left: 3px solid #c4b5fd;
+            padding: .35rem 0 .35rem .85rem;
+            margin-top: .75rem;
+            color: #1f2937;
+            line-height: 1.55;
+        }
+        .spark-quote .spark-q {
+            font-style: italic;
+            color: #6d28d9;
+            font-size: .88rem;
+            display: block;
+            margin-bottom: .25rem;
+        }
+        .spark-empty {
+            color: #9ca3af;
+            font-size: .82rem;
+            font-style: italic;
+            margin-top: .65rem;
+        }
+
+        /* ── Subtle fade-up on scroll ──────────────────────────── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media print {
+            .no-print, header, footer { display: none !important; }
+            body { background: white; }
+            .studio-shell { box-shadow: none; border: 0; padding: 0; }
+            .spark-bundle { break-inside: avoid; box-shadow: none; }
+        }
+
+        @media (max-width: 768px) {
+            .panel-bg { border-radius: 16px; }
+            .studio-shell { border-radius: 18px; }
+            .prompt-card { padding: 1rem; }
+            .step-rail { gap: .25rem; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+
+<div class="hero-bg text-white shadow-md">
+    <!-- Top nav -->
+    <header class="py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="/"
+                   class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
+                    <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="py-14 md:py-20">
+        <div class="container mx-auto px-4 text-center">
+            <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-60 mb-4">
+            <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">
+                The Genius! Editor
+            </h1>
+            <p class="text-violet-100 text-base md:text-lg font-light max-w-2xl mx-auto mb-4 leading-relaxed">
+                A brainstorming studio for the college essay.
+                Common App and every supplement, with the questions that surface what only you can write.
+            </p>
+            <p class="hero-quote max-w-xl mx-auto mb-10 text-sm md:text-base">
+                "쓸 거리가 없는 게 아니라, 아직 떠올리지 못한 것뿐입니다."
+            </p>
+
+            <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
+                <div class="stat-card">
+                    <div class="stat-number">9</div>
+                    <div class="stat-unit">themed rooms</div>
+                    <div class="stat-label">memory, fear, dreams, voice</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">44</div>
+                    <div class="stat-unit">deep prompts</div>
+                    <div class="stat-label">hand-tuned by EduFinder</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-unit">essay-ready</div>
+                    <div class="stat-label">spark sheet at the end</div>
+                </div>
+            </div>
+
+            <div class="mt-10">
+                <a href="#studio"
+                   class="inline-flex items-center px-6 py-3 bg-white text-violet-700 text-sm md:text-base font-semibold rounded-lg shadow hover:bg-violet-50 transition">
+                    <i class="fa-solid fa-feather-pointed mr-2 text-xs"></i>Start writing
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<main class="container mx-auto px-4 py-10 md:py-12">
+
+
+    <!-- ════════════════════════════════════════════════════════
+         Why this exists
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-violet-500 pb-2 mb-4 fade-up">
+        Why we built a different room
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        The Insight! Report tells you the truth in numbers.
+        The Genius! Editor asks you the questions numbers cannot.
+        Both belong on your desk — but during essay season, only one of them will actually help you write the first sentence.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-12 fade-up">
+        <div class="panel-bg panel-amber p-6 compare-card">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-chart-column text-base"></i>
+                </span>
+                <h4 class="font-bold">The Insight! Report</h4>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                Data-driven. Realistic. Comparative.
+                Built on 50,000+ admissions, it tells you where you stand.
+            </p>
+            <ul class="text-sm text-gray-700 space-y-1.5">
+                <li><i class="fa-solid fa-circle-check text-amber-500 mr-1.5 text-xs"></i>GPA, scores, activities, school list</li>
+                <li><i class="fa-solid fa-circle-check text-amber-500 mr-1.5 text-xs"></i>Reach / Target / Safety prediction</li>
+                <li><i class="fa-solid fa-circle-check text-amber-500 mr-1.5 text-xs"></i>What to fix first</li>
+            </ul>
+        </div>
+
+        <div class="panel-bg panel-violet p-6 compare-card">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-feather-pointed text-base"></i>
+                </span>
+                <h4 class="font-bold">The Genius! Editor</h4>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                Imagination-driven. Bold. Personal.
+                Forty-four questions designed to startle out the sentence only you can write.
+            </p>
+            <ul class="text-sm text-gray-700 space-y-1.5">
+                <li><i class="fa-solid fa-circle-check text-violet-500 mr-1.5 text-xs"></i>Memory, contradiction, fear, obsession</li>
+                <li><i class="fa-solid fa-circle-check text-violet-500 mr-1.5 text-xs"></i>Bold dreams and impossible ambitions</li>
+                <li><i class="fa-solid fa-circle-check text-violet-500 mr-1.5 text-xs"></i>A spark sheet for Common App + every supplement</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         Who it's for
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-rose-500 pb-2 mb-4 fade-up">
+        Who walks out of here with their essay started
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        Most students sit down to draft the Common App and freeze.
+        The questions here aren't trying to be cute — they are designed to walk past your prepared answers and land on the things you actually think about.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-12 fade-up">
+        <div class="panel-bg panel-rose p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-pen-nib text-base"></i>
+                </span>
+                <h4 class="font-bold text-gray-800">For the blank-page student</h4>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed">
+                You have lived a life. You just need someone to ask the right question.
+                Forty-four of them, in nine themed rooms, pulled from a decade of essay coaching.
+            </p>
+        </div>
+
+        <div class="panel-bg panel-violet p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-bolt text-base"></i>
+                </span>
+                <h4 class="font-bold text-gray-800">For the polished student</h4>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed">
+                Your draft sounds careful. Too careful.
+                These prompts pry the polite first answer off and ask what you'd say at 4 a.m. instead.
+            </p>
+        </div>
+
+        <div class="panel-bg panel-teal p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm">
+                    <i class="fa-solid fa-bullseye text-base"></i>
+                </span>
+                <h4 class="font-bold text-gray-800">For the supplemental writer</h4>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed">
+                Why X? Why this major? Community? Activity?
+                The school-specific room sharpens the answers that make a "Why X" stop sounding like every other "Why X."
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         How it works
+         ════════════════════════════════════════════════════════ -->
+    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-violet-500 pb-2 mb-6 fade-up">
+        How the Editor works
+    </h2>
+
+    <div class="bg-white rounded-lg shadow-md p-6 md:p-8 border border-gray-100 mb-12 fade-up">
+        <div class="relative flex gap-4 items-start pb-8">
+            <div class="step-line"></div>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">1</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">Walk through nine rooms</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Memory, identity, what lights you up, the dark room, the people you carry,
+                    wild questions, bold dreams, school-specific lenses, and finally — voice.
+                    Each room has four to five prompts.
+                </p>
+            </div>
+        </div>
+        <div class="relative flex gap-4 items-start pb-8">
+            <div class="step-line"></div>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">2</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">Write fragments, not paragraphs</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Two sentences. A list. A single image.
+                    The Editor saves locally as you type — leave anything blank, skip a room, come back tomorrow.
+                </p>
+            </div>
+        </div>
+        <div class="relative flex gap-4 items-start pb-8">
+            <div class="step-line"></div>
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">3</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">Read your spark sheet</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    At the end, every answer you wrote is bundled into one printable sheet, grouped by room.
+                    This is the page you bring to your draft — or to your counselor.
+                </p>
+            </div>
+        </div>
+        <div class="relative flex gap-4 items-start">
+            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">4</span>
+            <div class="pt-1">
+                <h3 class="text-base font-bold text-gray-800 mb-1">Map the sparks to prompts</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    The spark sheet ends with a short guide on which fragments tend to feed which essay prompt
+                    — Common App #1 through #7 and the most common supplements.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         The Studio (interactive editor)
+         ════════════════════════════════════════════════════════ -->
+    <h2 id="studio" class="text-2xl font-bold text-gray-700 border-b-2 border-violet-500 pb-2 mb-2 fade-up">
+        The Studio
+    </h2>
+    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
+        Nothing here is sent anywhere. Your fragments are saved only in this browser, on this device.
+        Clear them with the reset button when you're done.
+    </p>
+
+    <div class="studio-shell fade-up no-print">
+
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+                <p id="studio-step-counter" class="text-xs font-bold text-violet-600 uppercase tracking-wide">Room 1 of 11</p>
+                <h3 id="studio-step-title" class="text-lg font-bold text-gray-900">Welcome</h3>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="studio-save-pill" class="save-pill is-idle">
+                    <i class="fa-regular fa-floppy-disk text-[11px]"></i>
+                    <span>Drafted locally</span>
+                </span>
+                <div class="w-32 md:w-44 studio-progress-track" aria-hidden="true">
+                    <div id="studio-progress-fill" class="studio-progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="studio-step-rail" class="step-rail" aria-label="Studio rooms"></div>
+
+        <div id="studio-steps" class="mt-6"></div>
+
+        <div class="studio-step-footer">
+            <div class="flex items-center gap-2 flex-wrap">
+                <button id="studio-reset-btn" type="button" class="studio-btn studio-btn-danger">
+                    <i class="fa-regular fa-trash-can text-xs"></i>Reset everything
+                </button>
+                <button id="studio-print-btn" type="button" class="studio-btn studio-btn-ghost hidden">
+                    <i class="fa-solid fa-print text-xs"></i>Print spark sheet
+                </button>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <button id="studio-back-btn" type="button" class="studio-btn studio-btn-secondary">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>Back
+                </button>
+                <button id="studio-next-btn" type="button" class="studio-btn studio-btn-primary">
+                    Continue<i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         Notes for the writer
+         ════════════════════════════════════════════════════════ -->
+    <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 mt-12 mb-2 fade-up no-print">
+        <div class="flex items-start gap-4">
+            <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm">
+                <i class="fa-solid fa-circle-info text-base"></i>
+            </span>
+            <div>
+                <h4 class="text-base font-bold text-gray-800 mb-2">A few notes before you start</h4>
+                <ul class="text-sm md:text-base text-gray-700 leading-relaxed space-y-2">
+                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>Don't try to be impressive. Try to be specific.</li>
+                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>If a prompt makes you flinch, that one is probably the one to write.</li>
+                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>It is fine to skip rooms. The spark sheet still works on what you wrote.</li>
+                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>Use the language you think in — Korean, English, or both. Translate later.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+<footer class="bg-[#1f2937] text-white text-center py-6 mt-12">
+    <p>&copy; 2026 EduFinder by Waystar</p>
+</footer>
+
+
+<script>
+// ── The 9 themed rooms + welcome + summary = 11 steps ─────────────────
+const STUDIO_STEPS = [
+    {
+        id: 'welcome',
+        kind: 'welcome',
+        kicker: 'Before you begin',
+        title: 'Welcome to the Editor',
+        blurb: 'You are about to walk through nine rooms. Each room has four or five questions, and each question is here to make you think — not to make you sound clever. The goal is not a finished essay. The goal is the kind of fragments your finished essay will be built from. Take your time. Skip what you must. We will collect your sparks at the end.',
+    },
+    {
+        id: 'first-sparks',
+        kind: 'questions',
+        kicker: 'Room 1',
+        title: 'The first sparks',
+        blurb: 'Earliest images, oldest selves, the rooms you can still draw blindfolded.',
+        prompts: [
+            "What is the earliest memory you can place inside a specific room — and what color was the light?",
+            "Describe a smell from your childhood that, even now, can stop you mid-sentence.",
+            "Tell us about a small object you have carried for years — and what it is actually a monument to.",
+            "What did you believe at nine years old that, against your better judgment, you still believe?",
+            "Describe the moment you first realized adults could be wrong.",
+        ],
+    },
+    {
+        id: 'shape-of-you',
+        kind: 'questions',
+        kicker: 'Room 2',
+        title: 'The shape of you',
+        blurb: 'Identity is rarely tidy. Pull on the contradictions and see what gives.',
+        prompts: [
+            "What is a contradiction inside you that you have stopped trying to resolve?",
+            "Who are you when no adult is watching?",
+            "Tell us about a version of yourself you outgrew — and what you privately miss about him or her.",
+            "What is a label other people use about you that fits poorly — and what would fit better?",
+            "Describe a recurring image in your daydreams. Don't explain it. Just paint it.",
+        ],
+    },
+    {
+        id: 'what-lights-you-up',
+        kind: 'questions',
+        kicker: 'Room 3',
+        title: 'What lights you up',
+        blurb: 'Not what you put on a résumé. What you would defend at length to a stranger on a train.',
+        prompts: [
+            "Pick a thing — a song, a problem, a sport, a kind of weather — that you would defend for an hour against a stranger. Why?",
+            "If your obsession had a smell, a temperature, and a soundtrack, what would they be?",
+            "What is a topic you can talk about until the room empties and you don't notice?",
+            "Describe the most beautiful sentence (or equation, or chord, or play) you have ever encountered.",
+            "What is the strangest thing that has ever made you cry — happy tears or otherwise?",
+        ],
+    },
+    {
+        id: 'dark-room',
+        kind: 'questions',
+        kicker: 'Room 4',
+        title: 'The dark room',
+        blurb: 'The bravest essays are the ones that admit something. Try writing the thing first; decide whether to keep it later.',
+        prompts: [
+            "Describe a 4 a.m. moment — yours alone, no one else watching.",
+            "What is the most beautiful thing you have ever ruined?",
+            "Tell us about a fight you walked away from. Then tell us about the you who didn't.",
+            "What is a sentence you would be afraid to write down — and why?",
+            "Describe the smallest failure that taught you the largest thing.",
+        ],
+    },
+    {
+        id: 'people-you-carry',
+        kind: 'questions',
+        kicker: 'Room 5',
+        title: 'People you carry',
+        blurb: 'Mothers, strangers, ghosts, the kid two grades above you. List the voices, then pick one.',
+        prompts: [
+            "Whose voice do you hear when you are alone and trying to be brave?",
+            "Tell us about an unlikely teacher — someone the system would not credit, but who shaped you.",
+            "Whose absence taught you more than any presence ever could have?",
+            "Describe a stranger you cannot forget.",
+            "Whose handwriting do you imitate without meaning to?",
+        ],
+    },
+    {
+        id: 'wild-questions',
+        kind: 'questions',
+        kicker: 'Room 6',
+        title: 'Wild questions',
+        blurb: 'The intellectual questions that have no business living rent-free in your head, but do.',
+        prompts: [
+            "What is a question you have been afraid to ask out loud — even of yourself?",
+            "If you had a year to study one tiny, useless-sounding question, what would it be?",
+            "Describe a moment where two ideas collided in your head and made something neither one could have made alone.",
+            "What do you think about in the shower that you would never bring up at dinner?",
+            "What is a field, a discipline, or a craft that you have no business loving — but love anyway?",
+        ],
+    },
+    {
+        id: 'bold-dreams',
+        kind: 'questions',
+        kicker: 'Room 7',
+        title: 'Bold dreams',
+        blurb: 'No safety net. Tell us the version where everything quietly works.',
+        prompts: [
+            "If everything broke your way for the next ten years, where would I find you on a Tuesday morning?",
+            "What is a rule of the world you would quietly like to break?",
+            "If you had infinite money and one year, what would you build, write, or fix first?",
+            "Describe the future newspaper headline you would be most proud to be a footnote in.",
+            "What does your future self want you to stop being so polite about?",
+        ],
+    },
+    {
+        id: 'school-specific',
+        kind: 'questions',
+        kicker: 'Room 8',
+        title: 'The school-specific lens',
+        blurb: 'These four answers are the seed of every "Why X," "Why this major," and "Why this community" supplement. Pick one school you love and answer for that school first; you can run this room again for each school later.',
+        prompts: [
+            "Pick one school on your list. What is the one course, professor, library, or lab you have already imagined yourself inside? Be specific — name names.",
+            "For that same school, what is the conversation you are hoping to be in the middle of, two years from now?",
+            "What is a club, journal, lab, or tradition at that school where you would happily be the most clueless person in the room — at first?",
+            "What can you bring to that campus that, if you didn't show up, would simply not be there?",
+            "What is the first question you would ask in office hours your first week?",
+        ],
+    },
+    {
+        id: 'voice-and-form',
+        kind: 'questions',
+        kicker: 'Room 9',
+        title: 'Voice and form',
+        blurb: 'Last room. How will this story sound? Who is it for? What is the sentence you want left ringing?',
+        prompts: [
+            "If you wrote your essay as a letter, who would you address it to?",
+            "What is a word you love that you have never gotten to use in school writing?",
+            "Should your story be told in sound, in image, in memory, in argument, or in confession? Pick one — defend it in a sentence.",
+            "What is the one line of this essay that, when read aloud, you want to make the room go quiet?",
+        ],
+    },
+    {
+        id: 'spark-sheet',
+        kind: 'summary',
+        kicker: 'Spark sheet',
+        title: 'Your sparks, collected',
+        blurb: 'Below is everything you wrote, grouped by room. This is the page you bring to your first draft — or to your counselor. Print it, copy it, or come back tomorrow and add more.',
+    },
+];
+
+const STORAGE_KEY = 'genius-editor-draft.v1';
+const ESSAY_PROMPT_GUIDE = [
+    {
+        title: 'Common App essays (~650 words)',
+        items: [
+            { rooms: ['first-sparks', 'shape-of-you', 'people-you-carry'], note: 'Background, identity, story central to who you are — the sparks from Rooms 1, 2, and 5 most often anchor it.' },
+            { rooms: ['dark-room'], note: 'A challenge, setback, or failure — start with the answers from Room 4, especially the smallest failure that taught the largest thing.' },
+            { rooms: ['wild-questions', 'what-lights-you-up'], note: 'A question or idea that engages you — Rooms 3 and 6, particularly the question you have been afraid to ask out loud.' },
+            { rooms: ['shape-of-you', 'people-you-carry', 'bold-dreams'], note: 'A time you accomplished something that prompted growth — pull from contradictions in Room 2, voices in Room 5, or the future-self prompt in Room 7.' },
+            { rooms: ['first-sparks', 'shape-of-you', 'voice-and-form'], note: 'Topic of your choice — when in doubt, start with a memory in Room 1 or a recurring image in Room 2.' },
+        ],
+    },
+    {
+        title: 'Why X / Why this major / Why this community',
+        items: [
+            { rooms: ['school-specific'], note: 'Every fragment from Room 8 was written for these supplements. Pair the named course/professor with the office-hours question for an opener that does not sound like every other Why X.' },
+            { rooms: ['what-lights-you-up', 'wild-questions'], note: 'Fold in your obsessions and questions from Rooms 3 and 6 to show why this campus is the right place to chase them.' },
+        ],
+    },
+    {
+        title: 'Activity essays / leadership / community',
+        items: [
+            { rooms: ['what-lights-you-up', 'people-you-carry', 'dark-room'], note: 'The strongest activity essays braid an obsession (Room 3) with a relationship (Room 5) and a moment of strain or failure inside the activity (Room 4).' },
+        ],
+    },
+    {
+        title: 'Diversity, identity, or short-answer prompts',
+        items: [
+            { rooms: ['shape-of-you', 'first-sparks', 'voice-and-form'], note: 'Rooms 1, 2, and 9 give you specific images and voice notes — better than any abstract claim about identity.' },
+        ],
+    },
+];
+
+let currentStep = 0;
+let saveTimer = null;
+let savePillTimer = null;
+
+function getDraft() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+}
+
+function setDraft(data) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    catch (e) { /* localStorage unavailable, no-op */ }
+}
+
+function clearDraft() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* no-op */ }
+}
+
+function fieldKey(stepId, idx) { return stepId + '__' + idx; }
+
+function flashSavedPill() {
+    const pill = document.getElementById('studio-save-pill');
+    if (!pill) return;
+    pill.classList.remove('is-idle');
+    pill.querySelector('span').textContent = 'Saved just now';
+    clearTimeout(savePillTimer);
+    savePillTimer = setTimeout(() => {
+        pill.classList.add('is-idle');
+        pill.querySelector('span').textContent = 'Drafted locally';
+    }, 1800);
+}
+
+function scheduleSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+        const draft = getDraft();
+        document.querySelectorAll('.prompt-textarea').forEach(el => {
+            const key = el.dataset.key;
+            if (!key) return;
+            const value = el.value;
+            if (value && value.trim().length) draft[key] = value;
+            else if (key in draft) delete draft[key];
+        });
+        setDraft(draft);
+        flashSavedPill();
+        renderStepRail();
+    }, 350);
+}
+
+function countWords(text) {
+    if (!text) return 0;
+    return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function renderQuestionStep(step, container) {
+    const draft = getDraft();
+    const intro = document.createElement('div');
+    intro.className = 'mb-3';
+    const kicker = document.createElement('span');
+    kicker.className = 'studio-section-kicker';
+    kicker.innerHTML = '<i class="fa-solid fa-door-open text-[10px]"></i>' + step.kicker;
+    const title = document.createElement('h4');
+    title.className = 'studio-section-title';
+    title.textContent = step.title;
+    const blurb = document.createElement('p');
+    blurb.className = 'studio-section-blurb';
+    blurb.textContent = step.blurb;
+    intro.append(kicker, title, blurb);
+    container.appendChild(intro);
+
+    step.prompts.forEach((promptText, idx) => {
+        const card = document.createElement('div');
+        card.className = 'prompt-card';
+
+        const head = document.createElement('p');
+        head.className = 'flex items-start';
+        const num = document.createElement('span');
+        num.className = 'prompt-number';
+        num.textContent = String(idx + 1);
+        const text = document.createElement('span');
+        text.className = 'prompt-text';
+        text.textContent = promptText;
+        head.append(num, text);
+
+        const ta = document.createElement('textarea');
+        ta.className = 'prompt-textarea';
+        ta.placeholder = 'Two sentences are enough. A list works too. Skip if nothing comes.';
+        ta.dataset.key = fieldKey(step.id, idx);
+        ta.value = draft[ta.dataset.key] || '';
+
+        const meta = document.createElement('div');
+        meta.className = 'prompt-meta';
+        const left = document.createElement('span');
+        left.innerHTML = '<i class="fa-regular fa-keyboard mr-1"></i>Saved as you type';
+        const right = document.createElement('span');
+        right.className = 'word-count';
+        right.dataset.for = ta.dataset.key;
+        const initialCount = countWords(ta.value);
+        right.textContent = initialCount + ' words';
+        if (initialCount > 0) {
+            right.classList.add('has-words');
+            card.classList.add('is-touched');
+        }
+        meta.append(left, right);
+
+        ta.addEventListener('input', () => {
+            const c = countWords(ta.value);
+            right.textContent = c + ' words';
+            right.classList.toggle('has-words', c > 0);
+            card.classList.toggle('is-touched', c > 0);
+            scheduleSave();
+        });
+
+        card.append(head, ta, meta);
+        container.appendChild(card);
+    });
+}
+
+function renderWelcomeStep(step, container) {
+    const intro = document.createElement('div');
+    const kicker = document.createElement('span');
+    kicker.className = 'studio-section-kicker';
+    kicker.innerHTML = '<i class="fa-solid fa-feather-pointed text-[10px]"></i>' + step.kicker;
+    const title = document.createElement('h4');
+    title.className = 'studio-section-title';
+    title.textContent = step.title;
+    const blurb = document.createElement('p');
+    blurb.className = 'studio-section-blurb';
+    blurb.textContent = step.blurb;
+    intro.append(kicker, title, blurb);
+    container.appendChild(intro);
+
+    const hint = document.createElement('div');
+    hint.className = 'mt-5 grid sm:grid-cols-2 gap-3';
+    const items = [
+        { icon: 'fa-feather', text: 'Specific beats impressive. Use names, smells, hours.' },
+        { icon: 'fa-bolt', text: 'If a prompt makes you flinch, that is the one to answer.' },
+        { icon: 'fa-floppy-disk', text: 'Saved on this device only. Closing the tab is fine.' },
+        { icon: 'fa-language', text: 'Korean or English — translate later, write now.' },
+    ];
+    items.forEach(({ icon, text }) => {
+        const card = document.createElement('div');
+        card.className = 'flex items-start gap-2 p-3 bg-violet-50/60 border border-violet-100 rounded-xl text-sm text-gray-700';
+        card.innerHTML = '<i class="fa-solid ' + icon + ' text-violet-600 mt-1 text-xs"></i><span></span>';
+        card.querySelector('span').textContent = text;
+        hint.appendChild(card);
+    });
+    container.appendChild(hint);
+}
+
+function renderSummaryStep(step, container) {
+    const draft = getDraft();
+    const intro = document.createElement('div');
+    intro.className = 'mb-2';
+    const kicker = document.createElement('span');
+    kicker.className = 'studio-section-kicker';
+    kicker.innerHTML = '<i class="fa-solid fa-fire text-[10px]"></i>' + step.kicker;
+    const title = document.createElement('h4');
+    title.className = 'studio-section-title';
+    title.textContent = step.title;
+    const blurb = document.createElement('p');
+    blurb.className = 'studio-section-blurb';
+    blurb.textContent = step.blurb;
+    intro.append(kicker, title, blurb);
+    container.appendChild(intro);
+
+    let totalAnswered = 0;
+    let totalPrompts = 0;
+    const questionSteps = STUDIO_STEPS.filter(s => s.kind === 'questions');
+
+    questionSteps.forEach(qs => {
+        totalPrompts += qs.prompts.length;
+        const bundle = document.createElement('div');
+        bundle.className = 'spark-bundle';
+        const heading = document.createElement('h5');
+        heading.textContent = qs.kicker + ' — ' + qs.title;
+        bundle.appendChild(heading);
+
+        let answeredInBundle = 0;
+        qs.prompts.forEach((promptText, idx) => {
+            const key = fieldKey(qs.id, idx);
+            const value = (draft[key] || '').trim();
+            if (!value) return;
+            answeredInBundle += 1;
+            totalAnswered += 1;
+            const block = document.createElement('div');
+            block.className = 'spark-quote';
+            const q = document.createElement('span');
+            q.className = 'spark-q';
+            q.textContent = '"' + promptText + '"';
+            const a = document.createElement('div');
+            a.style.whiteSpace = 'pre-wrap';
+            a.textContent = value;
+            block.append(q, a);
+            bundle.appendChild(block);
+        });
+
+        if (answeredInBundle === 0) {
+            const empty = document.createElement('p');
+            empty.className = 'spark-empty';
+            empty.textContent = 'No fragments yet from this room. Step back if you want to add one.';
+            bundle.appendChild(empty);
+        }
+        container.appendChild(bundle);
+    });
+
+    const tally = document.createElement('div');
+    tally.className = 'mt-6 p-4 rounded-xl bg-violet-50 border border-violet-100 text-sm text-violet-900 leading-relaxed';
+    if (totalAnswered === 0) {
+        tally.innerHTML = '<i class="fa-solid fa-feather-pointed mr-2"></i>You have not written anything yet. Step back through the rooms — even three fragments is enough to start a draft.';
+    } else {
+        tally.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i>You wrote <strong>' + totalAnswered + ' of ' + totalPrompts + '</strong> fragments. ' +
+            'That is more than enough to start the Common App. Print this page and bring it to your first draft session.';
+    }
+    container.appendChild(tally);
+
+    // Essay-prompt mapping guide
+    const guideWrap = document.createElement('div');
+    guideWrap.className = 'mt-6';
+    const guideHeading = document.createElement('h5');
+    guideHeading.className = 'text-sm font-bold text-gray-700 uppercase tracking-wide';
+    guideHeading.textContent = 'Where each room tends to feed';
+    guideWrap.appendChild(guideHeading);
+
+    ESSAY_PROMPT_GUIDE.forEach(group => {
+        const groupBlock = document.createElement('div');
+        groupBlock.className = 'mt-3 p-4 rounded-xl border border-gray-200 bg-white';
+        const gt = document.createElement('p');
+        gt.className = 'text-sm font-bold text-gray-800 mb-2';
+        gt.textContent = group.title;
+        groupBlock.appendChild(gt);
+        group.items.forEach(item => {
+            const row = document.createElement('p');
+            row.className = 'text-sm text-gray-700 leading-relaxed mt-1.5';
+            const tags = item.rooms.map(rid => {
+                const target = STUDIO_STEPS.find(s => s.id === rid);
+                return target ? target.title : rid;
+            }).join(' · ');
+            row.innerHTML = '<span class="inline-block text-[11px] font-bold text-violet-700 bg-violet-50 border border-violet-100 rounded-md px-2 py-0.5 mr-2">' +
+                tags + '</span>' +
+                '<span></span>';
+            row.querySelector('span:last-child').textContent = item.note;
+            groupBlock.appendChild(row);
+        });
+        guideWrap.appendChild(groupBlock);
+    });
+    container.appendChild(guideWrap);
+}
+
+function renderCurrentStep() {
+    const wrap = document.getElementById('studio-steps');
+    wrap.replaceChildren();
+    const stepEl = document.createElement('section');
+    stepEl.className = 'studio-step is-active';
+    const step = STUDIO_STEPS[currentStep];
+    if (step.kind === 'welcome') renderWelcomeStep(step, stepEl);
+    else if (step.kind === 'summary') renderSummaryStep(step, stepEl);
+    else renderQuestionStep(step, stepEl);
+    wrap.appendChild(stepEl);
+
+    document.getElementById('studio-step-counter').textContent =
+        'Room ' + (currentStep + 1) + ' of ' + STUDIO_STEPS.length;
+    document.getElementById('studio-step-title').textContent = step.title;
+
+    const fillPct = (currentStep / (STUDIO_STEPS.length - 1)) * 100;
+    document.getElementById('studio-progress-fill').style.width = fillPct + '%';
+
+    document.getElementById('studio-back-btn').disabled = (currentStep === 0);
+    document.getElementById('studio-back-btn').classList.toggle('opacity-40', currentStep === 0);
+
+    const isLast = currentStep === STUDIO_STEPS.length - 1;
+    const nextBtn = document.getElementById('studio-next-btn');
+    if (isLast) {
+        nextBtn.innerHTML = 'Back to top<i class="fa-solid fa-arrow-up text-xs"></i>';
+    } else {
+        nextBtn.innerHTML = 'Continue<i class="fa-solid fa-arrow-right text-xs"></i>';
+    }
+
+    const printBtn = document.getElementById('studio-print-btn');
+    printBtn.classList.toggle('hidden', step.kind !== 'summary');
+
+    renderStepRail();
+}
+
+function renderStepRail() {
+    const rail = document.getElementById('studio-step-rail');
+    if (!rail) return;
+    rail.replaceChildren();
+    const draft = getDraft();
+    STUDIO_STEPS.forEach((step, idx) => {
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'step-pill';
+        pill.textContent = step.kind === 'welcome'
+            ? 'Start'
+            : step.kind === 'summary'
+                ? 'Sparks'
+                : 'Room ' + (idx);
+        if (idx === currentStep) pill.classList.add('is-current');
+        else if (step.kind === 'questions') {
+            const hasAny = step.prompts.some((_, pi) => {
+                const v = draft[fieldKey(step.id, pi)];
+                return v && v.trim().length;
+            });
+            if (hasAny) pill.classList.add('is-complete');
+        }
+        pill.title = step.title;
+        pill.addEventListener('click', () => {
+            currentStep = idx;
+            renderCurrentStep();
+            document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        rail.appendChild(pill);
+    });
+}
+
+function goNext() {
+    const isLast = currentStep === STUDIO_STEPS.length - 1;
+    if (isLast) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    }
+    currentStep += 1;
+    renderCurrentStep();
+    document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function goBack() {
+    if (currentStep === 0) return;
+    currentStep -= 1;
+    renderCurrentStep();
+    document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetStudio() {
+    const ok = window.confirm('Erase every fragment you have written so far? This cannot be undone.');
+    if (!ok) return;
+    clearDraft();
+    currentStep = 0;
+    renderCurrentStep();
+}
+
+document.getElementById('studio-next-btn').addEventListener('click', goNext);
+document.getElementById('studio-back-btn').addEventListener('click', goBack);
+document.getElementById('studio-reset-btn').addEventListener('click', resetStudio);
+document.getElementById('studio-print-btn').addEventListener('click', () => window.print());
+
+// ── Subtle fade-up reveal on scroll ─────────────────────────────────
+const fadeObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            fadeObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+renderCurrentStep();
+</script>
+
+</body>
+</html>

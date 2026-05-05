@@ -8,12 +8,14 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/prediction.html", destination: "/prediction", permanent: true },
+      { source: "/genius.html", destination: "/genius", permanent: true },
     ];
   },
   async rewrites() {
     return [
       { source: "/", destination: "/index.html" },
       { source: "/prediction", destination: "/prediction.html" },
+      { source: "/genius", destination: "/genius.html" },
     ];
   },
 };
