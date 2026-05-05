@@ -14,8 +14,33 @@
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
     />
     <style>
+        :root {
+            --brand-blue: #3b82f6;
+            --brand-blue-hover: #2563eb;
+            --brand-blue-soft: #eff6ff;
+            --brand-navy: #1f2937;
+            --brand-navy-soft: #f3f4f6;
+            --surface: #ffffff;
+            --bg: #faf9f6;
+            --bg-warm: #f5f1ea;
+            --border: #e8e4dc;
+            --border-strong: #d6d2c8;
+            --text-primary: #1f2937;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --text-quaternary: #94a3b8;
+            --shadow-warm-xs: 0 1px 2px rgba(31, 41, 55, .04);
+            --shadow-warm-sm: 0 1px 3px rgba(31, 41, 55, .05), 0 1px 2px rgba(31, 41, 55, .04);
+            --shadow-warm-md: 0 4px 14px rgba(31, 41, 55, .06), 0 2px 4px rgba(31, 41, 55, .04);
+            --shadow-warm-lg: 0 12px 32px rgba(31, 41, 55, .08), 0 4px 10px rgba(31, 41, 55, .04);
+        }
+
         body {
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body.auth-gate-active {
@@ -35,17 +60,17 @@
         .auth-input {
             width: 100%;
             border-radius: .6rem;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border);
             padding: .85rem 1rem;
             font-size: 1rem;
             line-height: 1.4;
-            color: #111827;
+            color: var(--text-primary);
             background: #fff;
             transition: border-color .15s ease, box-shadow .15s ease;
         }
         .auth-input:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--brand-blue);
             box-shadow: 0 0 0 3px rgba(59,130,246,.18);
         }
         .auth-input.code-input {
@@ -56,7 +81,7 @@
         .auth-primary-btn {
             width: 100%;
             border-radius: .7rem;
-            background: #3b82f6;
+            background: var(--brand-blue);
             color: #fff;
             font-weight: 700;
             font-size: 1rem;
@@ -64,33 +89,105 @@
             box-shadow: 0 4px 14px rgba(59,130,246,.25);
             transition: background .15s ease, transform .05s ease;
         }
-        .auth-primary-btn:hover { background: #2563eb; }
+        .auth-primary-btn:hover { background: var(--brand-blue-hover); }
         .auth-primary-btn:active { transform: translateY(1px); }
         .auth-primary-btn:disabled { opacity: .6; cursor: not-allowed; }
-        .auth-primary-btn.is-verify { background: #16a34a; box-shadow: 0 4px 14px rgba(22,163,74,.25); }
-        .auth-primary-btn.is-verify:hover { background: #15803d; }
+        .auth-primary-btn.is-verify { background: var(--brand-navy); box-shadow: 0 4px 14px rgba(31,41,55,.22); }
+        .auth-primary-btn.is-verify:hover { background: #111827; }
         .auth-secondary-btn {
             flex: 1;
             border-radius: .7rem;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border);
             background: #fff;
-            color: #374151;
+            color: var(--text-secondary);
             font-weight: 600;
             padding: .85rem 1rem;
             font-size: .95rem;
             transition: background .15s ease;
         }
-        .auth-secondary-btn:hover { background: #f9fafb; }
+        .auth-secondary-btn:hover { background: var(--bg-warm); }
         .auth-helper-link {
             display: block;
             width: 100%;
             text-align: center;
             font-size: .9rem;
-            color: #3b82f6;
+            color: var(--brand-blue);
             font-weight: 600;
             padding: .6rem 0 .1rem;
         }
         .auth-helper-link:hover { text-decoration: underline; }
+
+        /* ── Brand header ── */
+        .brand-header {
+            position: relative;
+            background: var(--brand-navy);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 100% 0%, rgba(59,130,246,.28) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 60% at 0% 100%, rgba(59,130,246,.12) 0%, transparent 60%);
+            overflow: hidden;
+        }
+        .brand-header::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.55) 50%, transparent 100%);
+        }
+        .brand-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .68rem;
+            font-weight: 700;
+            color: rgba(255,255,255,.72);
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+        .brand-eyebrow::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--brand-blue);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+        }
+        .auth-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .35rem .35rem .35rem .85rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.18);
+            color: rgba(255,255,255,.92);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .auth-status-pill .auth-user-label {
+            font-size: .8rem;
+            font-weight: 500;
+            letter-spacing: -.005em;
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .auth-status-pill .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .25rem .65rem;
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--brand-navy);
+            font-size: .72rem;
+            font-weight: 700;
+            transition: background .15s ease, color .15s ease;
+        }
+        .auth-status-pill .logout-btn:hover {
+            background: var(--brand-blue);
+            color: #fff;
+        }
 
         /* ── Star rating ── */
         .star {
@@ -108,73 +205,55 @@
 
         /* ── Reason button ── */
         .reason-btn.selected {
-            background-color: #3b82f6;
+            background-color: var(--brand-blue);
             color: white;
-            border-color: #3b82f6;
+            border-color: var(--brand-blue);
         }
 
-        /* ── Panel 3D bubble / liquid effect ── */
+        /* ── Sophisticated panel ── */
         .panel-bg {
             position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,.6);
-            box-shadow:
-                0 8px 32px rgba(0,0,0,.08),
-                0 2px 8px rgba(0,0,0,.04),
-                inset 0 2px 4px rgba(255,255,255,.8),
-                inset 0 -2px 6px rgba(0,0,0,.03);
-            transition: transform .25s ease, box-shadow .25s ease;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-warm-sm);
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
         }
         .panel-bg:hover {
             transform: translateY(-2px);
-            box-shadow:
-                0 12px 40px rgba(0,0,0,.10),
-                0 4px 12px rgba(0,0,0,.06),
-                inset 0 2px 4px rgba(255,255,255,.8),
-                inset 0 -2px 6px rgba(0,0,0,.03);
+            box-shadow: var(--shadow-warm-lg);
+            border-color: rgba(59, 130, 246, .35);
         }
-        .panel-bg > * {
-            position: relative;
-            z-index: 2;
-        }
-        /* Glossy highlight strip across top */
         .panel-bg::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 50%;
-            border-radius: 20px 20px 0 0;
-            z-index: 1;
+            top: 0; left: 16px; right: 16px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.0) 0%, rgba(59,130,246,.0) 100%);
+            transition: background .25s ease;
             pointer-events: none;
         }
-        /* Soft light blob for depth */
-        .panel-bg::after {
-            content: '';
-            position: absolute;
-            bottom: -30%; right: -10%;
-            width: 60%; height: 80%;
-            border-radius: 50%;
-            z-index: 0;
-            filter: blur(40px);
-            opacity: .45;
-            pointer-events: none;
+        .panel-bg:hover::before {
+            background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.55) 50%, transparent 100%);
         }
 
-        /* ── Section grid / panel colors ── */
+        /* ── Section grid ── */
         .sections-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
-            align-items: start;
+            gap: 1.25rem;
+            align-items: stretch;
             margin-bottom: 3rem;
         }
         .section-card {
             height: 100%;
-            padding: 1.25rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
         }
         .category-card {
-            display: block;
+            display: flex;
+            flex-direction: column;
             color: inherit;
             text-decoration: none;
             cursor: pointer;
@@ -185,24 +264,51 @@
         }
         .category-card:hover .category-arrow {
             transform: translateX(4px);
-            color: #3b82f6;
+            color: var(--brand-blue);
         }
+
+        /* Eyebrow label — adds editorial / SV-tech feel */
+        .section-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .68rem;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            margin-bottom: .85rem;
+        }
+        .section-eyebrow::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 999px;
+            background: var(--brand-blue);
+        }
+        .section-eyebrow.is-navy::before {
+            background: var(--brand-navy);
+        }
+
         .category-count {
             display: inline-flex;
             align-items: center;
             width: fit-content;
-            margin-top: .85rem;
-            padding: .35rem .75rem;
+            margin-top: 1rem;
+            padding: .35rem .8rem;
             border-radius: 999px;
-            background: rgba(255,255,255,.78);
-            border: 1px solid rgba(255,255,255,.9);
-            color: #374151;
-            font-size: .82rem;
-            font-weight: 800;
-            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+            background: var(--bg-warm);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: -.005em;
+        }
+        .category-count i {
+            color: var(--brand-blue);
         }
         .category-arrow {
-            color: #9ca3af;
+            color: var(--text-quaternary);
             transition: transform .2s ease, color .2s ease;
         }
         .section-card-header {
@@ -210,158 +316,162 @@
             align-items: flex-start;
             justify-content: space-between;
             gap: 1rem;
-            padding-bottom: .85rem;
-            border-bottom: 2px solid var(--section-accent, #3b82f6);
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
         }
         .section-card-header.is-static {
-            margin-bottom: 1.1rem;
+            margin-bottom: 1.25rem;
+        }
+        .section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 12px;
+            flex-shrink: 0;
+            background: var(--brand-navy);
+            color: #ffffff;
+            font-size: 1.05rem;
+            box-shadow: 0 2px 6px rgba(31, 41, 55, .15);
+            transition: background .25s ease, transform .25s ease;
+        }
+        .section-icon.is-blue {
+            background: var(--brand-blue);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, .25);
+        }
+        .panel-bg:hover .section-icon {
+            transform: rotate(-3deg) scale(1.04);
         }
         .section-title {
-            color: #374151;
+            color: var(--text-primary);
             font-size: 1.35rem;
-            font-weight: 800;
-            line-height: 1.25;
+            font-weight: 700;
+            line-height: 1.22;
+            letter-spacing: -.015em;
         }
         .section-caption {
             margin-top: .35rem;
-            color: #6b7280;
-            font-size: .88rem;
-            line-height: 1.45;
-        }
-        .section-action-row {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            flex-shrink: 0;
+            color: var(--text-tertiary);
+            font-size: .9rem;
+            line-height: 1.5;
         }
         .compact-copy {
-            color: #374151;
-            font-size: .95rem;
-            line-height: 1.65;
+            color: var(--text-secondary);
+            font-size: .94rem;
+            line-height: 1.7;
+            letter-spacing: -.005em;
+            flex: 1;
+        }
+        .compact-copy strong {
+            color: var(--text-primary);
+            font-weight: 700;
         }
         .compact-list {
             display: grid;
-            gap: .85rem;
-            color: #374151;
+            gap: .9rem;
+            color: var(--text-secondary);
             font-size: .92rem;
-            line-height: 1.5;
+            line-height: 1.55;
         }
         .news-group {
             display: grid;
-            gap: .65rem;
-        }
-        .news-label {
-            display: inline-flex;
-            align-items: center;
-            width: fit-content;
-            border-radius: 999px;
-            padding: .25rem .65rem;
-            font-size: .75rem;
-            font-weight: 800;
-        }
-        .news-label-ec {
-            background: #fff1f2;
-            color: #e11d48;
-            border: 1px solid #fecdd3;
-        }
-        .news-label-admission {
-            background: #ccfbf1;
-            color: #0f766e;
-            border: 1px solid #99f6e4;
-        }
-        .news-label-english {
-            background: #e0e7ff;
-            color: #4f46e5;
-            border: 1px solid #c7d2fe;
+            gap: .9rem;
         }
         .news-item {
             display: flex;
-            gap: .65rem;
+            gap: .75rem;
             align-items: flex-start;
+            padding-bottom: .9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .news-item:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
         }
         .news-dot {
-            width: .45rem;
-            height: .45rem;
-            margin-top: .5rem;
+            width: .4rem;
+            height: .4rem;
+            margin-top: .55rem;
             border-radius: 999px;
-            background: currentColor;
+            background: var(--brand-blue);
             flex-shrink: 0;
+        }
+        .news-link {
+            color: var(--text-primary);
+            font-weight: 500;
+            line-height: 1.55;
+            transition: color .15s ease;
+        }
+        .news-link:hover {
+            color: var(--brand-blue);
         }
         .sections-grid a {
             overflow-wrap: anywhere;
         }
 
-        #panel-international,
-        #panel-seoul,
-        #panel-outside {
-            --section-accent: #3b82f6;
-            background: linear-gradient(160deg, #f8fbff 0%, #eff6ff 40%, #dbeafe 100%);
+        /* Refined CTA buttons */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            margin-top: 1.25rem;
+            padding: .65rem 1.1rem;
+            border-radius: 10px;
+            font-size: .88rem;
+            font-weight: 700;
+            letter-spacing: -.005em;
+            transition: background .18s ease, color .18s ease, border-color .18s ease, transform .05s ease;
+            width: fit-content;
         }
-        #panel-gov-approved {
-            --section-accent: #22c55e;
-            background: linear-gradient(160deg, #f7fff9 0%, #f0fdf4 40%, #dcfce7 100%);
+        .cta-button.is-primary {
+            background: var(--brand-blue);
+            color: #fff;
+            border: 1px solid var(--brand-blue);
+            box-shadow: 0 1px 2px rgba(59,130,246,.18);
         }
-        #panel-hagwon {
-            --section-accent: #f59e0b;
-            background: linear-gradient(160deg, #fffdf5 0%, #fef9e7 40%, #fef3c7 100%);
+        .cta-button.is-primary:hover {
+            background: var(--brand-blue-hover);
+            border-color: var(--brand-blue-hover);
         }
-        #panel-eng-k {
-            --section-accent: #f97316;
-            background: linear-gradient(160deg, #fffaf5 0%, #fff7ed 40%, #ffedd5 100%);
+        .cta-button.is-outline {
+            background: #fff;
+            color: var(--brand-navy);
+            border: 1px solid var(--border-strong);
         }
-        #panel-dsat {
-            --section-accent: #3b82f6;
-            background: linear-gradient(160deg, #f0f7ff 0%, #dbeafe 40%, #93c5fd 100%);
+        .cta-button.is-outline:hover {
+            border-color: var(--brand-navy);
+            color: var(--brand-navy);
+            background: var(--brand-navy-soft);
         }
-        #panel-education-news {
-            --section-accent: #14b8a6;
-            background: linear-gradient(160deg, #fff8f8 0%, #f4fefb 46%, #eef1ff 100%);
+        .cta-button:active {
+            transform: translateY(1px);
         }
-        #panel-prediction {
-            --section-accent: #f59e0b;
-            background: linear-gradient(160deg, #fffdf5 0%, #fef3c7 40%, #fde68a 100%);
+        .cta-button .arrow-icon {
+            transition: transform .2s ease;
         }
-        #panel-genius {
-            --section-accent: #7c3aed;
-            background: linear-gradient(160deg, #fbf6ff 0%, #f3e8ff 40%, #e9d5ff 100%);
+        .cta-button:hover .arrow-icon {
+            transform: translateX(3px);
         }
-        #panel-international::before,
-        #panel-seoul::before,
-        #panel-outside::before,
-        #panel-gov-approved::before,
-        #panel-hagwon::before,
-        #panel-eng-k::before,
-        #panel-dsat::before,
-        #panel-education-news::before,
-        #panel-prediction::before,
-        #panel-genius::before {
-            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
+
+        /* Feedback / footer link button */
+        .ghost-button {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            padding: .7rem 1.2rem;
+            border-radius: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border-strong);
+            color: var(--text-primary);
+            font-size: .88rem;
+            font-weight: 600;
+            transition: background .18s ease, border-color .18s ease, color .18s ease;
         }
-        #panel-international::after,
-        #panel-seoul::after,
-        #panel-outside::after {
-            background: radial-gradient(circle, #93c5fd 0%, #bfdbfe 60%, transparent 100%);
-        }
-        #panel-gov-approved::after {
-            background: radial-gradient(circle, #86efac 0%, #bbf7d0 60%, transparent 100%);
-        }
-        #panel-hagwon::after {
-            background: radial-gradient(circle, #fcd34d 0%, #fde68a 60%, transparent 100%);
-        }
-        #panel-eng-k::after {
-            background: radial-gradient(circle, #fdba74 0%, #fed7aa 60%, transparent 100%);
-        }
-        #panel-dsat::after {
-            background: radial-gradient(circle, #3b82f6 0%, #60a5fa 60%, transparent 100%);
-        }
-        #panel-education-news::after {
-            background: radial-gradient(circle, #5eead4 0%, #c7d2fe 60%, transparent 100%);
-        }
-        #panel-prediction::after {
-            background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
-        }
-        #panel-genius::after {
-            background: radial-gradient(circle, #a855f7 0%, #ddd6fe 60%, transparent 100%);
+        .ghost-button:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+            background: var(--brand-blue-soft);
         }
 
         /* ── Toast notifications ── */
@@ -505,21 +615,25 @@
 
         /* ── Search bar ── */
         .search-wrap {
-            background: white;
-            border: 1px solid #e5e7eb;
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 14px;
-            box-shadow: 0 4px 16px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.03);
+            box-shadow: var(--shadow-warm-sm);
             transition: box-shadow .2s ease, border-color .2s ease;
         }
         .search-wrap:focus-within {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59,130,246,.12), 0 4px 16px rgba(0,0,0,.04);
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 4px rgba(59,130,246,.12), var(--shadow-warm-md);
         }
         #institution-search-input {
             outline: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            letter-spacing: -.005em;
         }
         #institution-search-input::placeholder {
-            color: #9ca3af;
+            color: var(--text-quaternary);
+            font-weight: 400;
         }
 
         /* ── Search highlight effect ── */
@@ -554,9 +668,10 @@
         @media (min-width: 768px) {
             .sections-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1.5rem;
             }
             .section-card {
-                padding: 1.5rem;
+                padding: 1.75rem;
             }
             #panel-education-news,
             #panel-genius {
@@ -570,12 +685,7 @@
         /* ── Mobile overrides ── */
         @media (max-width: 768px) {
             .panel-bg {
-                border-radius: 16px;
-            }
-            .panel-bg::after {
-                width: 80%;
-                height: 60%;
-                opacity: .35;
+                border-radius: 14px;
             }
             .section-card-header {
                 gap: .75rem;
@@ -584,12 +694,17 @@
                 font-size: 1.18rem;
             }
             .section-caption {
-                font-size: .82rem;
+                font-size: .85rem;
+            }
+            .section-icon {
+                width: 2.25rem;
+                height: 2.25rem;
+                font-size: .95rem;
             }
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="text-gray-800">
 
 <!-- Toast notification container -->
 <div id="toast-container" class="toast-container"></div>
@@ -597,41 +712,48 @@
 <!-- ════════════════════════════════════════════════════════════
      HEADER
      ════════════════════════════════════════════════════════════ -->
-<header class="bg-[#3b82f6] text-white py-8 shadow-md relative">
-    <div class="absolute top-4 right-4">
-        <div id="auth-status" class="text-sm font-medium"></div>
-    </div>
-    <div class="container mx-auto px-4 text-center mt-2">
-        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
+<header class="brand-header text-white relative">
+    <div class="container mx-auto px-4 pt-8 pb-10 md:pt-12 md:pb-14 relative">
+        <div class="absolute top-5 right-4 md:top-6 md:right-6">
+            <div id="auth-status" class="text-sm font-medium"></div>
+        </div>
+        <div class="text-center">
+            <span class="brand-eyebrow mb-5 md:mb-6">Edu-tech for the next generation</span>
+            <div class="mt-5">
+                <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
+            </div>
+        </div>
     </div>
 </header>
 
 
-<main class="container mx-auto px-4 py-8">
+<main class="container mx-auto px-4 py-10 md:py-12">
 
 
     <!-- ════════════════════════════════════════════════════════
          SEARCH BAR
          ════════════════════════════════════════════════════════ -->
-    <div class="search-wrap p-2 mb-10">
-        <div class="relative flex items-center">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400 pointer-events-none"></i>
-            <input
-                type="text"
-                id="institution-search-input"
-                placeholder="관심 있는 학교 / 학원 / 유치원을 검색해 보세요."
-                autocomplete="off"
-                class="w-full pl-11 pr-28 py-3 bg-transparent text-sm md:text-base text-gray-800 border-0"
-            >
-            <button
-                onclick="performSearch()"
-                class="absolute right-2 px-4 py-2 bg-[#3b82f6] hover:bg-[#3b82f6]
-                       text-white text-sm font-semibold rounded-lg transition-colors
-                       inline-flex items-center gap-1.5"
-            >
-                <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                <span class="hidden sm:inline">검색</span>
-            </button>
+    <div class="max-w-3xl mx-auto mb-12 -mt-16 md:-mt-20 relative">
+        <div class="search-wrap p-2">
+            <div class="relative flex items-center">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 text-[#94a3b8] pointer-events-none"></i>
+                <input
+                    type="text"
+                    id="institution-search-input"
+                    placeholder="관심 있는 학교 / 학원 / 유치원을 검색해 보세요."
+                    autocomplete="off"
+                    class="w-full pl-11 pr-28 py-3 bg-transparent text-sm md:text-base border-0"
+                >
+                <button
+                    onclick="performSearch()"
+                    class="absolute right-2 px-4 py-2 bg-[#3b82f6] hover:bg-[#2563eb]
+                           text-white text-sm font-semibold rounded-lg transition-colors
+                           inline-flex items-center gap-1.5"
+                >
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    <span class="hidden sm:inline">검색</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -646,15 +768,16 @@
            class="panel-bg section-card category-card">
             <div class="section-card-header">
                 <div>
+                    <span class="section-eyebrow">Reviews · Schools</span>
                     <h2 class="section-title">국제학교 / 영어 유치원</h2>
                     <p class="section-caption">핵심 정보 및 별점을 한눈에 확인하세요.</p>
                     <span class="category-count">
-                        <i class="fa-solid fa-building-columns mr-1.5 text-[#3b82f6]"></i>
+                        <i class="fa-solid fa-building-columns mr-1.5"></i>
                         <span id="international-count">0</span>개 리뷰
                     </span>
                 </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-blue-100 text-[#3b82f6] rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow text-base"></i>
+                <span class="section-icon is-blue">
+                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow"></i>
                 </span>
             </div>
         </a>
@@ -668,15 +791,16 @@
            class="panel-bg section-card category-card">
             <div class="section-card-header">
                 <div>
+                    <span class="section-eyebrow is-navy">Reviews · Hagwon</span>
                     <h2 class="section-title">학원 / 컨설팅</h2>
                     <p class="section-caption">진짜 학생과 학부모가 남긴 유학원 리뷰를 읽어보세요.</p>
                     <span class="category-count">
-                        <i class="fa-solid fa-graduation-cap mr-1.5 text-[#f59e0b]"></i>
+                        <i class="fa-solid fa-graduation-cap mr-1.5"></i>
                         <span id="hagwon-count">0</span>개 리뷰
                     </span>
                 </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-[#f59e0b] rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow text-base"></i>
+                <span class="section-icon">
+                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow"></i>
                 </span>
             </div>
         </a>
@@ -687,11 +811,12 @@
         <section id="panel-dsat" class="panel-bg section-card">
             <div class="section-card-header is-static">
                 <div>
+                    <span class="section-eyebrow">Practice · Digital SAT</span>
                     <h2 class="section-title">The Challenge! Series</h2>
                     <p class="section-caption">Digital SAT 공부는 이걸로 끝납니다.</p>
                 </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-blue-100 text-[#3b82f6] rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-laptop-file text-lg"></i>
+                <span class="section-icon is-blue">
+                    <i class="fa-solid fa-laptop-file"></i>
                 </span>
             </div>
             <div class="compact-copy space-y-3">
@@ -702,13 +827,10 @@
                 <p>
                     꾸준한 연습을 통해 매일 발전하는 스스로를 확인할 수 있습니다.
                 </p>
-                <a href="/challenge"
-                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-blue-50
-                          text-[#3b82f6] text-sm font-semibold rounded-lg border-2 border-[#3b82f6]
-                          hover:border-blue-600 transition-colors">
-                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                </a>
             </div>
+            <a href="/challenge" class="cta-button is-primary">
+                자세히 보기<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
+            </a>
         </section>
 
         <!-- ════════════════════════════════════════════════════
@@ -717,11 +839,12 @@
         <section id="panel-prediction" class="panel-bg section-card">
             <div class="section-card-header is-static">
                 <div>
+                    <span class="section-eyebrow is-navy">Insights · Admissions AI</span>
                     <h2 class="section-title">The Insight! Report</h2>
                     <p class="section-caption">빅데이터와 AI로 입시를 혁신합니다.</p>
                 </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-chart-column text-lg"></i>
+                <span class="section-icon">
+                    <i class="fa-solid fa-chart-column"></i>
                 </span>
             </div>
             <div class="compact-copy space-y-3">
@@ -733,13 +856,10 @@
                     EduFinder 10년 노하우를 담은 AI 챗봇이 언제 어디서나
                     리포트 속 질문에 자세히 답변합니다.
                 </p>
-                <a href="/prediction"
-                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-amber-50
-                          text-amber-600 text-sm font-semibold rounded-lg border-2 border-amber-500
-                          hover:border-amber-600 transition-colors">
-                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                </a>
             </div>
+            <a href="/prediction" class="cta-button is-outline">
+                자세히 보기<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
+            </a>
         </section>
 
         <!-- ════════════════════════════════════════════════════
@@ -748,11 +868,12 @@
         <section id="panel-genius" class="panel-bg section-card">
             <div class="section-card-header is-static">
                 <div>
+                    <span class="section-eyebrow">Writing · Essay Studio</span>
                     <h2 class="section-title">The Genius! Editor</h2>
                     <p class="section-caption">대입 에세이를 위한 영감을 한 줄씩 길어 올립니다.</p>
                 </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-solid fa-feather-pointed text-lg"></i>
+                <span class="section-icon is-blue">
+                    <i class="fa-solid fa-feather-pointed"></i>
                 </span>
             </div>
             <div class="compact-copy space-y-3">
@@ -764,13 +885,10 @@
                     데이터가 아니라 문학적 상상력으로,
                     당신만이 쓸 수 있는 첫 문장을 함께 찾아갑니다.
                 </p>
-                <a href="/genius"
-                   class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-violet-50
-                          text-violet-600 text-sm font-semibold rounded-lg border-2 border-violet-500
-                          hover:border-violet-600 transition-colors">
-                    자세히 보기<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                </a>
             </div>
+            <a href="/genius" class="cta-button is-primary">
+                자세히 보기<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
+            </a>
         </section>
 
         <!-- ════════════════════════════════════════════════════
@@ -779,36 +897,37 @@
         <section id="panel-education-news" class="panel-bg section-card">
             <div class="section-card-header is-static">
                 <div>
+                    <span class="section-eyebrow is-navy">This Week · Newsroom</span>
                     <h2 class="section-title">이번 주 교육 뉴스</h2>
                     <p class="section-caption">미국 명문대를 꿈꾸는 학생을 위한 소식을 모았습니다.</p>
                 </div>
-                <span class="flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm flex-shrink-0">
-                    <i class="fa-regular fa-newspaper text-lg"></i>
+                <span class="section-icon">
+                    <i class="fa-regular fa-newspaper"></i>
                 </span>
             </div>
             <div class="compact-list">
                 <div class="news-group">
-                    <p class="news-item text-teal-600">
+                    <p class="news-item">
                         <span class="news-dot"></span>
                         <a href="https://www.msn.com/en-us/money/general/the-college-admissions-chess-game-is-more-complicated-than-ever/ar-AA22a56a"
                            target="_blank"
-                           class="text-[#3b82f6] hover:text-[#3b82f6] hover:underline transition-colors">
+                           class="news-link">
                             [The Wall Street Journal] The College-Admissions Chess Game Is More Complicated Than Ever
                         </a>
                     </p>
-                    <p class="news-item text-teal-600">
+                    <p class="news-item">
                         <span class="news-dot"></span>
                         <a href="https://www.npr.org/2026/04/04/nx-s1-5773915/judge-halts-trump-effort-college-admissions-race"
                            target="_blank"
-                           class="text-[#3b82f6] hover:text-[#3b82f6] hover:underline transition-colors">
+                           class="news-link">
                             [NPR] Judge halts Trump effort requiring colleges to show they don't consider race in admissions
                         </a>
                     </p>
-                    <p class="news-item text-teal-600">
+                    <p class="news-item">
                         <span class="news-dot"></span>
                         <a href="https://www.johnlockeinstitute.com/essay-competition"
                            target="_blank"
-                           class="text-[#3b82f6] hover:text-[#3b82f6] hover:underline transition-colors">
+                           class="news-link">
                             The John Locke Institute Global Essay Prize, a leading worldwide essay contest for students under 19, closes regular submissions on May 31, 2026.
                         </a>
                     </p>
@@ -817,14 +936,9 @@
         </section>
     </div>
 
-    <div class="mt-10 flex justify-center">
-        <button
-            onclick="openFeedbackModal()"
-            class="inline-flex items-center px-5 py-2.5 bg-white hover:bg-blue-50
-                   text-[#3b82f6] text-sm font-semibold rounded-lg border border-blue-200
-                   shadow-sm transition-colors"
-        >
-            <i class="fa-regular fa-envelope mr-2"></i>문의 및 건의하기
+    <div class="mt-12 flex justify-center">
+        <button onclick="openFeedbackModal()" class="ghost-button">
+            <i class="fa-regular fa-envelope"></i>문의 및 건의하기
         </button>
     </div>
 
@@ -834,8 +948,13 @@
 <!-- ════════════════════════════════════════════════════════════
      FOOTER
      ════════════════════════════════════════════════════════════ -->
-<footer class="bg-[#1f2937] text-white text-center py-6 mt-12">
-    <p>&copy; 2026 EduFinder by Waystar</p>
+<footer class="bg-[#1f2937] text-white mt-16 relative">
+    <div class="absolute top-0 left-0 right-0 h-px"
+         style="background: linear-gradient(90deg, transparent, rgba(59,130,246,.5), transparent);"></div>
+    <div class="container mx-auto px-4 py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-3 text-center md:text-left">
+        <p class="text-sm font-medium tracking-tight">EduFinder by Waystar</p>
+        <p class="text-xs text-white/60 tracking-wide">&copy; 2026 EduFinder by Waystar. All rights reserved.</p>
+    </div>
 </footer>
 
 
@@ -1404,19 +1523,23 @@ function updateAuthUI() {
     const el = document.getElementById('auth-status');
     el.replaceChildren();
     if (currentUser) {
+        const pill = document.createElement('span');
+        pill.className = 'auth-status-pill';
+
         const userLabel = document.createElement('span');
-        userLabel.className = 'mr-3 opacity-90';
+        userLabel.className = 'auth-user-label';
         const icon = document.createElement('i');
-        icon.className = 'fa-regular fa-user mr-1';
-        userLabel.append(icon, document.createTextNode(' ' + currentUser));
+        icon.className = 'fa-regular fa-user mr-1.5 text-xs';
+        userLabel.append(icon, document.createTextNode(currentUser));
 
         const logoutButton = document.createElement('button');
         logoutButton.type = 'button';
-        logoutButton.className = 'bg-white text-[#3b82f6] px-3 py-1 rounded shadow text-xs hover:bg-gray-100 transition';
+        logoutButton.className = 'logout-btn';
         logoutButton.textContent = '로그아웃';
         logoutButton.addEventListener('click', logout);
 
-        el.append(userLabel, logoutButton);
+        pill.append(userLabel, logoutButton);
+        el.append(pill);
     }
 }
 
