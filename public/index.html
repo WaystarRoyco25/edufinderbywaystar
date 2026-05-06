@@ -136,17 +136,24 @@
         .brand-eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: .5rem;
-            font-size: .68rem;
+            gap: .65rem;
+            font-size: 1.05rem;
+            line-height: 1.2;
             font-weight: 700;
-            color: rgba(255,255,255,.72);
-            letter-spacing: .22em;
+            color: rgba(255,255,255,.85);
+            letter-spacing: .14em;
             text-transform: uppercase;
+        }
+        @media (min-width: 768px) {
+            .brand-eyebrow {
+                font-size: 1.25rem;
+                letter-spacing: .16em;
+            }
         }
         .brand-eyebrow::before {
             content: '';
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 999px;
             background: var(--brand-blue);
             box-shadow: 0 0 0 3px rgba(59,130,246,.18);
@@ -187,6 +194,125 @@
         .auth-status-pill .logout-btn:hover {
             background: var(--brand-blue);
             color: #fff;
+        }
+
+        /* ── News ticker (stock-market style) ── */
+        .news-ticker {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            height: 40px;
+            margin-bottom: 2.5rem;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid rgba(31, 41, 55, .12);
+            box-shadow: 0 1px 3px rgba(31, 41, 55, .06);
+        }
+        .news-ticker-label {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            flex-shrink: 0;
+            background: var(--brand-navy);
+            color: #ffffff;
+            padding: 0 1.05rem 0 1rem;
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            white-space: nowrap;
+        }
+        .news-ticker-label::before {
+            content: '';
+            width: .42rem;
+            height: .42rem;
+            border-radius: 999px;
+            background: var(--brand-blue);
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, .55);
+            animation: news-ticker-pulse 2s ease-out infinite;
+            flex-shrink: 0;
+        }
+        .news-ticker-label::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10px;
+            bottom: 0;
+            width: 10px;
+            background: linear-gradient(90deg, var(--brand-navy), transparent);
+            pointer-events: none;
+        }
+        @keyframes news-ticker-pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(59, 130, 246, .55); }
+            70%  { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .news-ticker-track {
+            flex: 1;
+            min-width: 0;
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+        }
+        .news-ticker-list {
+            display: inline-flex;
+            align-items: center;
+            gap: 2.25rem;
+            height: 100%;
+            padding-left: 1.25rem;
+            white-space: nowrap;
+            animation: news-ticker-scroll 60s linear infinite;
+            will-change: transform;
+        }
+        .news-ticker-track:hover .news-ticker-list {
+            animation-play-state: paused;
+        }
+        @keyframes news-ticker-scroll {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+        .news-ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: .65rem;
+            color: var(--brand-navy);
+            font-size: .85rem;
+            font-weight: 500;
+            letter-spacing: -.005em;
+            transition: color .15s ease;
+        }
+        .news-ticker-item::before {
+            content: '';
+            width: .35rem;
+            height: .35rem;
+            border-radius: 999px;
+            background: var(--brand-blue);
+            flex-shrink: 0;
+        }
+        .news-ticker-item:hover {
+            color: var(--brand-blue);
+        }
+        @media (max-width: 768px) {
+            .news-ticker {
+                height: 36px;
+                margin-bottom: 2rem;
+            }
+            .news-ticker-label {
+                font-size: .66rem;
+                padding: 0 .85rem;
+                letter-spacing: .06em;
+            }
+            .news-ticker-item {
+                font-size: .8rem;
+            }
+            .news-ticker-list {
+                gap: 1.75rem;
+                animation-duration: 45s;
+            }
         }
 
         /* ── Star rating ── */
@@ -366,45 +492,6 @@
         .compact-copy strong {
             color: var(--text-primary);
             font-weight: 700;
-        }
-        .compact-list {
-            display: grid;
-            gap: .9rem;
-            color: var(--text-secondary);
-            font-size: .92rem;
-            line-height: 1.55;
-        }
-        .news-group {
-            display: grid;
-            gap: .9rem;
-        }
-        .news-item {
-            display: flex;
-            gap: .75rem;
-            align-items: flex-start;
-            padding-bottom: .9rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .news-item:last-child {
-            border-bottom: 0;
-            padding-bottom: 0;
-        }
-        .news-dot {
-            width: .4rem;
-            height: .4rem;
-            margin-top: .55rem;
-            border-radius: 999px;
-            background: var(--brand-blue);
-            flex-shrink: 0;
-        }
-        .news-link {
-            color: var(--text-primary);
-            font-weight: 500;
-            line-height: 1.55;
-            transition: color .15s ease;
-        }
-        .news-link:hover {
-            color: var(--brand-blue);
         }
         .sections-grid a {
             overflow-wrap: anywhere;
@@ -673,7 +760,6 @@
             .section-card {
                 padding: 1.75rem;
             }
-            #panel-education-news,
             #panel-genius {
                 grid-column: 1 / -1;
                 justify-self: center;
@@ -718,8 +804,8 @@
             <div id="auth-status" class="text-sm font-medium"></div>
         </div>
         <div class="text-center">
-            <span class="brand-eyebrow mb-5 md:mb-6">Edu-tech for the next generation</span>
-            <div class="mt-5">
+            <span class="brand-eyebrow mb-3 md:mb-4">Edu-tech for the next generation</span>
+            <div class="mt-3 md:mt-4">
                 <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
             </div>
         </div>
@@ -753,6 +839,45 @@
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                     <span class="hidden sm:inline">검색</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         NEWS TICKER (stretches like stock-market headlines)
+         ════════════════════════════════════════════════════════ -->
+    <div class="news-ticker" role="region" aria-label="이번 주 교육 뉴스">
+        <div class="news-ticker-label">
+            <span>이번 주 교육 뉴스</span>
+        </div>
+        <div class="news-ticker-track">
+            <div class="news-ticker-list">
+                <a href="https://www.msn.com/en-us/money/general/the-college-admissions-chess-game-is-more-complicated-than-ever/ar-AA22a56a"
+                   target="_blank" rel="noopener" class="news-ticker-item">
+                    [The Wall Street Journal] The College-Admissions Chess Game Is More Complicated Than Ever
+                </a>
+                <a href="https://www.npr.org/2026/04/04/nx-s1-5773915/judge-halts-trump-effort-college-admissions-race"
+                   target="_blank" rel="noopener" class="news-ticker-item">
+                    [NPR] Judge halts Trump effort requiring colleges to show they don't consider race in admissions
+                </a>
+                <a href="https://www.johnlockeinstitute.com/essay-competition"
+                   target="_blank" rel="noopener" class="news-ticker-item">
+                    The John Locke Institute Global Essay Prize closes regular submissions on May 31, 2026.
+                </a>
+                <!-- Duplicated set for seamless looping -->
+                <a href="https://www.msn.com/en-us/money/general/the-college-admissions-chess-game-is-more-complicated-than-ever/ar-AA22a56a"
+                   target="_blank" rel="noopener" class="news-ticker-item" aria-hidden="true" tabindex="-1">
+                    [The Wall Street Journal] The College-Admissions Chess Game Is More Complicated Than Ever
+                </a>
+                <a href="https://www.npr.org/2026/04/04/nx-s1-5773915/judge-halts-trump-effort-college-admissions-race"
+                   target="_blank" rel="noopener" class="news-ticker-item" aria-hidden="true" tabindex="-1">
+                    [NPR] Judge halts Trump effort requiring colleges to show they don't consider race in admissions
+                </a>
+                <a href="https://www.johnlockeinstitute.com/essay-competition"
+                   target="_blank" rel="noopener" class="news-ticker-item" aria-hidden="true" tabindex="-1">
+                    The John Locke Institute Global Essay Prize closes regular submissions on May 31, 2026.
+                </a>
             </div>
         </div>
     </div>
@@ -891,49 +1016,6 @@
             </a>
         </section>
 
-        <!-- ════════════════════════════════════════════════════
-             SECTION 6: 이번 주 교육 뉴스
-             ════════════════════════════════════════════════════ -->
-        <section id="panel-education-news" class="panel-bg section-card">
-            <div class="section-card-header is-static">
-                <div>
-                    <span class="section-eyebrow is-navy">This Week · Newsroom</span>
-                    <h2 class="section-title">이번 주 교육 뉴스</h2>
-                    <p class="section-caption">미국 명문대를 꿈꾸는 학생을 위한 소식을 모았습니다.</p>
-                </div>
-                <span class="section-icon">
-                    <i class="fa-regular fa-newspaper"></i>
-                </span>
-            </div>
-            <div class="compact-list">
-                <div class="news-group">
-                    <p class="news-item">
-                        <span class="news-dot"></span>
-                        <a href="https://www.msn.com/en-us/money/general/the-college-admissions-chess-game-is-more-complicated-than-ever/ar-AA22a56a"
-                           target="_blank"
-                           class="news-link">
-                            [The Wall Street Journal] The College-Admissions Chess Game Is More Complicated Than Ever
-                        </a>
-                    </p>
-                    <p class="news-item">
-                        <span class="news-dot"></span>
-                        <a href="https://www.npr.org/2026/04/04/nx-s1-5773915/judge-halts-trump-effort-college-admissions-race"
-                           target="_blank"
-                           class="news-link">
-                            [NPR] Judge halts Trump effort requiring colleges to show they don't consider race in admissions
-                        </a>
-                    </p>
-                    <p class="news-item">
-                        <span class="news-dot"></span>
-                        <a href="https://www.johnlockeinstitute.com/essay-competition"
-                           target="_blank"
-                           class="news-link">
-                            The John Locke Institute Global Essay Prize, a leading worldwide essay contest for students under 19, closes regular submissions on May 31, 2026.
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </section>
     </div>
 
     <div class="mt-12 flex justify-center">
