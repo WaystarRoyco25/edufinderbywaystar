@@ -12,6 +12,11 @@ type DirectionSummary = {
   fuelPrice?: number;
 };
 
+type RoutePathPoint = {
+  lat: number;
+  lng: number;
+};
+
 function getHeaders() {
   const id = process.env.NAVER_MAPS_CLIENT_ID;
   const secret = process.env.NAVER_MAPS_CLIENT_SECRET;
@@ -23,9 +28,7 @@ function getHeaders() {
   };
 }
 
-function isLngLat(value: string | null) {
-  if (!value) return false;
-  const [lng, lat] = value.split(",").map(Number);
+function isKoreaLngLat(lng: number, lat: number) {
   return (
     Number.isFinite(lng) &&
     Number.isFinite(lat) &&
@@ -34,6 +37,23 @@ function isLngLat(value: string | null) {
     lat >= 33 &&
     lat <= 39
   );
+}
+
+function isLngLat(value: string | null) {
+  if (!value) return false;
+  const [lng, lat] = value.split(",").map(Number);
+  return isKoreaLngLat(lng, lat);
+}
+
+function normalizeDirectionPath(value: unknown): RoutePathPoint[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((point) => {
+    if (!Array.isArray(point) || point.length < 2) return [];
+    const lng = Number(point[0]);
+    const lat = Number(point[1]);
+    if (!isKoreaLngLat(lng, lat)) return [];
+    return [{ lat, lng }];
+  });
 }
 
 export async function GET(request: Request) {
@@ -68,12 +88,16 @@ export async function GET(request: Request) {
   }
 
   const payload = (await response.json().catch(() => null)) as
-    | { route?: { traoptimal?: Array<{ summary?: DirectionSummary }> } }
+    | { route?: { traoptimal?: Array<{ summary?: DirectionSummary; path?: unknown }> } }
     | null;
-  const summary = payload?.route?.traoptimal?.[0]?.summary;
+  const route = payload?.route?.traoptimal?.[0];
+  const summary = route?.summary;
   if (!summary) {
     return NextResponse.json({ error: "No route found." }, { status: 404 });
   }
 
-  return NextResponse.json({ summary });
+  return NextResponse.json({
+    summary,
+    path: normalizeDirectionPath(route?.path),
+  });
 }

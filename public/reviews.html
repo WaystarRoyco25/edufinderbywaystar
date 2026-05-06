@@ -887,13 +887,21 @@
             -webkit-backdrop-filter: blur(8px);
         }
         .selected-institution-panel {
-            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(31,41,55,.14);
+            border-top: 4px solid var(--brand-blue);
             border-radius: 14px;
-            background: var(--bg);
+            background: #ffffff;
             padding: 1rem;
-            box-shadow: var(--shadow-warm-xs);
+            box-shadow: 0 14px 30px rgba(31,41,55,.08), 0 2px 6px rgba(31,41,55,.04);
+        }
+        .selected-institution-panel > * {
+            position: relative;
+            z-index: 1;
         }
         .selected-institution-panel.is-empty {
+            border-top-color: var(--brand-navy);
             color: var(--text-tertiary);
             font-size: .9rem;
             line-height: 1.55;
@@ -917,11 +925,35 @@
             gap: .35rem;
             border-radius: 999px;
             background: #fff;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
+            border: 1px solid rgba(59,130,246,.2);
+            color: var(--brand-navy);
             font-size: .76rem;
             font-weight: 700;
             padding: .32rem .62rem;
+        }
+        .selected-detail {
+            display: grid;
+            gap: .45rem;
+            margin-top: .85rem;
+            color: var(--brand-navy);
+            font-size: .88rem;
+            line-height: 1.5;
+        }
+        .selected-detail p {
+            margin: 0;
+        }
+        .selected-detail-label {
+            display: inline-flex;
+            margin-right: .35rem;
+            color: var(--brand-blue);
+            font-size: .74rem;
+            font-weight: 800;
+            letter-spacing: .04em;
+        }
+        .selected-address {
+            padding-top: .45rem;
+            color: var(--text-tertiary);
+            font-size: .78rem;
         }
         .institution-list {
             display: grid;
@@ -996,38 +1028,81 @@
             box-shadow: 0 10px 24px rgba(59,130,246,.35);
         }
         .info-window {
-            min-width: 220px;
-            max-width: 270px;
-            padding: .15rem;
-            color: var(--text-primary);
+            min-width: 250px;
+            max-width: 310px;
+            padding: .95rem;
+            border: 1px solid rgba(31,41,55,.14);
+            border-top: 5px solid var(--brand-blue);
+            border-radius: 16px;
+            background: #ffffff;
+            color: var(--brand-navy);
             font-family: 'Pretendard', ui-sans-serif, system-ui, sans-serif;
+            box-shadow: 0 18px 42px rgba(31,41,55,.18), 0 4px 12px rgba(31,41,55,.08);
         }
         .info-window-title {
-            font-size: .95rem;
+            color: var(--brand-navy);
+            font-size: .98rem;
             font-weight: 800;
             line-height: 1.35;
-            margin-bottom: .35rem;
+            margin-bottom: .5rem;
         }
         .info-window-meta {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: .35rem;
-            color: var(--text-secondary);
+            width: fit-content;
+            max-width: 100%;
+            border: 1px solid rgba(59,130,246,.18);
+            border-radius: 999px;
+            background: #eff6ff;
+            color: var(--brand-navy);
             font-size: .78rem;
             font-weight: 700;
-            margin-bottom: .45rem;
+            margin: 0 .35rem .55rem 0;
+            padding: .32rem .6rem;
         }
         .info-window-reason {
-            color: var(--text-secondary);
-            font-size: .76rem;
+            border-left: 3px solid var(--brand-blue);
+            border-radius: 10px;
+            background: #f8fafc;
+            color: var(--brand-navy);
+            font-size: .78rem;
             line-height: 1.45;
-            margin-top: .25rem;
+            margin-top: .35rem;
+            padding: .55rem .65rem;
+        }
+        .info-window-reason strong {
+            color: var(--brand-blue);
+            margin-right: .25rem;
         }
         .route-summary {
             margin-top: .75rem;
-            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: .6rem;
+            border: 1px solid rgba(59,130,246,.22);
+            border-radius: 12px;
+            background: #eff6ff;
+            color: var(--brand-navy);
             font-size: .82rem;
+            font-weight: 700;
             line-height: 1.5;
+            padding: .72rem .82rem;
+        }
+        .route-summary i {
+            color: var(--brand-blue);
+            margin-top: .15rem;
+            width: 1rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .route-summary.is-muted {
+            border-color: rgba(31,41,55,.12);
+            background: #ffffff;
+            color: var(--text-secondary);
+        }
+        .route-summary.is-loading i {
+            color: var(--brand-blue);
         }
         @media (min-width: 1024px) {
             .review-map-layout {
@@ -1203,7 +1278,7 @@
                     </div>
                     <button id="current-location-button" type="button" onclick="requestUserLocation()" class="review-action-button">
                         <i class="fa-solid fa-location-crosshairs"></i>
-                        <span>내 위치 기준 거리</span>
+                        <span>내 위치 기준 경로</span>
                     </button>
                 </div>
                 <div id="naver-map" class="naver-map" aria-label="기관 위치 지도"></div>
@@ -1811,6 +1886,8 @@ let activeLocations = [];
 let locationCacheByCategory = {};
 let markersByInstitution = new Map();
 let routeSummaryCache = {};
+let activeRouteHaloLine = null;
+let activeRouteLine = null;
 
 const DEFAULT_MAP_CENTER = { lat: 37.5666103, lng: 126.9783882 };
 const MAP_LOOKUP_ENDPOINT = '/api/naver/maps/lookup';
@@ -2036,6 +2113,7 @@ function clearMapMarkers() {
     });
     markersByInstitution = new Map();
     if (activeInfoWindow) activeInfoWindow.close();
+    clearActiveRoute();
 }
 
 function markerIconFor(name) {
@@ -2110,9 +2188,9 @@ function buildInfoWindowContent(name, location) {
 
     return '<div class="info-window">' +
         '<div class="info-window-title">' + escapeHtml(name) + '</div>' +
-        '<div class="info-window-meta"><i class="fa-solid fa-star" style="color:#f59e0b"></i><span>' +
+        '<div class="info-window-meta"><i class="fa-solid fa-star" style="color:#3b82f6"></i><span>' +
         escapeHtml(summary.avgLabel) + ' / 5</span><span>(' + summary.votes + '개 리뷰)</span></div>' +
-        (distanceText ? '<div class="info-window-meta"><i class="fa-solid fa-location-arrow"></i><span>' + escapeHtml(distanceText) + '</span></div>' : '') +
+        (distanceText ? '<div class="info-window-meta"><i class="fa-solid fa-route" style="color:#3b82f6"></i><span>' + escapeHtml(distanceText) + '</span></div>' : '') +
         lines.join('') +
         '</div>';
 }
@@ -2178,7 +2256,7 @@ function renderSelectedInstitution(name) {
     const meta = document.createElement('div');
     meta.className = 'selected-meta';
     const rating = document.createElement('span');
-    rating.innerHTML = '<i class="fa-solid fa-star text-amber-500"></i>' + summary.avgLabel + ' / 5 · ' + summary.votes + '개 리뷰';
+    rating.innerHTML = '<i class="fa-solid fa-star text-[#3b82f6]"></i>' + summary.avgLabel + ' / 5 · ' + summary.votes + '개 리뷰';
     meta.appendChild(rating);
     const distanceText = location ? getDistanceTextForLocation(location) : '';
     if (distanceText) {
@@ -2198,21 +2276,21 @@ function renderSelectedInstitution(name) {
     const rounded = Math.round(summary.avg);
     for (let i = 1; i <= 5; i++) {
         const star = document.createElement('i');
-        star.className = 'fa-solid fa-star ' + (summary.avg > 0 && i <= rounded ? 'text-amber-400' : 'text-gray-300');
+        star.className = 'fa-solid fa-star ' + (summary.avg > 0 && i <= rounded ? 'text-[#3b82f6]' : 'text-gray-300');
         starLine.appendChild(star);
     }
     panel.appendChild(starLine);
 
     const detail = document.createElement('div');
-    detail.className = 'mt-3 space-y-1.5 text-sm text-gray-600 leading-relaxed';
+    detail.className = 'selected-detail';
     if (summary.topStrength) {
         const row = document.createElement('p');
-        row.innerHTML = '<span class="font-bold text-gray-500">최대 장점</span> ' + escapeHtml(summary.topStrength);
+        row.innerHTML = '<span class="selected-detail-label">최대 장점</span> ' + escapeHtml(summary.topStrength);
         detail.appendChild(row);
     }
     if (summary.topWeakness) {
         const row = document.createElement('p');
-        row.innerHTML = '<span class="font-bold text-gray-500">최대 단점</span> ' + escapeHtml(summary.topWeakness);
+        row.innerHTML = '<span class="selected-detail-label">최대 단점</span> ' + escapeHtml(summary.topWeakness);
         detail.appendChild(row);
     }
     if (!summary.topStrength && !summary.topWeakness) {
@@ -2223,7 +2301,7 @@ function renderSelectedInstitution(name) {
     const address = location?.roadAddress || location?.address || contact?.address;
     if (address) {
         const row = document.createElement('p');
-        row.className = 'pt-2 text-xs text-gray-500';
+        row.className = 'selected-address';
         row.innerHTML = '<i class="fa-solid fa-location-dot mr-1.5 text-gray-400"></i>' + escapeHtml(address);
         detail.appendChild(row);
     }
@@ -2259,10 +2337,10 @@ function requestUserLocation() {
                 naverMap.panTo(new naver.maps.LatLng(selectedLocation.lat, selectedLocation.lng));
             }
         }
-        setMapStatus('현재 위치 기준 직선 거리를 표시하고 있습니다.', 'fa-solid fa-location-crosshairs');
+        setMapStatus('현재 위치 기준 거리와 차량 경로를 사용할 수 있습니다.', 'fa-solid fa-route');
     }, function() {
         if (button) button.disabled = false;
-        showToast('위치 권한을 허용하면 현재 위치 기준 거리를 볼 수 있습니다.', 'info');
+        showToast('위치 권한을 허용하면 현재 위치 기준 거리와 차량 경로를 볼 수 있습니다.', 'info');
         setMapStatus('위치 권한이 없으면 기관 위치만 표시됩니다.', 'fa-solid fa-map-location-dot');
     }, {
         enableHighAccuracy: true,
@@ -2319,6 +2397,73 @@ function getDistanceTextForLocation(location) {
     return '직선 ' + formatDistance(haversineMeters(userLocation, location));
 }
 
+function clearActiveRoute() {
+    if (activeRouteHaloLine) activeRouteHaloLine.setMap(null);
+    if (activeRouteLine) activeRouteLine.setMap(null);
+    activeRouteHaloLine = null;
+    activeRouteLine = null;
+}
+
+function getRoutePathLatLngs(route) {
+    if (!naverMap || !window.naver?.maps || !Array.isArray(route?.path)) return [];
+    return route.path.flatMap(function(point) {
+        const lat = Number(point?.lat);
+        const lng = Number(point?.lng);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [];
+        return [new naver.maps.LatLng(lat, lng)];
+    });
+}
+
+function fitMapToRoute(path, location) {
+    if (!naverMap || !path.length || !userLocation || !location) return;
+    const bounds = new naver.maps.LatLngBounds(path[0], path[0]);
+    path.slice(1).forEach(function(point) {
+        bounds.extend(point);
+    });
+    bounds.extend(new naver.maps.LatLng(userLocation.lat, userLocation.lng));
+    bounds.extend(new naver.maps.LatLng(location.lat, location.lng));
+    naverMap.fitBounds(bounds);
+}
+
+function drawActiveRoute(route, location) {
+    clearActiveRoute();
+    if (!naverMap || !window.naver?.maps || !userLocation || !location) return;
+    const path = getRoutePathLatLngs(route);
+    if (path.length < 2) return;
+
+    activeRouteHaloLine = new naver.maps.Polyline({
+        map: naverMap,
+        path,
+        strokeColor: '#ffffff',
+        strokeOpacity: .94,
+        strokeWeight: 11,
+        strokeStyle: 'solid',
+        zIndex: 40
+    });
+    activeRouteLine = new naver.maps.Polyline({
+        map: naverMap,
+        path,
+        strokeColor: '#3b82f6',
+        strokeOpacity: .98,
+        strokeWeight: 6,
+        strokeStyle: 'solid',
+        strokeLineCap: 'round',
+        strokeLineJoin: 'round',
+        zIndex: 50
+    });
+    fitMapToRoute(path, location);
+}
+
+function setRouteSummaryMessage(el, message, iconClass, stateClass = 'is-muted') {
+    el.className = 'route-summary ' + stateClass;
+    el.replaceChildren();
+    const icon = document.createElement('i');
+    icon.className = iconClass;
+    const text = document.createElement('span');
+    text.textContent = message;
+    el.append(icon, text);
+}
+
 function updateDistanceLabels() {
     document.querySelectorAll('[data-distance-for]').forEach(function(label) {
         const location = getLocationByName(label.dataset.distanceFor);
@@ -2337,11 +2482,13 @@ async function refreshSelectedRouteSummary(name) {
     const location = getLocationByName(name);
     if (!el) return;
     if (!location) {
-        el.textContent = '아직 지도 좌표를 확인하지 못한 기관입니다.';
+        clearActiveRoute();
+        setRouteSummaryMessage(el, '아직 지도 좌표를 확인하지 못한 기관입니다.', 'fa-solid fa-triangle-exclamation');
         return;
     }
     if (!userLocation) {
-        el.textContent = '현재 위치를 허용하면 직선 거리와 선택 기관의 차량 경로 요약을 볼 수 있습니다.';
+        clearActiveRoute();
+        setRouteSummaryMessage(el, '현재 위치를 허용하면 선택 기관까지 차량 경로가 지도에 표시됩니다.', 'fa-solid fa-location-crosshairs');
         return;
     }
 
@@ -2351,10 +2498,12 @@ async function refreshSelectedRouteSummary(name) {
     ].join(',');
     if (routeSummaryCache[routeKey]) {
         renderRouteSummary(el, routeSummaryCache[routeKey], location);
+        drawActiveRoute(routeSummaryCache[routeKey], location);
         return;
     }
 
-    el.textContent = '차량 경로를 확인하고 있습니다...';
+    clearActiveRoute();
+    setRouteSummaryMessage(el, '차량 경로를 확인하고 있습니다...', 'fa-solid fa-circle-notch fa-spin', 'is-loading');
     const url = MAP_ROUTE_ENDPOINT +
         '?start=' + encodeURIComponent(userLocation.lng + ',' + userLocation.lat) +
         '&goal=' + encodeURIComponent(location.lng + ',' + location.lat);
@@ -2362,18 +2511,40 @@ async function refreshSelectedRouteSummary(name) {
         const response = await fetch(url);
         const payload = await response.json().catch(function() { return null; });
         if (!response.ok || !payload?.summary) throw new Error('No route');
-        routeSummaryCache[routeKey] = payload.summary;
-        renderRouteSummary(el, payload.summary, location);
+        const route = {
+            summary: payload.summary,
+            path: Array.isArray(payload.path) ? payload.path : []
+        };
+        routeSummaryCache[routeKey] = route;
+        if (selectedInstitutionName !== name || document.getElementById('selected-route-summary') !== el) return;
+        renderRouteSummary(el, route, location);
+        drawActiveRoute(route, location);
+        if (route.path.length >= 2) {
+            setMapStatus('선택 기관까지 차량 경로를 지도에 표시했습니다.', 'fa-solid fa-route');
+        }
     } catch (_) {
-        el.textContent = '차량 경로는 확인할 수 없습니다. 내 위치에서 ' + getDistanceTextForLocation(location) + '입니다.';
+        if (selectedInstitutionName !== name || document.getElementById('selected-route-summary') !== el) return;
+        clearActiveRoute();
+        setRouteSummaryMessage(el, '차량 경로는 확인할 수 없습니다. 내 위치에서 ' + getDistanceTextForLocation(location) + '입니다.', 'fa-solid fa-triangle-exclamation');
     }
 }
 
-function renderRouteSummary(el, summary, location) {
+function renderRouteSummary(el, route, location) {
+    const summary = route?.summary || route;
     const distance = formatDistance(Number(summary.distance));
     const duration = formatDuration(Number(summary.duration));
     const straight = getDistanceTextForLocation(location);
-    el.textContent = '차량 약 ' + duration + ' · ' + distance + (straight ? ' · 내 위치에서 ' + straight : '');
+    const parts = [];
+    if (duration) parts.push('차량 약 ' + duration);
+    if (distance) parts.push(distance);
+    if (straight) parts.push('내 위치에서 ' + straight);
+    if (Array.isArray(route?.path) && route.path.length >= 2) parts.push('지도에 경로 표시됨');
+    setRouteSummaryMessage(
+        el,
+        parts.length ? parts.join(' · ') : '차량 경로를 지도에 표시했습니다.',
+        'fa-solid fa-car-side',
+        'is-active'
+    );
 }
 
 function getRequestedCategoryKey() {
