@@ -398,30 +398,74 @@
             background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.55) 50%, transparent 100%);
         }
 
-        /* ── Section grid ── */
-        .sections-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
+        /* ── Lead tagline (60-30-10: white surface, navy text, blue accent) ── */
+        .lead-tagline {
+            text-align: center;
+            color: var(--brand-navy);
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.45;
+            letter-spacing: -.02em;
+            margin: .25rem auto 3rem;
+            max-width: 38rem;
+        }
+        .lead-tagline .lead-accent {
+            color: var(--brand-blue);
+            font-weight: 800;
+        }
+
+        /* ── Step header (pill in blue, title in navy on white) ── */
+        .step-header {
+            text-align: center;
+            margin: 1rem auto 1.75rem;
+            max-width: 36rem;
+        }
+        .step-header + .step-header,
+        .card-stack + .step-header {
+            margin-top: 4rem;
+        }
+        .step-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: .35rem .9rem;
+            border-radius: 999px;
+            background: var(--brand-blue-soft);
+            border: 1px solid rgba(59, 130, 246, .22);
+            color: var(--brand-blue);
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .step-title {
+            color: var(--brand-navy);
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: -.02em;
+        }
+
+        /* ── Card stack (single column, centered) ── */
+        .card-stack {
+            display: flex;
+            flex-direction: column;
             align-items: stretch;
-            margin-bottom: 3rem;
+            gap: 1.25rem;
+            max-width: 38rem;
+            margin: 0 auto;
         }
         .section-card {
-            height: 100%;
-            padding: 1.5rem;
+            padding: 2rem 1.5rem;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
         .category-card {
-            display: flex;
-            flex-direction: column;
             color: inherit;
             text-decoration: none;
             cursor: pointer;
-        }
-        .category-card .section-card-header {
-            border-bottom: 0;
-            padding-bottom: 0;
         }
         .category-card:hover .category-arrow {
             transform: translateX(4px);
@@ -454,8 +498,9 @@
         .category-count {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             width: fit-content;
-            margin-top: 1rem;
+            margin: 1.1rem auto 0;
             padding: .35rem .8rem;
             border-radius: 999px;
             background: var(--bg-warm);
@@ -474,61 +519,73 @@
         }
         .section-card-header {
             display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0;
+            width: 100%;
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+        .section-card-header > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
         .section-card-header.is-static {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1rem;
         }
         .section-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 12px;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 14px;
             flex-shrink: 0;
             background: var(--brand-blue);
             color: #ffffff;
-            font-size: 1.05rem;
-            box-shadow: 0 2px 6px rgba(59, 130, 246, .25);
+            font-size: 1.25rem;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, .28);
             transition: background .25s ease, transform .25s ease;
+            margin-bottom: 1.1rem;
+            order: -1;
         }
         .section-icon.is-blue {
             background: var(--brand-blue);
-            box-shadow: 0 2px 6px rgba(59, 130, 246, .25);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, .28);
         }
         .panel-bg:hover .section-icon {
             transform: rotate(-3deg) scale(1.04);
         }
         .section-title {
             color: var(--text-primary);
-            font-size: 1.35rem;
+            font-size: 1.55rem;
             font-weight: 700;
             line-height: 1.22;
             letter-spacing: -.015em;
         }
         .section-caption {
-            margin-top: .35rem;
+            margin-top: .55rem;
             color: var(--text-tertiary);
-            font-size: .9rem;
-            line-height: 1.5;
+            font-size: 1.05rem;
+            line-height: 1.55;
+            max-width: 30rem;
         }
         .compact-copy {
             color: var(--text-secondary);
-            font-size: .94rem;
+            font-size: 1rem;
             line-height: 1.7;
             letter-spacing: -.005em;
-            flex: 1;
+            margin-top: 1.1rem;
+            max-width: 30rem;
         }
         .compact-copy strong {
             color: var(--text-primary);
             font-weight: 700;
         }
-        .sections-grid a {
+        .card-stack a {
             overflow-wrap: anywhere;
         }
 
@@ -537,10 +594,10 @@
             display: inline-flex;
             align-items: center;
             gap: .5rem;
-            margin-top: 1.25rem;
-            padding: .65rem 1.1rem;
+            margin: 1.5rem auto 0;
+            padding: .7rem 1.25rem;
             border-radius: 10px;
-            font-size: .88rem;
+            font-size: .92rem;
             font-weight: 700;
             letter-spacing: -.005em;
             transition: background .18s ease, color .18s ease, border-color .18s ease, transform .05s ease;
@@ -789,18 +846,22 @@
         }
 
         @media (min-width: 768px) {
-            .sections-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .lead-tagline {
+                font-size: 1.85rem;
+                margin: .5rem auto 3.5rem;
+            }
+            .step-title {
+                font-size: 1.65rem;
+            }
+            .card-stack {
+                max-width: 42rem;
                 gap: 1.5rem;
             }
-            .section-card {
-                padding: 1.75rem;
+            .card-stack + .step-header {
+                margin-top: 4.5rem;
             }
-            #panel-genius {
-                grid-column: 1 / -1;
-                justify-self: center;
-                width: 100%;
-                max-width: calc((100% - 1.5rem) / 2);
+            .section-card {
+                padding: 2.25rem 2rem;
             }
         }
 
@@ -809,19 +870,38 @@
             .panel-bg {
                 border-radius: 14px;
             }
-            .section-card-header {
-                gap: .75rem;
+            .lead-tagline {
+                font-size: 1.35rem;
+                margin: .25rem auto 2.25rem;
+            }
+            .step-header {
+                margin: 1rem auto 1.5rem;
+            }
+            .step-pill {
+                font-size: .68rem;
+            }
+            .step-title {
+                font-size: 1.22rem;
+            }
+            .card-stack + .step-header {
+                margin-top: 3rem;
+            }
+            .section-card {
+                padding: 1.75rem 1.25rem;
             }
             .section-title {
-                font-size: 1.18rem;
+                font-size: 1.32rem;
             }
             .section-caption {
-                font-size: .85rem;
+                font-size: .98rem;
+            }
+            .compact-copy {
+                font-size: .94rem;
             }
             .section-icon {
-                width: 2.25rem;
-                height: 2.25rem;
-                font-size: .95rem;
+                width: 2.65rem;
+                height: 2.65rem;
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -934,7 +1014,23 @@
     </div>
 
 
-    <div class="sections-grid">
+    <!-- ════════════════════════════════════════════════════════
+         LEAD TAGLINE
+         ════════════════════════════════════════════════════════ -->
+    <p class="lead-tagline">
+        미래 인재를 키우는 곳, <span class="lead-accent">EduFinder</span>입니다.
+    </p>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         STEP 1 — 학교 찾기
+         ════════════════════════════════════════════════════════ -->
+    <div class="step-header">
+        <span class="step-pill">Step 1</span>
+        <p class="step-title">나에게 맞는 학교를 찾으세요.</p>
+    </div>
+
+    <div class="card-stack">
         <!-- ════════════════════════════════════════════════════
              SECTION 1: 국제학교 / 영어 유치원
              ════════════════════════════════════════════════════ -->
@@ -943,6 +1039,9 @@
            data-auth-required="true"
            class="panel-bg section-card category-card">
             <div class="section-card-header">
+                <span class="section-icon is-blue">
+                    <i class="fa-solid fa-building-columns category-arrow"></i>
+                </span>
                 <div>
                     <span class="section-eyebrow">Reviews · Schools</span>
                     <h2 class="section-title">국제학교 / 영어 유치원</h2>
@@ -952,9 +1051,6 @@
                         <span id="international-count">0</span>개 리뷰
                     </span>
                 </div>
-                <span class="section-icon is-blue">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow"></i>
-                </span>
             </div>
         </a>
 
@@ -966,6 +1062,9 @@
            data-auth-required="true"
            class="panel-bg section-card category-card">
             <div class="section-card-header">
+                <span class="section-icon">
+                    <i class="fa-solid fa-graduation-cap category-arrow"></i>
+                </span>
                 <div>
                     <span class="section-eyebrow is-navy">Reviews · Hagwon</span>
                     <h2 class="section-title">학원 / 컨설팅</h2>
@@ -975,25 +1074,33 @@
                         <span id="hagwon-count">0</span>개 리뷰
                     </span>
                 </div>
-                <span class="section-icon">
-                    <i class="fa-solid fa-arrow-up-right-from-square category-arrow"></i>
-                </span>
             </div>
         </a>
+    </div>
 
+
+    <!-- ════════════════════════════════════════════════════════
+         STEP 2 — 전문가와 공부하기
+         ════════════════════════════════════════════════════════ -->
+    <div class="step-header">
+        <span class="step-pill">Step 2</span>
+        <p class="step-title">전문가와 공부하세요.</p>
+    </div>
+
+    <div class="card-stack">
         <!-- ════════════════════════════════════════════════════
              SECTION 3: 디지털 SAT 실전 모의고사
              ════════════════════════════════════════════════════ -->
         <section id="panel-dsat" class="panel-bg section-card">
             <div class="section-card-header is-static">
+                <span class="section-icon is-blue">
+                    <i class="fa-solid fa-laptop-file"></i>
+                </span>
                 <div>
                     <span class="section-eyebrow">Practice · Digital SAT</span>
                     <h2 class="section-title">The Challenge! Series</h2>
                     <p class="section-caption">Digital SAT 공부는 이걸로 끝납니다.</p>
                 </div>
-                <span class="section-icon is-blue">
-                    <i class="fa-solid fa-laptop-file"></i>
-                </span>
             </div>
             <div class="compact-copy space-y-3">
                 <p>
@@ -1014,14 +1121,14 @@
              ════════════════════════════════════════════════════ -->
         <section id="panel-prediction" class="panel-bg section-card">
             <div class="section-card-header is-static">
+                <span class="section-icon">
+                    <i class="fa-solid fa-chart-column"></i>
+                </span>
                 <div>
                     <span class="section-eyebrow is-navy">Insights · Admissions AI</span>
                     <h2 class="section-title">The Insight! Report</h2>
                     <p class="section-caption">빅데이터와 AI로 입시를 혁신합니다.</p>
                 </div>
-                <span class="section-icon">
-                    <i class="fa-solid fa-chart-column"></i>
-                </span>
             </div>
             <div class="compact-copy space-y-3">
                 <p>
@@ -1043,14 +1150,14 @@
              ════════════════════════════════════════════════════ -->
         <section id="panel-genius" class="panel-bg section-card">
             <div class="section-card-header is-static">
+                <span class="section-icon is-blue">
+                    <i class="fa-solid fa-feather-pointed"></i>
+                </span>
                 <div>
                     <span class="section-eyebrow">Writing · Essay Studio</span>
                     <h2 class="section-title">The Genius! Editor</h2>
                     <p class="section-caption">대입 에세이를 위한 영감을 한 줄씩 길어 올립니다.</p>
                 </div>
-                <span class="section-icon is-blue">
-                    <i class="fa-solid fa-feather-pointed"></i>
-                </span>
             </div>
             <div class="compact-copy space-y-3">
                 <p>
@@ -1066,10 +1173,10 @@
                 자세히 보기<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
             </a>
         </section>
-
     </div>
 
-    <div class="mt-12 flex justify-center">
+
+    <div class="mt-14 flex justify-center">
         <button onclick="openFeedbackModal()" class="ghost-button">
             <i class="fa-regular fa-envelope"></i>문의 및 건의하기
         </button>
