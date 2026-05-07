@@ -14,15 +14,8 @@
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* ── Hero ─────────────────────────────────────────────── */
-        .hero-bg {
-            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 60%, #4c1d95 100%);
-        }
-        .hero-quote {
-            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
-            font-style: italic;
-            color: rgba(255,255,255,.86);
-        }
+        /* ── Hero stat cards ── */
+        .stat-number { font-variant-numeric: tabular-nums; }
         .stat-card {
             background: rgba(255,255,255,.10);
             backdrop-filter: blur(12px);
@@ -52,98 +45,49 @@
             line-height: 1.4;
         }
 
-        /* ── Reusable bubble panels (matched with index/prediction) ── */
-        .panel-bg {
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,.6);
-            box-shadow:
-                0 8px 32px rgba(0,0,0,.08),
-                0 2px 8px rgba(0,0,0,.04),
-                inset 0 2px 4px rgba(255,255,255,.8),
-                inset 0 -2px 6px rgba(0,0,0,.03);
-        }
-        .panel-bg > * { position: relative; z-index: 2; }
-        .panel-bg::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 50%;
-            border-radius: 20px 20px 0 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
-            z-index: 1;
-            pointer-events: none;
-        }
-        .panel-bg::after {
-            content: '';
-            position: absolute;
-            bottom: -30%; right: -10%;
-            width: 60%; height: 80%;
-            border-radius: 50%;
-            z-index: 0;
-            filter: blur(40px);
-            opacity: .45;
-            pointer-events: none;
-        }
-        .panel-violet {
-            background: linear-gradient(160deg, #fbf6ff 0%, #f3e8ff 40%, #e9d5ff 100%);
-        }
-        .panel-violet::after {
-            background: radial-gradient(circle, #a855f7 0%, #ddd6fe 60%, transparent 100%);
-        }
-        .panel-rose {
-            background: linear-gradient(160deg, #fff7f7 0%, #ffe4e6 40%, #fecdd3 100%);
-        }
-        .panel-rose::after {
-            background: radial-gradient(circle, #fb7185 0%, #fecdd3 60%, transparent 100%);
-        }
-        .panel-amber {
-            background: linear-gradient(160deg, #fffdf5 0%, #fef9e7 40%, #fef3c7 100%);
-        }
-        .panel-amber::after {
-            background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
-        }
-        .panel-teal {
-            background: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 40%, #99f6e4 100%);
-        }
-        .panel-teal::after {
-            background: radial-gradient(circle, #2dd4bf 0%, #99f6e4 60%, transparent 100%);
-        }
-
-        /* ── Process step connector (same style as prediction.html) ── */
+        /* ── Process step connector line ── */
         .step-line {
             position: absolute;
             left: 19px;
             top: 44px;
             bottom: 0;
             width: 2px;
-            background: linear-gradient(180deg, #ddd6fe 0%, #e5e7eb 100%);
+            background: #e5e7eb;
         }
 
-        /* ── Studio shell ─────────────────────────────────────── */
+        /* ── Subtle fade-up on scroll ── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── The Studio (interactive editor) ── */
         .studio-shell {
-            background: linear-gradient(180deg, #faf5ff 0%, #ffffff 60%);
-            border-radius: 24px;
-            border: 1px solid #ede9fe;
-            box-shadow: 0 24px 48px rgba(76,29,149,.07), 0 4px 12px rgba(76,29,149,.04);
-            padding: 1.6rem;
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(17, 24, 39, .03);
+            padding: 1.5rem;
         }
         @media (min-width: 768px) {
-            .studio-shell { padding: 2.2rem; }
+            .studio-shell { padding: 2.25rem; }
         }
-
         .studio-progress-track {
-            height: 8px;
+            height: 7px;
             border-radius: 999px;
-            background: #ede9fe;
+            background: #f3f4f6;
             overflow: hidden;
         }
         .studio-progress-fill {
             height: 100%;
             width: 0;
             border-radius: inherit;
-            background: linear-gradient(90deg, #a855f7 0%, #6d28d9 100%);
+            background: #3b82f6;
             transition: width .25s ease;
         }
         .studio-step { display: none; }
@@ -158,41 +102,42 @@
         .studio-section-kicker {
             display: inline-flex;
             align-items: center;
-            gap: .45rem;
+            gap: .4rem;
             border-radius: 999px;
-            background: #ede9fe;
-            color: #6d28d9;
+            background: #dbeafe;
+            color: #1d4ed8;
             font-size: .72rem;
             font-weight: 800;
-            padding: .35rem .75rem;
+            padding: .32rem .65rem;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
         .studio-section-title {
-            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
-            font-size: clamp(1.6rem, 3.5vw, 2rem);
+            font-size: clamp(1.4rem, 3vw, 1.85rem);
             font-weight: 700;
             color: #1f2937;
-            line-height: 1.2;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
             margin-top: .65rem;
         }
         .studio-section-blurb {
             color: #6b7280;
-            font-size: .92rem;
+            font-size: .9rem;
             line-height: 1.6;
             margin-top: .55rem;
         }
         .prompt-card {
-            border: 1px solid #ede9fe;
-            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
             background: #ffffff;
-            padding: 1.1rem 1.1rem 1rem;
-            box-shadow: 0 6px 16px rgba(76,29,149,.04);
+            padding: 1.1rem;
+            box-shadow: 0 1px 2px rgba(17, 24, 39, .02);
             margin-top: 1rem;
+            transition: border-color .15s ease, box-shadow .15s ease;
         }
         .prompt-card.is-touched {
-            border-color: #c4b5fd;
-            box-shadow: 0 8px 22px rgba(124,58,237,.10);
+            border-color: #bfdbfe;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, .08);
         }
         .prompt-number {
             display: inline-flex;
@@ -201,26 +146,27 @@
             width: 28px;
             height: 28px;
             border-radius: 999px;
-            background: #f5f3ff;
-            color: #6d28d9;
+            background: #eff6ff;
+            color: #1d4ed8;
             font-size: .72rem;
             font-weight: 800;
             margin-right: .55rem;
+            flex-shrink: 0;
         }
         .prompt-text {
-            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
-            font-size: 1.05rem;
-            line-height: 1.45;
-            color: #111827;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #1f2937;
+            font-weight: 600;
         }
         .prompt-textarea {
             width: 100%;
             margin-top: .8rem;
-            border: 1px solid #ede9fe;
-            border-radius: 12px;
-            background: #faf5ff;
+            border: 1px solid #e5e7eb;
+            border-radius: .75rem;
+            background: #f9fafb;
             padding: .75rem .85rem;
-            font-size: .94rem;
+            font-size: .92rem;
             line-height: 1.6;
             color: #1f2937;
             resize: vertical;
@@ -230,8 +176,8 @@
         .prompt-textarea:focus {
             outline: none;
             background: #ffffff;
-            border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168,85,247,.18);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, .15);
         }
         .prompt-meta {
             display: flex;
@@ -242,7 +188,7 @@
             font-size: .72rem;
             color: #9ca3af;
         }
-        .prompt-meta .word-count.has-words { color: #6d28d9; font-weight: 600; }
+        .prompt-meta .word-count.has-words { color: #1d4ed8; font-weight: 600; }
 
         .studio-step-footer {
             display: flex;
@@ -250,25 +196,25 @@
             gap: .65rem;
             justify-content: space-between;
             align-items: center;
-            margin-top: 1.4rem;
+            margin-top: 1.5rem;
         }
         .studio-btn {
             display: inline-flex;
             align-items: center;
             gap: .45rem;
             padding: .7rem 1.15rem;
-            border-radius: 12px;
+            border-radius: .6rem;
             font-size: .9rem;
             font-weight: 600;
             transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
         }
         .studio-btn-primary {
-            background: #6d28d9;
+            background: #3b82f6;
             color: white;
-            box-shadow: 0 6px 18px rgba(109,40,217,.25);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, .25);
             border: 1px solid transparent;
         }
-        .studio-btn-primary:hover { background: #5b21b6; }
+        .studio-btn-primary:hover { background: #2563eb; }
         .studio-btn-primary:active { transform: translateY(1px); }
         .studio-btn-secondary {
             background: white;
@@ -278,10 +224,10 @@
         .studio-btn-secondary:hover { background: #f9fafb; color: #1f2937; }
         .studio-btn-ghost {
             background: transparent;
-            color: #6d28d9;
+            color: #1d4ed8;
             border: 1px solid transparent;
         }
-        .studio-btn-ghost:hover { background: #ede9fe; }
+        .studio-btn-ghost:hover { background: #eff6ff; }
         .studio-btn-danger {
             background: white;
             color: #b91c1c;
@@ -295,11 +241,11 @@
             gap: .4rem;
             padding: .35rem .75rem;
             border-radius: 999px;
-            background: #ecfdf5;
-            color: #047857;
+            background: #eff6ff;
+            color: #1d4ed8;
             font-size: .72rem;
             font-weight: 700;
-            border: 1px solid #d1fae5;
+            border: 1px solid #dbeafe;
         }
         .save-pill.is-idle {
             background: #f9fafb;
@@ -324,40 +270,54 @@
             cursor: pointer;
             transition: all .15s ease;
         }
-        .step-pill:hover { color: #6d28d9; border-color: #ddd6fe; background: #faf5ff; }
+        .step-pill:hover { color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff; }
         .step-pill.is-current {
-            background: #6d28d9;
+            background: #3b82f6;
             color: white;
-            border-color: #6d28d9;
+            border-color: #3b82f6;
         }
         .step-pill.is-complete {
-            color: #6d28d9;
-            background: #ede9fe;
-            border-color: #ddd6fe;
+            color: #1d4ed8;
+            background: #dbeafe;
+            border-color: #bfdbfe;
         }
 
-        /* ── Comparison panel (Insight vs Genius) ─────────────── */
-        .compare-card h4 { color: #1f2937; }
+        .welcome-hint-card {
+            display: flex;
+            align-items: flex-start;
+            gap: .55rem;
+            padding: .75rem .9rem;
+            background: #f9fafb;
+            border: 1px solid #f3f4f6;
+            border-radius: .75rem;
+            font-size: .88rem;
+            color: #374151;
+            line-height: 1.5;
+        }
+        .welcome-hint-card i {
+            color: #3b82f6;
+            margin-top: .2rem;
+            font-size: .82rem;
+        }
 
-        /* ── Sparks summary (final step) ─────────────────────── */
+        /* ── Sparks summary (final step) ── */
         .spark-bundle {
             background: white;
-            border: 1px solid #ede9fe;
-            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
             padding: 1.1rem;
             margin-top: 1rem;
-            box-shadow: 0 6px 16px rgba(76,29,149,.04);
+            box-shadow: 0 1px 2px rgba(17, 24, 39, .02);
         }
         .spark-bundle h5 {
             font-size: .8rem;
             font-weight: 800;
-            color: #6d28d9;
+            color: #1d4ed8;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
         .spark-quote {
-            font-family: 'Iowan Old Style', 'Apple Garamond', 'Georgia', serif;
-            border-left: 3px solid #c4b5fd;
+            border-left: 3px solid #bfdbfe;
             padding: .35rem 0 .35rem .85rem;
             margin-top: .75rem;
             color: #1f2937;
@@ -365,7 +325,7 @@
         }
         .spark-quote .spark-q {
             font-style: italic;
-            color: #6d28d9;
+            color: #1d4ed8;
             font-size: .88rem;
             display: block;
             margin-bottom: .25rem;
@@ -377,334 +337,246 @@
             margin-top: .65rem;
         }
 
-        /* ── Subtle fade-up on scroll ──────────────────────────── */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(16px);
-            transition: opacity .5s ease, transform .5s ease;
-        }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         @media print {
             .no-print, header, footer { display: none !important; }
             body { background: white; }
             .studio-shell { box-shadow: none; border: 0; padding: 0; }
             .spark-bundle { break-inside: avoid; box-shadow: none; }
         }
-
-        @media (max-width: 768px) {
-            .panel-bg { border-radius: 16px; }
-            .studio-shell { border-radius: 18px; }
-            .prompt-card { padding: 1rem; }
-            .step-rail { gap: .25rem; }
-        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-white text-[#1f2937]">
 
 
-<div class="hero-bg text-white shadow-md">
-    <!-- Top nav -->
-    <header class="py-4">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between">
-                <a href="/"
-                   class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
-                    <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
-                </a>
+<!-- ════════════════════════════════════════════════════════════
+     TOP NAV
+     ════════════════════════════════════════════════════════════ -->
+<header class="bg-[#3b82f6] text-white py-4">
+    <div class="container mx-auto px-4">
+        <a href="/"
+           class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
+        </a>
+    </div>
+</header>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════════════════════════ -->
+<section class="bg-[#3b82f6] text-white py-16 md:py-24">
+    <div class="container mx-auto px-4 text-center max-w-4xl">
+        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-56 mb-6">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-tight">
+            The Genius! Editor
+        </h1>
+        <p class="text-blue-50 text-lg md:text-xl font-light max-w-xl mx-auto mb-12 leading-relaxed">
+            The questions that surface the sentence only you can write.
+        </p>
+
+        <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
+            <div class="stat-card">
+                <div class="stat-number" data-target="9">0</div>
+                <div class="stat-unit">themed rooms</div>
+                <div class="stat-label">memory · fear · voice</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="44">0</div>
+                <div class="stat-unit">deep prompts</div>
+                <div class="stat-label">hand-tuned, not generated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="1">0</div>
+                <div class="stat-unit">spark sheet</div>
+                <div class="stat-label">essay-ready</div>
             </div>
         </div>
-    </header>
+    </div>
+</section>
 
-    <!-- Hero -->
-    <section class="py-14 md:py-20">
-        <div class="container mx-auto px-4 text-center">
-            <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-60 mb-4">
-            <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">
-                The Genius! Editor
-            </h1>
-            <p class="text-violet-100 text-base md:text-lg font-light max-w-2xl mx-auto mb-4 leading-relaxed">
-                A brainstorming studio for the college essay.
-                Common App and every supplement, with the questions that surface what only you can write.
-            </p>
-            <p class="hero-quote max-w-xl mx-auto mb-10 text-sm md:text-base">
-                "쓸 거리가 없는 게 아니라, 아직 떠올리지 못한 것뿐입니다."
-            </p>
 
-            <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
-                <div class="stat-card">
-                    <div class="stat-number">9</div>
-                    <div class="stat-unit">themed rooms</div>
-                    <div class="stat-label">memory, fear, dreams, voice</div>
+<main class="container mx-auto px-4 py-16 md:py-24 max-w-4xl">
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION 1: What it does
+         ════════════════════════════════════════════════════════ -->
+    <section class="mb-20 md:mb-24 fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
+            Numbers say where you stand. Words say who you are.
+        </h2>
+        <p class="text-gray-500 text-base md:text-lg mb-10 max-w-2xl leading-relaxed">
+            Forty-four prompts that walk past prepared answers — to the line only you can write.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-5">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-pen-nib text-base"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">44</div>
-                    <div class="stat-unit">deep prompts</div>
-                    <div class="stat-label">hand-tuned by EduFinder</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">1</div>
-                    <div class="stat-unit">essay-ready</div>
-                    <div class="stat-label">spark sheet at the end</div>
-                </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">When the page is blank</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Forty-four questions in nine rooms — designed to startle out a memory worth keeping.</p>
             </div>
-
-            <div class="mt-10">
-                <a href="#studio"
-                   class="inline-flex items-center px-6 py-3 bg-white text-violet-700 text-sm md:text-base font-semibold rounded-lg shadow hover:bg-violet-50 transition">
-                    <i class="fa-solid fa-feather-pointed mr-2 text-xs"></i>Start writing
-                </a>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-bolt text-base"></i>
+                </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">When the draft sounds polite</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Pries off the rehearsed answer and asks what you would say at 4 a.m. instead.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-bullseye text-base"></i>
+                </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">When "Why X" sounds like every "Why X"</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">A school-specific room sharpens the supplement that makes a reader stop scrolling.</p>
             </div>
         </div>
     </section>
-</div>
-
-
-<main class="container mx-auto px-4 py-10 md:py-12">
 
 
     <!-- ════════════════════════════════════════════════════════
-         Why this exists
+         SECTION 2: Process
          ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-violet-500 pb-2 mb-4 fade-up">
-        Why we built a different room
-    </h2>
-    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
-        The Insight! Report tells you the truth in numbers.
-        The Genius! Editor asks you the questions numbers cannot.
-        Both belong on your desk — but during essay season, only one of them will actually help you write the first sentence.
-    </p>
+    <section class="mb-20 md:mb-24 fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-10 tracking-tight">
+            Four moves. One first sentence.
+        </h2>
 
-    <div class="grid md:grid-cols-2 gap-6 mb-12 fade-up">
-        <div class="panel-bg panel-amber p-6 compare-card">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-chart-column text-base"></i>
-                </span>
-                <h4 class="font-bold">The Insight! Report</h4>
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 md:p-10">
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">1</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Walk the nine rooms.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Memory, identity, fear, the people you carry, bold dreams.</p>
+                </div>
             </div>
-            <p class="text-sm text-gray-700 leading-relaxed mb-3">
-                Data-driven. Realistic. Comparative.
-                Built on 50,000+ admissions, it tells you where you stand.
-            </p>
-            <ul class="text-sm text-gray-700 space-y-1.5">
-                <li><i class="fa-solid fa-circle-check text-amber-500 mr-1.5 text-xs"></i>GPA, scores, activities, school list</li>
-                <li><i class="fa-solid fa-circle-check text-amber-500 mr-1.5 text-xs"></i>Reach / Target / Safety prediction</li>
-                <li><i class="fa-solid fa-circle-check text-amber-500 mr-1.5 text-xs"></i>What to fix first</li>
-            </ul>
-        </div>
-
-        <div class="panel-bg panel-violet p-6 compare-card">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-feather-pointed text-base"></i>
-                </span>
-                <h4 class="font-bold">The Genius! Editor</h4>
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">2</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Write fragments, not paragraphs.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Two sentences. A list. An image. Saved on your device only.</p>
+                </div>
             </div>
-            <p class="text-sm text-gray-700 leading-relaxed mb-3">
-                Imagination-driven. Bold. Personal.
-                Forty-four questions designed to startle out the sentence only you can write.
-            </p>
-            <ul class="text-sm text-gray-700 space-y-1.5">
-                <li><i class="fa-solid fa-circle-check text-violet-500 mr-1.5 text-xs"></i>Memory, contradiction, fear, obsession</li>
-                <li><i class="fa-solid fa-circle-check text-violet-500 mr-1.5 text-xs"></i>Bold dreams and impossible ambitions</li>
-                <li><i class="fa-solid fa-circle-check text-violet-500 mr-1.5 text-xs"></i>A spark sheet for Common App + every supplement</li>
-            </ul>
-        </div>
-    </div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         Who it's for
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-rose-500 pb-2 mb-4 fade-up">
-        Who walks out of here with their essay started
-    </h2>
-    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
-        Most students sit down to draft the Common App and freeze.
-        The questions here aren't trying to be cute — they are designed to walk past your prepared answers and land on the things you actually think about.
-    </p>
-
-    <div class="grid md:grid-cols-3 gap-6 mb-12 fade-up">
-        <div class="panel-bg panel-rose p-6">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-pen-nib text-base"></i>
-                </span>
-                <h4 class="font-bold text-gray-800">For the blank-page student</h4>
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">3</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Read your spark sheet.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Every fragment, grouped by room. Print it. Bring it to your draft.</p>
+                </div>
             </div>
-            <p class="text-sm text-gray-700 leading-relaxed">
-                You have lived a life. You just need someone to ask the right question.
-                Forty-four of them, in nine themed rooms, pulled from a decade of essay coaching.
-            </p>
-        </div>
-
-        <div class="panel-bg panel-violet p-6">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-bolt text-base"></i>
-                </span>
-                <h4 class="font-bold text-gray-800">For the polished student</h4>
-            </div>
-            <p class="text-sm text-gray-700 leading-relaxed">
-                Your draft sounds careful. Too careful.
-                These prompts pry the polite first answer off and ask what you'd say at 4 a.m. instead.
-            </p>
-        </div>
-
-        <div class="panel-bg panel-teal p-6">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-bullseye text-base"></i>
-                </span>
-                <h4 class="font-bold text-gray-800">For the supplemental writer</h4>
-            </div>
-            <p class="text-sm text-gray-700 leading-relaxed">
-                Why X? Why this major? Community? Activity?
-                The school-specific room sharpens the answers that make a "Why X" stop sounding like every other "Why X."
-            </p>
-        </div>
-    </div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         How it works
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-violet-500 pb-2 mb-6 fade-up">
-        How the Editor works
-    </h2>
-
-    <div class="bg-white rounded-lg shadow-md p-6 md:p-8 border border-gray-100 mb-12 fade-up">
-        <div class="relative flex gap-4 items-start pb-8">
-            <div class="step-line"></div>
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">1</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">Walk through nine rooms</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    Memory, identity, what lights you up, the dark room, the people you carry,
-                    wild questions, bold dreams, school-specific lenses, and finally — voice.
-                    Each room has four to five prompts.
-                </p>
-            </div>
-        </div>
-        <div class="relative flex gap-4 items-start pb-8">
-            <div class="step-line"></div>
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">2</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">Write fragments, not paragraphs</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    Two sentences. A list. A single image.
-                    The Editor saves locally as you type — leave anything blank, skip a room, come back tomorrow.
-                </p>
-            </div>
-        </div>
-        <div class="relative flex gap-4 items-start pb-8">
-            <div class="step-line"></div>
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">3</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">Read your spark sheet</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    At the end, every answer you wrote is bundled into one printable sheet, grouped by room.
-                    This is the page you bring to your draft — or to your counselor.
-                </p>
-            </div>
-        </div>
-        <div class="relative flex gap-4 items-start">
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">4</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">Map the sparks to prompts</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    The spark sheet ends with a short guide on which fragments tend to feed which essay prompt
-                    — Common App #1 through #7 and the most common supplements.
-                </p>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         The Studio (interactive editor)
-         ════════════════════════════════════════════════════════ -->
-    <h2 id="studio" class="text-2xl font-bold text-gray-700 border-b-2 border-violet-500 pb-2 mb-2 fade-up">
-        The Studio
-    </h2>
-    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
-        Nothing here is sent anywhere. Your fragments are saved only in this browser, on this device.
-        Clear them with the reset button when you're done.
-    </p>
-
-    <div class="studio-shell fade-up no-print">
-
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-            <div>
-                <p id="studio-step-counter" class="text-xs font-bold text-violet-600 uppercase tracking-wide">Room 1 of 11</p>
-                <h3 id="studio-step-title" class="text-lg font-bold text-gray-900">Welcome</h3>
-            </div>
-            <div class="flex items-center gap-3">
-                <span id="studio-save-pill" class="save-pill is-idle">
-                    <i class="fa-regular fa-floppy-disk text-[11px]"></i>
-                    <span>Drafted locally</span>
-                </span>
-                <div class="w-32 md:w-44 studio-progress-track" aria-hidden="true">
-                    <div id="studio-progress-fill" class="studio-progress-fill"></div>
+            <div class="relative flex gap-5 items-start">
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">4</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Map sparks to prompts.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">A short guide on which fragments feed Common App #1–#7 and the most common supplements.</p>
                 </div>
             </div>
         </div>
-
-        <div id="studio-step-rail" class="step-rail" aria-label="Studio rooms"></div>
-
-        <div id="studio-steps" class="mt-6"></div>
-
-        <div class="studio-step-footer">
-            <div class="flex items-center gap-2 flex-wrap">
-                <button id="studio-reset-btn" type="button" class="studio-btn studio-btn-danger">
-                    <i class="fa-regular fa-trash-can text-xs"></i>Reset everything
-                </button>
-                <button id="studio-print-btn" type="button" class="studio-btn studio-btn-ghost hidden">
-                    <i class="fa-solid fa-print text-xs"></i>Print spark sheet
-                </button>
-            </div>
-            <div class="flex items-center gap-2 flex-wrap">
-                <button id="studio-back-btn" type="button" class="studio-btn studio-btn-secondary">
-                    <i class="fa-solid fa-arrow-left text-xs"></i>Back
-                </button>
-                <button id="studio-next-btn" type="button" class="studio-btn studio-btn-primary">
-                    Continue<i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
-            </div>
-        </div>
-    </div>
+    </section>
 
 
     <!-- ════════════════════════════════════════════════════════
-         Notes for the writer
+         SECTION 3: The Studio (interactive editor)
          ════════════════════════════════════════════════════════ -->
-    <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 mt-12 mb-2 fade-up no-print">
-        <div class="flex items-start gap-4">
-            <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-violet-100 text-violet-600 rounded-full shadow-sm">
-                <i class="fa-solid fa-circle-info text-base"></i>
-            </span>
-            <div>
-                <h4 class="text-base font-bold text-gray-800 mb-2">A few notes before you start</h4>
-                <ul class="text-sm md:text-base text-gray-700 leading-relaxed space-y-2">
-                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>Don't try to be impressive. Try to be specific.</li>
-                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>If a prompt makes you flinch, that one is probably the one to write.</li>
-                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>It is fine to skip rooms. The spark sheet still works on what you wrote.</li>
-                    <li><i class="fa-solid fa-feather text-violet-500 mr-2 text-xs"></i>Use the language you think in — Korean, English, or both. Translate later.</li>
-                </ul>
+    <section id="studio" class="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
+            The Studio.
+        </h2>
+        <p class="text-gray-500 text-base md:text-lg mb-10 max-w-2xl leading-relaxed">
+            Free to use. Saved on this device. No account, no upload, no email.
+        </p>
+
+        <div class="studio-shell no-print">
+
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                    <p id="studio-step-counter" class="text-xs font-bold text-[#3b82f6] uppercase tracking-wide">Room 1 of 11</p>
+                    <h3 id="studio-step-title" class="text-lg font-bold text-gray-900">Welcome</h3>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="studio-save-pill" class="save-pill is-idle">
+                        <i class="fa-regular fa-floppy-disk text-[11px]"></i>
+                        <span>Drafted locally</span>
+                    </span>
+                    <div class="w-32 md:w-44 studio-progress-track" aria-hidden="true">
+                        <div id="studio-progress-fill" class="studio-progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="studio-step-rail" class="step-rail" aria-label="Studio rooms"></div>
+
+            <div id="studio-steps" class="mt-6"></div>
+
+            <div class="studio-step-footer">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button id="studio-reset-btn" type="button" class="studio-btn studio-btn-danger">
+                        <i class="fa-regular fa-trash-can text-xs"></i>Reset
+                    </button>
+                    <button id="studio-print-btn" type="button" class="studio-btn studio-btn-ghost hidden">
+                        <i class="fa-solid fa-print text-xs"></i>Print spark sheet
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button id="studio-back-btn" type="button" class="studio-btn studio-btn-secondary">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>Back
+                    </button>
+                    <button id="studio-next-btn" type="button" class="studio-btn studio-btn-primary">
+                        Continue<i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
 </main>
 
 
-<footer class="bg-[#1f2937] text-white text-center py-6 mt-12">
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER (matches main site)
+     ════════════════════════════════════════════════════════════ -->
+<footer class="bg-[#1f2937] text-white text-center py-6">
     <p>&copy; 2026 EduFinder by Waystar</p>
 </footer>
+
+
+<script>
+// ── Animated counters in hero ──────────────────────────────────────
+function animateCounters() {
+    document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target);
+        const duration = 1600;
+        const start = performance.now();
+        function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(target * ease).toLocaleString('en-US');
+            if (progress < 1) requestAnimationFrame(tick);
+            else el.textContent = target.toLocaleString('en-US') + (el.dataset.suffix || '');
+        }
+        requestAnimationFrame(tick);
+    });
+}
+
+const fadeObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            fadeObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.12 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(animateCounters, 400);
+    document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+});
+</script>
 
 
 <script>
@@ -715,7 +587,7 @@ const STUDIO_STEPS = [
         kind: 'welcome',
         kicker: 'Before you begin',
         title: 'Welcome to the Editor',
-        blurb: 'You are about to walk through nine rooms. Each room has four or five questions, and each question is here to make you think — not to make you sound clever. The goal is not a finished essay. The goal is the kind of fragments your finished essay will be built from. Take your time. Skip what you must. We will collect your sparks at the end.',
+        blurb: 'Nine rooms. Forty-four questions. The goal is not a finished essay — it is the fragments your essay will be built from. Take your time. Skip what you must. We collect your sparks at the end.',
     },
     {
         id: 'first-sparks',
@@ -764,7 +636,7 @@ const STUDIO_STEPS = [
         kind: 'questions',
         kicker: 'Room 4',
         title: 'The dark room',
-        blurb: 'The bravest essays are the ones that admit something. Try writing the thing first; decide whether to keep it later.',
+        blurb: 'The bravest essays admit something. Write the thing first; decide whether to keep it later.',
         prompts: [
             "Describe a 4 a.m. moment — yours alone, no one else watching.",
             "What is the most beautiful thing you have ever ruined?",
@@ -820,7 +692,7 @@ const STUDIO_STEPS = [
         kind: 'questions',
         kicker: 'Room 8',
         title: 'The school-specific lens',
-        blurb: 'These four answers are the seed of every "Why X," "Why this major," and "Why this community" supplement. Pick one school you love and answer for that school first; you can run this room again for each school later.',
+        blurb: 'These four answers are the seed of every "Why X," "Why this major," and "Why this community" supplement. Pick one school you love and answer for that school first.',
         prompts: [
             "Pick one school on your list. What is the one course, professor, library, or lab you have already imagined yourself inside? Be specific — name names.",
             "For that same school, what is the conversation you are hoping to be in the middle of, two years from now?",
@@ -847,7 +719,7 @@ const STUDIO_STEPS = [
         kind: 'summary',
         kicker: 'Spark sheet',
         title: 'Your sparks, collected',
-        blurb: 'Below is everything you wrote, grouped by room. This is the page you bring to your first draft — or to your counselor. Print it, copy it, or come back tomorrow and add more.',
+        blurb: 'Below is everything you wrote, grouped by room. Print it, copy it, or come back tomorrow and add more.',
     },
 ];
 
@@ -856,8 +728,8 @@ const ESSAY_PROMPT_GUIDE = [
     {
         title: 'Common App essays (~650 words)',
         items: [
-            { rooms: ['first-sparks', 'shape-of-you', 'people-you-carry'], note: 'Background, identity, story central to who you are — the sparks from Rooms 1, 2, and 5 most often anchor it.' },
-            { rooms: ['dark-room'], note: 'A challenge, setback, or failure — start with the answers from Room 4, especially the smallest failure that taught the largest thing.' },
+            { rooms: ['first-sparks', 'shape-of-you', 'people-you-carry'], note: 'Background, identity, story central to who you are — Rooms 1, 2, and 5 most often anchor it.' },
+            { rooms: ['dark-room'], note: 'A challenge, setback, or failure — start with Room 4, especially the smallest failure that taught the largest thing.' },
             { rooms: ['wild-questions', 'what-lights-you-up'], note: 'A question or idea that engages you — Rooms 3 and 6, particularly the question you have been afraid to ask out loud.' },
             { rooms: ['shape-of-you', 'people-you-carry', 'bold-dreams'], note: 'A time you accomplished something that prompted growth — pull from contradictions in Room 2, voices in Room 5, or the future-self prompt in Room 7.' },
             { rooms: ['first-sparks', 'shape-of-you', 'voice-and-form'], note: 'Topic of your choice — when in doubt, start with a memory in Room 1 or a recurring image in Room 2.' },
@@ -873,7 +745,7 @@ const ESSAY_PROMPT_GUIDE = [
     {
         title: 'Activity essays / leadership / community',
         items: [
-            { rooms: ['what-lights-you-up', 'people-you-carry', 'dark-room'], note: 'The strongest activity essays braid an obsession (Room 3) with a relationship (Room 5) and a moment of strain or failure inside the activity (Room 4).' },
+            { rooms: ['what-lights-you-up', 'people-you-carry', 'dark-room'], note: 'Strong activity essays braid an obsession (Room 3) with a relationship (Room 5) and a moment of strain inside the activity (Room 4).' },
         ],
     },
     {
@@ -1028,8 +900,8 @@ function renderWelcomeStep(step, container) {
     ];
     items.forEach(({ icon, text }) => {
         const card = document.createElement('div');
-        card.className = 'flex items-start gap-2 p-3 bg-violet-50/60 border border-violet-100 rounded-xl text-sm text-gray-700';
-        card.innerHTML = '<i class="fa-solid ' + icon + ' text-violet-600 mt-1 text-xs"></i><span></span>';
+        card.className = 'welcome-hint-card';
+        card.innerHTML = '<i class="fa-solid ' + icon + '"></i><span></span>';
         card.querySelector('span').textContent = text;
         hint.appendChild(card);
     });
@@ -1093,7 +965,7 @@ function renderSummaryStep(step, container) {
     });
 
     const tally = document.createElement('div');
-    tally.className = 'mt-6 p-4 rounded-xl bg-violet-50 border border-violet-100 text-sm text-violet-900 leading-relaxed';
+    tally.className = 'mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100 text-sm text-blue-900 leading-relaxed';
     if (totalAnswered === 0) {
         tally.innerHTML = '<i class="fa-solid fa-feather-pointed mr-2"></i>You have not written anything yet. Step back through the rooms — even three fragments is enough to start a draft.';
     } else {
@@ -1124,7 +996,7 @@ function renderSummaryStep(step, container) {
                 const target = STUDIO_STEPS.find(s => s.id === rid);
                 return target ? target.title : rid;
             }).join(' · ');
-            row.innerHTML = '<span class="inline-block text-[11px] font-bold text-violet-700 bg-violet-50 border border-violet-100 rounded-md px-2 py-0.5 mr-2">' +
+            row.innerHTML = '<span class="inline-block text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-100 rounded-md px-2 py-0.5 mr-2">' +
                 tags + '</span>' +
                 '<span></span>';
             row.querySelector('span:last-child').textContent = item.note;
@@ -1232,17 +1104,6 @@ document.getElementById('studio-next-btn').addEventListener('click', goNext);
 document.getElementById('studio-back-btn').addEventListener('click', goBack);
 document.getElementById('studio-reset-btn').addEventListener('click', resetStudio);
 document.getElementById('studio-print-btn').addEventListener('click', () => window.print());
-
-// ── Subtle fade-up reveal on scroll ─────────────────────────────────
-const fadeObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            fadeObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.12 });
-document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
 
 renderCurrentStep();
 </script>
