@@ -66,8 +66,8 @@
         .auth-primary-btn:hover { background: #2563eb; }
         .auth-primary-btn:active { transform: translateY(1px); }
         .auth-primary-btn:disabled { opacity: .6; cursor: not-allowed; }
-        .auth-primary-btn.is-verify { background: #16a34a; box-shadow: 0 4px 14px rgba(22,163,74,.25); }
-        .auth-primary-btn.is-verify:hover { background: #15803d; }
+        .auth-primary-btn.is-verify { background: #1f2937; box-shadow: 0 4px 14px rgba(31,41,55,.22); }
+        .auth-primary-btn.is-verify:hover { background: #111827; }
         .auth-secondary-btn {
             flex: 1;
             border-radius: .7rem;
@@ -565,18 +565,18 @@
         :root {
             --brand-blue: #3b82f6;
             --brand-blue-hover: #2563eb;
-            --brand-blue-soft: #eff6ff;
+            --brand-blue-soft: rgba(59, 130, 246, .08);
             --brand-navy: #1f2937;
-            --brand-navy-soft: #f3f4f6;
+            --brand-navy-soft: rgba(31, 41, 55, .06);
             --surface: #ffffff;
-            --bg: #faf9f6;
-            --bg-warm: #f5f1ea;
-            --border: #e8e4dc;
-            --border-strong: #d6d2c8;
+            --bg: #ffffff;
+            --bg-warm: rgba(31, 41, 55, .04);
+            --border: rgba(31, 41, 55, .12);
+            --border-strong: rgba(31, 41, 55, .22);
             --text-primary: #1f2937;
-            --text-secondary: #475569;
-            --text-tertiary: #64748b;
-            --text-quaternary: #94a3b8;
+            --text-secondary: rgba(31, 41, 55, .78);
+            --text-tertiary: rgba(31, 41, 55, .62);
+            --text-quaternary: rgba(31, 41, 55, .42);
             --shadow-warm-xs: 0 1px 2px rgba(31, 41, 55, .04);
             --shadow-warm-sm: 0 1px 3px rgba(31, 41, 55, .05), 0 1px 2px rgba(31, 41, 55, .04);
             --shadow-warm-md: 0 4px 14px rgba(31, 41, 55, .06), 0 2px 4px rgba(31, 41, 55, .04);
@@ -706,7 +706,7 @@
             background: var(--brand-blue);
         }
         .section-eyebrow.is-navy::before {
-            background: var(--brand-navy);
+            background: var(--brand-blue);
         }
         .section-icon {
             display: inline-flex;
@@ -716,10 +716,10 @@
             height: 2.5rem;
             border-radius: 12px;
             flex-shrink: 0;
-            background: var(--brand-navy);
+            background: var(--brand-blue);
             color: #ffffff;
             font-size: 1.05rem;
-            box-shadow: 0 2px 6px rgba(31, 41, 55, .15);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, .25);
         }
         .section-icon.is-blue {
             background: var(--brand-blue);
@@ -1736,9 +1736,9 @@ const CATEGORY_CONFIG = {
         panelClass: 'category-international',
         guide: 'school',
         icon: 'fa-solid fa-building-columns',
-        iconColor: 'text-blue-500',
-        guideClass: 'bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-200',
-        guideIconColor: 'text-blue-400'
+        iconColor: 'text-[#3b82f6]',
+        guideClass: 'bg-[#eff6ff] hover:bg-[#eff6ff] text-[#3b82f6] border-[#3b82f6]',
+        guideIconColor: 'text-[#3b82f6]'
     },
     hagwon: {
         title: '학원 / 컨설팅',
@@ -1748,9 +1748,9 @@ const CATEGORY_CONFIG = {
         panelClass: 'category-hagwon',
         guide: 'hagwon',
         icon: 'fa-solid fa-graduation-cap',
-        iconColor: 'text-amber-500',
-        guideClass: 'bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200',
-        guideIconColor: 'text-amber-400'
+        iconColor: 'text-[#3b82f6]',
+        guideClass: 'bg-[#eff6ff] hover:bg-[#eff6ff] text-[#3b82f6] border-[#3b82f6]',
+        guideIconColor: 'text-[#3b82f6]'
     }
 };
 

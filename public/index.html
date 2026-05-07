@@ -17,18 +17,18 @@
         :root {
             --brand-blue: #3b82f6;
             --brand-blue-hover: #2563eb;
-            --brand-blue-soft: #eff6ff;
+            --brand-blue-soft: rgba(59, 130, 246, .08);
             --brand-navy: #1f2937;
-            --brand-navy-soft: #f3f4f6;
+            --brand-navy-soft: rgba(31, 41, 55, .06);
             --surface: #ffffff;
-            --bg: #faf9f6;
-            --bg-warm: #f5f1ea;
-            --border: #e8e4dc;
-            --border-strong: #d6d2c8;
+            --bg: #ffffff;
+            --bg-warm: rgba(31, 41, 55, .04);
+            --border: rgba(31, 41, 55, .12);
+            --border-strong: rgba(31, 41, 55, .22);
             --text-primary: #1f2937;
-            --text-secondary: #475569;
-            --text-tertiary: #64748b;
-            --text-quaternary: #94a3b8;
+            --text-secondary: rgba(31, 41, 55, .78);
+            --text-tertiary: rgba(31, 41, 55, .62);
+            --text-quaternary: rgba(31, 41, 55, .42);
             --shadow-warm-xs: 0 1px 2px rgba(31, 41, 55, .04);
             --shadow-warm-sm: 0 1px 3px rgba(31, 41, 55, .05), 0 1px 2px rgba(31, 41, 55, .04);
             --shadow-warm-md: 0 4px 14px rgba(31, 41, 55, .06), 0 2px 4px rgba(31, 41, 55, .04);
@@ -448,7 +448,7 @@
             background: var(--brand-blue);
         }
         .section-eyebrow.is-navy::before {
-            background: var(--brand-navy);
+            background: var(--brand-blue);
         }
 
         .category-count {
@@ -491,10 +491,10 @@
             height: 2.5rem;
             border-radius: 12px;
             flex-shrink: 0;
-            background: var(--brand-navy);
+            background: var(--brand-blue);
             color: #ffffff;
             font-size: 1.05rem;
-            box-shadow: 0 2px 6px rgba(31, 41, 55, .15);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, .25);
             transition: background .25s ease, transform .25s ease;
         }
         .section-icon.is-blue {
@@ -557,14 +557,15 @@
             border-color: var(--brand-blue-hover);
         }
         .cta-button.is-outline {
-            background: #fff;
-            color: var(--brand-navy);
-            border: 1px solid var(--border-strong);
+            background: var(--brand-blue);
+            color: #fff;
+            border: 1px solid var(--brand-blue);
+            box-shadow: 0 1px 2px rgba(59,130,246,.18);
         }
         .cta-button.is-outline:hover {
-            border-color: var(--brand-navy);
-            color: var(--brand-navy);
-            background: var(--brand-navy-soft);
+            border-color: var(--brand-blue-hover);
+            color: #fff;
+            background: var(--brand-blue-hover);
         }
         .cta-button:active {
             transform: translateY(1px);
