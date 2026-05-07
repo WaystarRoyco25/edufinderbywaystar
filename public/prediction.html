@@ -14,7 +14,7 @@
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* ── Hero stat cards (matched with challenge.html) ── */
+        /* ── Hero stat cards ── */
         .stat-number { font-variant-numeric: tabular-nums; }
         .stat-card {
             background: rgba(255,255,255,.10);
@@ -45,65 +45,6 @@
             line-height: 1.4;
         }
 
-        /* ── 3D bubble panels (reused from main site) ── */
-        .panel-bg {
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,.6);
-            box-shadow:
-                0 8px 32px rgba(0,0,0,.08),
-                0 2px 8px rgba(0,0,0,.04),
-                inset 0 2px 4px rgba(255,255,255,.8),
-                inset 0 -2px 6px rgba(0,0,0,.03);
-        }
-        .panel-bg > * { position: relative; z-index: 2; }
-        .panel-bg::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 50%;
-            border-radius: 20px 20px 0 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 100%);
-            z-index: 1;
-            pointer-events: none;
-        }
-        .panel-bg::after {
-            content: '';
-            position: absolute;
-            bottom: -30%; right: -10%;
-            width: 60%; height: 80%;
-            border-radius: 50%;
-            z-index: 0;
-            filter: blur(40px);
-            opacity: .45;
-            pointer-events: none;
-        }
-        .panel-amber {
-            background: linear-gradient(160deg, #fffdf5 0%, #fef9e7 40%, #fef3c7 100%);
-        }
-        .panel-amber::after {
-            background: radial-gradient(circle, #fbbf24 0%, #fde68a 60%, transparent 100%);
-        }
-        .panel-blue {
-            background: linear-gradient(160deg, #f0f7ff 0%, #e0ecff 40%, #dbeafe 100%);
-        }
-        .panel-blue::after {
-            background: radial-gradient(circle, #60a5fa 0%, #bfdbfe 60%, transparent 100%);
-        }
-        .panel-rose {
-            background: linear-gradient(160deg, #fff7f7 0%, #ffe4e6 40%, #fecdd3 100%);
-        }
-        .panel-rose::after {
-            background: radial-gradient(circle, #fb7185 0%, #fecdd3 60%, transparent 100%);
-        }
-        .panel-teal {
-            background: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 40%, #99f6e4 100%);
-        }
-        .panel-teal::after {
-            background: radial-gradient(circle, #2dd4bf 0%, #99f6e4 60%, transparent 100%);
-        }
-
         /* ── Process step connector line ── */
         .step-line {
             position: absolute;
@@ -111,7 +52,7 @@
             top: 44px;
             bottom: 0;
             width: 2px;
-            background: linear-gradient(180deg, #fde68a 0%, #e5e7eb 100%);
+            background: #e5e7eb;
         }
 
         /* ── Subtle fade-up on scroll ── */
@@ -125,18 +66,9 @@
             transform: translateY(0);
         }
 
-        /* ── Hero gradient (amber-tinted variant of challenge.html blue) ── */
-        .hero-bg {
-            background: linear-gradient(135deg, #d97706 0%, #b45309 60%, #92400e 100%);
-        }
-
         /* ── Modal styles ── */
-        #report-modal.is-open {
-            display: flex;
-        }
-        body.modal-open {
-            overflow: hidden;
-        }
+        #report-modal.is-open { display: flex; }
+        body.modal-open { overflow: hidden; }
         .modal-overlay {
             background: rgba(17, 24, 39, .55);
             backdrop-filter: blur(4px);
@@ -158,8 +90,8 @@
         .form-select:focus,
         .form-textarea:focus {
             outline: none;
-            border-color: #d97706;
-            box-shadow: 0 0 0 3px rgba(217, 119, 6, .15);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, .15);
         }
         .form-textarea {
             resize: vertical;
@@ -177,36 +109,6 @@
             color: #9ca3af;
             margin-top: .3rem;
         }
-        .form-section {
-            border-top: 1px solid #f3f4f6;
-            padding-top: 1.25rem;
-            margin-top: 1.25rem;
-        }
-        .form-section:first-of-type {
-            border-top: 0;
-            padding-top: 0;
-            margin-top: 0;
-        }
-        .form-section-title {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            font-size: .92rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: .9rem;
-        }
-        .form-section-title .form-section-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 26px;
-            height: 26px;
-            border-radius: 999px;
-            background: #fef3c7;
-            color: #b45309;
-            font-size: .75rem;
-        }
         .conversation-shell {
             display: grid;
             gap: 1.1rem;
@@ -221,7 +123,7 @@
             height: 100%;
             width: 0;
             border-radius: inherit;
-            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            background: #3b82f6;
             transition: width .25s ease;
         }
         .advisor-thread {
@@ -237,21 +139,21 @@
             width: 40px;
             height: 40px;
             border-radius: 999px;
-            background: #fef3c7;
-            color: #b45309;
-            box-shadow: 0 2px 8px rgba(180, 83, 9, .12);
+            background: #dbeafe;
+            color: #3b82f6;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, .12);
         }
         .advisor-bubble {
             border: 1px solid #f3f4f6;
             border-radius: 1rem;
-            background: #fffaf0;
+            background: #f8fafc;
             padding: .9rem 1rem;
             box-shadow: 0 6px 18px rgba(17, 24, 39, .04);
         }
         .advisor-name {
             font-size: .72rem;
             font-weight: 800;
-            color: #b45309;
+            color: #3b82f6;
             text-transform: uppercase;
             letter-spacing: .04em;
             margin-bottom: .25rem;
@@ -279,8 +181,8 @@
             align-items: center;
             gap: .4rem;
             border-radius: 999px;
-            background: #fef3c7;
-            color: #92400e;
+            background: #dbeafe;
+            color: #1d4ed8;
             font-size: .72rem;
             font-weight: 800;
             padding: .32rem .65rem;
@@ -308,14 +210,14 @@
             transition: border-color .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
         }
         .choice-option:hover {
-            border-color: #f59e0b;
-            background: #fffbeb;
+            border-color: #3b82f6;
+            background: #eff6ff;
         }
         .choice-option.is-selected {
-            border-color: #d97706;
-            background: #fef3c7;
-            color: #78350f;
-            box-shadow: 0 0 0 3px rgba(217, 119, 6, .12);
+            border-color: #3b82f6;
+            background: #dbeafe;
+            color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
         }
         .field-error {
             display: none;
@@ -358,8 +260,8 @@
             width: 28px;
             height: 28px;
             border-radius: 999px;
-            background: #fef3c7;
-            color: #b45309;
+            background: #dbeafe;
+            color: #1d4ed8;
             font-size: .72rem;
             font-weight: 800;
             margin-top: .35rem;
@@ -388,7 +290,6 @@
             padding-top: 0;
         }
         @media (max-width: 768px) {
-            .panel-bg { border-radius: 16px; }
             .school-fields {
                 grid-template-columns: 1fr;
             }
@@ -432,8 +333,8 @@
         }
         .auth-input:focus {
             outline: none;
-            border-color: #d97706;
-            box-shadow: 0 0 0 3px rgba(217,119,6,.18);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.18);
         }
         .auth-input.code-input {
             letter-spacing: .5em;
@@ -443,15 +344,15 @@
         .auth-primary-btn {
             width: 100%;
             border-radius: .7rem;
-            background: #d97706;
+            background: #3b82f6;
             color: #fff;
             font-weight: 700;
             font-size: 1rem;
             padding: .9rem 1rem;
-            box-shadow: 0 4px 14px rgba(217,119,6,.25);
+            box-shadow: 0 4px 14px rgba(59,130,246,.25);
             transition: background .15s ease, transform .05s ease;
         }
-        .auth-primary-btn:hover { background: #b45309; }
+        .auth-primary-btn:hover { background: #2563eb; }
         .auth-primary-btn:active { transform: translateY(1px); }
         .auth-primary-btn:disabled { opacity: .6; cursor: not-allowed; }
         .auth-primary-btn.is-verify { background: #16a34a; box-shadow: 0 4px 14px rgba(22,163,74,.25); }
@@ -473,350 +374,195 @@
             width: 100%;
             text-align: center;
             font-size: .9rem;
-            color: #d97706;
+            color: #3b82f6;
             font-weight: 600;
             padding: .6rem 0 .1rem;
         }
         .auth-helper-link:hover { text-decoration: underline; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-white text-[#1f2937]">
 
 
-<div class="hero-bg text-white shadow-md">
-    <!-- ════════════════════════════════════════════════════════════
-         TOP NAV (link back to main site)
-         ════════════════════════════════════════════════════════════ -->
-    <header class="py-4">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between">
-                <a href="/"
-                   class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
-                    <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
-                </a>
+<!-- ════════════════════════════════════════════════════════════
+     TOP NAV
+     ════════════════════════════════════════════════════════════ -->
+<header class="bg-[#3b82f6] text-white py-4">
+    <div class="container mx-auto px-4">
+        <a href="/"
+           class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
+        </a>
+    </div>
+</header>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════════════════════════ -->
+<section class="bg-[#3b82f6] text-white py-16 md:py-24">
+    <div class="container mx-auto px-4 text-center max-w-4xl">
+        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-56 mb-6">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-tight">
+            The Insight! Report
+        </h1>
+        <p class="text-blue-50 text-lg md:text-xl font-light max-w-xl mx-auto mb-12 leading-relaxed">
+            Your odds, modeled on 50,000+ real acceptances.
+        </p>
+
+        <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
+            <div class="stat-card">
+                <div class="stat-number" data-target="50000" data-suffix="+">0</div>
+                <div class="stat-unit">acceptances</div>
+                <div class="stat-label">behind every read</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="10" data-suffix="+">0</div>
+                <div class="stat-unit">years</div>
+                <div class="stat-label">per advisor</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="24" data-suffix="/7">0</div>
+                <div class="stat-unit">AI chatbot</div>
+                <div class="stat-label">for every follow-up</div>
             </div>
         </div>
-    </header>
+    </div>
+</section>
 
 
-    <!-- ════════════════════════════════════════════════════════════
-         HERO
-         ════════════════════════════════════════════════════════════ -->
-    <section class="py-14 md:py-20">
-        <div class="container mx-auto px-4 text-center">
-            <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-60 mb-4">
-            <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-wide">
-                The Insight! Report
-            </h1>
-            <p class="text-amber-50 text-base md:text-lg font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-                An admissions report built on 50,000+ real acceptances.
-            </p>
+<main class="container mx-auto px-4 py-16 md:py-24 max-w-4xl">
 
-            <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
-                <div class="stat-card">
-                    <div class="stat-number" data-target="50000" data-suffix="+">0</div>
-                    <div class="stat-unit">acceptances</div>
-                    <div class="stat-label">we built the model on</div>
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION 1: What we compare
+         ════════════════════════════════════════════════════════ -->
+    <section class="mb-20 md:mb-24 fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
+            Compared to the students who got in.
+        </h2>
+        <p class="text-gray-500 text-base md:text-lg mb-10 max-w-2xl leading-relaxed">
+            Every part of your profile, set side-by-side with real admits.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-5">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-graduation-cap text-base"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" data-target="10" data-suffix="+">0</div>
-                    <div class="stat-unit">years</div>
-                    <div class="stat-label">average advisor experience</div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Academics</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Grades, course rigor, test scores — measured against real admits.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-people-group text-base"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" data-target="24" data-suffix="/7">0</div>
-                    <div class="stat-unit">AI chatbot</div>
-                    <div class="stat-label">for your follow-up questions</div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Activities</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Depth, leadership, awards — read against your major and your list.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-id-badge text-base"></i>
+                </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Context</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Citizenship, school, year — every prediction range factors them in.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-bullseye text-base"></i>
+                </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">School list</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Up to five colleges, each sorted Reach, Target, or Safety.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION 2: Process
+         ════════════════════════════════════════════════════════ -->
+    <section class="mb-20 md:mb-24 fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-10 tracking-tight">
+            Four steps. One clear answer.
+        </h2>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 md:p-10">
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">1</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Tell us about you.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">A guided intake. One question at a time. Drafts save as you go.</p>
+                </div>
+            </div>
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">2</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">We run the comparison.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Against 50,000+ real acceptances. Every part of you, weighed.</p>
+                </div>
+            </div>
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">3</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Read your report.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">A prediction range per school. Reach, Target, Safety — and where to focus first.</p>
+                </div>
+            </div>
+            <div class="relative flex gap-5 items-start">
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">4</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Ask the AI chatbot.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Ten follow-ups. Korean or English. Every answer reads from your report.</p>
                 </div>
             </div>
         </div>
     </section>
-</div>
-
-
-<main class="container mx-auto px-4 py-10 md:py-12">
 
 
     <!-- ════════════════════════════════════════════════════════
-         SECTION: 무엇을 분석하는가
+         SECTION 3: Pricing
          ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-amber-500 pb-2 mb-4 fade-up">
-        We compare you with students who got in
-    </h2>
-    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
-        Your grades, your classes, your test scores, your activities, and your school list — all set side by side with students who were accepted.
-    </p>
+    <section class="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
+            One report. One price.
+        </h2>
+        <p class="text-gray-500 text-base md:text-lg mb-10">
+            Buy once. Yours forever.
+        </p>
 
-    <div class="grid md:grid-cols-2 gap-6 mb-6 fade-up">
-        <!-- Academic -->
-        <div class="panel-bg panel-amber p-6">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-graduation-cap text-base"></i>
-                </span>
-                <div>
-                    <h4 class="font-bold text-gray-800">Your academics</h4>
-                    <p class="text-xs text-gray-500">Grades · Class load · Test scores</p>
+        <div class="bg-[#1f2937] rounded-2xl p-7 md:p-10 relative shadow-lg">
+            <span class="absolute -top-3 left-7 bg-[#3b82f6] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">The Insight! Report</span>
+
+            <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center">
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-white mb-5">Everything you need, in one read.</h3>
+                    <ul class="space-y-3 text-sm text-gray-200">
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Up to 5 schools, sorted Reach / Target / Safety</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>A close read of your GPA, classes, scores, and activities</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>The first things to fix — in priority order</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>10 follow-up questions with the AI chatbot</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>A PDF you can keep</span></li>
+                    </ul>
                 </div>
-            </div>
-            <p class="text-sm text-gray-700 leading-relaxed">
-                We look at your grade trend, your test scores, and how you've done in advanced classes,
-                then show how close you stand to students already accepted at your schools.
-            </p>
-        </div>
 
-        <!-- Extracurricular -->
-        <div class="panel-bg panel-blue p-6">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-people-group text-base"></i>
-                </span>
-                <div>
-                    <h4 class="font-bold text-gray-800">Your activities</h4>
-                    <p class="text-xs text-gray-500">Activities · Leadership · Awards</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 leading-relaxed">
-                We see how deep and steady your activities have been,
-                and how well your leadership and awards line up with your major and your schools.
-            </p>
-        </div>
-
-        <!-- Personal -->
-        <div class="panel-bg panel-rose p-6">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-id-badge text-base"></i>
-                </span>
-                <div>
-                    <h4 class="font-bold text-gray-800">Where you're applying from</h4>
-                    <p class="text-xs text-gray-500">Citizenship · High school · Year</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 leading-relaxed">
-                Your citizenship, your high school, and where you are in your studies — we factor it all in when we set your prediction range.
-            </p>
-        </div>
-
-        <!-- School fit -->
-        <div class="panel-bg panel-teal p-6">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full shadow-sm">
-                    <i class="fa-solid fa-bullseye text-base"></i>
-                </span>
-                <div>
-                    <h4 class="font-bold text-gray-800">Your school list</h4>
-                    <p class="text-xs text-gray-500">Up to 5 schools compared</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 leading-relaxed">
-                Pick up to five schools, and each one gets sorted into Reach, Target, or Safety.
-            </p>
-        </div>
-    </div>
-
-    <!-- Methodology callout -->
-    <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 mb-12 fade-up">
-        <div class="flex items-start gap-4">
-            <span class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
-                <i class="fa-solid fa-microscope text-base"></i>
-            </span>
-            <div>
-                <h4 class="text-base font-bold text-gray-800 mb-2">Only what you need, nothing extra</h4>
-                <p class="text-sm md:text-base text-gray-700 leading-relaxed">
-                    We won't push you toward any tutoring program or new activity.
-                    The report leans on 50,000+ real acceptances and former Ivy admissions officers, so it sticks to what actually matters for your decision right now.
-                </p>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 4단계 리포트 진행 과정
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-rose-500 pb-2 mb-6 fade-up">
-        How the report comes together
-    </h2>
-
-    <div class="bg-white rounded-lg shadow-md p-6 md:p-8 border border-gray-100 mb-12 fade-up">
-        <div class="relative flex gap-4 items-start pb-8">
-            <div class="step-line"></div>
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">1</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">Tell us about you</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    A guided intake asks one focused question at a time, then saves your GPA, classes, scores,
-                    activities, and school list as one report draft.
-                </p>
-            </div>
-        </div>
-        <div class="relative flex gap-4 items-start pb-8">
-            <div class="step-line"></div>
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-rose-100 text-rose-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">2</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">We run the comparison</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    Your profile gets matched against 50,000+ real acceptances.
-                    We pull together a prediction range for each school, the parts that look strong, and the parts that could use more work.
-                </p>
-            </div>
-        </div>
-        <div class="relative flex gap-4 items-start pb-8">
-            <div class="step-line"></div>
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-teal-100 text-teal-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">3</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">Read your report</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    You get one clear report — a prediction range for each school,
-                    the Reach / Target / Safety split, and the first things to work on.
-                </p>
-            </div>
-        </div>
-        <div class="relative flex gap-4 items-start">
-            <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full font-bold text-sm shadow-sm border-2 border-white">4</span>
-            <div class="pt-1">
-                <h3 class="text-base font-bold text-gray-800 mb-1">Ask the AI chatbot</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                    Once the report is in your hands, take any follow-up questions to the AI chatbot.
-                    You get up to ten questions per report.
-                </p>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: AI 컨설팅 챗봇 (강조)
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-blue-500 pb-2 mb-4 fade-up">
-        We answer the questions that come next
-    </h2>
-    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
-        Most reports raise as many questions as they answer.
-        Our AI chatbot, trained on college admissions, picks up right where the report leaves off.
-    </p>
-
-    <div class="panel-bg panel-blue p-6 md:p-8 mb-12 fade-up">
-        <div class="flex flex-col md:flex-row items-start gap-6">
-            <div class="flex-shrink-0">
-                <span class="flex items-center justify-center w-16 h-16 bg-white/80 text-blue-600 rounded-2xl shadow-sm">
-                    <i class="fa-solid fa-comments text-3xl"></i>
-                </span>
-            </div>
-            <div class="flex-1">
-                <div class="flex items-center gap-2 mb-3 flex-wrap">
-                    <span class="inline-flex items-center bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                        <i class="fa-solid fa-bolt mr-1.5 text-[10px]"></i>10 questions included with every report
-                    </span>
-                </div>
-                <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2">
-                    It answers the next question on your mind: "So what do I do with this?"
-                </h3>
-                <p class="text-sm md:text-base text-gray-700 leading-relaxed mb-4">
-                    Once you see the prediction range, the real questions start.
-                    What should I fix first? Activities or test scores? Where should I apply Early Decision?
-                    The chatbot reads your report and walks you through your options.
-                </p>
-
-                <div class="grid sm:grid-cols-2 gap-3">
-                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
-                            <p class="text-sm font-bold text-gray-800">Built on your report</p>
-                        </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            Every answer comes from the grades, scores, activities, and schools you shared.
-                        </p>
-                    </div>
-                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
-                            <p class="text-sm font-bold text-gray-800">Real admissions know-how</p>
-                        </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            It covers Early Decision strategy, major fit, recommendation letters, and more.
-                        </p>
-                    </div>
-                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
-                            <p class="text-sm font-bold text-gray-800">Ten questions per report</p>
-                        </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            Ask, read the answer, then ask the next thing on your mind.
-                        </p>
-                    </div>
-                    <div class="bg-white/80 rounded-lg p-4 border border-blue-100">
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
-                            <p class="text-sm font-bold text-gray-800">Korean or English</p>
-                        </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            Students and parents can both ask in whichever language feels easier.
-                        </p>
-                    </div>
+                <div class="md:border-l md:border-white/10 md:pl-12 flex flex-col items-start md:items-center w-full md:w-auto flex-shrink-0">
+                    <p class="text-5xl md:text-6xl font-bold text-white tracking-tight leading-none mb-2">
+                        <span class="text-2xl align-top text-gray-400 font-medium">$</span>59
+                    </p>
+                    <p class="text-xs text-gray-400 mb-5">One-time. No subscription.</p>
+                    <button id="report-start-button"
+                            type="button"
+                            onclick="handleReportStart()"
+                            class="w-full md:w-auto whitespace-nowrap px-6 py-3 bg-[#3b82f6] text-white text-sm md:text-base font-bold rounded-lg hover:bg-blue-500 transition">
+                        Start your report
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION: 가격 & CTA
-         ════════════════════════════════════════════════════════ -->
-    <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-fuchsia-500 pb-2 mb-4 fade-up">
-        One payment. One report. That's it.
-    </h2>
-    <p class="text-gray-600 mb-6 text-sm md:text-base leading-relaxed fade-up">
-        You get the full prediction report — built on 50,000+ real acceptances — plus ten questions with the AI chatbot.
-    </p>
-
-    <div class="bg-white rounded-lg shadow-md p-6 md:p-8 border-2 border-amber-500 mb-12 fade-up">
-        <div class="grid md:grid-cols-[1fr_auto] gap-8 items-center">
-            <div>
-                <p class="text-xs font-bold text-amber-600 uppercase tracking-wide mb-1">Admissions prediction report</p>
-                <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-4">The Insight! Report</h3>
-                <ul class="space-y-2.5 text-sm text-gray-700 mb-2">
-                    <li class="flex items-start gap-2">
-                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
-                        <span>Your odds for up to 5 schools, sorted into Reach, Target, or Safety</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
-                        <span>A close look at your GPA, classes, SAT or ACT, and activities</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
-                        <span>The first things to work on next</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
-                        <span>Ten follow-up questions with the AI chatbot</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
-                        <span>A PDF you can download and keep</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="md:text-right md:border-l md:border-gray-100 md:pl-8 flex flex-col items-start md:items-end">
-                <p class="text-5xl md:text-6xl font-bold text-amber-600 leading-none mb-2">
-                    <span class="text-2xl align-top">$</span>59
-                </p>
-                <p class="text-xs text-gray-500 mb-5">One report · One-time payment</p>
-                <button
-                    id="report-start-button"
-                    type="button"
-                    onclick="handleReportStart()"
-                    class="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white
-                           text-sm md:text-base font-semibold rounded-lg shadow hover:bg-amber-700 transition">
-                    <i class="fa-solid fa-file-pen mr-2 text-xs"></i>Start your report
-                </button>
-                <p class="text-[11px] text-gray-400 mt-3">You log in, then a guided intake opens.</p>
-            </div>
-        </div>
-    </div>
+    </section>
 
 </main>
 
@@ -835,7 +581,7 @@
         <!-- Modal header -->
         <div class="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 flex-shrink-0">
             <div class="flex items-center gap-3">
-                <span class="flex items-center justify-center w-10 h-10 bg-amber-100 text-amber-600 rounded-full shadow-sm">
+                <span class="flex items-center justify-center w-10 h-10 bg-blue-50 text-[#3b82f6] rounded-full shadow-sm">
                     <i class="fa-solid fa-comments text-base"></i>
                 </span>
                 <div>
@@ -855,7 +601,7 @@
             <div class="conversation-shell">
                 <div class="flex items-center justify-between gap-4">
                     <div>
-                        <p id="conversation-step-label" class="text-xs font-bold text-amber-600 uppercase tracking-wide">Question 1 of 14</p>
+                        <p id="conversation-step-label" class="text-xs font-bold text-[#3b82f6] uppercase tracking-wide">Question 1 of 14</p>
                         <h4 id="conversation-step-title" class="text-lg font-bold text-gray-900">Applicant basics</h4>
                     </div>
                     <div class="w-32 md:w-44 conversation-progress-track" aria-hidden="true">
@@ -1328,11 +1074,11 @@
                     Back
                 </button>
                 <button id="report-next-button" type="button" onclick="advanceConversation()"
-                        class="px-5 py-2.5 rounded-lg bg-amber-600 text-white text-sm font-semibold shadow hover:bg-amber-700 transition inline-flex items-center">
+                        class="px-5 py-2.5 rounded-lg bg-[#3b82f6] text-white text-sm font-semibold shadow hover:bg-blue-500 transition inline-flex items-center">
                     Continue<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
                 </button>
                 <button id="report-submit-button" type="submit" form="report-form"
-                        class="hidden px-5 py-2.5 rounded-lg bg-amber-600 text-white text-sm font-semibold shadow hover:bg-amber-700 transition items-center">
+                        class="hidden px-5 py-2.5 rounded-lg bg-[#3b82f6] text-white text-sm font-semibold shadow hover:bg-blue-500 transition items-center">
                     <i class="fa-solid fa-arrow-right mr-2 text-xs"></i>Save and go to checkout
                 </button>
             </div>
@@ -1352,8 +1098,8 @@
      aria-labelledby="auth-modal-title">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
 
-        <!-- Header with horizontal EduFinder logo on amber background -->
-        <div class="relative bg-[#d97706] px-6 pt-7 pb-6 text-center">
+        <!-- Header with horizontal EduFinder logo on brand blue background -->
+        <div class="relative bg-[#3b82f6] px-6 pt-7 pb-6 text-center">
             <button type="button" onclick="closeAuthModal()"
                     class="absolute top-3 right-3 text-white/80 hover:text-white transition-colors p-1.5"
                     aria-label="Close">
@@ -1400,7 +1146,7 @@
             <div id="auth-step-otp-code" class="hidden space-y-3.5">
                 <div class="text-center -mt-1 mb-1">
                     <h2 class="text-2xl font-bold text-gray-900">Enter Code</h2>
-                    <p id="sent-email-label" class="text-sm text-[#d97706] mt-1 font-medium"></p>
+                    <p id="sent-email-label" class="text-sm text-[#3b82f6] mt-1 font-medium"></p>
                 </div>
                 <input type="text" id="auth-code-input" inputmode="numeric" maxlength="6"
                        placeholder="6-digit code" class="auth-input code-input">
@@ -1439,6 +1185,7 @@
 <script>
 const REPORT_LOGIN_NEXT = '/prediction?start=1';
 const REPORT_DRAFT_ENDPOINT = '/prediction/api/draft';
+const REPORT_START_ENDPOINT = '/prediction/api/report/start';
 const REPORT_FIELD_NAMES = [
     'name',
     'email',
@@ -1851,6 +1598,25 @@ async function saveReportDraft(status = 'draft') {
     return true;
 }
 
+async function startReportGeneration() {
+    const response = await fetch(REPORT_START_ENDPOINT, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+    });
+
+    if (response.status === 401) {
+        redirectToReportLogin();
+        return null;
+    }
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.error || 'Could not start report generation.');
+    }
+    return data;
+}
+
 function queueReportDraftSave() {
     if (!reportDraftReady) return;
     window.clearTimeout(reportSaveTimer);
@@ -1931,14 +1697,24 @@ async function submitReportForm(event) {
     if (!validateFullConversation()) return;
     window.clearTimeout(reportSaveTimer);
     reportDraftReady = true;
+    setReportSaveStatus('Saving...');
     const saved = await saveReportDraft('submitted');
     if (!saved) {
         alert("We couldn't save your form. Please try again in a moment.");
         return;
     }
-    alert("Your information is saved. The report will start once you go to checkout. You won't be charged until you pay.");
-    skipNextCloseSave = true;
-    closeReportModal();
+    setReportSaveStatus('Starting report...');
+    try {
+        const started = await startReportGeneration();
+        if (!started) return;
+        skipNextCloseSave = true;
+        closeReportModal();
+        window.location.href = started.reportUrl;
+    } catch (error) {
+        console.error(error);
+        setReportSaveStatus('Report start failed');
+        alert(error.message || "We couldn't start your report. Please try again in a moment.");
+    }
 }
 </script>
 
@@ -1986,7 +1762,7 @@ function showAuthMessage(message, type = 'error') {
     const colorClass = type === 'success'
         ? 'text-green-700'
         : type === 'info'
-            ? 'text-[#d97706] font-medium'
+            ? 'text-[#3b82f6] font-medium'
             : 'text-red-600';
     el.textContent = String(message);
     el.className = 'text-sm ' + colorClass;
