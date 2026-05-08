@@ -3,209 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Genius! Editor - EduFinder</title>
+    <title>The Genius! Editor — EduFinder</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" as="style" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
     <style>
-        :root {
-            --blue: #2563eb;
-            --blue-dark: #1d4ed8;
-            --ink: #172033;
-            --muted: #64748b;
-            --line: #e2e8f0;
-            --soft: #f8fafc;
-            --mint: #14b8a6;
-            --amber: #f59e0b;
-            --rose: #e11d48;
-        }
-
-        * { box-sizing: border-box; }
-
         body {
-            margin: 0;
-            background: #f8fafc;
-            color: var(--ink);
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        button, input, textarea {
-            font: inherit;
+        /* ── Hero stat cards ── */
+        .stat-number { font-variant-numeric: tabular-nums; }
+        .stat-card {
+            background: rgba(255,255,255,.10);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 16px;
+            padding: 20px 14px;
+            text-align: center;
         }
-
-        button:disabled {
-            cursor: not-allowed;
+        .stat-card .stat-number {
+            font-size: clamp(1.9rem, 4.5vw, 2.5rem);
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
         }
-
-        .site-header {
-            background: #ffffff;
-            border-bottom: 1px solid var(--line);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
-
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-            min-height: 56px;
-            color: #1e293b;
-            font-weight: 800;
-            letter-spacing: .01em;
-        }
-
-        .hero-band {
-            background:
-                linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(20, 184, 166, .08) 44%, rgba(245, 158, 11, .08)),
-                #ffffff;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .hero-grid {
-            display: grid;
-            gap: 1.5rem;
-            align-items: end;
-            padding: 3rem 1rem 2rem;
-        }
-
-        @media (min-width: 900px) {
-            .hero-grid {
-                grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
-                padding: 4rem 1rem 2.75rem;
-            }
-        }
-
-        .brand-mark {
-            width: min(220px, 58vw);
-            height: auto;
-            margin-bottom: 1.25rem;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: .45rem;
-            border: 1px solid rgba(37, 99, 235, .18);
-            background: rgba(37, 99, 235, .08);
-            color: var(--blue-dark);
-            border-radius: 999px;
-            padding: .42rem .7rem;
-            font-size: .76rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-        }
-
-        .hero-title {
-            margin-top: 1rem;
-            font-size: clamp(2.35rem, 7vw, 5rem);
-            line-height: .96;
-            font-weight: 900;
-            letter-spacing: 0;
-            color: #0f172a;
-        }
-
-        .hero-copy {
-            margin-top: 1.1rem;
-            max-width: 680px;
-            color: #475569;
-            font-size: clamp(1rem, 2.4vw, 1.25rem);
-            line-height: 1.65;
-        }
-
-        .hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: .65rem;
-            margin-top: 1.35rem;
-        }
-
-        .hero-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: .45rem;
-            min-height: 34px;
-            border: 1px solid var(--line);
-            background: rgba(255, 255, 255, .76);
-            color: #334155;
-            border-radius: 999px;
-            padding: .38rem .72rem;
+        .stat-card .stat-unit {
             font-size: .8rem;
-            font-weight: 750;
+            font-weight: 600;
+            color: rgba(255,255,255,.85);
+            margin-top: 4px;
+        }
+        .stat-card .stat-label {
+            font-size: .7rem;
+            color: rgba(255,255,255,.65);
+            margin-top: 8px;
+            line-height: 1.4;
         }
 
-        .signal-panel {
-            border: 1px solid var(--line);
-            background: rgba(255, 255, 255, .84);
-            border-radius: 8px;
-            box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
-            padding: 1rem;
+        /* ── Process step connector line ── */
+        .step-line {
+            position: absolute;
+            left: 19px;
+            top: 44px;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
         }
 
-        .signal-row {
-            display: grid;
-            grid-template-columns: 40px minmax(0, 1fr);
-            gap: .85rem;
-            padding: .85rem 0;
-            border-bottom: 1px solid #edf2f7;
+        /* ── Subtle fade-up on scroll ── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .signal-row:last-child {
-            border-bottom: 0;
+        /* ── Auth modal (sign-in / sign-up popup) ── */
+        body.auth-gate-active { overflow: hidden; }
+        body.auth-gate-active > :not(#auth-modal):not(#toast-container) {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+            transition: filter .2s ease;
         }
-
-        .signal-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            color: #ffffff;
-            background: var(--blue);
+        #auth-modal {
+            background: rgba(17, 24, 39, .35);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
         }
-
-        .signal-row:nth-child(2) .signal-icon { background: var(--mint); }
-        .signal-row:nth-child(3) .signal-icon { background: var(--amber); }
-
-        .signal-title {
-            color: #0f172a;
-            font-size: .92rem;
-            font-weight: 850;
+        .auth-input {
+            width: 100%;
+            border-radius: .6rem;
+            border: 1px solid #e5e7eb;
+            padding: .85rem 1rem;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #111827;
+            background: #fff;
+            transition: border-color .15s ease, box-shadow .15s ease;
         }
-
-        .signal-copy {
-            color: var(--muted);
-            font-size: .82rem;
-            line-height: 1.55;
-            margin-top: .18rem;
+        .auth-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.18);
         }
-
-        .studio-band {
-            padding: 1.25rem 1rem 4rem;
+        .auth-input.code-input {
+            letter-spacing: .5em;
+            text-align: center;
+            font-size: 1.15rem;
         }
+        .auth-primary-btn {
+            width: 100%;
+            border-radius: .7rem;
+            background: #3b82f6;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: .9rem 1rem;
+            box-shadow: 0 4px 14px rgba(59,130,246,.25);
+            transition: background .15s ease, transform .05s ease;
+        }
+        .auth-primary-btn:hover { background: #2563eb; }
+        .auth-primary-btn:active { transform: translateY(1px); }
+        .auth-primary-btn:disabled { opacity: .6; cursor: not-allowed; }
+        .auth-primary-btn.is-verify { background: #16a34a; box-shadow: 0 4px 14px rgba(22,163,74,.25); }
+        .auth-primary-btn.is-verify:hover { background: #15803d; }
+        .auth-secondary-btn {
+            flex: 1;
+            border-radius: .7rem;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            font-weight: 600;
+            padding: .85rem 1rem;
+            font-size: .95rem;
+            transition: background .15s ease;
+        }
+        .auth-secondary-btn:hover { background: #f9fafb; }
+        .auth-helper-link {
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: .9rem;
+            color: #3b82f6;
+            font-weight: 600;
+            padding: .6rem 0 .1rem;
+        }
+        .auth-helper-link:hover { text-decoration: underline; }
 
+        /* ════════════════════════════════════════════════════════
+           EDITOR (existing structure preserved; restyled to use only
+           the three brand colors #3b82f6 / #1f2937 / #ffffff plus
+           neutral grays for borders and supporting copy)
+           ════════════════════════════════════════════════════════ */
+        .editor-band { padding: 2.5rem 1rem 4rem; background: #f9fafb; }
         .studio-shell {
             max-width: 1040px;
             margin: 0 auto;
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
             background: #ffffff;
-            box-shadow: 0 18px 60px rgba(15, 23, 42, .08);
+            box-shadow: 0 18px 60px rgba(31, 41, 55, .08);
             overflow: hidden;
         }
-
         .studio-top {
             display: grid;
             gap: 1rem;
             padding: 1.1rem;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 1px solid #e5e7eb;
             background: #ffffff;
         }
-
         @media (min-width: 760px) {
             .studio-top {
                 grid-template-columns: minmax(0, 1fr) auto;
@@ -213,220 +168,188 @@
                 padding: 1.25rem 1.4rem;
             }
         }
-
         .step-label {
-            color: var(--blue);
+            color: #3b82f6;
             font-size: .76rem;
-            font-weight: 900;
+            font-weight: 800;
             letter-spacing: .04em;
             text-transform: uppercase;
         }
-
         .step-title {
-            color: #0f172a;
+            color: #1f2937;
             font-size: 1.08rem;
-            font-weight: 900;
+            font-weight: 800;
             margin-top: .15rem;
         }
-
         .save-pill {
             display: inline-flex;
             align-items: center;
             gap: .42rem;
             justify-self: start;
-            border: 1px solid var(--line);
+            border: 1px solid #e5e7eb;
             border-radius: 999px;
-            background: #f8fafc;
-            color: #64748b;
+            background: #f9fafb;
+            color: #6b7280;
             min-height: 34px;
             padding: .38rem .75rem;
             font-size: .78rem;
-            font-weight: 800;
+            font-weight: 700;
             white-space: nowrap;
         }
-
         .save-pill.is-hot {
-            border-color: rgba(20, 184, 166, .28);
-            background: rgba(20, 184, 166, .10);
-            color: #0f766e;
+            border-color: rgba(59, 130, 246, .32);
+            background: #eff6ff;
+            color: #1d4ed8;
         }
-
         .progress-track {
             width: 100%;
             height: 8px;
             border-radius: 999px;
-            background: #e2e8f0;
+            background: #e5e7eb;
             overflow: hidden;
             margin-top: .8rem;
         }
-
         .progress-fill {
             width: 0;
             height: 100%;
             border-radius: inherit;
-            background: linear-gradient(90deg, var(--blue), var(--mint));
+            background: #3b82f6;
             transition: width .22s ease;
         }
-
         .move-rail {
             display: grid;
             gap: .5rem;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             padding: 1rem 1.1rem;
-            border-bottom: 1px solid var(--line);
-            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
         }
-
         @media (min-width: 760px) {
             .move-rail {
                 grid-template-columns: repeat(7, minmax(0, 1fr));
                 padding: 1rem 1.4rem;
             }
         }
-
         .move-pill {
-            border: 1px solid var(--line);
+            border: 1px solid #e5e7eb;
             background: #ffffff;
-            color: #64748b;
-            border-radius: 8px;
+            color: #6b7280;
+            border-radius: 10px;
             padding: .55rem .6rem;
             min-height: 44px;
             text-align: left;
             transition: border-color .15s ease, color .15s ease, background .15s ease;
         }
-
         .move-pill strong {
             display: block;
-            color: #334155;
+            color: #1f2937;
             font-size: .78rem;
             line-height: 1.2;
         }
-
         .move-pill span {
             display: block;
             font-size: .68rem;
             margin-top: .12rem;
         }
-
         .move-pill.is-current {
-            border-color: rgba(37, 99, 235, .38);
+            border-color: rgba(59, 130, 246, .42);
             background: #eff6ff;
-            color: var(--blue-dark);
+            color: #1d4ed8;
         }
-
         .move-pill.is-complete {
-            border-color: rgba(20, 184, 166, .32);
+            border-color: rgba(59, 130, 246, .28);
         }
-
         .studio-body {
             min-height: 460px;
             padding: 1.1rem;
         }
-
         @media (min-width: 760px) {
             .studio-body {
                 padding: 1.6rem 1.4rem 1.4rem;
             }
         }
-
         .advisor-thread {
             display: grid;
             grid-template-columns: 42px minmax(0, 1fr);
             gap: .85rem;
             align-items: start;
         }
-
         .advisor-avatar {
             width: 42px;
             height: 42px;
-            border-radius: 8px;
+            border-radius: 10px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
-            background: #0f172a;
+            background: #1f2937;
         }
-
         .advisor-bubble {
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
             padding: 1rem;
         }
-
         .advisor-name {
-            color: #475569;
-            font-size: .75rem;
-            font-weight: 900;
+            color: #3b82f6;
+            font-size: .72rem;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
-
         .question-prompt {
             margin-top: .25rem;
-            color: #0f172a;
-            font-size: clamp(1.25rem, 3vw, 2rem);
-            font-weight: 900;
-            line-height: 1.18;
-            letter-spacing: 0;
+            color: #1f2937;
+            font-size: clamp(1.25rem, 3vw, 1.85rem);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
         }
-
         .question-hint {
-            color: #64748b;
+            color: #6b7280;
             font-size: .92rem;
             line-height: 1.6;
             margin-top: .55rem;
         }
-
         .answer-zone {
             margin-top: 1.1rem;
             display: grid;
             gap: .75rem;
         }
-
         .choice-grid {
             display: grid;
             gap: .6rem;
         }
-
         @media (min-width: 640px) {
-            .choice-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .choice-grid.is-three {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
+            .choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .choice-grid.is-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
-
         .choice-option {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: .75rem;
             min-height: 54px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
             background: #ffffff;
-            color: #1e293b;
+            color: #1f2937;
             padding: .78rem .85rem;
             text-align: left;
-            font-weight: 780;
+            font-weight: 650;
             line-height: 1.35;
             transition: border-color .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
         }
-
         .choice-option:hover {
-            border-color: #bfdbfe;
-            box-shadow: 0 7px 18px rgba(37, 99, 235, .08);
-        }
-
-        .choice-option.is-selected {
-            border-color: rgba(37, 99, 235, .52);
+            border-color: #3b82f6;
             background: #eff6ff;
-            color: var(--blue-dark);
         }
-
+        .choice-option.is-selected {
+            border-color: #3b82f6;
+            background: #dbeafe;
+            color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+        }
         .choice-option .rank-badge {
             display: inline-flex;
             align-items: center;
@@ -434,557 +357,765 @@
             width: 26px;
             height: 26px;
             border-radius: 999px;
-            border: 1px solid var(--line);
-            color: #94a3b8;
+            border: 1px solid #e5e7eb;
+            color: #9ca3af;
             background: #ffffff;
             font-size: .76rem;
-            font-weight: 900;
+            font-weight: 800;
             flex: 0 0 auto;
         }
-
         .choice-option.is-selected .rank-badge {
-            border-color: rgba(37, 99, 235, .42);
+            border-color: #3b82f6;
             color: #ffffff;
-            background: var(--blue);
+            background: #3b82f6;
         }
-
         .text-answer {
             width: 100%;
             min-height: 112px;
             resize: vertical;
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
             background: #ffffff;
-            color: #0f172a;
+            color: #1f2937;
             padding: .9rem .95rem;
             line-height: 1.6;
             transition: border-color .15s ease, box-shadow .15s ease;
         }
-
         .text-answer:focus {
             outline: none;
-            border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, .14);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, .14);
         }
-
         .answer-meta {
             display: flex;
             flex-wrap: wrap;
             gap: .65rem;
             align-items: center;
             justify-content: space-between;
-            color: #94a3b8;
+            color: #9ca3af;
             font-size: .76rem;
-            font-weight: 750;
+            font-weight: 600;
         }
-
         .footer-actions {
             display: flex;
             flex-wrap: wrap;
             gap: .65rem;
             align-items: center;
             justify-content: space-between;
-            border-top: 1px solid var(--line);
+            border-top: 1px solid #e5e7eb;
             padding: 1rem 1.1rem;
             background: #ffffff;
         }
-
-        @media (min-width: 760px) {
-            .footer-actions {
-                padding: 1rem 1.4rem;
-            }
-        }
-
+        @media (min-width: 760px) { .footer-actions { padding: 1rem 1.4rem; } }
         .btn-row {
             display: flex;
             flex-wrap: wrap;
             gap: .55rem;
             align-items: center;
         }
-
         .studio-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: .45rem;
             min-height: 40px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid transparent;
             padding: .65rem .95rem;
             font-size: .88rem;
-            font-weight: 850;
+            font-weight: 700;
             transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
         }
-
-        .studio-btn:active {
-            transform: translateY(1px);
-        }
-
+        .studio-btn:active { transform: translateY(1px); }
         .btn-primary {
-            background: var(--blue);
+            background: #3b82f6;
             color: #ffffff;
-            box-shadow: 0 8px 22px rgba(37, 99, 235, .22);
+            box-shadow: 0 8px 22px rgba(59, 130, 246, .22);
         }
-
-        .btn-primary:hover { background: var(--blue-dark); }
-
+        .btn-primary:hover { background: #2563eb; }
         .btn-secondary {
             background: #ffffff;
-            color: #334155;
-            border-color: var(--line);
+            color: #1f2937;
+            border-color: #e5e7eb;
         }
-
-        .btn-secondary:hover {
-            background: #f8fafc;
-            color: #0f172a;
-        }
-
+        .btn-secondary:hover { background: #f9fafb; }
         .btn-ghost {
             background: transparent;
-            color: var(--blue-dark);
+            color: #1d4ed8;
             border-color: transparent;
         }
-
         .btn-ghost:hover { background: #eff6ff; }
-
-        .btn-danger {
+        .btn-quiet {
             background: #ffffff;
-            color: #be123c;
-            border-color: #fecdd3;
+            color: #6b7280;
+            border-color: #e5e7eb;
         }
-
-        .btn-danger:hover { background: #fff1f2; }
-
-        .idea-board {
-            display: grid;
-            gap: 1rem;
-        }
-
+        .btn-quiet:hover { background: #f9fafb; color: #1f2937; }
+        .idea-board { display: grid; gap: 1rem; }
         .reveal-header {
             display: grid;
             gap: 1rem;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
             padding: 1rem;
         }
-
         @media (min-width: 780px) {
             .reveal-header {
                 grid-template-columns: minmax(0, 1fr) 220px;
                 align-items: center;
             }
         }
-
         .reveal-title {
-            color: #0f172a;
-            font-size: clamp(1.5rem, 4vw, 2.35rem);
-            font-weight: 950;
-            letter-spacing: 0;
-            line-height: 1.12;
+            color: #1f2937;
+            font-size: clamp(1.5rem, 4vw, 2.25rem);
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            line-height: 1.15;
         }
-
         .reveal-copy {
-            color: #64748b;
+            color: #6b7280;
             line-height: 1.65;
             margin-top: .45rem;
         }
-
         .signal-meter {
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
             background: #ffffff;
             padding: .85rem;
         }
-
         .meter-number {
-            color: var(--blue-dark);
+            color: #3b82f6;
             font-size: 2rem;
-            font-weight: 950;
+            font-weight: 800;
             line-height: 1;
         }
-
         .meter-label {
-            color: #64748b;
+            color: #6b7280;
             font-size: .78rem;
-            font-weight: 850;
+            font-weight: 700;
             margin-top: .25rem;
         }
-
         .dimension-grid {
             display: grid;
             gap: .55rem;
             margin-top: 1rem;
         }
-
         @media (min-width: 720px) {
-            .dimension-grid {
-                grid-template-columns: repeat(5, minmax(0, 1fr));
-            }
+            .dimension-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
         }
-
         .dimension-pill {
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
             background: #ffffff;
             padding: .65rem;
         }
-
         .dimension-pill strong {
             display: block;
-            color: #0f172a;
+            color: #1f2937;
             font-size: .78rem;
         }
-
         .dimension-pill span {
             display: block;
-            color: #64748b;
+            color: #6b7280;
             font-size: .72rem;
             margin-top: .1rem;
         }
-
         .idea-card {
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
             background: #ffffff;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+            box-shadow: 0 10px 30px rgba(31, 41, 55, .06);
             overflow: hidden;
         }
-
         .idea-card-header {
             display: flex;
             gap: .85rem;
             align-items: start;
             padding: 1rem;
-            border-bottom: 1px solid var(--line);
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #ffffff, #f9fafb);
         }
-
         .idea-index {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 34px;
             height: 34px;
-            border-radius: 8px;
-            background: var(--blue);
+            border-radius: 10px;
+            background: #3b82f6;
             color: #ffffff;
-            font-weight: 950;
+            font-weight: 800;
             flex: 0 0 auto;
         }
-
-        .idea-card:nth-of-type(3n + 1) .idea-index { background: var(--blue); }
-        .idea-card:nth-of-type(3n + 2) .idea-index { background: var(--mint); }
-        .idea-card:nth-of-type(3n + 3) .idea-index { background: var(--amber); }
-
+        .idea-card:nth-of-type(even) .idea-index { background: #1f2937; }
         .idea-title {
-            color: #0f172a;
-            font-size: 1.12rem;
-            font-weight: 950;
+            color: #1f2937;
+            font-size: 1.1rem;
+            font-weight: 800;
             line-height: 1.25;
         }
-
         .idea-core {
-            color: #475569;
+            color: #4b5563;
             font-size: .92rem;
             line-height: 1.6;
             margin-top: .3rem;
         }
-
         .idea-card-body {
             display: grid;
             gap: .8rem;
             padding: 1rem;
         }
-
         @media (min-width: 820px) {
-            .idea-card-body {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
+            .idea-card-body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
-
         .idea-block {
-            border: 1px solid #edf2f7;
-            border-radius: 8px;
+            border: 1px solid #f3f4f6;
+            border-radius: 10px;
             background: #ffffff;
             padding: .85rem;
         }
-
         .idea-block-title {
             display: flex;
             align-items: center;
             gap: .45rem;
-            color: #334155;
+            color: #1f2937;
             font-size: .78rem;
-            font-weight: 950;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
-
         .idea-block-copy {
-            color: #475569;
+            color: #4b5563;
             font-size: .88rem;
             line-height: 1.6;
             margin-top: .45rem;
         }
-
         .evidence-list {
             display: grid;
             gap: .55rem;
             margin-top: .55rem;
         }
-
         .evidence-item {
-            border-left: 3px solid #bfdbfe;
+            border-left: 3px solid #3b82f6;
             padding-left: .65rem;
-            color: #475569;
+            color: #4b5563;
             font-size: .84rem;
             line-height: 1.5;
         }
-
         .evidence-item strong {
             display: block;
-            color: #0f172a;
+            color: #1f2937;
             font-size: .78rem;
             margin-bottom: .12rem;
         }
-
         .tag-row {
             display: flex;
             flex-wrap: wrap;
             gap: .4rem;
             margin-top: .6rem;
         }
-
         .idea-tag {
             display: inline-flex;
             align-items: center;
             border-radius: 999px;
             border: 1px solid #dbeafe;
             background: #eff6ff;
-            color: var(--blue-dark);
+            color: #1d4ed8;
             min-height: 28px;
             padding: .28rem .55rem;
             font-size: .72rem;
-            font-weight: 850;
+            font-weight: 700;
         }
-
         .discard-panel {
-            border: 1px solid #fecdd3;
-            border-radius: 8px;
-            background: #fff8f9;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #1f2937;
+            color: #f3f4f6;
             padding: 1rem;
         }
-
         .discard-title {
             display: flex;
             align-items: center;
             gap: .5rem;
-            color: #9f1239;
-            font-weight: 950;
+            color: #ffffff;
+            font-weight: 800;
         }
-
         .discard-grid {
             display: grid;
             gap: .65rem;
             margin-top: .8rem;
         }
-
         @media (min-width: 720px) {
-            .discard-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
+            .discard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
-
         .discard-item {
-            border: 1px solid #ffe4e6;
-            border-radius: 8px;
-            background: #ffffff;
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .04);
             padding: .8rem;
-            color: #475569;
+            color: #d1d5db;
             font-size: .86rem;
             line-height: 1.55;
         }
-
         .discard-item strong {
             display: block;
-            color: #9f1239;
+            color: #ffffff;
             margin-bottom: .22rem;
         }
-
         .low-signal {
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
             background: #ffffff;
             padding: 1rem;
         }
-
         .low-signal h4 {
-            color: #0f172a;
+            color: #1f2937;
             font-size: 1.2rem;
-            font-weight: 950;
+            font-weight: 800;
         }
-
         .low-signal p {
-            color: #64748b;
+            color: #6b7280;
             line-height: 1.65;
             margin-top: .45rem;
         }
-
         .next-question-list {
             display: grid;
             gap: .6rem;
             margin-top: 1rem;
         }
-
         .next-question {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: .75rem;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: #f8fafc;
-            color: #334155;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+            color: #1f2937;
             padding: .75rem .85rem;
             text-align: left;
-            font-weight: 800;
+            font-weight: 700;
         }
-
         .hidden { display: none !important; }
 
         @media print {
-            .site-header, .hero-band, .move-rail, .footer-actions, .studio-top .save-pill, .no-print {
+            header, footer, #landing-view, .move-rail, .footer-actions, .studio-top .save-pill, .no-print {
                 display: none !important;
             }
-
-            body {
-                background: #ffffff;
-            }
-
-            .studio-band {
-                padding: 0;
-            }
-
-            .studio-shell {
-                border: 0;
-                box-shadow: none;
-            }
-
-            .studio-body {
-                padding: 0;
-            }
-
-            .idea-card, .discard-panel, .reveal-header {
-                break-inside: avoid;
-                box-shadow: none;
-            }
+            body { background: #ffffff; }
+            .editor-band { padding: 0; }
+            .studio-shell { border: 0; box-shadow: none; }
+            .studio-body { padding: 0; }
+            .idea-card, .discard-panel, .reveal-header { break-inside: avoid; box-shadow: none; }
         }
     </style>
 </head>
-<body>
+<body class="bg-white text-[#1f2937]">
 
-<header class="site-header no-print">
-    <div class="max-w-6xl mx-auto px-4">
-        <a href="/" class="nav-link">
-            <i class="fa-solid fa-arrow-left text-sm text-blue-600"></i>
-            EduFinder
+
+<!-- ════════════════════════════════════════════════════════════
+     TOP NAV
+     ════════════════════════════════════════════════════════════ -->
+<header class="bg-[#3b82f6] text-white py-4">
+    <div class="container mx-auto px-4">
+        <a href="/"
+           class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
         </a>
     </div>
 </header>
 
-<main>
-    <section class="hero-band no-print">
-        <div class="hero-grid max-w-6xl mx-auto">
-            <div>
-                <img src="EduFinder.svg" alt="EduFinder by Waystar" class="brand-mark">
-                <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i>Discovery Engine V2</span>
-                <h1 class="hero-title">The Genius! Editor</h1>
-                <p class="hero-copy">
-                    Answer small questions that do not feel like a performance. At the end, the editor shows what your answers kept pointing toward.
-                </p>
-                <div class="hero-actions" aria-label="Editor traits">
-                    <span class="hero-chip"><i class="fa-regular fa-floppy-disk text-blue-600"></i>Saved locally</span>
-                    <span class="hero-chip"><i class="fa-solid fa-user-shield text-teal-600"></i>No upload</span>
-                    <span class="hero-chip"><i class="fa-solid fa-list-check text-amber-600"></i>28 quick signals</span>
-                </div>
-            </div>
 
-            <aside class="signal-panel" aria-label="How the editor works">
-                <div class="signal-row">
-                    <span class="signal-icon"><i class="fa-solid fa-location-dot"></i></span>
-                    <div>
-                        <p class="signal-title">Tiny answers first</p>
-                        <p class="signal-copy">Places, objects, irritations, compliments, questions, and future snapshots.</p>
-                    </div>
+<!-- ════════════════════════════════════════════════════════════
+     LANDING VIEW (visible until the user signs in and unlocks)
+     ════════════════════════════════════════════════════════════ -->
+<div id="landing-view">
+
+<!-- ── HERO ── -->
+<section class="bg-[#3b82f6] text-white py-16 md:py-24">
+    <div class="container mx-auto px-4 text-center max-w-4xl">
+        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-56 mb-6">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-tight">
+            The Genius! Editor
+        </h1>
+        <p class="text-blue-50 text-lg md:text-xl font-light max-w-xl mx-auto mb-12 leading-relaxed">
+            Where the Insight! Report measures the numbers, the Genius! Editor finds the story.
+        </p>
+
+        <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
+            <div class="stat-card">
+                <div class="stat-number" data-target="28" data-suffix="">0</div>
+                <div class="stat-unit">tiny questions</div>
+                <div class="stat-label">no résumé needed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="7" data-suffix="">0</div>
+                <div class="stat-unit">discovery moves</div>
+                <div class="stat-label">place to direction</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="6" data-suffix="">0</div>
+                <div class="stat-unit">essay angles</div>
+                <div class="stat-label">ranked, with evidence</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<main class="container mx-auto px-4 py-16 md:py-24 max-w-4xl">
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION 1: What we surface
+         ════════════════════════════════════════════════════════ -->
+    <section class="mb-20 md:mb-24 fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
+            Not your odds. Your angle.
+        </h2>
+        <p class="text-gray-500 text-base md:text-lg mb-10 max-w-2xl leading-relaxed">
+            The Insight! Report tells you where you stand. The Genius! Editor tells you what only you can write.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-5">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-location-dot text-base"></i>
                 </div>
-                <div class="signal-row">
-                    <span class="signal-icon"><i class="fa-solid fa-diagram-project"></i></span>
-                    <div>
-                        <p class="signal-title">Hidden patterning</p>
-                        <p class="signal-copy">Each answer quietly feeds motifs, tensions, values, voice, risk, and direction.</p>
-                    </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Tiny details</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Places you return to, objects you kept, irritations you cannot unsee.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-diagram-project text-base"></i>
                 </div>
-                <div class="signal-row">
-                    <span class="signal-icon"><i class="fa-solid fa-lightbulb"></i></span>
-                    <div>
-                        <p class="signal-title">A final idea board</p>
-                        <p class="signal-copy">Only the reveal names the possible writing angles and the generic ones to avoid.</p>
-                    </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Hidden patterns</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Each answer quietly feeds motif, tension, voice, value, risk, and direction.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-lightbulb text-base"></i>
                 </div>
-            </aside>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Idea board</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Up to six essay angles, ranked by signal — with opening scenes and the proof behind each one.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
+                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
+                    <i class="fa-solid fa-ban text-base"></i>
+                </div>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Discard pile</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">A named list of the generic angles to avoid, written from your own answers.</p>
+            </div>
         </div>
     </section>
 
-    <section id="studio" class="studio-band">
-        <div class="studio-shell">
-            <div class="studio-top">
-                <div>
-                    <p id="step-label" class="step-label">Move 1 of 7</p>
-                    <h2 id="step-title" class="step-title">Trace the places you return to</h2>
-                    <div class="progress-track" aria-hidden="true">
-                        <div id="progress-fill" class="progress-fill"></div>
-                    </div>
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION 2: Process
+         ════════════════════════════════════════════════════════ -->
+    <section class="mb-20 md:mb-24 fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-10 tracking-tight">
+            Four steps. One honest angle.
+        </h2>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 md:p-10">
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">1</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Answer small questions.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Places, objects, irritations, compliments, questions, future snapshots. No résumé. No performance.</p>
                 </div>
-                <span id="save-pill" class="save-pill">
-                    <i class="fa-regular fa-floppy-disk"></i>
-                    <span>Drafted locally</span>
-                </span>
             </div>
-
-            <div id="move-rail" class="move-rail no-print" aria-label="Discovery moves"></div>
-
-            <div id="studio-body" class="studio-body" aria-live="polite"></div>
-
-            <div class="footer-actions no-print">
-                <div class="btn-row">
-                    <button id="reset-btn" type="button" class="studio-btn btn-danger">
-                        <i class="fa-regular fa-trash-can text-xs"></i>Reset
-                    </button>
-                    <button id="print-btn" type="button" class="studio-btn btn-ghost hidden">
-                        <i class="fa-solid fa-print text-xs"></i>Print board
-                    </button>
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">2</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">We listen for patterns.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Each answer feeds ten quiet dimensions — motif, tension, voice, agency, relationship, and more.</p>
                 </div>
-                <div class="btn-row">
-                    <button id="back-btn" type="button" class="studio-btn btn-secondary">
-                        <i class="fa-solid fa-arrow-left text-xs"></i>Back
-                    </button>
-                    <button id="skip-btn" type="button" class="studio-btn btn-ghost">
-                        Skip
-                    </button>
-                    <button id="next-btn" type="button" class="studio-btn btn-primary">
-                        Continue<i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+            <div class="relative flex gap-5 items-start pb-8">
+                <div class="step-line"></div>
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">3</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">See your idea board.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Up to six essay angles, ranked, each with a hidden tension, an opening scene, and the evidence from your answers.</p>
+                </div>
+            </div>
+            <div class="relative flex gap-5 items-start">
+                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">4</span>
+                <div class="pt-1.5">
+                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Avoid the generic.</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">A discard pile names the polished, predictable angles to walk away from — pulled from your own words.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION 3: Pricing (the paywall)
+         ════════════════════════════════════════════════════════ -->
+    <section class="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
+            One editor. One price.
+        </h2>
+        <p class="text-gray-500 text-base md:text-lg mb-10">
+            Buy once. Yours forever.
+        </p>
+
+        <div class="bg-[#1f2937] rounded-2xl p-7 md:p-10 relative shadow-lg">
+            <span class="absolute -top-3 left-7 bg-[#3b82f6] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">The Genius! Editor</span>
+
+            <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center">
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-white mb-5">Everything you need to find your angle.</h3>
+                    <ul class="space-y-3 text-sm text-gray-200">
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>28 small questions across 7 discovery moves</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>An idea board with up to six essay angles, ranked</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Hidden tension, opening scene, and proof for each angle</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>A discard pile of generic angles to avoid</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Saved as you answer — print or export the board</span></li>
+                    </ul>
+                </div>
+
+                <div class="md:border-l md:border-white/10 md:pl-12 flex flex-col items-start md:items-center w-full md:w-auto flex-shrink-0">
+                    <p class="text-5xl md:text-6xl font-bold text-white tracking-tight leading-none mb-2">
+                        <span class="text-2xl align-top text-gray-400 font-medium">$</span>59
+                    </p>
+                    <p class="text-xs text-gray-400 mb-5">One-time. No subscription.</p>
+                    <button id="editor-start-button"
+                            type="button"
+                            onclick="handleEditorStart()"
+                            class="w-full md:w-auto whitespace-nowrap px-6 py-3 bg-[#3b82f6] text-white text-sm md:text-base font-bold rounded-lg hover:bg-blue-500 transition">
+                        Start your editor
                     </button>
                 </div>
             </div>
         </div>
     </section>
+
 </main>
 
-<footer class="bg-[#172033] text-white text-center py-6 no-print">
+</div>
+<!-- ════════ /LANDING VIEW ════════ -->
+
+
+<!-- ════════════════════════════════════════════════════════════
+     EDITOR VIEW (revealed only after sign-in + paywall)
+     The interactive editor structure below is unchanged from the
+     original — only its visual styling has been updated.
+     ════════════════════════════════════════════════════════════ -->
+<section id="editor-view" class="hidden editor-band">
+    <div class="studio-shell">
+        <div class="studio-top">
+            <div>
+                <p id="step-label" class="step-label">Move 1 of 7</p>
+                <h2 id="step-title" class="step-title">Trace the places you return to</h2>
+                <div class="progress-track" aria-hidden="true">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+            <span id="save-pill" class="save-pill">
+                <i class="fa-regular fa-floppy-disk"></i>
+                <span>Drafted locally</span>
+            </span>
+        </div>
+
+        <div id="move-rail" class="move-rail no-print" aria-label="Discovery moves"></div>
+
+        <div id="studio-body" class="studio-body" aria-live="polite"></div>
+
+        <div class="footer-actions no-print">
+            <div class="btn-row">
+                <button id="reset-btn" type="button" class="studio-btn btn-quiet">
+                    <i class="fa-regular fa-trash-can text-xs"></i>Reset
+                </button>
+                <button id="print-btn" type="button" class="studio-btn btn-ghost hidden">
+                    <i class="fa-solid fa-print text-xs"></i>Print board
+                </button>
+            </div>
+            <div class="btn-row">
+                <button id="back-btn" type="button" class="studio-btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>Back
+                </button>
+                <button id="skip-btn" type="button" class="studio-btn btn-ghost">
+                    Skip
+                </button>
+                <button id="next-btn" type="button" class="studio-btn btn-primary">
+                    Continue<i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     AUTH MODAL: sign-in / sign-up popup with blurred backdrop
+     ════════════════════════════════════════════════════════════ -->
+<div id="auth-modal"
+     class="fixed inset-0 z-50 hidden flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto"
+     role="dialog"
+     aria-modal="true"
+     aria-hidden="true"
+     aria-labelledby="auth-modal-title">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        <div class="relative bg-[#3b82f6] px-6 pt-7 pb-6 text-center">
+            <button type="button" onclick="closeAuthModal()"
+                    class="absolute top-3 right-3 text-white/80 hover:text-white transition-colors p-1.5"
+                    aria-label="Close">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+            <img src="/EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-48">
+        </div>
+
+        <div class="px-6 pt-6 pb-7 space-y-4">
+            <p id="auth-message" class="hidden text-sm"></p>
+
+            <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 id="auth-modal-title" class="text-2xl font-bold text-gray-900">Log in</h2>
+                    <p class="text-sm text-gray-500 mt-1">Use your EduFinder account to continue.</p>
+                </div>
+                <input type="email" id="auth-login-email" required
+                       placeholder="Email address" class="auth-input">
+                <input type="password" id="auth-login-password" required
+                       placeholder="Password" class="auth-input">
+                <button type="submit" class="auth-primary-btn">Log in</button>
+                <button type="button" onclick="switchToOtpEmail()" class="auth-helper-link">
+                    Click here to reset your password or create a new account.
+                </button>
+            </form>
+
+            <form id="auth-step-otp-email" onsubmit="sendAuthCode(); return false;" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 class="text-2xl font-bold text-gray-900">Email Verification</h2>
+                    <p class="text-sm text-gray-500 mt-1">We will send a 6-digit code to your email.</p>
+                </div>
+                <input type="email" id="auth-otp-email-input" required
+                       placeholder="Email address" class="auth-input">
+                <div class="flex gap-2.5">
+                    <button type="button" onclick="switchToPassword()" class="auth-secondary-btn">Cancel</button>
+                    <button type="submit" class="auth-primary-btn" style="flex:1;width:auto;">Send Code</button>
+                </div>
+            </form>
+
+            <div id="auth-step-otp-code" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 class="text-2xl font-bold text-gray-900">Enter Code</h2>
+                    <p id="sent-email-label" class="text-sm text-[#3b82f6] mt-1 font-medium"></p>
+                </div>
+                <input type="text" id="auth-code-input" inputmode="numeric" maxlength="6"
+                       placeholder="6-digit code" class="auth-input code-input">
+                <div class="flex gap-2.5">
+                    <button type="button" onclick="switchToOtpEmail()" class="auth-secondary-btn">Back</button>
+                    <button type="button" onclick="verifyAuthCode()"
+                            class="auth-primary-btn is-verify" style="flex:1;width:auto;">Verify</button>
+                </div>
+            </div>
+
+            <form id="auth-step-set-password" onsubmit="setNewPassword(); return false;" class="hidden space-y-3.5">
+                <div class="text-center -mt-1 mb-1">
+                    <h2 class="text-2xl font-bold text-gray-900">Set Password</h2>
+                    <p class="text-sm text-gray-500 mt-1">Choose the password you'll use from now on. Min 8 characters.</p>
+                </div>
+                <input type="password" id="auth-new-password" required minlength="8"
+                       placeholder="New password (min 8)" class="auth-input">
+                <input type="password" id="auth-new-password-confirm" required minlength="8"
+                       placeholder="Confirm password" class="auth-input">
+                <button type="submit" class="auth-primary-btn">Set Password and Log In</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════════════════════ -->
+<footer class="bg-[#1f2937] text-white text-center py-6">
     <p>&copy; 2026 EduFinder by Waystar</p>
 </footer>
 
+
+<!-- ════════════════════════════════════════════════════════════
+     LANDING PAGE JS (counters + fade-up + start gating)
+     ════════════════════════════════════════════════════════════ -->
+<script>
+function animateCounters() {
+    document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target, 10);
+        const duration = 1600;
+        const start = performance.now();
+        function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(target * ease).toLocaleString('en-US');
+            if (progress < 1) requestAnimationFrame(tick);
+            else el.textContent = target.toLocaleString('en-US') + (el.dataset.suffix || '');
+        }
+        requestAnimationFrame(tick);
+    });
+}
+
+const observer = new IntersectionObserver(
+    (entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    },
+    { threshold: 0.1 }
+);
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(animateCounters, 400);
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+});
+
+/* ── Editor unlock gating ──
+   The full Genius! Editor lives below the landing view but stays
+   hidden until the user signs in. The $59 pricing card is the
+   visible paywall; auth (Supabase) is the functional gate. */
+function unlockEditor() {
+    const landing = document.getElementById('landing-view');
+    const editor = document.getElementById('editor-view');
+    if (!landing || !editor) return;
+    landing.classList.add('hidden');
+    editor.classList.remove('hidden');
+    if (typeof window.initEditor === 'function') window.initEditor();
+    setTimeout(() => editor.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
+}
+
+function handleEditorStart() {
+    if (typeof window.requestEditorAuth === 'function') {
+        window.requestEditorAuth();
+        return;
+    }
+    /* Fallback if Supabase module hasn't loaded yet — just open the modal markup. */
+    const modal = document.getElementById('auth-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('auth-gate-active');
+    }
+}
+window.handleEditorStart = handleEditorStart;
+window.unlockEditor = unlockEditor;
+</script>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     EDITOR JS (preserved verbatim — only the auto-render at the
+     bottom is gated so the editor renders on unlock, not on load)
+     ════════════════════════════════════════════════════════════ -->
 <script>
 const STORAGE_KEY = 'genius-discovery-draft.v2';
 const MIN_SIGNAL_COUNT = 8;
@@ -2189,13 +2320,13 @@ function goNext() {
         currentIndex = 0;
         persistPosition();
         render();
-        document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('editor-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
     }
     currentIndex = Math.min(currentIndex + 1, QUESTIONS.length);
     persistPosition();
     render();
-    document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('editor-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function goBack() {
@@ -2203,7 +2334,7 @@ function goBack() {
     currentIndex -= 1;
     persistPosition();
     render();
-    document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('editor-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function resetStudio() {
@@ -2220,9 +2351,234 @@ document.getElementById('back-btn').addEventListener('click', goBack);
 document.getElementById('reset-btn').addEventListener('click', resetStudio);
 document.getElementById('print-btn').addEventListener('click', () => window.print());
 
-const initialDraft = readDraft();
-currentIndex = Math.max(0, Math.min(initialDraft.currentIndex || 0, QUESTIONS.length));
-render();
+/* The editor stays hidden until the user signs in; render() is
+   deferred to initEditor() so the hidden DOM is not painted early. */
+let editorInitialized = false;
+function initEditor() {
+    if (editorInitialized) return;
+    editorInitialized = true;
+    const initialDraft = readDraft();
+    currentIndex = Math.max(0, Math.min(initialDraft.currentIndex || 0, QUESTIONS.length));
+    render();
+}
+window.initEditor = initEditor;
+</script>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     AUTH MODAL JS (Supabase popup auth flow — mirrors prediction.html)
+     ════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { createBrowserClient } from 'https://esm.sh/@supabase/ssr@0.10.2';
+
+const supabaseUrl = 'https://hpcrvibjhfmqwivwqcoo.supabase.co';
+const supabaseAnonKey = 'sb_publishable_9IEmL6Tsc8jA_42d6SB6nA_Zu0L_cbL';
+const supabaseClient = createBrowserClient(supabaseUrl, supabaseAnonKey);
+
+let currentUser = null;
+let currentUserHasPassword = false;
+let pendingEmail = '';
+let pendingEditorUnlock = false;
+
+const AUTH_STEPS = ['password', 'otp-email', 'otp-code', 'set-password'];
+
+function showAuthStep(name) {
+    clearAuthMessage();
+    AUTH_STEPS.forEach(s => {
+        const el = document.getElementById('auth-step-' + s);
+        if (el) el.classList.toggle('hidden', s !== name);
+    });
+    setTimeout(() => {
+        const active = document.getElementById('auth-step-' + name);
+        const input = active ? active.querySelector('input') : null;
+        if (input) input.focus();
+    }, 0);
+}
+
+function clearAuthMessage() {
+    const el = document.getElementById('auth-message');
+    if (!el) return;
+    el.textContent = '';
+    el.className = 'hidden text-sm';
+}
+
+function showAuthMessage(message, type = 'error') {
+    const el = document.getElementById('auth-message');
+    if (!el) return;
+    const colorClass = type === 'success'
+        ? 'text-green-700'
+        : type === 'info'
+            ? 'text-[#3b82f6] font-medium'
+            : 'text-red-600';
+    el.textContent = String(message);
+    el.className = 'text-sm ' + colorClass;
+}
+
+function resetAuthFields() {
+    ['auth-login-email','auth-login-password','auth-otp-email-input','auth-code-input','auth-new-password','auth-new-password-confirm']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+function setAuthGateActive(active) {
+    document.body.classList.toggle('auth-gate-active', active);
+    const modal = document.getElementById('auth-modal');
+    modal.classList.toggle('hidden', !active);
+    modal.setAttribute('aria-hidden', active ? 'false' : 'true');
+    document.querySelectorAll('body > :not(#auth-modal):not(script)').forEach(el => {
+        if (active) el.setAttribute('inert', '');
+        else el.removeAttribute('inert');
+    });
+}
+
+function openAuthModal(options = {}) {
+    if (options.unlockEditor) pendingEditorUnlock = true;
+    if (options.reset !== false) {
+        resetAuthFields();
+        if (currentUser && !currentUserHasPassword) {
+            pendingEmail = currentUser;
+            const a = document.getElementById('auth-login-email'); if (a) a.value = currentUser;
+            const b = document.getElementById('auth-otp-email-input'); if (b) b.value = currentUser;
+            showAuthStep('set-password');
+        } else {
+            showAuthStep('password');
+        }
+    }
+    setAuthGateActive(true);
+}
+
+function closeAuthModal() {
+    pendingEditorUnlock = false;
+    setAuthGateActive(false);
+}
+
+function completeAuthFlow() {
+    const shouldUnlock = pendingEditorUnlock;
+    pendingEditorUnlock = false;
+    setAuthGateActive(false);
+    if (shouldUnlock && typeof window.unlockEditor === 'function') {
+        setTimeout(() => window.unlockEditor(), 50);
+    }
+}
+
+function requestEditorAuth() {
+    if (currentUser && currentUserHasPassword) {
+        if (typeof window.unlockEditor === 'function') window.unlockEditor();
+        return;
+    }
+    openAuthModal({ unlockEditor: true, reset: true });
+}
+
+function switchToPassword() { showAuthStep('password'); }
+function switchToOtpEmail() {
+    const existing =
+        (document.getElementById('auth-login-email')?.value) ||
+        (document.getElementById('auth-otp-email-input')?.value) || '';
+    const t = document.getElementById('auth-otp-email-input'); if (t) t.value = existing;
+    showAuthStep('otp-email');
+}
+
+async function signInWithPassword() {
+    const email = document.getElementById('auth-login-email').value.trim();
+    const password = document.getElementById('auth-login-password').value;
+    clearAuthMessage();
+    if (!email || !email.includes('@')) { showAuthMessage('Please enter a valid email address.'); return; }
+    if (!password) { showAuthMessage('Please enter your password.'); return; }
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) { showAuthMessage('The email or password is incorrect.'); return; }
+    if (!data.user?.user_metadata?.password_set) {
+        await supabaseClient.auth.updateUser({ data: { password_set: true } });
+    }
+    currentUser = data.user?.email || email;
+    currentUserHasPassword = true;
+    completeAuthFlow();
+}
+
+async function sendAuthCode() {
+    const email = document.getElementById('auth-otp-email-input').value.trim();
+    clearAuthMessage();
+    if (!email || !email.includes('@')) { showAuthMessage('Please enter a valid email address.'); return; }
+    pendingEmail = email;
+    const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+    if (error) { showAuthMessage('An error occurred: ' + error.message); return; }
+    document.getElementById('sent-email-label').textContent = 'A 6-digit code was sent to ' + email + '.';
+    document.getElementById('auth-code-input').value = '';
+    showAuthStep('otp-code');
+}
+
+let _verifying = false;
+async function verifyAuthCode() {
+    if (_verifying) return;
+    const code = document.getElementById('auth-code-input').value;
+    if (code.length < 6) return;
+    _verifying = true;
+    clearAuthMessage();
+    const { data, error } = await supabaseClient.auth.verifyOtp({ email: pendingEmail, token: code, type: 'email' });
+    _verifying = false;
+    if (error) {
+        document.getElementById('auth-code-input').value = '';
+        showAuthMessage('The verification code is incorrect or has expired.');
+        return;
+    }
+    if (data.user?.user_metadata?.password_set) {
+        currentUser = data.user?.email || pendingEmail;
+        currentUserHasPassword = true;
+        completeAuthFlow();
+        return;
+    }
+    document.getElementById('auth-new-password').value = '';
+    document.getElementById('auth-new-password-confirm').value = '';
+    showAuthStep('set-password');
+    showAuthMessage('Verification complete. Set a password to continue.', 'info');
+}
+
+async function setNewPassword() {
+    const password = document.getElementById('auth-new-password').value;
+    const confirm = document.getElementById('auth-new-password-confirm').value;
+    clearAuthMessage();
+    if (password.length < 8) { showAuthMessage('Your password must be at least 8 characters long.'); return; }
+    if (password !== confirm) { showAuthMessage('The passwords do not match.'); return; }
+    const { error } = await supabaseClient.auth.updateUser({ password, data: { password_set: true } });
+    if (error) { showAuthMessage('Could not set your password: ' + error.message); return; }
+    currentUserHasPassword = true;
+    completeAuthFlow();
+}
+
+document.getElementById('auth-code-input').addEventListener('input', function () {
+    const v = this.value.replace(/\D/g, '');
+    this.value = v;
+    if (v.length === 6) verifyAuthCode();
+});
+
+document.getElementById('auth-modal').addEventListener('click', e => {
+    if (e.target.id === 'auth-modal') closeAuthModal();
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.body.classList.contains('auth-gate-active')) closeAuthModal();
+});
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session) {
+        currentUser = session.user.email || null;
+        currentUserHasPassword = Boolean(session.user.user_metadata?.password_set);
+        if (currentUserHasPassword && pendingEditorUnlock) {
+            completeAuthFlow();
+        } else if (!currentUserHasPassword && document.body.classList.contains('auth-gate-active')) {
+            pendingEmail = session.user.email || pendingEmail;
+            const a = document.getElementById('auth-login-email'); if (a) a.value = pendingEmail;
+            const b = document.getElementById('auth-otp-email-input'); if (b) b.value = pendingEmail;
+            showAuthStep('set-password');
+        }
+    } else {
+        currentUser = null;
+        currentUserHasPassword = false;
+    }
+});
+
+Object.assign(window, {
+    closeAuthModal, openAuthModal, requestEditorAuth,
+    switchToPassword, switchToOtpEmail, signInWithPassword,
+    sendAuthCode, verifyAuthCode, setNewPassword
+});
 </script>
 
 </body>
