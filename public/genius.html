@@ -3,1109 +3,2226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Genius! Editor — EduFinder</title>
+    <title>The Genius! Editor - EduFinder</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" as="style" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
     <style>
+        :root {
+            --blue: #2563eb;
+            --blue-dark: #1d4ed8;
+            --ink: #172033;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --soft: #f8fafc;
+            --mint: #14b8a6;
+            --amber: #f59e0b;
+            --rose: #e11d48;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
+            margin: 0;
+            background: #f8fafc;
+            color: var(--ink);
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* ── Hero stat cards ── */
-        .stat-number { font-variant-numeric: tabular-nums; }
-        .stat-card {
-            background: rgba(255,255,255,.10);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,.18);
-            border-radius: 16px;
-            padding: 20px 14px;
-            text-align: center;
-        }
-        .stat-card .stat-number {
-            font-size: clamp(1.9rem, 4.5vw, 2.5rem);
-            font-weight: 700;
-            color: white;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-        }
-        .stat-card .stat-unit {
-            font-size: .8rem;
-            font-weight: 600;
-            color: rgba(255,255,255,.85);
-            margin-top: 4px;
-        }
-        .stat-card .stat-label {
-            font-size: .7rem;
-            color: rgba(255,255,255,.65);
-            margin-top: 8px;
-            line-height: 1.4;
+        button, input, textarea {
+            font: inherit;
         }
 
-        /* ── Process step connector line ── */
-        .step-line {
-            position: absolute;
-            left: 19px;
-            top: 44px;
-            bottom: 0;
-            width: 2px;
-            background: #e5e7eb;
+        button:disabled {
+            cursor: not-allowed;
         }
 
-        /* ── Subtle fade-up on scroll ── */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(16px);
-            transition: opacity .5s ease, transform .5s ease;
-        }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ── The Studio (interactive editor) ── */
-        .studio-shell {
+        .site-header {
             background: #ffffff;
-            border-radius: 1rem;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 2px rgba(17, 24, 39, .03);
-            padding: 1.5rem;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 20;
         }
-        @media (min-width: 768px) {
-            .studio-shell { padding: 2.25rem; }
-        }
-        .studio-progress-track {
-            height: 7px;
-            border-radius: 999px;
-            background: #f3f4f6;
-            overflow: hidden;
-        }
-        .studio-progress-fill {
-            height: 100%;
-            width: 0;
-            border-radius: inherit;
-            background: #3b82f6;
-            transition: width .25s ease;
-        }
-        .studio-step { display: none; }
-        .studio-step.is-active {
-            display: block;
-            animation: studioFade .25s ease;
-        }
-        @keyframes studioFade {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .studio-section-kicker {
+
+        .nav-link {
             display: inline-flex;
             align-items: center;
-            gap: .4rem;
-            border-radius: 999px;
-            background: #dbeafe;
-            color: #1d4ed8;
-            font-size: .72rem;
+            gap: .5rem;
+            min-height: 56px;
+            color: #1e293b;
             font-weight: 800;
-            padding: .32rem .65rem;
-            text-transform: uppercase;
-            letter-spacing: .04em;
+            letter-spacing: .01em;
         }
-        .studio-section-title {
-            font-size: clamp(1.4rem, 3vw, 1.85rem);
-            font-weight: 700;
-            color: #1f2937;
-            line-height: 1.25;
-            letter-spacing: -0.01em;
-            margin-top: .65rem;
-        }
-        .studio-section-blurb {
-            color: #6b7280;
-            font-size: .9rem;
-            line-height: 1.6;
-            margin-top: .55rem;
-        }
-        .prompt-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 1rem;
-            background: #ffffff;
-            padding: 1.1rem;
-            box-shadow: 0 1px 2px rgba(17, 24, 39, .02);
-            margin-top: 1rem;
-            transition: border-color .15s ease, box-shadow .15s ease;
-        }
-        .prompt-card.is-touched {
-            border-color: #bfdbfe;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, .08);
-        }
-        .prompt-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-size: .72rem;
-            font-weight: 800;
-            margin-right: .55rem;
-            flex-shrink: 0;
-        }
-        .prompt-text {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #1f2937;
-            font-weight: 600;
-        }
-        .prompt-textarea {
-            width: 100%;
-            margin-top: .8rem;
-            border: 1px solid #e5e7eb;
-            border-radius: .75rem;
-            background: #f9fafb;
-            padding: .75rem .85rem;
-            font-size: .92rem;
-            line-height: 1.6;
-            color: #1f2937;
-            resize: vertical;
-            min-height: 96px;
-            transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-        }
-        .prompt-textarea:focus {
-            outline: none;
-            background: #ffffff;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, .15);
-        }
-        .prompt-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: .65rem;
-            margin-top: .55rem;
-            font-size: .72rem;
-            color: #9ca3af;
-        }
-        .prompt-meta .word-count.has-words { color: #1d4ed8; font-weight: 600; }
 
-        .studio-step-footer {
-            display: flex;
-            flex-wrap: wrap;
-            gap: .65rem;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1.5rem;
+        .hero-band {
+            background:
+                linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(20, 184, 166, .08) 44%, rgba(245, 158, 11, .08)),
+                #ffffff;
+            border-bottom: 1px solid var(--line);
         }
-        .studio-btn {
+
+        .hero-grid {
+            display: grid;
+            gap: 1.5rem;
+            align-items: end;
+            padding: 3rem 1rem 2rem;
+        }
+
+        @media (min-width: 900px) {
+            .hero-grid {
+                grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+                padding: 4rem 1rem 2.75rem;
+            }
+        }
+
+        .brand-mark {
+            width: min(220px, 58vw);
+            height: auto;
+            margin-bottom: 1.25rem;
+        }
+
+        .eyebrow {
             display: inline-flex;
             align-items: center;
             gap: .45rem;
-            padding: .7rem 1.15rem;
-            border-radius: .6rem;
-            font-size: .9rem;
-            font-weight: 600;
-            transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+            border: 1px solid rgba(37, 99, 235, .18);
+            background: rgba(37, 99, 235, .08);
+            color: var(--blue-dark);
+            border-radius: 999px;
+            padding: .42rem .7rem;
+            font-size: .76rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
         }
-        .studio-btn-primary {
-            background: #3b82f6;
-            color: white;
-            box-shadow: 0 4px 14px rgba(59, 130, 246, .25);
-            border: 1px solid transparent;
+
+        .hero-title {
+            margin-top: 1rem;
+            font-size: clamp(2.35rem, 7vw, 5rem);
+            line-height: .96;
+            font-weight: 900;
+            letter-spacing: 0;
+            color: #0f172a;
         }
-        .studio-btn-primary:hover { background: #2563eb; }
-        .studio-btn-primary:active { transform: translateY(1px); }
-        .studio-btn-secondary {
-            background: white;
-            color: #4b5563;
-            border: 1px solid #e5e7eb;
+
+        .hero-copy {
+            margin-top: 1.1rem;
+            max-width: 680px;
+            color: #475569;
+            font-size: clamp(1rem, 2.4vw, 1.25rem);
+            line-height: 1.65;
         }
-        .studio-btn-secondary:hover { background: #f9fafb; color: #1f2937; }
-        .studio-btn-ghost {
-            background: transparent;
-            color: #1d4ed8;
-            border: 1px solid transparent;
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .65rem;
+            margin-top: 1.35rem;
         }
-        .studio-btn-ghost:hover { background: #eff6ff; }
-        .studio-btn-danger {
-            background: white;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
+
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            min-height: 34px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, .76);
+            color: #334155;
+            border-radius: 999px;
+            padding: .38rem .72rem;
+            font-size: .8rem;
+            font-weight: 750;
         }
-        .studio-btn-danger:hover { background: #fef2f2; }
+
+        .signal-panel {
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, .84);
+            border-radius: 8px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+            padding: 1rem;
+        }
+
+        .signal-row {
+            display: grid;
+            grid-template-columns: 40px minmax(0, 1fr);
+            gap: .85rem;
+            padding: .85rem 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .signal-row:last-child {
+            border-bottom: 0;
+        }
+
+        .signal-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            color: #ffffff;
+            background: var(--blue);
+        }
+
+        .signal-row:nth-child(2) .signal-icon { background: var(--mint); }
+        .signal-row:nth-child(3) .signal-icon { background: var(--amber); }
+
+        .signal-title {
+            color: #0f172a;
+            font-size: .92rem;
+            font-weight: 850;
+        }
+
+        .signal-copy {
+            color: var(--muted);
+            font-size: .82rem;
+            line-height: 1.55;
+            margin-top: .18rem;
+        }
+
+        .studio-band {
+            padding: 1.25rem 1rem 4rem;
+        }
+
+        .studio-shell {
+            max-width: 1040px;
+            margin: 0 auto;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 18px 60px rgba(15, 23, 42, .08);
+            overflow: hidden;
+        }
+
+        .studio-top {
+            display: grid;
+            gap: 1rem;
+            padding: 1.1rem;
+            border-bottom: 1px solid var(--line);
+            background: #ffffff;
+        }
+
+        @media (min-width: 760px) {
+            .studio-top {
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+                padding: 1.25rem 1.4rem;
+            }
+        }
+
+        .step-label {
+            color: var(--blue);
+            font-size: .76rem;
+            font-weight: 900;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .step-title {
+            color: #0f172a;
+            font-size: 1.08rem;
+            font-weight: 900;
+            margin-top: .15rem;
+        }
 
         .save-pill {
             display: inline-flex;
             align-items: center;
-            gap: .4rem;
-            padding: .35rem .75rem;
+            gap: .42rem;
+            justify-self: start;
+            border: 1px solid var(--line);
             border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-size: .72rem;
-            font-weight: 700;
-            border: 1px solid #dbeafe;
-        }
-        .save-pill.is-idle {
-            background: #f9fafb;
-            color: #6b7280;
-            border-color: #e5e7eb;
-        }
-
-        .step-rail {
-            display: flex;
-            flex-wrap: wrap;
-            gap: .35rem;
-            margin-top: 1rem;
-        }
-        .step-pill {
-            font-size: .7rem;
-            font-weight: 700;
-            color: #9ca3af;
-            background: #f9fafb;
-            border: 1px solid #f3f4f6;
-            border-radius: 999px;
-            padding: .3rem .6rem;
-            cursor: pointer;
-            transition: all .15s ease;
-        }
-        .step-pill:hover { color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff; }
-        .step-pill.is-current {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-        .step-pill.is-complete {
-            color: #1d4ed8;
-            background: #dbeafe;
-            border-color: #bfdbfe;
-        }
-
-        .welcome-hint-card {
-            display: flex;
-            align-items: flex-start;
-            gap: .55rem;
-            padding: .75rem .9rem;
-            background: #f9fafb;
-            border: 1px solid #f3f4f6;
-            border-radius: .75rem;
-            font-size: .88rem;
-            color: #374151;
-            line-height: 1.5;
-        }
-        .welcome-hint-card i {
-            color: #3b82f6;
-            margin-top: .2rem;
-            font-size: .82rem;
-        }
-
-        /* ── Sparks summary (final step) ── */
-        .spark-bundle {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 1rem;
-            padding: 1.1rem;
-            margin-top: 1rem;
-            box-shadow: 0 1px 2px rgba(17, 24, 39, .02);
-        }
-        .spark-bundle h5 {
-            font-size: .8rem;
+            background: #f8fafc;
+            color: #64748b;
+            min-height: 34px;
+            padding: .38rem .75rem;
+            font-size: .78rem;
             font-weight: 800;
-            color: #1d4ed8;
+            white-space: nowrap;
+        }
+
+        .save-pill.is-hot {
+            border-color: rgba(20, 184, 166, .28);
+            background: rgba(20, 184, 166, .10);
+            color: #0f766e;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            overflow: hidden;
+            margin-top: .8rem;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--blue), var(--mint));
+            transition: width .22s ease;
+        }
+
+        .move-rail {
+            display: grid;
+            gap: .5rem;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid var(--line);
+            background: #f8fafc;
+        }
+
+        @media (min-width: 760px) {
+            .move-rail {
+                grid-template-columns: repeat(7, minmax(0, 1fr));
+                padding: 1rem 1.4rem;
+            }
+        }
+
+        .move-pill {
+            border: 1px solid var(--line);
+            background: #ffffff;
+            color: #64748b;
+            border-radius: 8px;
+            padding: .55rem .6rem;
+            min-height: 44px;
+            text-align: left;
+            transition: border-color .15s ease, color .15s ease, background .15s ease;
+        }
+
+        .move-pill strong {
+            display: block;
+            color: #334155;
+            font-size: .78rem;
+            line-height: 1.2;
+        }
+
+        .move-pill span {
+            display: block;
+            font-size: .68rem;
+            margin-top: .12rem;
+        }
+
+        .move-pill.is-current {
+            border-color: rgba(37, 99, 235, .38);
+            background: #eff6ff;
+            color: var(--blue-dark);
+        }
+
+        .move-pill.is-complete {
+            border-color: rgba(20, 184, 166, .32);
+        }
+
+        .studio-body {
+            min-height: 460px;
+            padding: 1.1rem;
+        }
+
+        @media (min-width: 760px) {
+            .studio-body {
+                padding: 1.6rem 1.4rem 1.4rem;
+            }
+        }
+
+        .advisor-thread {
+            display: grid;
+            grid-template-columns: 42px minmax(0, 1fr);
+            gap: .85rem;
+            align-items: start;
+        }
+
+        .advisor-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            background: #0f172a;
+        }
+
+        .advisor-bubble {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f8fafc;
+            padding: 1rem;
+        }
+
+        .advisor-name {
+            color: #475569;
+            font-size: .75rem;
+            font-weight: 900;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
-        .spark-quote {
-            border-left: 3px solid #bfdbfe;
-            padding: .35rem 0 .35rem .85rem;
-            margin-top: .75rem;
-            color: #1f2937;
-            line-height: 1.55;
-        }
-        .spark-quote .spark-q {
-            font-style: italic;
-            color: #1d4ed8;
-            font-size: .88rem;
-            display: block;
-            margin-bottom: .25rem;
-        }
-        .spark-empty {
-            color: #9ca3af;
-            font-size: .82rem;
-            font-style: italic;
-            margin-top: .65rem;
+
+        .question-prompt {
+            margin-top: .25rem;
+            color: #0f172a;
+            font-size: clamp(1.25rem, 3vw, 2rem);
+            font-weight: 900;
+            line-height: 1.18;
+            letter-spacing: 0;
         }
 
+        .question-hint {
+            color: #64748b;
+            font-size: .92rem;
+            line-height: 1.6;
+            margin-top: .55rem;
+        }
+
+        .answer-zone {
+            margin-top: 1.1rem;
+            display: grid;
+            gap: .75rem;
+        }
+
+        .choice-grid {
+            display: grid;
+            gap: .6rem;
+        }
+
+        @media (min-width: 640px) {
+            .choice-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .choice-grid.is-three {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .choice-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            min-height: 54px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1e293b;
+            padding: .78rem .85rem;
+            text-align: left;
+            font-weight: 780;
+            line-height: 1.35;
+            transition: border-color .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .choice-option:hover {
+            border-color: #bfdbfe;
+            box-shadow: 0 7px 18px rgba(37, 99, 235, .08);
+        }
+
+        .choice-option.is-selected {
+            border-color: rgba(37, 99, 235, .52);
+            background: #eff6ff;
+            color: var(--blue-dark);
+        }
+
+        .choice-option .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            color: #94a3b8;
+            background: #ffffff;
+            font-size: .76rem;
+            font-weight: 900;
+            flex: 0 0 auto;
+        }
+
+        .choice-option.is-selected .rank-badge {
+            border-color: rgba(37, 99, 235, .42);
+            color: #ffffff;
+            background: var(--blue);
+        }
+
+        .text-answer {
+            width: 100%;
+            min-height: 112px;
+            resize: vertical;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            color: #0f172a;
+            padding: .9rem .95rem;
+            line-height: 1.6;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        .text-answer:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .14);
+        }
+
+        .answer-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .65rem;
+            align-items: center;
+            justify-content: space-between;
+            color: #94a3b8;
+            font-size: .76rem;
+            font-weight: 750;
+        }
+
+        .footer-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .65rem;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--line);
+            padding: 1rem 1.1rem;
+            background: #ffffff;
+        }
+
+        @media (min-width: 760px) {
+            .footer-actions {
+                padding: 1rem 1.4rem;
+            }
+        }
+
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .55rem;
+            align-items: center;
+        }
+
+        .studio-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            min-height: 40px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            padding: .65rem .95rem;
+            font-size: .88rem;
+            font-weight: 850;
+            transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+        }
+
+        .studio-btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: #ffffff;
+            box-shadow: 0 8px 22px rgba(37, 99, 235, .22);
+        }
+
+        .btn-primary:hover { background: var(--blue-dark); }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #334155;
+            border-color: var(--line);
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--blue-dark);
+            border-color: transparent;
+        }
+
+        .btn-ghost:hover { background: #eff6ff; }
+
+        .btn-danger {
+            background: #ffffff;
+            color: #be123c;
+            border-color: #fecdd3;
+        }
+
+        .btn-danger:hover { background: #fff1f2; }
+
+        .idea-board {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .reveal-header {
+            display: grid;
+            gap: 1rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f8fafc;
+            padding: 1rem;
+        }
+
+        @media (min-width: 780px) {
+            .reveal-header {
+                grid-template-columns: minmax(0, 1fr) 220px;
+                align-items: center;
+            }
+        }
+
+        .reveal-title {
+            color: #0f172a;
+            font-size: clamp(1.5rem, 4vw, 2.35rem);
+            font-weight: 950;
+            letter-spacing: 0;
+            line-height: 1.12;
+        }
+
+        .reveal-copy {
+            color: #64748b;
+            line-height: 1.65;
+            margin-top: .45rem;
+        }
+
+        .signal-meter {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            padding: .85rem;
+        }
+
+        .meter-number {
+            color: var(--blue-dark);
+            font-size: 2rem;
+            font-weight: 950;
+            line-height: 1;
+        }
+
+        .meter-label {
+            color: #64748b;
+            font-size: .78rem;
+            font-weight: 850;
+            margin-top: .25rem;
+        }
+
+        .dimension-grid {
+            display: grid;
+            gap: .55rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 720px) {
+            .dimension-grid {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
+        }
+
+        .dimension-pill {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            padding: .65rem;
+        }
+
+        .dimension-pill strong {
+            display: block;
+            color: #0f172a;
+            font-size: .78rem;
+        }
+
+        .dimension-pill span {
+            display: block;
+            color: #64748b;
+            font-size: .72rem;
+            margin-top: .1rem;
+        }
+
+        .idea-card {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+            overflow: hidden;
+        }
+
+        .idea-card-header {
+            display: flex;
+            gap: .85rem;
+            align-items: start;
+            padding: 1rem;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+        }
+
+        .idea-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 950;
+            flex: 0 0 auto;
+        }
+
+        .idea-card:nth-of-type(3n + 1) .idea-index { background: var(--blue); }
+        .idea-card:nth-of-type(3n + 2) .idea-index { background: var(--mint); }
+        .idea-card:nth-of-type(3n + 3) .idea-index { background: var(--amber); }
+
+        .idea-title {
+            color: #0f172a;
+            font-size: 1.12rem;
+            font-weight: 950;
+            line-height: 1.25;
+        }
+
+        .idea-core {
+            color: #475569;
+            font-size: .92rem;
+            line-height: 1.6;
+            margin-top: .3rem;
+        }
+
+        .idea-card-body {
+            display: grid;
+            gap: .8rem;
+            padding: 1rem;
+        }
+
+        @media (min-width: 820px) {
+            .idea-card-body {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .idea-block {
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            background: #ffffff;
+            padding: .85rem;
+        }
+
+        .idea-block-title {
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            color: #334155;
+            font-size: .78rem;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .idea-block-copy {
+            color: #475569;
+            font-size: .88rem;
+            line-height: 1.6;
+            margin-top: .45rem;
+        }
+
+        .evidence-list {
+            display: grid;
+            gap: .55rem;
+            margin-top: .55rem;
+        }
+
+        .evidence-item {
+            border-left: 3px solid #bfdbfe;
+            padding-left: .65rem;
+            color: #475569;
+            font-size: .84rem;
+            line-height: 1.5;
+        }
+
+        .evidence-item strong {
+            display: block;
+            color: #0f172a;
+            font-size: .78rem;
+            margin-bottom: .12rem;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-top: .6rem;
+        }
+
+        .idea-tag {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            color: var(--blue-dark);
+            min-height: 28px;
+            padding: .28rem .55rem;
+            font-size: .72rem;
+            font-weight: 850;
+        }
+
+        .discard-panel {
+            border: 1px solid #fecdd3;
+            border-radius: 8px;
+            background: #fff8f9;
+            padding: 1rem;
+        }
+
+        .discard-title {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            color: #9f1239;
+            font-weight: 950;
+        }
+
+        .discard-grid {
+            display: grid;
+            gap: .65rem;
+            margin-top: .8rem;
+        }
+
+        @media (min-width: 720px) {
+            .discard-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .discard-item {
+            border: 1px solid #ffe4e6;
+            border-radius: 8px;
+            background: #ffffff;
+            padding: .8rem;
+            color: #475569;
+            font-size: .86rem;
+            line-height: 1.55;
+        }
+
+        .discard-item strong {
+            display: block;
+            color: #9f1239;
+            margin-bottom: .22rem;
+        }
+
+        .low-signal {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 1rem;
+        }
+
+        .low-signal h4 {
+            color: #0f172a;
+            font-size: 1.2rem;
+            font-weight: 950;
+        }
+
+        .low-signal p {
+            color: #64748b;
+            line-height: 1.65;
+            margin-top: .45rem;
+        }
+
+        .next-question-list {
+            display: grid;
+            gap: .6rem;
+            margin-top: 1rem;
+        }
+
+        .next-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #334155;
+            padding: .75rem .85rem;
+            text-align: left;
+            font-weight: 800;
+        }
+
+        .hidden { display: none !important; }
+
         @media print {
-            .no-print, header, footer { display: none !important; }
-            body { background: white; }
-            .studio-shell { box-shadow: none; border: 0; padding: 0; }
-            .spark-bundle { break-inside: avoid; box-shadow: none; }
+            .site-header, .hero-band, .move-rail, .footer-actions, .studio-top .save-pill, .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: #ffffff;
+            }
+
+            .studio-band {
+                padding: 0;
+            }
+
+            .studio-shell {
+                border: 0;
+                box-shadow: none;
+            }
+
+            .studio-body {
+                padding: 0;
+            }
+
+            .idea-card, .discard-panel, .reveal-header {
+                break-inside: avoid;
+                box-shadow: none;
+            }
         }
     </style>
 </head>
-<body class="bg-white text-[#1f2937]">
+<body>
 
-
-<!-- ════════════════════════════════════════════════════════════
-     TOP NAV
-     ════════════════════════════════════════════════════════════ -->
-<header class="bg-[#3b82f6] text-white py-4">
-    <div class="container mx-auto px-4">
-        <a href="/"
-           class="inline-flex items-center text-xl font-bold tracking-wide hover:opacity-90 transition">
-            <i class="fa-solid fa-arrow-left mr-2 text-sm opacity-80"></i>EduFinder
+<header class="site-header no-print">
+    <div class="max-w-6xl mx-auto px-4">
+        <a href="/" class="nav-link">
+            <i class="fa-solid fa-arrow-left text-sm text-blue-600"></i>
+            EduFinder
         </a>
     </div>
 </header>
 
-
-<!-- ════════════════════════════════════════════════════════════
-     HERO
-     ════════════════════════════════════════════════════════════ -->
-<section class="bg-[#3b82f6] text-white py-16 md:py-24">
-    <div class="container mx-auto px-4 text-center max-w-4xl">
-        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-44 md:w-56 mb-6">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-tight">
-            The Genius! Editor
-        </h1>
-        <p class="text-blue-50 text-lg md:text-xl font-light max-w-xl mx-auto mb-12 leading-relaxed">
-            The questions that surface the sentence only you can write.
-        </p>
-
-        <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
-            <div class="stat-card">
-                <div class="stat-number" data-target="9">0</div>
-                <div class="stat-unit">themed rooms</div>
-                <div class="stat-label">memory · fear · voice</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" data-target="44">0</div>
-                <div class="stat-unit">deep prompts</div>
-                <div class="stat-label">hand-tuned, not generated</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" data-target="1">0</div>
-                <div class="stat-unit">spark sheet</div>
-                <div class="stat-label">essay-ready</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<main class="container mx-auto px-4 py-16 md:py-24 max-w-4xl">
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION 1: What it does
-         ════════════════════════════════════════════════════════ -->
-    <section class="mb-20 md:mb-24 fade-up">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
-            Numbers say where you stand. Words say who you are.
-        </h2>
-        <p class="text-gray-500 text-base md:text-lg mb-10 max-w-2xl leading-relaxed">
-            Forty-four prompts that walk past prepared answers — to the line only you can write.
-        </p>
-
-        <div class="grid md:grid-cols-3 gap-5">
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
-                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
-                    <i class="fa-solid fa-pen-nib text-base"></i>
-                </div>
-                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">When the page is blank</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">Forty-four questions in nine rooms — designed to startle out a memory worth keeping.</p>
-            </div>
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
-                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
-                    <i class="fa-solid fa-bolt text-base"></i>
-                </div>
-                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">When the draft sounds polite</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">Pries off the rehearsed answer and asks what you would say at 4 a.m. instead.</p>
-            </div>
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
-                <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
-                    <i class="fa-solid fa-bullseye text-base"></i>
-                </div>
-                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">When "Why X" sounds like every "Why X"</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">A school-specific room sharpens the supplement that makes a reader stop scrolling.</p>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION 2: Process
-         ════════════════════════════════════════════════════════ -->
-    <section class="mb-20 md:mb-24 fade-up">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-10 tracking-tight">
-            Four moves. One first sentence.
-        </h2>
-
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 md:p-10">
-            <div class="relative flex gap-5 items-start pb-8">
-                <div class="step-line"></div>
-                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">1</span>
-                <div class="pt-1.5">
-                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Walk the nine rooms.</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed">Memory, identity, fear, the people you carry, bold dreams.</p>
+<main>
+    <section class="hero-band no-print">
+        <div class="hero-grid max-w-6xl mx-auto">
+            <div>
+                <img src="EduFinder.svg" alt="EduFinder by Waystar" class="brand-mark">
+                <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i>Discovery Engine V2</span>
+                <h1 class="hero-title">The Genius! Editor</h1>
+                <p class="hero-copy">
+                    Answer small questions that do not feel like a performance. At the end, the editor shows what your answers kept pointing toward.
+                </p>
+                <div class="hero-actions" aria-label="Editor traits">
+                    <span class="hero-chip"><i class="fa-regular fa-floppy-disk text-blue-600"></i>Saved locally</span>
+                    <span class="hero-chip"><i class="fa-solid fa-user-shield text-teal-600"></i>No upload</span>
+                    <span class="hero-chip"><i class="fa-solid fa-list-check text-amber-600"></i>28 quick signals</span>
                 </div>
             </div>
-            <div class="relative flex gap-5 items-start pb-8">
-                <div class="step-line"></div>
-                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">2</span>
-                <div class="pt-1.5">
-                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Write fragments, not paragraphs.</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed">Two sentences. A list. An image. Saved on your device only.</p>
-                </div>
-            </div>
-            <div class="relative flex gap-5 items-start pb-8">
-                <div class="step-line"></div>
-                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">3</span>
-                <div class="pt-1.5">
-                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Read your spark sheet.</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed">Every fragment, grouped by room. Print it. Bring it to your draft.</p>
-                </div>
-            </div>
-            <div class="relative flex gap-5 items-start">
-                <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">4</span>
-                <div class="pt-1.5">
-                    <h3 class="text-base font-bold text-[#1f2937] mb-1">Map sparks to prompts.</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed">A short guide on which fragments feed Common App #1–#7 and the most common supplements.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-
-    <!-- ════════════════════════════════════════════════════════
-         SECTION 3: The Studio (interactive editor)
-         ════════════════════════════════════════════════════════ -->
-    <section id="studio" class="fade-up">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
-            The Studio.
-        </h2>
-        <p class="text-gray-500 text-base md:text-lg mb-10 max-w-2xl leading-relaxed">
-            Free to use. Saved on this device. No account, no upload, no email.
-        </p>
-
-        <div class="studio-shell no-print">
-
-            <div class="flex items-center justify-between gap-3 flex-wrap">
-                <div>
-                    <p id="studio-step-counter" class="text-xs font-bold text-[#3b82f6] uppercase tracking-wide">Room 1 of 11</p>
-                    <h3 id="studio-step-title" class="text-lg font-bold text-gray-900">Welcome</h3>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span id="studio-save-pill" class="save-pill is-idle">
-                        <i class="fa-regular fa-floppy-disk text-[11px]"></i>
-                        <span>Drafted locally</span>
-                    </span>
-                    <div class="w-32 md:w-44 studio-progress-track" aria-hidden="true">
-                        <div id="studio-progress-fill" class="studio-progress-fill"></div>
+            <aside class="signal-panel" aria-label="How the editor works">
+                <div class="signal-row">
+                    <span class="signal-icon"><i class="fa-solid fa-location-dot"></i></span>
+                    <div>
+                        <p class="signal-title">Tiny answers first</p>
+                        <p class="signal-copy">Places, objects, irritations, compliments, questions, and future snapshots.</p>
                     </div>
                 </div>
+                <div class="signal-row">
+                    <span class="signal-icon"><i class="fa-solid fa-diagram-project"></i></span>
+                    <div>
+                        <p class="signal-title">Hidden patterning</p>
+                        <p class="signal-copy">Each answer quietly feeds motifs, tensions, values, voice, risk, and direction.</p>
+                    </div>
+                </div>
+                <div class="signal-row">
+                    <span class="signal-icon"><i class="fa-solid fa-lightbulb"></i></span>
+                    <div>
+                        <p class="signal-title">A final idea board</p>
+                        <p class="signal-copy">Only the reveal names the possible writing angles and the generic ones to avoid.</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <section id="studio" class="studio-band">
+        <div class="studio-shell">
+            <div class="studio-top">
+                <div>
+                    <p id="step-label" class="step-label">Move 1 of 7</p>
+                    <h2 id="step-title" class="step-title">Trace the places you return to</h2>
+                    <div class="progress-track" aria-hidden="true">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+                <span id="save-pill" class="save-pill">
+                    <i class="fa-regular fa-floppy-disk"></i>
+                    <span>Drafted locally</span>
+                </span>
             </div>
 
-            <div id="studio-step-rail" class="step-rail" aria-label="Studio rooms"></div>
+            <div id="move-rail" class="move-rail no-print" aria-label="Discovery moves"></div>
 
-            <div id="studio-steps" class="mt-6"></div>
+            <div id="studio-body" class="studio-body" aria-live="polite"></div>
 
-            <div class="studio-step-footer">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button id="studio-reset-btn" type="button" class="studio-btn studio-btn-danger">
+            <div class="footer-actions no-print">
+                <div class="btn-row">
+                    <button id="reset-btn" type="button" class="studio-btn btn-danger">
                         <i class="fa-regular fa-trash-can text-xs"></i>Reset
                     </button>
-                    <button id="studio-print-btn" type="button" class="studio-btn studio-btn-ghost hidden">
-                        <i class="fa-solid fa-print text-xs"></i>Print spark sheet
+                    <button id="print-btn" type="button" class="studio-btn btn-ghost hidden">
+                        <i class="fa-solid fa-print text-xs"></i>Print board
                     </button>
                 </div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button id="studio-back-btn" type="button" class="studio-btn studio-btn-secondary">
+                <div class="btn-row">
+                    <button id="back-btn" type="button" class="studio-btn btn-secondary">
                         <i class="fa-solid fa-arrow-left text-xs"></i>Back
                     </button>
-                    <button id="studio-next-btn" type="button" class="studio-btn studio-btn-primary">
+                    <button id="skip-btn" type="button" class="studio-btn btn-ghost">
+                        Skip
+                    </button>
+                    <button id="next-btn" type="button" class="studio-btn btn-primary">
                         Continue<i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
                 </div>
             </div>
         </div>
     </section>
-
 </main>
 
-
-<!-- ════════════════════════════════════════════════════════════
-     FOOTER (matches main site)
-     ════════════════════════════════════════════════════════════ -->
-<footer class="bg-[#1f2937] text-white text-center py-6">
+<footer class="bg-[#172033] text-white text-center py-6 no-print">
     <p>&copy; 2026 EduFinder by Waystar</p>
 </footer>
 
-
 <script>
-// ── Animated counters in hero ──────────────────────────────────────
-function animateCounters() {
-    document.querySelectorAll('.stat-number[data-target]').forEach(el => {
-        const target = parseInt(el.dataset.target);
-        const duration = 1600;
-        const start = performance.now();
-        function tick(now) {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3);
-            el.textContent = Math.round(target * ease).toLocaleString('en-US');
-            if (progress < 1) requestAnimationFrame(tick);
-            else el.textContent = target.toLocaleString('en-US') + (el.dataset.suffix || '');
-        }
-        requestAnimationFrame(tick);
-    });
-}
+const STORAGE_KEY = 'genius-discovery-draft.v2';
+const MIN_SIGNAL_COUNT = 8;
 
-const fadeObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            fadeObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.12 });
+const MOVES = [
+    { id: 'trace', title: 'Trace', label: 'Places' },
+    { id: 'taste', title: 'Taste', label: 'Energy' },
+    { id: 'friction', title: 'Friction', label: 'Irritations' },
+    { id: 'mirrors', title: 'Mirrors', label: 'People' },
+    { id: 'pressure', title: 'Pressure', label: 'Risk' },
+    { id: 'questions', title: 'Questions', label: 'Curiosity' },
+    { id: 'direction', title: 'Direction', label: 'Future' },
+];
 
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(animateCounters, 400);
-    document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
-});
-</script>
+const DIMENSIONS = {
+    motif: 'Motif',
+    tension: 'Tension',
+    value: 'Value',
+    agency: 'Agency',
+    relationship: 'Relationship',
+    intellectual_pattern: 'Question Pattern',
+    risk: 'Risk',
+    voice: 'Voice',
+    setting: 'Setting',
+    future_direction: 'Direction',
+};
 
-
-<script>
-// ── The 9 themed rooms + welcome + summary = 11 steps ─────────────────
-const STUDIO_STEPS = [
+const QUESTIONS = [
     {
-        id: 'welcome',
-        kind: 'welcome',
-        kicker: 'Before you begin',
-        title: 'Welcome to the Editor',
-        blurb: 'Nine rooms. Forty-four questions. The goal is not a finished essay — it is the fragments your essay will be built from. Take your time. Skip what you must. We collect your sparks at the end.',
-    },
-    {
-        id: 'first-sparks',
-        kind: 'questions',
-        kicker: 'Room 1',
-        title: 'The first sparks',
-        blurb: 'Earliest images, oldest selves, the rooms you can still draw blindfolded.',
-        prompts: [
-            "What is the earliest memory you can place inside a specific room — and what color was the light?",
-            "Describe a smell from your childhood that, even now, can stop you mid-sentence.",
-            "Tell us about a small object you have carried for years — and what it is actually a monument to.",
-            "What did you believe at nine years old that, against your better judgment, you still believe?",
-            "Describe the moment you first realized adults could be wrong.",
+        id: 'recurring_place',
+        move: 'trace',
+        type: 'choice',
+        prompt: 'Where do you keep returning without being asked?',
+        hint: 'Pick the closest place. It can be physical or digital.',
+        dimensions: { setting: 2, motif: 1 },
+        options: [
+            { value: 'desk', label: 'A desk, table, or corner', dimensions: { setting: 2, intellectual_pattern: 1 } },
+            { value: 'threshold', label: 'A hallway, stairwell, or doorway', dimensions: { setting: 2, tension: 1 } },
+            { value: 'practice_space', label: 'A field, court, studio, or lab', dimensions: { setting: 2, agency: 1 } },
+            { value: 'moving_seat', label: 'A bus, train, car, or walk', dimensions: { setting: 2, voice: 1 } },
+            { value: 'working_place', label: 'A kitchen, store, cafe, or office', dimensions: { setting: 2, relationship: 1 } },
+            { value: 'online_room', label: 'A forum, game, playlist, or tab', dimensions: { setting: 1, intellectual_pattern: 1 } },
         ],
     },
     {
-        id: 'shape-of-you',
-        kind: 'questions',
-        kicker: 'Room 2',
-        title: 'The shape of you',
-        blurb: 'Identity is rarely tidy. Pull on the contradictions and see what gives.',
-        prompts: [
-            "What is a contradiction inside you that you have stopped trying to resolve?",
-            "Who are you when no adult is watching?",
-            "Tell us about a version of yourself you outgrew — and what you privately miss about him or her.",
-            "What is a label other people use about you that fits poorly — and what would fit better?",
-            "Describe a recurring image in your daydreams. Don't explain it. Just paint it.",
+        id: 'place_detail',
+        move: 'trace',
+        type: 'memory',
+        prompt: 'What is one detail from that place that nobody else would mention first?',
+        hint: 'A sound, light, smell, crack in the wall, loading screen, or repeated gesture is enough.',
+        placeholder: 'The fluorescent light over the last desk buzzes when the room gets quiet.',
+        dimensions: { setting: 2, motif: 1, voice: 1 },
+    },
+    {
+        id: 'kept_object',
+        move: 'trace',
+        type: 'text',
+        prompt: 'Name a small object you have kept longer than makes sense.',
+        hint: 'Do not explain the whole story yet. Just name it and say why it stayed.',
+        placeholder: 'A bent debate timer because it still feels like the first room where I sounded brave.',
+        dimensions: { motif: 2, relationship: 1, value: 1 },
+    },
+    {
+        id: 'tiny_notices',
+        move: 'trace',
+        type: 'multi',
+        prompt: 'Which tiny things do you notice before other people do?',
+        hint: 'Choose up to three.',
+        max: 3,
+        dimensions: { motif: 1, voice: 1 },
+        options: [
+            { value: 'tone', label: 'Tone shifts', dimensions: { relationship: 1, voice: 1 } },
+            { value: 'numbers', label: 'Patterns or numbers', dimensions: { intellectual_pattern: 2 } },
+            { value: 'rooms', label: 'How rooms are arranged', dimensions: { setting: 2 } },
+            { value: 'outsider', label: 'Who is left out', dimensions: { relationship: 2, value: 1 } },
+            { value: 'systems', label: 'Broken systems', dimensions: { tension: 2, agency: 1 } },
+            { value: 'phrases', label: 'Beautiful phrases', dimensions: { voice: 2 } },
+            { value: 'materials', label: 'Tools or materials', dimensions: { agency: 1, motif: 1 } },
+            { value: 'odd_facts', label: 'Odd facts', dimensions: { intellectual_pattern: 1, voice: 1 } },
         ],
     },
     {
-        id: 'what-lights-you-up',
-        kind: 'questions',
-        kicker: 'Room 3',
-        title: 'What lights you up',
-        blurb: 'Not what you put on a résumé. What you would defend at length to a stranger on a train.',
-        prompts: [
-            "Pick a thing — a song, a problem, a sport, a kind of weather — that you would defend for an hour against a stranger. Why?",
-            "If your obsession had a smell, a temperature, and a soundtrack, what would they be?",
-            "What is a topic you can talk about until the room empties and you don't notice?",
-            "Describe the most beautiful sentence (or equation, or chord, or play) you have ever encountered.",
-            "What is the strangest thing that has ever made you cry — happy tears or otherwise?",
+        id: 'defend_too_long',
+        move: 'taste',
+        type: 'choice',
+        prompt: 'Which thing could you defend for too long?',
+        hint: 'This is not about being impressive. It is about where your energy leaks out.',
+        dimensions: { value: 1, voice: 1 },
+        options: [
+            { value: 'art', label: 'A song, book, film, or line', dimensions: { voice: 2, motif: 1 } },
+            { value: 'problem', label: 'A theorem, problem, or puzzle', dimensions: { intellectual_pattern: 2 } },
+            { value: 'move', label: 'A sport move, tactic, or routine', dimensions: { agency: 2, risk: 1 } },
+            { value: 'place', label: 'A neighborhood, route, or place', dimensions: { setting: 2, relationship: 1 } },
+            { value: 'opinion', label: 'A controversial opinion', dimensions: { tension: 2, voice: 1 } },
+            { value: 'craft', label: 'A craft, tool, or method', dimensions: { agency: 2, intellectual_pattern: 1 } },
         ],
     },
     {
-        id: 'dark-room',
-        kind: 'questions',
-        kicker: 'Room 4',
-        title: 'The dark room',
-        blurb: 'The bravest essays admit something. Write the thing first; decide whether to keep it later.',
-        prompts: [
-            "Describe a 4 a.m. moment — yours alone, no one else watching.",
-            "What is the most beautiful thing you have ever ruined?",
-            "Tell us about a fight you walked away from. Then tell us about the you who didn't.",
-            "What is a sentence you would be afraid to write down — and why?",
-            "Describe the smallest failure that taught you the largest thing.",
+        id: 'group_role',
+        move: 'taste',
+        type: 'choice',
+        prompt: 'When a group is confused, what do you usually do first?',
+        hint: 'Choose what you actually do, not what sounds best.',
+        dimensions: { agency: 1, relationship: 1 },
+        options: [
+            { value: 'quiet_question', label: 'Ask the quiet question', dimensions: { intellectual_pattern: 1, voice: 1 } },
+            { value: 'draw_map', label: 'Draw a map or list', dimensions: { agency: 2, setting: 1 } },
+            { value: 'prototype', label: 'Try a small test', dimensions: { agency: 2, risk: 1 } },
+            { value: 'joke', label: 'Make people breathe first', dimensions: { relationship: 2, voice: 1 } },
+            { value: 'outsider', label: 'Find the ignored person', dimensions: { relationship: 2, value: 1 } },
+            { value: 'record', label: 'Take notes until the pattern appears', dimensions: { intellectual_pattern: 2 } },
         ],
     },
     {
-        id: 'people-you-carry',
-        kind: 'questions',
-        kicker: 'Room 5',
-        title: 'People you carry',
-        blurb: 'Mothers, strangers, ghosts, the kid two grades above you. List the voices, then pick one.',
-        prompts: [
-            "Whose voice do you hear when you are alone and trying to be brave?",
-            "Tell us about an unlikely teacher — someone the system would not credit, but who shaped you.",
-            "Whose absence taught you more than any presence ever could have?",
-            "Describe a stranger you cannot forget.",
-            "Whose handwriting do you imitate without meaning to?",
+        id: 'energy_rank',
+        move: 'taste',
+        type: 'rank',
+        prompt: 'Rank the three that give you the most energy.',
+        hint: 'Click in order: first, second, third. Click again to remove one.',
+        max: 3,
+        dimensions: { value: 1 },
+        options: [
+            { value: 'solving', label: 'Solving', dimensions: { intellectual_pattern: 2 } },
+            { value: 'building', label: 'Building', dimensions: { agency: 2 } },
+            { value: 'performing', label: 'Performing', dimensions: { voice: 2, risk: 1 } },
+            { value: 'arguing', label: 'Arguing', dimensions: { tension: 1, voice: 2 } },
+            { value: 'caring', label: 'Caring', dimensions: { relationship: 2, value: 1 } },
+            { value: 'observing', label: 'Observing', dimensions: { setting: 1, intellectual_pattern: 1 } },
+            { value: 'organizing', label: 'Organizing', dimensions: { agency: 2, relationship: 1 } },
+            { value: 'researching', label: 'Researching', dimensions: { intellectual_pattern: 2 } },
         ],
     },
     {
-        id: 'wild-questions',
-        kind: 'questions',
-        kicker: 'Room 6',
-        title: 'Wild questions',
-        blurb: 'The intellectual questions that have no business living rent-free in your head, but do.',
-        prompts: [
-            "What is a question you have been afraid to ask out loud — even of yourself?",
-            "If you had a year to study one tiny, useless-sounding question, what would it be?",
-            "Describe a moment where two ideas collided in your head and made something neither one could have made alone.",
-            "What do you think about in the shower that you would never bring up at dinner?",
-            "What is a field, a discipline, or a craft that you have no business loving — but love anyway?",
+        id: 'repeated_compliment',
+        move: 'taste',
+        type: 'choice',
+        prompt: 'What compliment do people repeat that you only half-believe?',
+        hint: 'The half-belief matters. It often points to a tension.',
+        dimensions: { voice: 1, tension: 1 },
+        options: [
+            { value: 'calm', label: 'Calm', dimensions: { risk: 1, relationship: 1 } },
+            { value: 'intense', label: 'Intense', dimensions: { value: 1, voice: 1 } },
+            { value: 'creative', label: 'Creative', dimensions: { voice: 1, motif: 1 } },
+            { value: 'responsible', label: 'Responsible', dimensions: { agency: 1, relationship: 1 } },
+            { value: 'funny', label: 'Funny', dimensions: { voice: 2, relationship: 1 } },
+            { value: 'precise', label: 'Precise', dimensions: { intellectual_pattern: 1, value: 1 } },
+            { value: 'kind', label: 'Kind', dimensions: { relationship: 2 } },
+            { value: 'independent', label: 'Independent', dimensions: { agency: 1, risk: 1 } },
         ],
     },
     {
-        id: 'bold-dreams',
-        kind: 'questions',
-        kicker: 'Room 7',
-        title: 'Bold dreams',
-        blurb: 'No safety net. Tell us the version where everything quietly works.',
-        prompts: [
-            "If everything broke your way for the next ten years, where would I find you on a Tuesday morning?",
-            "What is a rule of the world you would quietly like to break?",
-            "If you had infinite money and one year, what would you build, write, or fix first?",
-            "Describe the future newspaper headline you would be most proud to be a footnote in.",
-            "What does your future self want you to stop being so polite about?",
+        id: 'unfair_rule',
+        move: 'friction',
+        type: 'choice',
+        prompt: 'Which rule bothers you most?',
+        hint: 'Not a school rule necessarily. A rule of rooms, groups, families, or systems.',
+        dimensions: { tension: 2, value: 1 },
+        options: [
+            { value: 'no_why', label: 'No one explains why', dimensions: { intellectual_pattern: 1, tension: 2 } },
+            { value: 'speed_over_care', label: 'Speed matters more than care', dimensions: { value: 2, tension: 1 } },
+            { value: 'loudest_wins', label: 'The loudest person wins', dimensions: { relationship: 1, tension: 2 } },
+            { value: 'ugly_design', label: 'People accept ugly design', dimensions: { motif: 1, agency: 1 } },
+            { value: 'impressive_only', label: 'Success has to look impressive', dimensions: { tension: 2, voice: 1 } },
+            { value: 'hide_mistakes', label: 'Mistakes are hidden', dimensions: { risk: 2, value: 1 } },
         ],
     },
     {
-        id: 'school-specific',
-        kind: 'questions',
-        kicker: 'Room 8',
-        title: 'The school-specific lens',
-        blurb: 'These four answers are the seed of every "Why X," "Why this major," and "Why this community" supplement. Pick one school you love and answer for that school first.',
-        prompts: [
-            "Pick one school on your list. What is the one course, professor, library, or lab you have already imagined yourself inside? Be specific — name names.",
-            "For that same school, what is the conversation you are hoping to be in the middle of, two years from now?",
-            "What is a club, journal, lab, or tradition at that school where you would happily be the most clueless person in the room — at first?",
-            "What can you bring to that campus that, if you didn't show up, would simply not be there?",
-            "What is the first question you would ask in office hours your first week?",
+        id: 'tiny_fix',
+        move: 'friction',
+        type: 'text',
+        prompt: 'What is one tiny thing you would fix if nobody asked for permission?',
+        hint: 'A process, layout, habit, phrase, form, rule, routine, or missing explanation.',
+        placeholder: 'I would rewrite the club sign-up form so new students can tell what each club actually does.',
+        dimensions: { agency: 2, future_direction: 1, tension: 1 },
+    },
+    {
+        id: 'daily_irritation',
+        move: 'friction',
+        type: 'choice',
+        prompt: 'What tiny irritation follows you around?',
+        hint: 'The small irritation is often more useful than the dramatic problem.',
+        dimensions: { tension: 1, value: 1 },
+        options: [
+            { value: 'wasted_time', label: 'Wasted time', dimensions: { agency: 1, value: 1 } },
+            { value: 'vague_instructions', label: 'Vague instructions', dimensions: { intellectual_pattern: 1, tension: 1 } },
+            { value: 'fake_kindness', label: 'Performative kindness', dimensions: { relationship: 1, voice: 1 } },
+            { value: 'messy_data', label: 'Messy data', dimensions: { intellectual_pattern: 2 } },
+            { value: 'unasked_questions', label: 'Unasked questions', dimensions: { intellectual_pattern: 1, risk: 1 } },
+            { value: 'pretending', label: 'People pretending not to care', dimensions: { tension: 1, relationship: 1 } },
         ],
     },
     {
-        id: 'voice-and-form',
-        kind: 'questions',
-        kicker: 'Room 9',
-        title: 'Voice and form',
-        blurb: 'Last room. How will this story sound? Who is it for? What is the sentence you want left ringing?',
-        prompts: [
-            "If you wrote your essay as a letter, who would you address it to?",
-            "What is a word you love that you have never gotten to use in school writing?",
-            "Should your story be told in sound, in image, in memory, in argument, or in confession? Pick one — defend it in a sentence.",
-            "What is the one line of this essay that, when read aloud, you want to make the room go quiet?",
+        id: 'refusal_sentence',
+        move: 'friction',
+        type: 'choice',
+        prompt: 'Which sentence sounds more like you?',
+        hint: 'No need to overthink it.',
+        dimensions: { voice: 1, value: 1 },
+        options: [
+            { value: 'understand_before_obey', label: 'I need to understand before I obey.', dimensions: { intellectual_pattern: 1, tension: 1 } },
+            { value: 'try_before_understand', label: 'I need to try before I understand.', dimensions: { agency: 1, risk: 1 } },
+            { value: 'care_before_speed', label: 'I care more when people slow down.', dimensions: { relationship: 1, value: 1 } },
+            { value: 'joke_before_truth', label: 'I joke before I tell the truth.', dimensions: { voice: 2, risk: 1 } },
         ],
     },
     {
-        id: 'spark-sheet',
-        kind: 'summary',
-        kicker: 'Spark sheet',
-        title: 'Your sparks, collected',
-        blurb: 'Below is everything you wrote, grouped by room. Print it, copy it, or come back tomorrow and add more.',
+        id: 'bad_label',
+        move: 'mirrors',
+        type: 'text',
+        prompt: 'What label fits you badly?',
+        hint: 'Write the label and the replacement you would choose.',
+        placeholder: 'People call me quiet, but accurate would be delayed.',
+        dimensions: { tension: 2, voice: 1 },
+    },
+    {
+        id: 'imitated_person',
+        move: 'mirrors',
+        type: 'text',
+        prompt: 'Whose way of speaking, moving, or thinking have you accidentally copied?',
+        hint: 'A family member, teacher, teammate, creator, rival, or younger student counts.',
+        placeholder: "My grandmother's habit of checking whether everyone has eaten before she sits down.",
+        dimensions: { relationship: 2, motif: 1, voice: 1 },
+    },
+    {
+        id: 'envy_signal',
+        move: 'mirrors',
+        type: 'choice',
+        prompt: 'When you envy someone, what are you usually envying?',
+        hint: 'Envy is useful data when it is read honestly.',
+        dimensions: { value: 2, tension: 1 },
+        options: [
+            { value: 'freedom', label: 'Their freedom', dimensions: { future_direction: 1, risk: 1 } },
+            { value: 'ease_people', label: 'Their ease with people', dimensions: { relationship: 2 } },
+            { value: 'technical_skill', label: 'Their technical skill', dimensions: { agency: 1, intellectual_pattern: 1 } },
+            { value: 'certainty', label: 'Their certainty', dimensions: { tension: 1, future_direction: 1 } },
+            { value: 'courage', label: 'Their courage', dimensions: { risk: 2 } },
+            { value: 'taste', label: 'Their taste', dimensions: { voice: 1, motif: 1 } },
+            { value: 'patience', label: 'Their patience', dimensions: { value: 1, relationship: 1 } },
+            { value: 'audience', label: 'Their audience', dimensions: { voice: 1, future_direction: 1 } },
+        ],
+    },
+    {
+        id: 'private_voice',
+        move: 'mirrors',
+        type: 'choice',
+        prompt: 'Who hears the truest version of your voice?',
+        hint: 'Pick the closest answer, even if it is imperfect.',
+        dimensions: { relationship: 1, voice: 1 },
+        options: [
+            { value: 'sibling', label: 'A sibling or cousin', dimensions: { relationship: 2 } },
+            { value: 'friend', label: 'One specific friend', dimensions: { relationship: 2, voice: 1 } },
+            { value: 'teacher', label: 'A teacher or coach', dimensions: { relationship: 1, agency: 1 } },
+            { value: 'online', label: 'People online', dimensions: { voice: 1, setting: 1 } },
+            { value: 'no_one', label: 'Almost no one', dimensions: { risk: 1, tension: 1 } },
+            { value: 'future_self', label: 'Future me, somehow', dimensions: { future_direction: 1, voice: 1 } },
+        ],
+    },
+    {
+        id: 'small_failure',
+        move: 'pressure',
+        type: 'memory',
+        prompt: 'Name a small failure that still bothers you more than it should.',
+        hint: 'Small is better here. A missed text, bad question, awkward silence, or broken promise can carry more signal.',
+        placeholder: 'I forgot to check on the new student after saying I would.',
+        dimensions: { risk: 2, tension: 1, value: 1 },
+    },
+    {
+        id: 'go_quiet',
+        move: 'pressure',
+        type: 'text',
+        prompt: 'When do you go quiet, even if you have something to say?',
+        hint: 'The answer can be a situation, person, room, or type of conversation.',
+        placeholder: 'When someone older sounds certain but I can see the numbers do not support it.',
+        dimensions: { risk: 2, voice: 1, tension: 1 },
+    },
+    {
+        id: 'hard_bravery',
+        move: 'pressure',
+        type: 'choice',
+        prompt: 'What kind of bravery is hardest for you?',
+        hint: 'The useful answer is usually the uncomfortable one.',
+        dimensions: { risk: 2, value: 1 },
+        options: [
+            { value: 'ask_help', label: 'Asking for help', dimensions: { relationship: 1, risk: 1 } },
+            { value: 'be_ordinary', label: 'Being ordinary', dimensions: { tension: 1, voice: 1 } },
+            { value: 'go_first', label: 'Going first', dimensions: { agency: 1, risk: 1 } },
+            { value: 'slow_down', label: 'Slowing down', dimensions: { value: 1, risk: 1 } },
+            { value: 'admit_caring', label: 'Admitting I care', dimensions: { voice: 1, risk: 1 } },
+            { value: 'change_mind', label: 'Changing my mind in public', dimensions: { intellectual_pattern: 1, risk: 1 } },
+        ],
+    },
+    {
+        id: 'decision_style',
+        move: 'pressure',
+        type: 'choice',
+        prompt: 'Under pressure, what do you trust first?',
+        hint: 'This is about instinct, not ideal strategy.',
+        dimensions: { agency: 1, risk: 1 },
+        options: [
+            { value: 'data', label: 'The data', dimensions: { intellectual_pattern: 2 } },
+            { value: 'body', label: 'My body reaction', dimensions: { voice: 1, risk: 1 } },
+            { value: 'person', label: 'The person who will be affected', dimensions: { relationship: 2 } },
+            { value: 'prototype', label: 'A quick test', dimensions: { agency: 2 } },
+            { value: 'memory', label: 'A memory of last time', dimensions: { motif: 1, value: 1 } },
+            { value: 'silence', label: 'Silence before deciding', dimensions: { voice: 1, intellectual_pattern: 1 } },
+        ],
+    },
+    {
+        id: 'private_question',
+        move: 'questions',
+        type: 'text',
+        prompt: 'What question keeps returning when you are walking, waiting, or showering?',
+        hint: 'It does not need to sound academic. Strange questions are usually stronger.',
+        placeholder: 'Why do people trust a map more when it has fewer details?',
+        dimensions: { intellectual_pattern: 3, voice: 1 },
+    },
+    {
+        id: 'tiny_study',
+        move: 'questions',
+        type: 'text',
+        prompt: 'If you had one year to study a tiny question, what would it be?',
+        hint: 'Tiny means narrow enough that someone else might laugh before they understand.',
+        placeholder: 'How convenience stores decide which snacks go at eye level near schools.',
+        dimensions: { intellectual_pattern: 2, motif: 1, future_direction: 1 },
+    },
+    {
+        id: 'world_collision',
+        move: 'questions',
+        type: 'multi',
+        prompt: 'Which two worlds keep colliding in your head?',
+        hint: 'Choose one or two collisions.',
+        max: 2,
+        dimensions: { intellectual_pattern: 1, tension: 1 },
+        options: [
+            { value: 'science_art', label: 'Science and art', dimensions: { intellectual_pattern: 1, voice: 1 } },
+            { value: 'money_family', label: 'Money and family', dimensions: { relationship: 1, tension: 1 } },
+            { value: 'language_music', label: 'Language and music', dimensions: { voice: 2 } },
+            { value: 'sports_math', label: 'Sports and math', dimensions: { agency: 1, intellectual_pattern: 1 } },
+            { value: 'faith_doubt', label: 'Faith and doubt', dimensions: { tension: 2, risk: 1 } },
+            { value: 'city_nature', label: 'City and nature', dimensions: { setting: 1, motif: 1 } },
+            { value: 'code_people', label: 'Code and people', dimensions: { intellectual_pattern: 1, relationship: 1 } },
+            { value: 'history_future', label: 'History and future', dimensions: { future_direction: 1, intellectual_pattern: 1 } },
+        ],
+    },
+    {
+        id: 'beginner_room',
+        move: 'questions',
+        type: 'choice',
+        prompt: 'Where would you happily be the least skilled person in the room?',
+        hint: 'The best answer has a little fear in it.',
+        dimensions: { risk: 1, future_direction: 1 },
+        options: [
+            { value: 'lab', label: 'A lab', dimensions: { intellectual_pattern: 2 } },
+            { value: 'newsroom', label: 'A newsroom', dimensions: { voice: 1, agency: 1 } },
+            { value: 'kitchen', label: 'A serious kitchen', dimensions: { motif: 1, agency: 1 } },
+            { value: 'stage', label: 'A stage or rehearsal room', dimensions: { voice: 2, risk: 1 } },
+            { value: 'workshop', label: 'A workshop or studio', dimensions: { agency: 2 } },
+            { value: 'community', label: 'A community meeting', dimensions: { relationship: 2, value: 1 } },
+            { value: 'market', label: 'A trading floor or market', dimensions: { risk: 1, future_direction: 1 } },
+            { value: 'archive', label: 'An archive', dimensions: { intellectual_pattern: 1, setting: 1 } },
+        ],
+    },
+    {
+        id: 'tuesday_future',
+        move: 'direction',
+        type: 'text',
+        prompt: 'Ten years from now on a Tuesday morning, where are you?',
+        hint: 'Make it ordinary and concrete: room, hour, work surface, people nearby.',
+        placeholder: 'At 8:10 a.m., checking a prototype in a clinic hallway before the first patient arrives.',
+        dimensions: { future_direction: 3, setting: 1, agency: 1 },
+    },
+    {
+        id: 'stop_polite',
+        move: 'direction',
+        type: 'text',
+        prompt: 'What should future-you stop being so polite about?',
+        hint: 'This can be a problem, ambition, standard, feeling, or question.',
+        placeholder: 'I should stop pretending I only like design when what I really like is changing how people behave.',
+        dimensions: { future_direction: 2, tension: 1, voice: 1 },
+    },
+    {
+        id: 'story_form',
+        move: 'direction',
+        type: 'choice',
+        prompt: 'Which form fits the story best?',
+        hint: 'Choose the shape that feels natural, even if you will not use it literally.',
+        dimensions: { voice: 2, motif: 1 },
+        options: [
+            { value: 'scene', label: 'A scene', dimensions: { setting: 1, motif: 1 } },
+            { value: 'letter', label: 'A letter', dimensions: { relationship: 1, voice: 1 } },
+            { value: 'argument', label: 'An argument', dimensions: { tension: 1, voice: 1 } },
+            { value: 'confession', label: 'A confession', dimensions: { risk: 2 } },
+            { value: 'investigation', label: 'An investigation', dimensions: { intellectual_pattern: 2 } },
+            { value: 'catalog', label: 'A catalog of small things', dimensions: { motif: 2 } },
+            { value: 'manual', label: 'A manual or recipe', dimensions: { agency: 1, voice: 1 } },
+        ],
+    },
+    {
+        id: 'true_line',
+        move: 'direction',
+        type: 'memory',
+        prompt: 'Write one line that sounds more like you than like school.',
+        hint: 'It can be rough, funny, plain, or strange. Just make it yours.',
+        placeholder: 'I do not trust answers that arrive without fingerprints.',
+        dimensions: { voice: 3, risk: 1 },
     },
 ];
 
-const STORAGE_KEY = 'genius-editor-draft.v1';
-const ESSAY_PROMPT_GUIDE = [
+const IDEA_TEMPLATES = [
     {
-        title: 'Common App essays (~650 words)',
-        items: [
-            { rooms: ['first-sparks', 'shape-of-you', 'people-you-carry'], note: 'Background, identity, story central to who you are — Rooms 1, 2, and 5 most often anchor it.' },
-            { rooms: ['dark-room'], note: 'A challenge, setback, or failure — start with Room 4, especially the smallest failure that taught the largest thing.' },
-            { rooms: ['wild-questions', 'what-lights-you-up'], note: 'A question or idea that engages you — Rooms 3 and 6, particularly the question you have been afraid to ask out loud.' },
-            { rooms: ['shape-of-you', 'people-you-carry', 'bold-dreams'], note: 'A time you accomplished something that prompted growth — pull from contradictions in Room 2, voices in Room 5, or the future-self prompt in Room 7.' },
-            { rooms: ['first-sparks', 'shape-of-you', 'voice-and-form'], note: 'Topic of your choice — when in doubt, start with a memory in Room 1 or a recurring image in Room 2.' },
-        ],
+        id: 'place-map',
+        title: 'The place that trained your attention',
+        weights: { setting: 2.2, motif: 1.4, voice: .8, value: .6 },
+        evidence: ['recurring_place', 'place_detail', 'kept_object', 'tiny_notices', 'story_form'],
+        essayTypes: ['Personal statement', 'Background or identity', 'Topic of choice'],
+        build: (ctx) => {
+            const place = ctx.answer('recurring_place') || 'a place you keep returning to';
+            const detail = ctx.answer('place_detail') || ctx.answer('kept_object') || 'one detail only you would notice';
+            return {
+                core: `A story about how ${lowerFirst(place)} became a private training ground for how you notice, care, and make meaning.`,
+                tension: 'The useful tension is quiet observation versus the moment you finally have to act on what you see.',
+                opening: `Start inside ${lowerFirst(place)}. Let ${lowerFirst(detail)} appear before you explain why it matters.`,
+                distinctive: `This angle is specific because it begins with a real setting and a small object or detail, not a general claim about personality.`,
+            };
+        },
     },
     {
-        title: 'Why X / Why this major / Why this community',
-        items: [
-            { rooms: ['school-specific'], note: 'Every fragment from Room 8 was written for these supplements. Pair the named course/professor with the office-hours question for an opener that does not sound like every other Why X.' },
-            { rooms: ['what-lights-you-up', 'wild-questions'], note: 'Fold in your obsessions and questions from Rooms 3 and 6 to show why this campus is the right place to chase them.' },
-        ],
+        id: 'beautiful-irritation',
+        title: 'The irritation that became a standard',
+        weights: { tension: 2.1, agency: 1.6, value: 1.1, future_direction: .8 },
+        evidence: ['unfair_rule', 'tiny_fix', 'daily_irritation', 'refusal_sentence', 'stop_polite'],
+        essayTypes: ['Challenge or problem', 'Community impact', 'Why this major'],
+        build: (ctx) => {
+            const rule = ctx.answer('unfair_rule') || ctx.answer('daily_irritation') || 'a rule that bothered you';
+            const fix = ctx.answer('tiny_fix') || 'the small fix you imagined';
+            return {
+                core: `A story about the moment ${lowerFirst(rule)} stopped being background noise and became something you wanted to repair.`,
+                tension: 'The force here is not complaint. It is the gap between what everyone tolerates and what you cannot unsee.',
+                opening: `Open with ${lowerFirst(fix)} at the smallest possible scale, then widen the frame.`,
+                distinctive: `This avoids the generic problem-solver angle because the standard comes from a precise irritation only you named.`,
+            };
+        },
     },
     {
-        title: 'Activity essays / leadership / community',
-        items: [
-            { rooms: ['what-lights-you-up', 'people-you-carry', 'dark-room'], note: 'Strong activity essays braid an obsession (Room 3) with a relationship (Room 5) and a moment of strain inside the activity (Room 4).' },
-        ],
+        id: 'private-question',
+        title: 'The private question that keeps reorganizing your world',
+        weights: { intellectual_pattern: 2.3, voice: 1.1, motif: .8, future_direction: .7 },
+        evidence: ['private_question', 'tiny_study', 'world_collision', 'defend_too_long', 'beginner_room'],
+        essayTypes: ['Intellectual curiosity', 'Why this field', 'Supplement short answer'],
+        build: (ctx) => {
+            const question = ctx.answer('private_question') || ctx.answer('tiny_study') || 'a question that keeps returning';
+            const collision = ctx.answer('world_collision') || 'two worlds that keep colliding';
+            return {
+                core: `A story about following ${lowerFirst(question)} until it connects to ${lowerFirst(collision)} in a way that only your path would produce.`,
+                tension: 'The tension is between curiosity as a private habit and curiosity as a public direction.',
+                opening: `Begin with the question itself. Then show the ordinary moment when it first refused to leave.`,
+                distinctive: `It sounds personal because the question is narrow and odd enough to resist becoming a generic academic interest.`,
+            };
+        },
     },
     {
-        title: 'Diversity, identity, or short-answer prompts',
-        items: [
-            { rooms: ['shape-of-you', 'first-sparks', 'voice-and-form'], note: 'Rooms 1, 2, and 9 give you specific images and voice notes — better than any abstract claim about identity.' },
-        ],
+        id: 'borrowed-voice',
+        title: 'The voice you borrowed, then made your own',
+        weights: { relationship: 2.2, voice: 1.3, motif: .8, risk: .7 },
+        evidence: ['imitated_person', 'private_voice', 'repeated_compliment', 'kept_object', 'story_form'],
+        essayTypes: ['Community or family', 'Personal statement', 'Diversity or identity'],
+        build: (ctx) => {
+            const person = ctx.answer('imitated_person') || ctx.answer('private_voice') || 'someone whose voice stayed with you';
+            const reader = ctx.answer('private_voice') || 'the person whose reaction would matter';
+            return {
+                core: `A story about how ${lowerFirst(person)} shaped the way you speak, notice, care, or decide.`,
+                tension: 'The tension is inheritance versus authorship: what you received, what you resisted, and what became yours.',
+                opening: `Start with a copied gesture, phrase, or habit. Let ${lowerFirst(reader)} appear later as the emotional test.`,
+                distinctive: `This angle works when the person is not just admired; they leave fingerprints on your actual behavior.`,
+            };
+        },
+    },
+    {
+        id: 'capable-beginner',
+        title: 'The room where you want to be a beginner',
+        weights: { risk: 1.8, future_direction: 1.7, agency: 1.2, intellectual_pattern: .8 },
+        evidence: ['beginner_room', 'hard_bravery', 'decision_style', 'tuesday_future', 'envy_signal'],
+        essayTypes: ['Growth', 'Leadership or activity', 'Why campus community'],
+        build: (ctx) => {
+            const room = ctx.answer('beginner_room') || 'a room where you would be the least skilled person';
+            const future = ctx.answer('tuesday_future') || 'the ordinary future you pictured';
+            return {
+                core: `A story about choosing ${lowerFirst(room)} because the next version of you needs harder rooms, not louder praise.`,
+                tension: 'The tension is competence versus appetite. You are not proving you are finished; you are proving what you want to become capable of.',
+                opening: `Open at the edge of ${lowerFirst(room)} or in ${lowerFirst(future)}. Let uncertainty be visible.`,
+                distinctive: `This is stronger than a success story because the center is willingness to be unpolished in a meaningful direction.`,
+            };
+        },
+    },
+    {
+        id: 'livable-contradiction',
+        title: 'The contradiction you can live inside',
+        weights: { tension: 1.9, voice: 1.4, value: 1.2, risk: .9 },
+        evidence: ['bad_label', 'repeated_compliment', 'refusal_sentence', 'go_quiet', 'true_line'],
+        essayTypes: ['Identity', 'Personal statement', 'Topic of choice'],
+        build: (ctx) => {
+            const label = ctx.answer('bad_label') || ctx.answer('repeated_compliment') || 'a label that never quite fit';
+            const line = ctx.answer('true_line') || ctx.answer('refusal_sentence') || 'the sentence that sounds like you';
+            return {
+                core: `A story about the gap between ${quoteDetail(label, 'the label that never quite fit')} and the more accurate language you are trying to earn.`,
+                tension: 'The tension is not a problem to solve. It is the pressure that gives the story shape.',
+                opening: `Begin with the wrong label, then interrupt it with ${lowerFirst(line)}.`,
+                distinctive: `It feels personal because it gives the reader your actual language instead of a polished trait summary.`,
+            };
+        },
     },
 ];
 
-let currentStep = 0;
-let saveTimer = null;
+let currentIndex = 0;
 let savePillTimer = null;
 
-function getDraft() {
+function readDraft() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : {};
-    } catch (e) { return {}; }
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (!parsed || parsed.version !== 2) return { version: 2, currentIndex: 0, answers: {} };
+        return {
+            version: 2,
+            currentIndex: Number.isInteger(parsed.currentIndex) ? parsed.currentIndex : 0,
+            answers: parsed.answers && typeof parsed.answers === 'object' ? parsed.answers : {},
+        };
+    } catch (e) {
+        return { version: 2, currentIndex: 0, answers: {} };
+    }
 }
 
-function setDraft(data) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-    catch (e) { /* localStorage unavailable, no-op */ }
+function writeDraft(draft) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            version: 2,
+            currentIndex,
+            answers: draft.answers || {},
+            updatedAt: new Date().toISOString(),
+        }));
+        flashSaved();
+    } catch (e) {
+        /* localStorage unavailable */
+    }
 }
 
 function clearDraft() {
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* no-op */ }
 }
 
-function fieldKey(stepId, idx) { return stepId + '__' + idx; }
+function getDraft() {
+    const draft = readDraft();
+    if (!draft.answers) draft.answers = {};
+    return draft;
+}
 
-function flashSavedPill() {
-    const pill = document.getElementById('studio-save-pill');
+function getQuestion(id) {
+    return QUESTIONS.find(question => question.id === id);
+}
+
+function getOption(question, value) {
+    if (!question || !question.options) return null;
+    return question.options.find(option => option.value === value) || null;
+}
+
+function isAnswered(answer) {
+    if (!answer) return false;
+    if (Array.isArray(answer.value)) return answer.value.length > 0;
+    return String(answer.value || '').trim().length > 0;
+}
+
+function answeredCount() {
+    const answers = getDraft().answers;
+    return QUESTIONS.filter(question => isAnswered(answers[question.id])).length;
+}
+
+function lowerFirst(text) {
+    const clean = String(text || '').trim();
+    if (!clean) return '';
+    if (clean === 'I' || clean.startsWith('I ')) return clean;
+    return clean.charAt(0).toLowerCase() + clean.slice(1);
+}
+
+function quoteDetail(text, fallback) {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    return clean ? '"' + clean + '"' : fallback;
+}
+
+function truncate(text, max) {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    if (clean.length <= max) return clean;
+    return clean.slice(0, max - 1).trim() + '...';
+}
+
+function flashSaved() {
+    const pill = document.getElementById('save-pill');
     if (!pill) return;
-    pill.classList.remove('is-idle');
+    pill.classList.add('is-hot');
     pill.querySelector('span').textContent = 'Saved just now';
     clearTimeout(savePillTimer);
     savePillTimer = setTimeout(() => {
-        pill.classList.add('is-idle');
+        pill.classList.remove('is-hot');
         pill.querySelector('span').textContent = 'Drafted locally';
-    }, 1800);
+    }, 1400);
 }
 
-function scheduleSave() {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-        const draft = getDraft();
-        document.querySelectorAll('.prompt-textarea').forEach(el => {
-            const key = el.dataset.key;
-            if (!key) return;
-            const value = el.value;
-            if (value && value.trim().length) draft[key] = value;
-            else if (key in draft) delete draft[key];
-        });
-        setDraft(draft);
-        flashSavedPill();
-        renderStepRail();
-    }, 350);
+function createAnswer(question, rawValue) {
+    const selectedValues = Array.isArray(rawValue) ? rawValue : [rawValue];
+    const labels = selectedValues.map(value => {
+        const option = getOption(question, value);
+        return option ? option.label : String(value || '').trim();
+    }).filter(Boolean);
+
+    return {
+        questionId: question.id,
+        type: question.type,
+        value: rawValue,
+        labels,
+        updatedAt: new Date().toISOString(),
+    };
+}
+
+function saveAnswer(question, rawValue) {
+    const draft = getDraft();
+    if (Array.isArray(rawValue) ? rawValue.length === 0 : !String(rawValue || '').trim()) {
+        delete draft.answers[question.id];
+    } else {
+        draft.answers[question.id] = createAnswer(question, rawValue);
+    }
+    writeDraft(draft);
+    renderMoveRail();
+}
+
+function answerText(questionId) {
+    const answer = getDraft().answers[questionId];
+    if (!isAnswered(answer)) return '';
+    if (Array.isArray(answer.value)) return answer.labels.join(', ');
+    return answer.labels[0] || String(answer.value || '').trim();
+}
+
+function answerPreview(questionId) {
+    return truncate(answerText(questionId), 120);
 }
 
 function countWords(text) {
-    if (!text) return 0;
-    return text.trim().split(/\s+/).filter(Boolean).length;
+    return String(text || '').trim().split(/\s+/).filter(Boolean).length;
 }
 
-function renderQuestionStep(step, container) {
-    const draft = getDraft();
-    const intro = document.createElement('div');
-    intro.className = 'mb-3';
-    const kicker = document.createElement('span');
-    kicker.className = 'studio-section-kicker';
-    kicker.innerHTML = '<i class="fa-solid fa-door-open text-[10px]"></i>' + step.kicker;
-    const title = document.createElement('h4');
-    title.className = 'studio-section-title';
-    title.textContent = step.title;
-    const blurb = document.createElement('p');
-    blurb.className = 'studio-section-blurb';
-    blurb.textContent = step.blurb;
-    intro.append(kicker, title, blurb);
-    container.appendChild(intro);
-
-    step.prompts.forEach((promptText, idx) => {
-        const card = document.createElement('div');
-        card.className = 'prompt-card';
-
-        const head = document.createElement('p');
-        head.className = 'flex items-start';
-        const num = document.createElement('span');
-        num.className = 'prompt-number';
-        num.textContent = String(idx + 1);
-        const text = document.createElement('span');
-        text.className = 'prompt-text';
-        text.textContent = promptText;
-        head.append(num, text);
-
-        const ta = document.createElement('textarea');
-        ta.className = 'prompt-textarea';
-        ta.placeholder = 'Two sentences are enough. A list works too. Skip if nothing comes.';
-        ta.dataset.key = fieldKey(step.id, idx);
-        ta.value = draft[ta.dataset.key] || '';
-
-        const meta = document.createElement('div');
-        meta.className = 'prompt-meta';
-        const left = document.createElement('span');
-        left.innerHTML = '<i class="fa-regular fa-keyboard mr-1"></i>Saved as you type';
-        const right = document.createElement('span');
-        right.className = 'word-count';
-        right.dataset.for = ta.dataset.key;
-        const initialCount = countWords(ta.value);
-        right.textContent = initialCount + ' words';
-        if (initialCount > 0) {
-            right.classList.add('has-words');
-            card.classList.add('is-touched');
-        }
-        meta.append(left, right);
-
-        ta.addEventListener('input', () => {
-            const c = countWords(ta.value);
-            right.textContent = c + ' words';
-            right.classList.toggle('has-words', c > 0);
-            card.classList.toggle('is-touched', c > 0);
-            scheduleSave();
-        });
-
-        card.append(head, ta, meta);
-        container.appendChild(card);
+function addDimensions(target, source, multiplier) {
+    if (!source) return;
+    Object.entries(source).forEach(([key, value]) => {
+        target[key] = (target[key] || 0) + value * (multiplier || 1);
     });
 }
 
-function renderWelcomeStep(step, container) {
-    const intro = document.createElement('div');
-    const kicker = document.createElement('span');
-    kicker.className = 'studio-section-kicker';
-    kicker.innerHTML = '<i class="fa-solid fa-feather-pointed text-[10px]"></i>' + step.kicker;
-    const title = document.createElement('h4');
-    title.className = 'studio-section-title';
-    title.textContent = step.title;
-    const blurb = document.createElement('p');
-    blurb.className = 'studio-section-blurb';
-    blurb.textContent = step.blurb;
-    intro.append(kicker, title, blurb);
-    container.appendChild(intro);
+function scoreDimensions() {
+    const answers = getDraft().answers;
+    const scores = Object.keys(DIMENSIONS).reduce((acc, key) => {
+        acc[key] = 0;
+        return acc;
+    }, {});
 
-    const hint = document.createElement('div');
-    hint.className = 'mt-5 grid sm:grid-cols-2 gap-3';
-    const items = [
-        { icon: 'fa-feather', text: 'Specific beats impressive. Use names, smells, hours.' },
-        { icon: 'fa-bolt', text: 'If a prompt makes you flinch, that is the one to answer.' },
-        { icon: 'fa-floppy-disk', text: 'Saved on this device only. Closing the tab is fine.' },
-        { icon: 'fa-language', text: 'Korean or English — translate later, write now.' },
+    QUESTIONS.forEach(question => {
+        const answer = answers[question.id];
+        if (!isAnswered(answer)) return;
+        addDimensions(scores, question.dimensions, 1);
+
+        const values = Array.isArray(answer.value) ? answer.value : [answer.value];
+        values.forEach((value, idx) => {
+            const option = getOption(question, value);
+            const rankMultiplier = question.type === 'rank' ? Math.max(.55, 1 - idx * .18) : 1;
+            if (option) addDimensions(scores, option.dimensions, rankMultiplier);
+        });
+    });
+
+    return scores;
+}
+
+function buildContext() {
+    const scores = scoreDimensions();
+    return {
+        scores,
+        answer: answerPreview,
+        rawAnswer: answerText,
+        topDimensions: Object.entries(scores)
+            .sort((a, b) => b[1] - a[1])
+            .filter(([, value]) => value > 0)
+            .slice(0, 5),
+    };
+}
+
+function scoreTemplate(template, scores) {
+    let score = 0;
+    Object.entries(template.weights).forEach(([dimension, weight]) => {
+        score += (scores[dimension] || 0) * weight;
+    });
+    template.evidence.forEach(questionId => {
+        if (answerText(questionId)) score += 1.6;
+    });
+    return score;
+}
+
+function getIdeaCards() {
+    const ctx = buildContext();
+    const count = answeredCount();
+    const targetCount = count >= 23 ? 5 : count >= 14 ? 4 : 3;
+    return IDEA_TEMPLATES
+        .map(template => ({
+            template,
+            score: scoreTemplate(template, ctx.scores),
+            content: template.build(ctx),
+            evidence: collectEvidence(template),
+        }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, targetCount);
+}
+
+function collectEvidence(template) {
+    const answers = getDraft().answers;
+    const picked = [];
+
+    template.evidence.forEach(questionId => {
+        const answer = answers[questionId];
+        const question = getQuestion(questionId);
+        if (!question || !isAnswered(answer) || picked.length >= 4) return;
+        picked.push({
+            prompt: question.prompt,
+            answer: answerPreview(questionId),
+        });
+    });
+
+    if (picked.length >= 3) return picked.slice(0, 3);
+
+    QUESTIONS.forEach(question => {
+        if (picked.length >= 3 || picked.some(item => item.prompt === question.prompt)) return;
+        const answer = answers[question.id];
+        if (!isAnswered(answer)) return;
+        const overlap = Object.keys(template.weights).some(key => question.dimensions && question.dimensions[key]);
+        if (!overlap) return;
+        picked.push({ prompt: question.prompt, answer: answerPreview(question.id) });
+    });
+
+    return picked.slice(0, 3);
+}
+
+function buildDiscardPile() {
+    const place = answerPreview('recurring_place') || answerPreview('place_detail') || 'a concrete scene';
+    const irritation = answerPreview('daily_irritation') || answerPreview('unfair_rule') || 'the exact irritation you named';
+    const question = answerPreview('private_question') || answerPreview('tiny_study') || 'your narrow question';
+    const line = answerPreview('true_line') || answerPreview('bad_label') || 'your own language';
+
+    return [
+        {
+            title: 'The polished activity list',
+            body: `Do not lead by proving you were busy. Start with ${lowerFirst(place)} or another concrete scene, then let the achievement appear only if it earns its place.`,
+        },
+        {
+            title: 'The generic problem-solver story',
+            body: `Avoid saying you like solving problems in general. The sharper angle is ${lowerFirst(irritation)} because it shows the standard you could not ignore.`,
+        },
+        {
+            title: 'The broad curiosity claim',
+            body: `Do not write that you are curious about everything. Let ${lowerFirst(question)} carry the curiosity because narrow questions feel lived-in.`,
+        },
+        {
+            title: 'The trait-summary ending',
+            body: `Avoid ending with "I became confident" or "I learned resilience." End closer to ${lowerFirst(line)} so the voice stays specific.`,
+        },
     ];
-    items.forEach(({ icon, text }) => {
-        const card = document.createElement('div');
-        card.className = 'welcome-hint-card';
-        card.innerHTML = '<i class="fa-solid ' + icon + '"></i><span></span>';
-        card.querySelector('span').textContent = text;
-        hint.appendChild(card);
-    });
-    container.appendChild(hint);
 }
 
-function renderSummaryStep(step, container) {
-    const draft = getDraft();
-    const intro = document.createElement('div');
-    intro.className = 'mb-2';
-    const kicker = document.createElement('span');
-    kicker.className = 'studio-section-kicker';
-    kicker.innerHTML = '<i class="fa-solid fa-fire text-[10px]"></i>' + step.kicker;
-    const title = document.createElement('h4');
-    title.className = 'studio-section-title';
-    title.textContent = step.title;
-    const blurb = document.createElement('p');
-    blurb.className = 'studio-section-blurb';
-    blurb.textContent = step.blurb;
-    intro.append(kicker, title, blurb);
-    container.appendChild(intro);
-
-    let totalAnswered = 0;
-    let totalPrompts = 0;
-    const questionSteps = STUDIO_STEPS.filter(s => s.kind === 'questions');
-
-    questionSteps.forEach(qs => {
-        totalPrompts += qs.prompts.length;
-        const bundle = document.createElement('div');
-        bundle.className = 'spark-bundle';
-        const heading = document.createElement('h5');
-        heading.textContent = qs.kicker + ' — ' + qs.title;
-        bundle.appendChild(heading);
-
-        let answeredInBundle = 0;
-        qs.prompts.forEach((promptText, idx) => {
-            const key = fieldKey(qs.id, idx);
-            const value = (draft[key] || '').trim();
-            if (!value) return;
-            answeredInBundle += 1;
-            totalAnswered += 1;
-            const block = document.createElement('div');
-            block.className = 'spark-quote';
-            const q = document.createElement('span');
-            q.className = 'spark-q';
-            q.textContent = '"' + promptText + '"';
-            const a = document.createElement('div');
-            a.style.whiteSpace = 'pre-wrap';
-            a.textContent = value;
-            block.append(q, a);
-            bundle.appendChild(block);
-        });
-
-        if (answeredInBundle === 0) {
-            const empty = document.createElement('p');
-            empty.className = 'spark-empty';
-            empty.textContent = 'No fragments yet from this room. Step back if you want to add one.';
-            bundle.appendChild(empty);
-        }
-        container.appendChild(bundle);
-    });
-
-    const tally = document.createElement('div');
-    tally.className = 'mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100 text-sm text-blue-900 leading-relaxed';
-    if (totalAnswered === 0) {
-        tally.innerHTML = '<i class="fa-solid fa-feather-pointed mr-2"></i>You have not written anything yet. Step back through the rooms — even three fragments is enough to start a draft.';
-    } else {
-        tally.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i>You wrote <strong>' + totalAnswered + ' of ' + totalPrompts + '</strong> fragments. ' +
-            'That is more than enough to start the Common App. Print this page and bring it to your first draft session.';
-    }
-    container.appendChild(tally);
-
-    // Essay-prompt mapping guide
-    const guideWrap = document.createElement('div');
-    guideWrap.className = 'mt-6';
-    const guideHeading = document.createElement('h5');
-    guideHeading.className = 'text-sm font-bold text-gray-700 uppercase tracking-wide';
-    guideHeading.textContent = 'Where each room tends to feed';
-    guideWrap.appendChild(guideHeading);
-
-    ESSAY_PROMPT_GUIDE.forEach(group => {
-        const groupBlock = document.createElement('div');
-        groupBlock.className = 'mt-3 p-4 rounded-xl border border-gray-200 bg-white';
-        const gt = document.createElement('p');
-        gt.className = 'text-sm font-bold text-gray-800 mb-2';
-        gt.textContent = group.title;
-        groupBlock.appendChild(gt);
-        group.items.forEach(item => {
-            const row = document.createElement('p');
-            row.className = 'text-sm text-gray-700 leading-relaxed mt-1.5';
-            const tags = item.rooms.map(rid => {
-                const target = STUDIO_STEPS.find(s => s.id === rid);
-                return target ? target.title : rid;
-            }).join(' · ');
-            row.innerHTML = '<span class="inline-block text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-100 rounded-md px-2 py-0.5 mr-2">' +
-                tags + '</span>' +
-                '<span></span>';
-            row.querySelector('span:last-child').textContent = item.note;
-            groupBlock.appendChild(row);
-        });
-        guideWrap.appendChild(groupBlock);
-    });
-    container.appendChild(guideWrap);
-}
-
-function renderCurrentStep() {
-    const wrap = document.getElementById('studio-steps');
-    wrap.replaceChildren();
-    const stepEl = document.createElement('section');
-    stepEl.className = 'studio-step is-active';
-    const step = STUDIO_STEPS[currentStep];
-    if (step.kind === 'welcome') renderWelcomeStep(step, stepEl);
-    else if (step.kind === 'summary') renderSummaryStep(step, stepEl);
-    else renderQuestionStep(step, stepEl);
-    wrap.appendChild(stepEl);
-
-    document.getElementById('studio-step-counter').textContent =
-        'Room ' + (currentStep + 1) + ' of ' + STUDIO_STEPS.length;
-    document.getElementById('studio-step-title').textContent = step.title;
-
-    const fillPct = (currentStep / (STUDIO_STEPS.length - 1)) * 100;
-    document.getElementById('studio-progress-fill').style.width = fillPct + '%';
-
-    document.getElementById('studio-back-btn').disabled = (currentStep === 0);
-    document.getElementById('studio-back-btn').classList.toggle('opacity-40', currentStep === 0);
-
-    const isLast = currentStep === STUDIO_STEPS.length - 1;
-    const nextBtn = document.getElementById('studio-next-btn');
-    if (isLast) {
-        nextBtn.innerHTML = 'Back to top<i class="fa-solid fa-arrow-up text-xs"></i>';
-    } else {
-        nextBtn.innerHTML = 'Continue<i class="fa-solid fa-arrow-right text-xs"></i>';
-    }
-
-    const printBtn = document.getElementById('studio-print-btn');
-    printBtn.classList.toggle('hidden', step.kind !== 'summary');
-
-    renderStepRail();
-}
-
-function renderStepRail() {
-    const rail = document.getElementById('studio-step-rail');
+function renderMoveRail() {
+    const rail = document.getElementById('move-rail');
     if (!rail) return;
     rail.replaceChildren();
-    const draft = getDraft();
-    STUDIO_STEPS.forEach((step, idx) => {
-        const pill = document.createElement('button');
-        pill.type = 'button';
-        pill.className = 'step-pill';
-        pill.textContent = step.kind === 'welcome'
-            ? 'Start'
-            : step.kind === 'summary'
-                ? 'Sparks'
-                : 'Room ' + (idx);
-        if (idx === currentStep) pill.classList.add('is-current');
-        else if (step.kind === 'questions') {
-            const hasAny = step.prompts.some((_, pi) => {
-                const v = draft[fieldKey(step.id, pi)];
-                return v && v.trim().length;
-            });
-            if (hasAny) pill.classList.add('is-complete');
-        }
-        pill.title = step.title;
-        pill.addEventListener('click', () => {
-            currentStep = idx;
-            renderCurrentStep();
-            document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const answers = getDraft().answers;
+    const currentQuestion = QUESTIONS[currentIndex];
+    const currentMove = currentQuestion ? currentQuestion.move : 'reveal';
+
+    MOVES.forEach((move, idx) => {
+        const moveQuestions = QUESTIONS.filter(question => question.move === move.id);
+        const completed = moveQuestions.filter(question => isAnswered(answers[question.id])).length;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'move-pill';
+        if (move.id === currentMove) button.classList.add('is-current');
+        if (completed > 0) button.classList.add('is-complete');
+        button.innerHTML = '<strong></strong><span></span>';
+        button.querySelector('strong').textContent = (idx + 1) + '. ' + move.title;
+        button.querySelector('span').textContent = completed + ' of ' + moveQuestions.length + ' signals';
+        button.addEventListener('click', () => {
+            const firstQuestion = QUESTIONS.findIndex(question => question.move === move.id);
+            if (firstQuestion >= 0) {
+                currentIndex = firstQuestion;
+                persistPosition();
+                render();
+            }
         });
-        rail.appendChild(pill);
+        rail.appendChild(button);
     });
+}
+
+function persistPosition() {
+    const draft = getDraft();
+    writeDraft(draft);
+}
+
+function render() {
+    currentIndex = Math.max(0, Math.min(currentIndex, QUESTIONS.length));
+    const isReveal = currentIndex === QUESTIONS.length;
+    const question = QUESTIONS[currentIndex];
+    const move = question ? MOVES.find(item => item.id === question.move) : null;
+
+    document.getElementById('step-label').textContent = isReveal
+        ? 'Reveal'
+        : 'Move ' + (MOVES.findIndex(item => item.id === question.move) + 1) + ' of ' + MOVES.length + ' - Question ' + (currentIndex + 1) + ' of ' + QUESTIONS.length;
+    document.getElementById('step-title').textContent = isReveal
+        ? 'Here is what your answers kept pointing toward'
+        : move.label + ': ' + move.title;
+    document.getElementById('progress-fill').style.width = ((currentIndex / QUESTIONS.length) * 100) + '%';
+
+    document.getElementById('back-btn').disabled = currentIndex === 0;
+    document.getElementById('back-btn').classList.toggle('opacity-40', currentIndex === 0);
+    document.getElementById('skip-btn').classList.toggle('hidden', isReveal);
+    document.getElementById('print-btn').classList.toggle('hidden', !isReveal);
+    document.getElementById('next-btn').innerHTML = isReveal
+        ? 'Back to start<i class="fa-solid fa-arrow-up text-xs"></i>'
+        : currentIndex === QUESTIONS.length - 1
+            ? 'Reveal board<i class="fa-solid fa-lightbulb text-xs"></i>'
+            : 'Continue<i class="fa-solid fa-arrow-right text-xs"></i>';
+
+    renderMoveRail();
+    if (isReveal) renderIdeaBoard();
+    else renderQuestion(question);
+}
+
+function renderQuestion(question) {
+    const body = document.getElementById('studio-body');
+    const draft = getDraft();
+    const existing = draft.answers[question.id];
+    body.replaceChildren();
+
+    const thread = document.createElement('div');
+    thread.className = 'advisor-thread';
+
+    const avatar = document.createElement('span');
+    avatar.className = 'advisor-avatar';
+    avatar.innerHTML = '<i class="fa-solid fa-user-graduate"></i>';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'advisor-bubble';
+
+    const name = document.createElement('p');
+    name.className = 'advisor-name';
+    name.textContent = 'Genius Editor';
+
+    const prompt = document.createElement('h3');
+    prompt.className = 'question-prompt';
+    prompt.textContent = question.prompt;
+
+    const hint = document.createElement('p');
+    hint.className = 'question-hint';
+    hint.textContent = question.hint;
+
+    const answerZone = document.createElement('div');
+    answerZone.className = 'answer-zone';
+    renderAnswerControl(question, existing, answerZone);
+
+    bubble.append(name, prompt, hint, answerZone);
+    thread.append(avatar, bubble);
+    body.appendChild(thread);
+}
+
+function renderAnswerControl(question, existing, container) {
+    if (question.type === 'text' || question.type === 'memory') {
+        renderTextControl(question, existing, container);
+        return;
+    }
+
+    if (question.type === 'rank') {
+        renderRankControl(question, existing, container);
+        return;
+    }
+
+    renderChoiceControl(question, existing, container);
+}
+
+function renderTextControl(question, existing, container) {
+    const textarea = document.createElement('textarea');
+    textarea.className = 'text-answer';
+    textarea.rows = question.type === 'memory' ? 4 : 3;
+    textarea.placeholder = question.placeholder || 'One sentence is enough.';
+    textarea.value = existing && !Array.isArray(existing.value) ? existing.value : '';
+
+    const meta = document.createElement('div');
+    meta.className = 'answer-meta';
+    const left = document.createElement('span');
+    left.innerHTML = '<i class="fa-regular fa-keyboard mr-1"></i>Saved as you type';
+    const right = document.createElement('span');
+
+    function updateMeta() {
+        const words = countWords(textarea.value);
+        right.textContent = words + (words === 1 ? ' word' : ' words');
+    }
+
+    textarea.addEventListener('input', () => {
+        updateMeta();
+        saveAnswer(question, textarea.value);
+    });
+
+    updateMeta();
+    meta.append(left, right);
+    container.append(textarea, meta);
+    setTimeout(() => textarea.focus(), 40);
+}
+
+function renderChoiceControl(question, existing, container) {
+    const selected = existing
+        ? (Array.isArray(existing.value) ? existing.value : [existing.value])
+        : [];
+    const grid = document.createElement('div');
+    grid.className = question.options.length > 6 ? 'choice-grid is-three' : 'choice-grid';
+
+    question.options.forEach(option => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice-option';
+        if (selected.includes(option.value)) button.classList.add('is-selected');
+        button.innerHTML = '<span></span><i class="fa-solid fa-check text-xs opacity-0"></i>';
+        button.querySelector('span').textContent = option.label;
+        button.querySelector('i').classList.toggle('opacity-0', !selected.includes(option.value));
+        button.addEventListener('click', () => {
+            if (question.type === 'multi') {
+                toggleMultiValue(question, option.value);
+            } else {
+                saveAnswer(question, option.value);
+            }
+            renderQuestion(question);
+        });
+        grid.appendChild(button);
+    });
+
+    const meta = document.createElement('div');
+    meta.className = 'answer-meta';
+    const maxText = question.type === 'multi'
+        ? 'Choose up to ' + (question.max || 3) + '.'
+        : 'Choose one.';
+    meta.innerHTML = '<span><i class="fa-regular fa-circle-check mr-1"></i>' + maxText + '</span><span>Saved locally</span>';
+
+    container.append(grid, meta);
+}
+
+function toggleMultiValue(question, value) {
+    const draft = getDraft();
+    const existing = draft.answers[question.id];
+    const current = existing && Array.isArray(existing.value) ? existing.value.slice() : [];
+    const found = current.indexOf(value);
+    if (found >= 0) current.splice(found, 1);
+    else {
+        if (current.length >= (question.max || 3)) current.shift();
+        current.push(value);
+    }
+    saveAnswer(question, current);
+}
+
+function renderRankControl(question, existing, container) {
+    const selected = existing && Array.isArray(existing.value) ? existing.value.slice() : [];
+    const grid = document.createElement('div');
+    grid.className = 'choice-grid is-three';
+
+    question.options.forEach(option => {
+        const rank = selected.indexOf(option.value);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice-option';
+        if (rank >= 0) button.classList.add('is-selected');
+        button.innerHTML = '<span></span><span class="rank-badge"></span>';
+        button.querySelector('span:first-child').textContent = option.label;
+        button.querySelector('.rank-badge').textContent = rank >= 0 ? String(rank + 1) : '+';
+        button.addEventListener('click', () => {
+            toggleRankValue(question, option.value);
+            renderQuestion(question);
+        });
+        grid.appendChild(button);
+    });
+
+    const meta = document.createElement('div');
+    meta.className = 'answer-meta';
+    meta.innerHTML = '<span><i class="fa-solid fa-arrow-down-1-9 mr-1"></i>' + selected.length + ' of ' + question.max + ' ranked</span><span>Click again to remove</span>';
+
+    container.append(grid, meta);
+}
+
+function toggleRankValue(question, value) {
+    const draft = getDraft();
+    const existing = draft.answers[question.id];
+    const current = existing && Array.isArray(existing.value) ? existing.value.slice() : [];
+    const found = current.indexOf(value);
+    if (found >= 0) current.splice(found, 1);
+    else {
+        if (current.length >= question.max) current.shift();
+        current.push(value);
+    }
+    saveAnswer(question, current);
+}
+
+function renderIdeaBoard() {
+    const body = document.getElementById('studio-body');
+    body.replaceChildren();
+    const count = answeredCount();
+    const board = document.createElement('div');
+    board.className = 'idea-board';
+
+    const header = document.createElement('section');
+    header.className = 'reveal-header';
+    const headerText = document.createElement('div');
+    const title = document.createElement('h3');
+    title.className = 'reveal-title';
+    title.textContent = 'Here is what your answers kept pointing toward.';
+    const copy = document.createElement('p');
+    copy.className = 'reveal-copy';
+    copy.textContent = count < MIN_SIGNAL_COUNT
+        ? 'There is not enough signal yet for honest idea cards. Answer a few more small questions and the board will become more specific.'
+        : 'These are not drafts. They are starting angles with evidence, opening scenes, and traps to avoid.';
+    headerText.append(title, copy);
+
+    const meter = document.createElement('div');
+    meter.className = 'signal-meter';
+    const meterNumber = document.createElement('div');
+    meterNumber.className = 'meter-number';
+    meterNumber.textContent = count + '/' + QUESTIONS.length;
+    const meterLabel = document.createElement('div');
+    meterLabel.className = 'meter-label';
+    meterLabel.textContent = 'signals answered';
+    meter.append(meterNumber, meterLabel);
+
+    header.append(headerText, meter);
+    board.appendChild(header);
+
+    renderDimensionSnapshot(board);
+
+    if (count < MIN_SIGNAL_COUNT) {
+        renderLowSignal(board, count);
+    } else {
+        getIdeaCards().forEach((idea, idx) => renderIdeaCard(board, idea, idx));
+        renderDiscardPanel(board);
+    }
+
+    body.appendChild(board);
+}
+
+function renderDimensionSnapshot(board) {
+    const ctx = buildContext();
+    if (!ctx.topDimensions.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'dimension-grid';
+    ctx.topDimensions.forEach(([key, value]) => {
+        const pill = document.createElement('div');
+        pill.className = 'dimension-pill';
+        const title = document.createElement('strong');
+        title.textContent = DIMENSIONS[key] || key;
+        const score = document.createElement('span');
+        score.textContent = Math.round(value) + ' signal points';
+        pill.append(title, score);
+        wrap.appendChild(pill);
+    });
+    board.appendChild(wrap);
+}
+
+function renderLowSignal(board, count) {
+    const panel = document.createElement('section');
+    panel.className = 'low-signal';
+    const title = document.createElement('h4');
+    title.textContent = count === 0 ? 'Start with any small answer.' : 'A few more signals will make this sharper.';
+    const copy = document.createElement('p');
+    copy.textContent = count === 0
+        ? 'The editor needs at least eight answered signals before it can responsibly suggest essay angles.'
+        : 'The current pattern is still thin. Answer the next few questions that feel easiest; short answers are enough.';
+    panel.append(title, copy);
+
+    const list = document.createElement('div');
+    list.className = 'next-question-list';
+    QUESTIONS
+        .filter(question => !answerText(question.id))
+        .slice(0, 4)
+        .forEach(question => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'next-question';
+            button.innerHTML = '<span></span><i class="fa-solid fa-arrow-right text-xs text-blue-600"></i>';
+            button.querySelector('span').textContent = question.prompt;
+            button.addEventListener('click', () => {
+                currentIndex = QUESTIONS.findIndex(item => item.id === question.id);
+                persistPosition();
+                render();
+            });
+            list.appendChild(button);
+        });
+    panel.appendChild(list);
+    board.appendChild(panel);
+}
+
+function renderIdeaCard(board, idea, idx) {
+    const card = document.createElement('article');
+    card.className = 'idea-card';
+
+    const header = document.createElement('div');
+    header.className = 'idea-card-header';
+    const index = document.createElement('span');
+    index.className = 'idea-index';
+    index.textContent = String(idx + 1);
+    const headerCopy = document.createElement('div');
+    const title = document.createElement('h4');
+    title.className = 'idea-title';
+    title.textContent = idea.template.title;
+    const core = document.createElement('p');
+    core.className = 'idea-core';
+    core.textContent = idea.content.core;
+    headerCopy.append(title, core);
+    header.append(index, headerCopy);
+
+    const body = document.createElement('div');
+    body.className = 'idea-card-body';
+    addIdeaBlock(body, 'fa-solid fa-arrows-left-right', 'Hidden tension', idea.content.tension);
+    addIdeaBlock(body, 'fa-solid fa-film', 'Possible opening scene', idea.content.opening);
+    addIdeaBlock(body, 'fa-solid fa-fingerprint', 'Why it is yours', idea.content.distinctive);
+    addEvidenceBlock(body, idea.evidence, idea.template.essayTypes);
+
+    card.append(header, body);
+    board.appendChild(card);
+}
+
+function addIdeaBlock(parent, icon, titleText, copyText) {
+    const block = document.createElement('div');
+    block.className = 'idea-block';
+    const title = document.createElement('p');
+    title.className = 'idea-block-title';
+    title.innerHTML = '<i class="' + icon + '"></i><span></span>';
+    title.querySelector('span').textContent = titleText;
+    const copy = document.createElement('p');
+    copy.className = 'idea-block-copy';
+    copy.textContent = copyText;
+    block.append(title, copy);
+    parent.appendChild(block);
+}
+
+function addEvidenceBlock(parent, evidence, essayTypes) {
+    const block = document.createElement('div');
+    block.className = 'idea-block';
+    const title = document.createElement('p');
+    title.className = 'idea-block-title';
+    title.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i><span>Evidence from answers</span>';
+    const list = document.createElement('div');
+    list.className = 'evidence-list';
+    evidence.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'evidence-item';
+        const q = document.createElement('strong');
+        q.textContent = item.prompt;
+        const a = document.createElement('span');
+        a.textContent = item.answer;
+        row.append(q, a);
+        list.appendChild(row);
+    });
+    const tags = document.createElement('div');
+    tags.className = 'tag-row';
+    essayTypes.forEach(type => {
+        const tag = document.createElement('span');
+        tag.className = 'idea-tag';
+        tag.textContent = type;
+        tags.appendChild(tag);
+    });
+    block.append(title, list, tags);
+    parent.appendChild(block);
+}
+
+function renderDiscardPanel(board) {
+    const panel = document.createElement('section');
+    panel.className = 'discard-panel';
+    const title = document.createElement('h4');
+    title.className = 'discard-title';
+    title.innerHTML = '<i class="fa-solid fa-ban"></i><span>Discard pile</span>';
+    panel.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'discard-grid';
+    buildDiscardPile().forEach(item => {
+        const block = document.createElement('div');
+        block.className = 'discard-item';
+        const strong = document.createElement('strong');
+        strong.textContent = item.title;
+        const body = document.createElement('span');
+        body.textContent = item.body;
+        block.append(strong, body);
+        grid.appendChild(block);
+    });
+    panel.appendChild(grid);
+    board.appendChild(panel);
 }
 
 function goNext() {
-    const isLast = currentStep === STUDIO_STEPS.length - 1;
-    if (isLast) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (currentIndex === QUESTIONS.length) {
+        currentIndex = 0;
+        persistPosition();
+        render();
+        document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
     }
-    currentStep += 1;
-    renderCurrentStep();
+    currentIndex = Math.min(currentIndex + 1, QUESTIONS.length);
+    persistPosition();
+    render();
     document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function goBack() {
-    if (currentStep === 0) return;
-    currentStep -= 1;
-    renderCurrentStep();
+    if (currentIndex === 0) return;
+    currentIndex -= 1;
+    persistPosition();
+    render();
     document.getElementById('studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function resetStudio() {
-    const ok = window.confirm('Erase every fragment you have written so far? This cannot be undone.');
+    const ok = window.confirm('Erase every answer in this local draft? This cannot be undone.');
     if (!ok) return;
     clearDraft();
-    currentStep = 0;
-    renderCurrentStep();
+    currentIndex = 0;
+    render();
 }
 
-document.getElementById('studio-next-btn').addEventListener('click', goNext);
-document.getElementById('studio-back-btn').addEventListener('click', goBack);
-document.getElementById('studio-reset-btn').addEventListener('click', resetStudio);
-document.getElementById('studio-print-btn').addEventListener('click', () => window.print());
+document.getElementById('next-btn').addEventListener('click', goNext);
+document.getElementById('skip-btn').addEventListener('click', goNext);
+document.getElementById('back-btn').addEventListener('click', goBack);
+document.getElementById('reset-btn').addEventListener('click', resetStudio);
+document.getElementById('print-btn').addEventListener('click', () => window.print());
 
-renderCurrentStep();
+const initialDraft = readDraft();
+currentIndex = Math.max(0, Math.min(initialDraft.currentIndex || 0, QUESTIONS.length));
+render();
 </script>
 
 </body>
