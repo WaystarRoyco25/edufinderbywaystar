@@ -889,6 +889,9 @@
         .map-status.is-hidden {
             display: none;
         }
+        .mobile-map-selection {
+            display: none;
+        }
         .institution-list {
             display: grid;
             gap: .8rem;
@@ -1063,21 +1066,124 @@
             }
         }
         @media (max-width: 768px) {
+            #review-page-panel {
+                overflow: visible;
+            }
+            .review-map-layout {
+                display: block;
+            }
+            .review-list-panel {
+                margin-top: 1rem;
+            }
             .section-card {
                 padding: 1rem;
             }
-            .map-panel,
+            .map-panel {
+                position: sticky;
+                top: .5rem;
+                top: max(.5rem, env(safe-area-inset-top, 0px));
+                z-index: 30;
+                height: 280px;
+                height: clamp(240px, 42svh, 320px);
+                min-height: 240px;
+                box-shadow: 0 16px 36px rgba(31,41,55,.16), var(--shadow-warm-xs);
+            }
             .naver-map {
-                min-height: 340px;
+                height: 100%;
+                min-height: 240px;
             }
             .map-panel-header {
-                position: static;
-                padding: .75rem;
-                background: #fff;
-                border-bottom: 1px solid var(--border);
+                position: absolute;
+                left: .5rem;
+                right: .5rem;
+                top: .5rem;
+                padding: 0;
+                background: transparent;
+                border-bottom: 0;
+                flex-wrap: nowrap;
+                align-items: flex-start;
             }
-            .naver-map {
-                height: 340px;
+            .map-status {
+                max-width: calc(100% - 3rem);
+                padding: .44rem .65rem;
+                font-size: .72rem;
+                line-height: 1.35;
+            }
+            #current-location-button {
+                width: 2.45rem;
+                height: 2.45rem;
+                flex: 0 0 2.45rem;
+                margin-left: auto;
+                padding: 0;
+                border-radius: 999px;
+                background: rgba(255,255,255,.94);
+                box-shadow: var(--shadow-warm-sm);
+            }
+            #current-location-button span {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+            .mobile-map-selection {
+                position: absolute;
+                left: .5rem;
+                right: .5rem;
+                bottom: .5rem;
+                z-index: 12;
+                display: none;
+                align-items: center;
+                gap: .65rem;
+                border: 1px solid rgba(214,210,200,.82);
+                border-radius: 12px;
+                background: rgba(255,255,255,.96);
+                box-shadow: 0 12px 30px rgba(31,41,55,.16);
+                color: var(--brand-navy);
+                padding: .65rem .75rem;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+            .mobile-map-selection.is-visible {
+                display: flex;
+            }
+            .mobile-map-selection-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 2rem;
+                height: 2rem;
+                flex: 0 0 2rem;
+                border-radius: 999px;
+                background: var(--brand-blue-soft);
+                color: var(--brand-blue);
+            }
+            .mobile-map-selection-title {
+                color: var(--text-primary);
+                font-size: .88rem;
+                font-weight: 800;
+                line-height: 1.25;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .mobile-map-selection-meta {
+                margin-top: .15rem;
+                color: var(--text-secondary);
+                font-size: .72rem;
+                font-weight: 700;
+                line-height: 1.35;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .institution-card {
+                scroll-margin-top: 21rem;
+                scroll-margin-top: calc(clamp(240px, 42svh, 320px) + 1.25rem + env(safe-area-inset-top, 0px));
             }
             .auth-status-pill .auth-user-label {
                 max-width: 96px;
@@ -1214,12 +1320,13 @@
                         <i class="fa-solid fa-circle-notch fa-spin"></i>
                         <span>NAVER 지도를 준비하고 있습니다.</span>
                     </div>
-                    <button id="current-location-button" type="button" onclick="requestUserLocation()" class="review-action-button">
+                    <button id="current-location-button" type="button" onclick="requestUserLocation()" class="review-action-button" aria-label="내 위치 기준 경로">
                         <i class="fa-solid fa-location-crosshairs"></i>
                         <span>내 위치 기준 경로</span>
                     </button>
                 </div>
                 <div id="naver-map" class="naver-map" aria-label="기관 위치 지도"></div>
+                <div id="mobile-map-selection" class="mobile-map-selection" aria-live="polite"></div>
             </div>
             <div class="review-list-panel">
                 <div id="review-list-container" class="institution-list"></div>
@@ -1878,6 +1985,7 @@ let markersByInstitution = new Map();
 let routeSummaryCache = {};
 let activeRouteHaloLine = null;
 let activeRouteLine = null;
+let mapResizeTimer = null;
 
 const DEFAULT_MAP_CENTER = { lat: 37.5666103, lng: 126.9783882 };
 const MAP_LOOKUP_ENDPOINT = '/api/naver/maps/lookup';
@@ -2051,6 +2159,33 @@ function ensureMapInstance() {
             position: naver.maps.Position.TOP_RIGHT
         }
     });
+    scheduleMapResize(0);
+    scheduleMapResize(250);
+}
+
+function scheduleMapResize(delay = 0) {
+    const resize = function() {
+        if (!naverMap || !window.naver?.maps?.Event) return;
+        naver.maps.Event.trigger(naverMap, 'resize');
+        const selectedLocation = selectedInstitutionName ? getLocationByName(selectedInstitutionName) : null;
+        if (selectedLocation) {
+            naverMap.setCenter(new naver.maps.LatLng(selectedLocation.lat, selectedLocation.lng));
+        }
+    };
+    if (delay > 0) {
+        setTimeout(function() {
+            requestAnimationFrame(resize);
+        }, delay);
+        return;
+    }
+    requestAnimationFrame(resize);
+}
+
+function handleViewportMapResize() {
+    clearTimeout(mapResizeTimer);
+    mapResizeTimer = setTimeout(function() {
+        scheduleMapResize();
+    }, 120);
 }
 
 function normalizeLocationCoordinate(item) {
@@ -2130,6 +2265,8 @@ async function hydrateMapForCategory(category) {
         renderMapMarkers(activeLocations);
         updateMapLocationCount(activeLocations.length, category.list.length);
         updateDistanceLabels();
+        updateMobileMapSelection(selectedInstitutionName);
+        scheduleMapResize(80);
         setTimeout(detectNaverMapAuthIssue, 1400);
 
         if (activeLocations.length) {
@@ -2243,12 +2380,47 @@ function buildInfoWindowContent(name, location) {
         '</div>';
 }
 
+function updateMobileMapSelection(name) {
+    const strip = document.getElementById('mobile-map-selection');
+    if (!strip) return;
+    strip.replaceChildren();
+    strip.classList.toggle('is-visible', Boolean(name));
+    if (!name) return;
+
+    const summary = getRatingSummary(name);
+    const location = getLocationByName(name);
+    const distanceText = getDistanceTextForLocation(location);
+    const meta = [
+        summary.avgLabel + ' / 5',
+        summary.votes + '개 리뷰'
+    ];
+    if (distanceText) meta.push(distanceText);
+
+    const icon = document.createElement('span');
+    icon.className = 'mobile-map-selection-icon';
+    const iconGlyph = document.createElement('i');
+    iconGlyph.className = 'fa-solid fa-location-dot';
+    icon.appendChild(iconGlyph);
+
+    const copy = document.createElement('div');
+    copy.className = 'min-w-0';
+    const title = document.createElement('div');
+    title.className = 'mobile-map-selection-title';
+    title.textContent = name;
+    const metaEl = document.createElement('div');
+    metaEl.className = 'mobile-map-selection-meta';
+    metaEl.textContent = meta.join(' · ');
+    copy.append(title, metaEl);
+    strip.append(icon, copy);
+}
+
 function selectInstitution(name, options = {}) {
     if (!name) return;
     selectedInstitutionName = name;
     updateSelectedCards();
     refreshMarkerIcons();
     renderSelectedInstitution(name);
+    updateMobileMapSelection(name);
 
     const location = getLocationByName(name);
     const marker = markersByInstitution.get(name);
@@ -2315,6 +2487,7 @@ function requestUserLocation() {
         if (button) button.disabled = false;
         addUserLocationMarker();
         updateDistanceLabels();
+        updateMobileMapSelection(selectedInstitutionName);
         if (selectedInstitutionName) {
             renderSelectedInstitution(selectedInstitutionName);
             const selectedLocation = getLocationByName(selectedInstitutionName);
@@ -3174,6 +3347,8 @@ document.getElementById('institution-search-input').addEventListener('keydown', 
         performSearch();
     }
 });
+window.addEventListener('resize', handleViewportMapResize);
+window.addEventListener('orientationchange', handleViewportMapResize);
 
 // Expose handlers on window so inline onclick/onmouseover attributes can
 // reach them from this ES module.
