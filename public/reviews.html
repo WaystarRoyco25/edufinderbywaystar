@@ -621,10 +621,27 @@
             background: var(--brand-blue);
             box-shadow: 0 0 0 3px rgba(59,130,246,.18);
         }
+        .auth-status-slot {
+            position: static;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-width: 0;
+        }
+        .auth-status-slot.has-auth-user {
+            margin-bottom: .85rem;
+        }
+        .auth-status-slot #auth-status {
+            min-width: 0;
+            max-width: 100%;
+        }
         .auth-status-pill {
             display: inline-flex;
             align-items: center;
             gap: .5rem;
+            max-width: 100%;
             padding: .35rem .35rem .35rem .85rem;
             border-radius: 999px;
             background: rgba(255,255,255,.08);
@@ -637,6 +654,7 @@
             font-size: .8rem;
             font-weight: 500;
             letter-spacing: -.005em;
+            min-width: 0;
             max-width: 160px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -657,6 +675,23 @@
         .auth-status-pill .logout-btn:hover {
             background: var(--brand-blue);
             color: #fff;
+        }
+        @media (max-width: 1023px) {
+            .auth-status-pill .auth-user-label {
+                max-width: min(52vw, 180px);
+            }
+        }
+        @media (min-width: 1024px) {
+            .auth-status-slot {
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+                width: auto;
+                justify-content: flex-end;
+            }
+            .auth-status-slot.has-auth-user {
+                margin-bottom: 0;
+            }
         }
         .panel-bg {
             background: var(--surface);
@@ -1186,7 +1221,7 @@
                 scroll-margin-top: calc(clamp(240px, 42svh, 320px) + 1.25rem + env(safe-area-inset-top, 0px));
             }
             .auth-status-pill .auth-user-label {
-                max-width: 96px;
+                max-width: min(52vw, 180px);
             }
         }
     </style>
@@ -1201,7 +1236,7 @@
      ════════════════════════════════════════════════════════════ -->
 <header class="brand-header text-white relative">
     <div class="container mx-auto px-4 pt-8 pb-10 md:pt-12 md:pb-14 relative">
-        <div class="absolute top-5 right-4 md:top-6 md:right-6">
+        <div class="auth-status-slot">
             <div id="auth-status" class="text-sm font-medium"></div>
         </div>
         <div class="text-center">
@@ -2760,6 +2795,7 @@ function openCurrentGuideModal() {
 function updateAuthUI() {
     const el = document.getElementById('auth-status');
     el.replaceChildren();
+    el.parentElement?.classList.toggle('has-auth-user', Boolean(currentUser));
     if (currentUser) {
         const pill = document.createElement('div');
         pill.className = 'auth-status-pill';
