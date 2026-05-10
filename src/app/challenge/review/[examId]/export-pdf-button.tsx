@@ -21,7 +21,6 @@ type ExportPdfButtonProps = {
 
 type AssetUrls = {
   logo: string;
-  watermark: string;
 };
 
 const HTML_ESCAPE: Record<string, string> = {
@@ -205,19 +204,6 @@ function buildExportHtml(
       font-family: "Pretendard", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 9.3pt;
       line-height: 1.38;
-    }
-
-    .watermark {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 5.8in;
-      max-width: 76vw;
-      transform: translate(-50%, -50%);
-      filter: brightness(0);
-      opacity: 0.055;
-      z-index: 0;
-      pointer-events: none;
     }
 
     .packet {
@@ -495,7 +481,6 @@ function buildExportHtml(
   </style>
 </head>
 <body>
-  <img class="watermark" src="${assets.watermark}" alt="">
   <main class="packet">
     <section class="cover${hasMissedQuestions ? " has-questions" : ""}">
       <header class="brand-header">
@@ -604,7 +589,6 @@ export default function ExportPdfButton({
       const origin = window.location.origin;
       const html = buildExportHtml(summary, questions, {
         logo: `${origin}/EduFinder.svg`,
-        watermark: `${origin}/EduFinder_Watermark.svg`,
       });
 
       printDocument.open();
