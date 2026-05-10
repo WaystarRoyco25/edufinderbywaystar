@@ -711,6 +711,192 @@
         .hidden { display: none !important; }
         .print-brand-header { display: none; }
 
+        .voice-palette,
+        .motif-panel,
+        .counterfactual {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 1rem;
+        }
+        .palette-title {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            color: #1f2937;
+            font-size: .92rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .palette-sub {
+            color: #6b7280;
+            font-size: .86rem;
+            line-height: 1.55;
+            margin-top: .35rem;
+        }
+        .palette-list {
+            display: grid;
+            gap: .55rem;
+            margin-top: .8rem;
+        }
+        .palette-row {
+            border-left: 3px solid #6366f1;
+            padding-left: .75rem;
+        }
+        .palette-phrase {
+            color: #1f2937;
+            font-style: italic;
+            font-size: .96rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .palette-source {
+            display: block;
+            color: #6b7280;
+            font-size: .72rem;
+            margin-top: .15rem;
+        }
+        .motif-panel {
+            background: #f9fafb;
+        }
+        .motif-grid {
+            display: grid;
+            gap: .55rem;
+            margin-top: .8rem;
+        }
+        @media (min-width: 720px) {
+            .motif-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        .motif-chip {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #ffffff;
+            padding: .65rem .8rem;
+            display: grid;
+            gap: .15rem;
+        }
+        .motif-chip strong {
+            color: #1f2937;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+        .motif-count {
+            color: #3b82f6;
+            font-weight: 700;
+            font-size: .78rem;
+        }
+        .motif-sources {
+            color: #6b7280;
+            font-size: .72rem;
+            line-height: 1.4;
+        }
+        .counterfactual {
+            background: #fffbeb;
+            border-color: #fde68a;
+        }
+        .counterfactual-title {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            color: #92400e;
+            font-weight: 800;
+        }
+        .counterfactual-note {
+            color: #92400e;
+            font-size: .88rem;
+            line-height: 1.55;
+            margin-top: .35rem;
+        }
+        .idea-card.is-counterfactual {
+            margin-top: .8rem;
+            background: #ffffff;
+            box-shadow: none;
+        }
+        .idea-card-body.single { display: block; }
+        .cf-title-row { margin-bottom: .35rem; }
+
+        .board-toolbar {
+            display: flex;
+            gap: .8rem;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #ffffff;
+            padding: .8rem 1rem;
+        }
+        .board-toolbar-note {
+            color: #4b5563;
+            font-size: .85rem;
+            line-height: 1.55;
+            flex: 1 1 280px;
+            margin: 0;
+        }
+        .board-refresh {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            border: 1px solid #1f2937;
+            border-radius: 999px;
+            background: #1f2937;
+            color: #ffffff;
+            padding: .5rem .9rem;
+            font-weight: 700;
+            font-size: .85rem;
+        }
+        .board-refresh:hover { background: #111827; }
+
+        .idea-header-copy {
+            display: grid;
+            gap: .15rem;
+        }
+        .variant-tag {
+            color: #6b7280;
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .variant-tag:empty { display: none; }
+        .idea-controls {
+            display: flex;
+            gap: .35rem;
+            margin-left: auto;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-self: flex-start;
+        }
+        .idea-control {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #4b5563;
+            padding: .3rem .55rem;
+            font-size: .72rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .idea-control:hover { background: #f3f4f6; color: #1f2937; }
+        .idea-control.is-on {
+            background: #1f2937;
+            color: #ffffff;
+            border-color: #1f2937;
+        }
+        .idea-control.is-disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+        .idea-control-icon { font-size: .9rem; }
+        .idea-control-label { white-space: nowrap; }
+        @media (max-width: 540px) {
+            .idea-control-label { display: none; }
+        }
+
         @page {
             size: letter;
             margin: 0.55in;
@@ -754,7 +940,12 @@
                 line-height: 1.45;
                 color: #dbeafe;
             }
-            .idea-card, .discard-panel, .reveal-header { break-inside: avoid; box-shadow: none; }
+            .idea-card,
+            .discard-panel,
+            .reveal-header,
+            .voice-palette,
+            .motif-panel,
+            .counterfactual { break-inside: avoid; box-shadow: none; }
         }
     </style>
 </head>
@@ -792,7 +983,7 @@
 
         <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
             <div class="stat-card">
-                <div class="stat-number" data-target="28" data-suffix="">0</div>
+                <div class="stat-number" data-target="39" data-suffix="">0</div>
                 <div class="stat-unit">tiny questions</div>
                 <div class="stat-label">no résumé needed</div>
             </div>
@@ -802,7 +993,7 @@
                 <div class="stat-label">place to direction</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" data-target="6" data-suffix="">0</div>
+                <div class="stat-number" data-target="14" data-suffix="">0</div>
                 <div class="stat-unit">essay angles</div>
                 <div class="stat-label">ranked, with evidence</div>
             </div>
@@ -845,7 +1036,7 @@
                     <i class="fa-solid fa-lightbulb text-base"></i>
                 </div>
                 <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Idea board</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">Up to six essay angles, ranked by signal — with opening scenes and the proof behind each one.</p>
+                <p class="text-sm text-gray-600 leading-relaxed">Up to five essay angles, ranked by signal — with opening scenes, voice palette, and the proof behind each one.</p>
             </div>
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
                 <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
@@ -888,7 +1079,7 @@
                 <span class="relative z-10 flex-shrink-0 flex items-center justify-center w-10 h-10 bg-[#3b82f6] text-white rounded-full font-bold text-sm">3</span>
                 <div class="pt-1.5">
                     <h3 class="text-base font-bold text-[#1f2937] mb-1">See your idea board.</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed">Up to six essay angles, ranked, each with a hidden tension, an opening scene, and the evidence from your answers.</p>
+                    <p class="text-sm text-gray-600 leading-relaxed">Up to five essay angles, ranked, each with a hidden tension, an opening scene, evidence, and prose variants you can cycle through.</p>
                 </div>
             </div>
             <div class="relative flex gap-5 items-start">
@@ -920,10 +1111,11 @@
                 <div class="flex-1">
                     <h3 class="text-2xl font-bold text-white mb-5">Everything you need to find your angle.</h3>
                     <ul class="space-y-3 text-sm text-gray-200">
-                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>28 small questions across 7 discovery moves</span></li>
-                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>An idea board with up to six essay angles, ranked</span></li>
-                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Hidden tension, opening scene, and proof for each angle</span></li>
-                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>A discard pile of generic angles to avoid</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>39 small questions across 7 discovery moves</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>An idea board with up to five ranked angles, plus a counterfactual you might be avoiding</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Voice palette and motif map pulled from your own answers</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>React with 👍 / 👎 to steer the board, cycle through prose variants</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Adaptive discard pile of generic angles to avoid</span></li>
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Saved as you answer — print the board</span></li>
                     </ul>
                 </div>
@@ -1172,7 +1364,8 @@ window.unlockEditor = unlockEditor;
      ════════════════════════════════════════════════════════════ -->
 <script>
 const STORAGE_KEY = 'genius-discovery-draft.v2';
-const MIN_SIGNAL_COUNT = 8;
+const MIN_SIGNAL_COUNT = 11;
+const STORAGE_VERSION = 3;
 
 const MOVES = [
     { id: 'trace', title: 'Trace', label: 'Places' },
@@ -1252,6 +1445,15 @@ const QUESTIONS = [
         ],
     },
     {
+        id: 'place_smell',
+        move: 'trace',
+        type: 'memory',
+        prompt: 'Name a smell that takes you back to one specific place.',
+        hint: 'A real smell. Plain language. The place can be private.',
+        placeholder: 'Wet cardboard in the back of my grandmother’s grocery store, before the freezer was fixed.',
+        dimensions: { setting: 2, motif: 2, voice: 1 },
+    },
+    {
         id: 'defend_too_long',
         move: 'taste',
         type: 'choice',
@@ -1321,6 +1523,15 @@ const QUESTIONS = [
         ],
     },
     {
+        id: 'repeat_media',
+        move: 'taste',
+        type: 'text',
+        prompt: 'Which book, song, film, show, or game have you returned to more than three times?',
+        hint: 'Name it and say one line about why it pulls you back.',
+        placeholder: 'Studio Ghibli’s Whisper of the Heart — I keep rewatching the violin workshop scene to remind myself that practice can look like quiet failure.',
+        dimensions: { voice: 2, motif: 1, intellectual_pattern: 1 },
+    },
+    {
         id: 'unfair_rule',
         move: 'friction',
         type: 'choice',
@@ -1376,6 +1587,15 @@ const QUESTIONS = [
         ],
     },
     {
+        id: 'over_apology',
+        move: 'friction',
+        type: 'text',
+        prompt: 'What do you apologize for too often that probably isn’t your fault?',
+        hint: 'Name the apology you keep making automatically.',
+        placeholder: 'I keep saying sorry for asking the question that turns out to be the right one.',
+        dimensions: { tension: 2, voice: 1, value: 1 },
+    },
+    {
         id: 'bad_label',
         move: 'mirrors',
         type: 'text',
@@ -1428,6 +1648,24 @@ const QUESTIONS = [
         ],
     },
     {
+        id: 'inherited_phrase',
+        move: 'mirrors',
+        type: 'text',
+        prompt: 'What phrase from your family or hometown do you catch yourself using?',
+        hint: 'Quote it as you actually say it, not the polished version.',
+        placeholder: '“Eat first, then we’ll fight.” My mom says it before any hard conversation.',
+        dimensions: { voice: 2, relationship: 2, motif: 1 },
+    },
+    {
+        id: 'carried_dialogue',
+        move: 'mirrors',
+        type: 'memory',
+        prompt: 'Quote one line — real or remembered — that you carry around.',
+        hint: 'It can be from a person, a movie, a teacher, or a stranger. Quote it exactly.',
+        placeholder: '“You don’t have to be the loudest to be the one they listen to.”',
+        dimensions: { voice: 2, relationship: 1 },
+    },
+    {
         id: 'small_failure',
         move: 'pressure',
         type: 'memory',
@@ -1476,6 +1714,24 @@ const QUESTIONS = [
             { value: 'memory', label: 'A memory of last time', dimensions: { motif: 1, value: 1 } },
             { value: 'silence', label: 'Silence before deciding', dimensions: { voice: 1, intellectual_pattern: 1 } },
         ],
+    },
+    {
+        id: 'quiet_pride',
+        move: 'pressure',
+        type: 'memory',
+        prompt: 'Name a moment you are quietly proud of and have not told anyone about.',
+        hint: 'Small is fine. Specific is better.',
+        placeholder: 'I rewrote the math problem set the night before so the kid who hates Sundays could solve at least three of them.',
+        dimensions: { risk: 1, agency: 1, value: 1, voice: 1 },
+    },
+    {
+        id: 'two_truths',
+        move: 'pressure',
+        type: 'text',
+        prompt: 'Two true things about you that seem to contradict each other.',
+        hint: 'Write them as a pair. The contradiction is the signal.',
+        placeholder: 'I love arguing publicly, and I dread sounding rude.',
+        dimensions: { tension: 2, voice: 1, value: 1 },
     },
     {
         id: 'private_question',
@@ -1533,6 +1789,24 @@ const QUESTIONS = [
         ],
     },
     {
+        id: 'belief_shift',
+        move: 'questions',
+        type: 'text',
+        prompt: 'What did you used to believe that you no longer do, and what changed it?',
+        hint: 'The shift is more interesting than the position.',
+        placeholder: 'I used to think shy people were just rude. Then I noticed how much my brother says with his hands.',
+        dimensions: { intellectual_pattern: 2, tension: 1, voice: 1 },
+    },
+    {
+        id: 'unguarded_search',
+        move: 'questions',
+        type: 'text',
+        prompt: 'What do you search for online when nobody is looking?',
+        hint: 'Curiosity unguarded is data. Be honest.',
+        placeholder: 'How a metro system schedules its first train of the day, and who decides which station gets it.',
+        dimensions: { intellectual_pattern: 2, voice: 1 },
+    },
+    {
         id: 'tuesday_future',
         move: 'direction',
         type: 'text',
@@ -1576,76 +1850,192 @@ const QUESTIONS = [
         placeholder: 'I do not trust answers that arrive without fingerprints.',
         dimensions: { voice: 3, risk: 1 },
     },
+    {
+        id: 'childhood_scene',
+        move: 'direction',
+        type: 'memory',
+        prompt: 'Describe one five-minute scene from your childhood you can still see in detail.',
+        hint: 'Sensory detail beats explanation. Time of day, who else was there, what you heard.',
+        placeholder: 'Saturday at 6 a.m., my uncle hammering loose floorboards while the kettle whistled twice before anyone moved.',
+        dimensions: { setting: 1, motif: 2, voice: 1 },
+    },
+    {
+        id: 'private_ritual',
+        move: 'direction',
+        type: 'text',
+        prompt: 'What private ritual do you keep that almost no one else knows about?',
+        hint: 'Daily, weekly, or seasonal. The smaller the ritual, the better.',
+        placeholder: 'Every Sunday I rewrite one paragraph of someone else’s book by hand to remember what good sentences feel like.',
+        dimensions: { motif: 2, voice: 1, agency: 1 },
+    },
 ];
+
+const FORM_ADVICE = {
+    scene: 'Drop the reader inside one moment. No setup, no thesis. Let the frame appear later.',
+    letter: 'Address one specific person. Use “you” in the first sentence and never zoom out to a general reader.',
+    argument: 'Lead with the claim you can defend. Save the proof for paragraph two.',
+    confession: 'Admit the inconvenient thing first. The reader will trust you faster than you expect.',
+    investigation: 'Open with the question, not the answer. Use the next paragraphs as evidence reveals.',
+    catalog: 'Open with item #1. Trust the list to do the work; do not introduce it.',
+    manual: 'Use imperative voice. Step 1 begins the essay; the why arrives at step 4 or 5.',
+};
 
 const IDEA_TEMPLATES = [
     {
         id: 'place-map',
         title: 'The place that trained your attention',
         weights: { setting: 2.2, motif: 1.4, voice: .8, value: .6 },
-        evidence: ['recurring_place', 'place_detail', 'kept_object', 'tiny_notices', 'story_form'],
+        evidence: ['recurring_place', 'place_detail', 'kept_object', 'tiny_notices', 'place_smell', 'story_form'],
         essayTypes: ['Personal statement', 'Background or identity', 'Topic of choice'],
-        build: (ctx) => {
-            const place = ctx.answer('recurring_place') || 'a place you keep returning to';
-            const detail = ctx.answer('place_detail') || ctx.answer('kept_object') || 'one detail only you would notice';
-            return {
-                core: `A story about how ${lowerFragment(place)} became a private training ground for how you notice, care, and make meaning.`,
-                tension: 'The useful tension is quiet observation versus the moment you finally have to act on what you see.',
-                opening: `Start with a real scene from ${lowerFragment(place)}. Let ${quoteDetail(detail, 'one detail only you would notice')} appear before you explain why it matters.`,
-                distinctive: `This angle is specific because it begins with a real setting and a small object or detail, not a general claim about personality.`,
-            };
-        },
+        builds: [
+            (ctx) => {
+                const place = ctx.answer('recurring_place') || 'a place you keep returning to';
+                const detail = ctx.answer('place_detail') || ctx.answer('kept_object') || 'one detail only you would notice';
+                return {
+                    core: `A story about how ${lowerFragment(place)} became a private training ground for how you notice, care, and make meaning.`,
+                    tension: 'The useful tension is quiet observation versus the moment you finally have to act on what you see.',
+                    opening: `Start with a real scene from ${lowerFragment(place)}. Let ${quoteDetail(detail, 'one detail only you would notice')} appear before you explain why it matters.`,
+                    distinctive: `This angle is specific because it begins with a real setting and a small object or detail, not a general claim about personality.`,
+                };
+            },
+            (ctx) => {
+                const place = ctx.answer('recurring_place') || 'the place you keep choosing';
+                const smell = ctx.answer('place_smell') || ctx.answer('place_detail') || 'a sensory detail of the place';
+                return {
+                    core: `An essay where the recurring choice of ${lowerFragment(place)} is the spine, and what changed is who you became while returning.`,
+                    tension: 'The tension is between belonging and independence — you keep going back, but the room cannot stay the same room.',
+                    opening: `Open with ${quoteDetail(smell, 'a sensory cue from the place')}. Withhold the reason you returned until the third paragraph.`,
+                    distinctive: `It is yours because the proof is sense memory the reader cannot fake — the place keeps coming back to you, not the other way around.`,
+                };
+            },
+            (ctx) => {
+                const detail = ctx.answer('place_detail') || ctx.answer('place_smell') || 'one quiet detail';
+                const object = ctx.answer('kept_object') || 'a small object you kept';
+                return {
+                    core: `An essay built around the way ${quoteDetail(detail, 'one quiet detail')} taught you a way of paying attention you now use everywhere.`,
+                    tension: 'The tension is private noticing versus the social demand to look like you’re doing something.',
+                    opening: `Start with ${quoteDetail(object, 'the kept object')} on a surface. Describe it before you say where you are.`,
+                    distinctive: `This avoids the “my hometown shaped me” cliché because the proof is sensory and physical — a real artifact, not a claim.`,
+                };
+            },
+        ],
     },
     {
         id: 'beautiful-irritation',
         title: 'The irritation that became a standard',
         weights: { tension: 2.1, agency: 1.6, value: 1.1, future_direction: .8 },
-        evidence: ['unfair_rule', 'tiny_fix', 'daily_irritation', 'refusal_sentence', 'stop_polite'],
+        evidence: ['unfair_rule', 'tiny_fix', 'daily_irritation', 'refusal_sentence', 'over_apology', 'stop_polite'],
         essayTypes: ['Challenge or problem', 'Community impact', 'Why this major'],
-        build: (ctx) => {
-            const rule = ctx.answer('unfair_rule') || ctx.answer('daily_irritation') || 'a rule that bothered you';
-            const fix = ctx.answer('tiny_fix') || 'the small fix you imagined';
-            return {
-                core: `A story about the moment ${quoteDetail(rule, 'a rule that bothered you')} stopped being background noise and became something you wanted to repair.`,
-                tension: 'The force here is not complaint. It is the gap between what everyone tolerates and what you cannot unsee.',
-                opening: `Open with ${quoteDetail(fix, 'the small fix you imagined')} at the smallest possible scale, then widen the frame.`,
-                distinctive: `This avoids the generic problem-solver angle because the standard comes from a precise irritation only you named.`,
-            };
-        },
+        builds: [
+            (ctx) => {
+                const rule = ctx.answer('unfair_rule') || ctx.answer('daily_irritation') || 'a rule that bothered you';
+                const fix = ctx.answer('tiny_fix') || 'the small fix you imagined';
+                return {
+                    core: `A story about the moment ${quoteDetail(rule, 'a rule that bothered you')} stopped being background noise and became something you wanted to repair.`,
+                    tension: 'The force here is not complaint. It is the gap between what everyone tolerates and what you cannot unsee.',
+                    opening: `Open with ${quoteDetail(fix, 'the small fix you imagined')} at the smallest possible scale, then widen the frame.`,
+                    distinctive: `This avoids the generic problem-solver angle because the standard comes from a precise irritation only you named.`,
+                };
+            },
+            (ctx) => {
+                const irritation = ctx.answer('daily_irritation') || ctx.answer('unfair_rule') || 'the small irritation you keep noticing';
+                const apology = ctx.answer('over_apology') || ctx.answer('refusal_sentence') || 'the apology you keep making';
+                return {
+                    core: `An essay where the recurring irritation of ${quoteDetail(irritation, 'a small daily irritation')} became the seed of a private standard you now refuse to lower.`,
+                    tension: 'The tension is between fitting in and refusing to apologize for what you actually see.',
+                    opening: `Begin with ${quoteDetail(apology, 'the apology that keeps slipping out')}. Then show the moment you stopped meaning it.`,
+                    distinctive: `Most “problem” essays skip the part where you were the polite one first. This one keeps that uncomfortable middle.`,
+                };
+            },
+            (ctx) => {
+                const fix = ctx.answer('tiny_fix') || ctx.answer('stop_polite') || 'the fix you imagined';
+                const rule = ctx.answer('unfair_rule') || 'the rule that bothered you';
+                return {
+                    core: `An essay about the moment a small repair — ${quoteDetail(fix, 'the small fix')} — taught you that taste, not permission, is what makes someone responsible.`,
+                    tension: 'The tension is the difference between “it’s allowed” and “it’s right.” You stopped letting the first one excuse the second.',
+                    opening: `Open with the official version of ${quoteDetail(rule, 'the rule')}, then your version, in the next sentence.`,
+                    distinctive: `It works because the standard appears in your hands, not your résumé.`,
+                };
+            },
+        ],
     },
     {
         id: 'private-question',
         title: 'The private question that keeps reorganizing your world',
         weights: { intellectual_pattern: 2.3, voice: 1.1, motif: .8, future_direction: .7 },
-        evidence: ['private_question', 'tiny_study', 'world_collision', 'defend_too_long', 'beginner_room'],
+        evidence: ['private_question', 'tiny_study', 'world_collision', 'defend_too_long', 'beginner_room', 'unguarded_search'],
         essayTypes: ['Intellectual curiosity', 'Why this field', 'Supplement short answer'],
-        build: (ctx) => {
-            const question = ctx.answer('private_question') || ctx.answer('tiny_study') || 'a question that keeps returning';
-            const collision = ctx.answer('world_collision') || 'two worlds that keep colliding';
-            return {
-                core: `A story about following ${quoteDetail(question, 'a question that keeps returning', true)} until it connects to ${listFragment(collision, 'two worlds that keep colliding')} in a way that only your path would produce.`,
-                tension: 'The tension is between curiosity as a private habit and curiosity as a public direction.',
-                opening: `Begin with the question itself. Then show the ordinary moment when it first refused to leave.`,
-                distinctive: `It sounds personal because the question is narrow and odd enough to resist becoming a generic academic interest.`,
-            };
-        },
+        builds: [
+            (ctx) => {
+                const question = ctx.answer('private_question') || ctx.answer('tiny_study') || 'a question that keeps returning';
+                const collision = ctx.answer('world_collision') || 'two worlds that keep colliding';
+                return {
+                    core: `A story about following ${quoteDetail(question, 'a question that keeps returning', true)} until it connects to ${listFragment(collision, 'two worlds that keep colliding')} in a way that only your path would produce.`,
+                    tension: 'The tension is between curiosity as a private habit and curiosity as a public direction.',
+                    opening: `Begin with the question itself. Then show the ordinary moment when it first refused to leave.`,
+                    distinctive: `It sounds personal because the question is narrow and odd enough to resist becoming a generic academic interest.`,
+                };
+            },
+            (ctx) => {
+                const search = ctx.answer('unguarded_search') || ctx.answer('private_question') || 'what you search for when nobody is looking';
+                const study = ctx.answer('tiny_study') || 'the narrow study you would commit to';
+                return {
+                    core: `An essay where ${quoteDetail(search, 'what you search for when nobody is looking')} is the honest data, and ${quoteDetail(study, 'the narrow study you would commit to')} is the public commitment that grew out of it.`,
+                    tension: 'The tension is private curiosity versus public legibility: the question is real before it is respectable.',
+                    opening: `Open with the search bar — what you actually typed last week. Resist polishing it.`,
+                    distinctive: `It is yours because the source material is unedited curiosity, not a polished “lifelong fascination.”`,
+                };
+            },
+            (ctx) => {
+                const collision = ctx.answer('world_collision') || 'the two fields you keep braiding together';
+                const defend = ctx.answer('defend_too_long') || 'the thing you would defend for too long';
+                return {
+                    core: `An essay built on the friction between ${listFragment(collision, 'two fields')} — and how that friction shows up in why you would defend ${quoteDetail(defend, 'the thing you over-defend')}.`,
+                    tension: 'The tension is intellectual restlessness versus the discipline a field demands.',
+                    opening: `State the collision in a single sentence. Then walk one specific instance — date, setting, what you were holding.`,
+                    distinctive: `It avoids the “interdisciplinary” cliché because the collision is something you actually carry, not a pose.`,
+                };
+            },
+        ],
     },
     {
         id: 'borrowed-voice',
         title: 'The voice you borrowed, then made your own',
         weights: { relationship: 2.2, voice: 1.3, motif: .8, risk: .7 },
-        evidence: ['imitated_person', 'private_voice', 'repeated_compliment', 'kept_object', 'story_form'],
+        evidence: ['imitated_person', 'private_voice', 'repeated_compliment', 'kept_object', 'inherited_phrase', 'carried_dialogue', 'story_form'],
         essayTypes: ['Community or family', 'Personal statement', 'Diversity or identity'],
-        build: (ctx) => {
-            const person = ctx.answer('imitated_person') || ctx.answer('private_voice') || 'someone whose voice stayed with you';
-            const reader = ctx.answer('private_voice') || 'the person whose reaction would matter';
-            return {
-                core: `A story about how ${quoteDetail(person, 'someone whose voice stayed with you')} shaped the way you speak, notice, care, or decide.`,
-                tension: 'The tension is inheritance versus authorship: what you received, what you resisted, and what became yours.',
-                opening: `Start with a copied gesture, phrase, or habit. Let ${lowerFragment(reader)} appear later as the emotional test.`,
-                distinctive: `This angle works when the person is not just admired; they leave fingerprints on your actual behavior.`,
-            };
-        },
+        builds: [
+            (ctx) => {
+                const person = ctx.answer('imitated_person') || ctx.answer('private_voice') || 'someone whose voice stayed with you';
+                const reader = ctx.answer('private_voice') || 'the person whose reaction would matter';
+                return {
+                    core: `A story about how ${quoteDetail(person, 'someone whose voice stayed with you')} shaped the way you speak, notice, care, or decide.`,
+                    tension: 'The tension is inheritance versus authorship: what you received, what you resisted, and what became yours.',
+                    opening: `Start with a copied gesture, phrase, or habit. Let ${lowerFragment(reader)} appear later as the emotional test.`,
+                    distinctive: `This angle works when the person is not just admired; they leave fingerprints on your actual behavior.`,
+                };
+            },
+            (ctx) => {
+                const phrase = ctx.answer('inherited_phrase') || ctx.answer('carried_dialogue') || 'a phrase you inherited';
+                const person = ctx.answer('imitated_person') || 'the person you copied';
+                return {
+                    core: `An essay where the inherited phrase ${quoteDetail(phrase, 'an inherited phrase', true)} is the through-line, and the question is when you started to mean it differently than ${lowerFragment(person)} did.`,
+                    tension: 'The tension is the moment a phrase you grew up with became something you said on purpose.',
+                    opening: `Open with the phrase itself, in quotes, no setup. Then place it in one specific room.`,
+                    distinctive: `It is irreplaceable because the language is literally inherited — no other applicant could write this opening.`,
+                };
+            },
+            (ctx) => {
+                const dialogue = ctx.answer('carried_dialogue') || ctx.answer('inherited_phrase') || 'a line you carry around';
+                const compliment = ctx.answer('repeated_compliment') || 'the compliment you only half-believe';
+                return {
+                    core: `An essay about a line you carry — ${quoteDetail(dialogue, 'a line you carry around', true)} — and how it slowly rewrote what you thought ${lowerFragment(compliment)} actually meant.`,
+                    tension: 'The tension is between the version of you others repeat and the version of you a single sentence keeps insisting on.',
+                    opening: `Begin with the quoted line. Don’t name the speaker yet. Let the reader feel its weight before its source.`,
+                    distinctive: `Most family essays summarize. This one gives the reader the literal sentence that did the work.`,
+                };
+            },
+        ],
     },
     {
         id: 'capable-beginner',
@@ -1653,60 +2043,359 @@ const IDEA_TEMPLATES = [
         weights: { risk: 1.8, future_direction: 1.7, agency: 1.2, intellectual_pattern: .8 },
         evidence: ['beginner_room', 'hard_bravery', 'decision_style', 'tuesday_future', 'envy_signal'],
         essayTypes: ['Growth', 'Leadership or activity', 'Why campus community'],
-        build: (ctx) => {
-            const room = ctx.answer('beginner_room') || 'a room where you would be the least skilled person';
-            const future = ctx.answer('tuesday_future') || 'the ordinary future you pictured';
-            return {
-                core: `A story about choosing ${lowerFragment(room)} because the next version of you needs harder rooms, not louder praise.`,
-                tension: 'The tension is competence versus appetite. You are not proving you are finished; you are proving what you want to become capable of.',
-                opening: `Open at the edge of ${lowerFragment(room)}, or with ${quoteDetail(future, 'the ordinary future you pictured')}. Let uncertainty be visible.`,
-                distinctive: `This is stronger than a success story because the center is willingness to be unpolished in a meaningful direction.`,
-            };
-        },
+        builds: [
+            (ctx) => {
+                const room = ctx.answer('beginner_room') || 'a room where you would be the least skilled person';
+                const future = ctx.answer('tuesday_future') || 'the ordinary future you pictured';
+                return {
+                    core: `A story about choosing ${lowerFragment(room)} because the next version of you needs harder rooms, not louder praise.`,
+                    tension: 'The tension is competence versus appetite. You are not proving you are finished; you are proving what you want to become capable of.',
+                    opening: `Open at the edge of ${lowerFragment(room)}, or with ${quoteDetail(future, 'the ordinary future you pictured')}. Let uncertainty be visible.`,
+                    distinctive: `This is stronger than a success story because the center is willingness to be unpolished in a meaningful direction.`,
+                };
+            },
+            (ctx) => {
+                const bravery = ctx.answer('hard_bravery') || 'the kind of bravery that is hardest for you';
+                const room = ctx.answer('beginner_room') || 'the room you want to be unskilled in';
+                return {
+                    core: `An essay about the specific bravery of ${lowerFragment(bravery)} — and why ${lowerFragment(room)} is the next room where you intend to practice it.`,
+                    tension: 'The tension is the gap between the kind of courage you admire and the kind you have actually used.',
+                    opening: `Begin with the small failure version of this bravery — a moment you almost did it, and didn’t. Then the room.`,
+                    distinctive: `It avoids the “growth essay” cliché by naming the bravery you are still bad at, not the one you have already mastered.`,
+                };
+            },
+            (ctx) => {
+                const envy = ctx.answer('envy_signal') || 'the thing you keep envying in others';
+                const room = ctx.answer('beginner_room') || 'a room where the more skilled people already are';
+                return {
+                    core: `An essay where envy is a compass: you keep wanting ${lowerFragment(envy)}, and ${lowerFragment(room)} is where that wanting actually points.`,
+                    tension: 'The tension is jealousy versus apprenticeship: envy is data, but only if you walk toward it.',
+                    opening: `Open with the most embarrassing version of the envy. Be specific about whose. Don’t soften it.`,
+                    distinctive: `This works because most students hide envy. Treating it as direction is itself the move.`,
+                };
+            },
+        ],
     },
     {
         id: 'livable-contradiction',
         title: 'The contradiction you can live inside',
         weights: { tension: 1.9, voice: 1.4, value: 1.2, risk: .9 },
-        evidence: ['bad_label', 'repeated_compliment', 'refusal_sentence', 'go_quiet', 'true_line'],
+        evidence: ['bad_label', 'repeated_compliment', 'refusal_sentence', 'go_quiet', 'true_line', 'two_truths'],
         essayTypes: ['Identity', 'Personal statement', 'Topic of choice'],
-        build: (ctx) => {
-            const label = ctx.answer('bad_label') || ctx.answer('repeated_compliment') || 'a label that never quite fit';
-            const line = ctx.answer('true_line') || ctx.answer('refusal_sentence') || 'the sentence that sounds like you';
-            return {
-                core: `A story about the gap between ${quoteDetail(label, 'the label that never quite fit')} and the more accurate language you are trying to earn.`,
-                tension: 'The tension is not a problem to solve. It is the pressure that gives the story shape.',
-                opening: `Begin with the wrong label, then interrupt it with ${quoteDetail(line, 'your own language')}.`,
-                distinctive: `It feels personal because it gives the reader your actual language instead of a polished trait summary.`,
-            };
-        },
+        builds: [
+            (ctx) => {
+                const label = ctx.answer('bad_label') || ctx.answer('repeated_compliment') || 'a label that never quite fit';
+                const line = ctx.answer('true_line') || ctx.answer('refusal_sentence') || 'the sentence that sounds like you';
+                return {
+                    core: `A story about the gap between ${quoteDetail(label, 'the label that never quite fit')} and the more accurate language you are trying to earn.`,
+                    tension: 'The tension is not a problem to solve. It is the pressure that gives the story shape.',
+                    opening: `Begin with the wrong label, then interrupt it with ${quoteDetail(line, 'your own language')}.`,
+                    distinctive: `It feels personal because it gives the reader your actual language instead of a polished trait summary.`,
+                };
+            },
+            (ctx) => {
+                const truths = ctx.answer('two_truths') || ctx.answer('bad_label') || 'two true things that contradict';
+                const line = ctx.answer('true_line') || 'your own line';
+                return {
+                    core: `An essay built around the pair of contradictions you named — ${quoteDetail(truths, 'two truths in tension', true)} — and the small daily life that lets both be true.`,
+                    tension: 'The tension is the refusal to resolve. You are not picking one of the two. You are building a life that holds both.',
+                    opening: `State both truths in two sentences, no transition. Then place them in one specific scene.`,
+                    distinctive: `Most identity essays resolve. This one lets the reader sit inside the contradiction with you, which is rarer and more honest.`,
+                };
+            },
+            (ctx) => {
+                const quiet = ctx.answer('go_quiet') || 'when you go quiet';
+                const line = ctx.answer('true_line') || ctx.answer('refusal_sentence') || 'the line that sounds like you';
+                return {
+                    core: `An essay about the difference between when you go quiet — ${quoteDetail(quiet, 'when you go quiet')} — and the line you would say if you were braver: ${quoteDetail(line, 'your own line', true)}.`,
+                    tension: 'The tension is silence as protection versus voice as a debt you owe yourself.',
+                    opening: `Open with the silence — the room, the moment, the thing you didn’t say. Then the line, alone on its own line.`,
+                    distinctive: `It’s rarer than a “finding my voice” story because it locates the exact friction, not the resolution.`,
+                };
+            },
+        ],
+    },
+    {
+        id: 'sensory-thread',
+        title: 'The sense that organizes your memory',
+        weights: { motif: 2.0, setting: 1.5, voice: 1.0, value: .5 },
+        evidence: ['place_smell', 'place_detail', 'tiny_notices', 'kept_object', 'childhood_scene'],
+        essayTypes: ['Personal statement', 'Background or identity', 'Topic of choice'],
+        builds: [
+            (ctx) => {
+                const smell = ctx.answer('place_smell') || ctx.answer('place_detail') || 'a sensory cue you keep returning to';
+                const scene = ctx.answer('childhood_scene') || 'a real five-minute scene you can still see';
+                return {
+                    core: `An essay where one sense — anchored in ${quoteDetail(smell, 'a sensory cue', true)} — quietly organizes how you remember, decide, and pay attention.`,
+                    tension: 'The tension is between the visible self everyone meets and the sensory life that shaped how you actually think.',
+                    opening: `Open inside ${quoteDetail(scene, 'a five-minute scene')}. Let the sense — not the explanation — do the heavy lifting first.`,
+                    distinctive: `It is yours because sense memory cannot be borrowed. The reader knows immediately whether you are inside it or outside.`,
+                };
+            },
+            (ctx) => {
+                const object = ctx.answer('kept_object') || 'an object you have kept too long';
+                const detail = ctx.answer('place_detail') || ctx.answer('place_smell') || 'a quiet detail';
+                return {
+                    core: `An essay where ${quoteDetail(object, 'a small kept object')} is the artifact and ${quoteDetail(detail, 'one sensory detail')} is the recurring evidence — together they show what you have always been training yourself to notice.`,
+                    tension: 'The tension is keepsakes as nostalgia versus keepsakes as method: you keep them because they are how you think.',
+                    opening: 'Hold the object in your hands on the page. Describe it before you say what it means.',
+                    distinctive: 'It avoids the “meaningful object” cliché because the object is treated as evidence, not symbol.',
+                };
+            },
+        ],
+    },
+    {
+        id: 'inherited-language',
+        title: 'The phrase you inherited and the meaning you gave it',
+        weights: { voice: 2.2, relationship: 1.8, motif: 1.0, value: .6 },
+        evidence: ['inherited_phrase', 'carried_dialogue', 'imitated_person', 'private_voice', 'true_line'],
+        essayTypes: ['Community or family', 'Personal statement', 'Diversity or identity'],
+        builds: [
+            (ctx) => {
+                const phrase = ctx.answer('inherited_phrase') || 'a phrase from your family or hometown';
+                const person = ctx.answer('imitated_person') || 'the person who said it';
+                return {
+                    core: `An essay where ${quoteDetail(phrase, 'an inherited phrase', true)} is the spine, and the move is showing how you came to mean it differently than ${lowerFragment(person)} did.`,
+                    tension: 'The tension is between language as inheritance and language as authorship.',
+                    opening: `Open with the phrase, on its own line, in quotes. Then a single specific scene where it was said.`,
+                    distinctive: `No other applicant could write this opening because the literal language is yours by birth.`,
+                };
+            },
+            (ctx) => {
+                const dialogue = ctx.answer('carried_dialogue') || ctx.answer('inherited_phrase') || 'a line you carry around';
+                const line = ctx.answer('true_line') || 'a line of your own';
+                return {
+                    core: `An essay built around the conversation between ${quoteDetail(dialogue, 'a line you carry around', true)} and the line you would write next: ${quoteDetail(line, 'a line of your own', true)}.`,
+                    tension: 'The tension is between borrowed language that comforts and your own language, which is still under construction.',
+                    opening: `Start with the inherited line. Three paragraphs later, answer it in your own.`,
+                    distinctive: `It treats voice as a real conversation between specific sentences, not an abstract “discovery.”`,
+                };
+            },
+        ],
+    },
+    {
+        id: 'changed-mind',
+        title: 'The belief you outgrew',
+        weights: { intellectual_pattern: 2.0, tension: 1.5, voice: 1.0, future_direction: .6 },
+        evidence: ['belief_shift', 'private_question', 'world_collision', 'refusal_sentence', 'two_truths'],
+        essayTypes: ['Intellectual curiosity', 'Identity', 'Supplement short answer'],
+        builds: [
+            (ctx) => {
+                const shift = ctx.answer('belief_shift') || 'a belief you used to hold';
+                const question = ctx.answer('private_question') || 'the question that pried the belief loose';
+                return {
+                    core: `An essay where the engine is the moment ${quoteDetail(shift, 'a belief you used to hold', true)} stopped being adequate, and ${quoteDetail(question, 'the question that pried it loose', true)} took its place.`,
+                    tension: 'The tension is intellectual loyalty versus honesty: the belief was useful before it was wrong.',
+                    opening: `Begin inside the old belief — describe it in the present tense, sympathetically. Then the moment of fracture.`,
+                    distinctive: `Most “growth” essays start where they ended up. This one starts where you used to be, and earns the change.`,
+                };
+            },
+            (ctx) => {
+                const shift = ctx.answer('belief_shift') || 'something you used to be sure about';
+                const truths = ctx.answer('two_truths') || ctx.answer('refusal_sentence') || 'the contradictions you now hold instead';
+                return {
+                    core: `An essay about the cost of letting a clean belief — ${quoteDetail(shift, 'a clean old belief', true)} — be replaced by something messier: ${quoteDetail(truths, 'the contradictions that replaced it', true)}.`,
+                    tension: 'The tension is the comfort of certainty versus the obligation to be accurate.',
+                    opening: `Open with the certainty in its old, confident form. Then break it with one specific counter-example you cannot dismiss.`,
+                    distinctive: `It treats changing your mind as expensive, which it is, instead of treating it as a tidy upgrade.`,
+                };
+            },
+        ],
+    },
+    {
+        id: 'quiet-pride',
+        title: 'The accomplishment you never named out loud',
+        weights: { risk: 1.8, agency: 1.5, value: 1.2, voice: .8 },
+        evidence: ['quiet_pride', 'small_failure', 'hard_bravery', 'decision_style', 'go_quiet'],
+        essayTypes: ['Personal statement', 'Growth', 'Topic of choice'],
+        builds: [
+            (ctx) => {
+                const pride = ctx.answer('quiet_pride') || 'a moment you are quietly proud of';
+                const fail = ctx.answer('small_failure') || 'a small failure that still bothers you';
+                return {
+                    core: `An essay about a moment — ${quoteDetail(pride, 'a moment of quiet pride', true)} — that you have never told anyone, and the small failure ${quoteDetail(fail, 'a small failure', true)} that taught you why.`,
+                    tension: 'The tension is between the version of pride that needs an audience and the version that holds without one.',
+                    opening: `Open inside the moment of pride, in real time, with no one else watching.`,
+                    distinctive: `Most accomplishment essays are public. This one is the rarer kind: an accomplishment whose value was that it stayed private.`,
+                };
+            },
+            (ctx) => {
+                const pride = ctx.answer('quiet_pride') || 'a small moment you held alone';
+                const bravery = ctx.answer('hard_bravery') || 'the kind of bravery that is hardest for you';
+                return {
+                    core: `An essay about how ${quoteDetail(pride, 'a private accomplishment', true)} required the kind of bravery you are usually bad at: ${lowerFragment(bravery)}.`,
+                    tension: 'The tension is between the bravery you admire publicly and the small one you actually performed.',
+                    opening: `Open with the moment just before — the one where you almost talked yourself out of it.`,
+                    distinctive: `It earns its quiet because it shows the cost. The pride is small, but real, and you do not perform it at the end.`,
+                };
+            },
+        ],
+    },
+    {
+        id: 'private-ritual',
+        title: 'The ritual that taught you something the curriculum did not',
+        weights: { motif: 2.0, voice: 1.3, agency: 1.0, setting: .8 },
+        evidence: ['private_ritual', 'kept_object', 'recurring_place', 'place_detail', 'tiny_notices'],
+        essayTypes: ['Personal statement', 'Topic of choice', 'Background or identity'],
+        builds: [
+            (ctx) => {
+                const ritual = ctx.answer('private_ritual') || 'a private ritual you keep';
+                const place = ctx.answer('recurring_place') || 'the place where it happens';
+                return {
+                    core: `An essay where ${quoteDetail(ritual, 'a private ritual', true)} — performed in ${lowerFragment(place)} — is the school you actually built for yourself.`,
+                    tension: 'The tension is the gap between the curriculum that gets graded and the one you teach yourself, weekly, in private.',
+                    opening: `Open in the middle of the ritual. Mid-gesture. The setup arrives later.`,
+                    distinctive: `Most essays talk about discipline. This one shows the smallest possible unit of it — a ritual you would still do if no one ever saw.`,
+                };
+            },
+            (ctx) => {
+                const ritual = ctx.answer('private_ritual') || 'a small repeating practice';
+                const object = ctx.answer('kept_object') || 'an object the ritual depends on';
+                return {
+                    core: `An essay where ${quoteDetail(ritual, 'a small ritual', true)} is the practice and ${quoteDetail(object, 'a depended-on object', true)} is its instrument — together they reveal a method you can name now.`,
+                    tension: 'The tension is between performance and practice: the ritual is unimpressive, which is why it works.',
+                    opening: `Lead with the object in motion. Hands first, idea second.`,
+                    distinctive: `It avoids motivational essay tropes by treating the ritual as physical, not symbolic.`,
+                };
+            },
+        ],
+    },
+    {
+        id: 'two-truths',
+        title: 'The two-truths sentence',
+        weights: { tension: 2.0, voice: 1.5, value: 1.0, risk: .6 },
+        evidence: ['two_truths', 'bad_label', 'repeated_compliment', 'refusal_sentence', 'true_line'],
+        essayTypes: ['Identity', 'Personal statement', 'Topic of choice'],
+        builds: [
+            (ctx) => {
+                const truths = ctx.answer('two_truths') || 'two true things about you that contradict';
+                const label = ctx.answer('bad_label') || 'a label that never quite fit';
+                return {
+                    core: `An essay built around the literal sentence — ${quoteDetail(truths, 'two truths in tension', true)} — and the way ${quoteDetail(label, 'a wrong label', true)} kept asking you to pick one.`,
+                    tension: 'The tension is the cultural pressure to choose versus the honesty of refusing.',
+                    opening: `Lead with both truths, side by side, no softening conjunction. Then a scene where both were true at once.`,
+                    distinctive: `It is irreplaceable because the source material is a literal sentence the reader can hold.`,
+                };
+            },
+            (ctx) => {
+                const truths = ctx.answer('two_truths') || 'two truths in tension';
+                const line = ctx.answer('true_line') || ctx.answer('refusal_sentence') || 'the line that sounds like you';
+                return {
+                    core: `An essay where ${quoteDetail(truths, 'a contradiction you can name', true)} is the structure, and ${quoteDetail(line, 'your own line', true)} is the resolution that refuses to be a resolution.`,
+                    tension: 'The tension is the literary one: contradiction is the engine, not the obstacle.',
+                    opening: 'State the contradiction. Then walk three short scenes that earn it.',
+                    distinctive: 'Most “identity” essays resolve. This one is structurally honest about not resolving.',
+                };
+            },
+        ],
+    },
+    {
+        id: 'unguarded-curiosity',
+        title: 'The search bar as autobiography',
+        weights: { intellectual_pattern: 2.2, voice: 1.0, motif: .8, future_direction: .6 },
+        evidence: ['unguarded_search', 'private_question', 'tiny_study', 'repeat_media', 'defend_too_long'],
+        essayTypes: ['Intellectual curiosity', 'Why this field', 'Supplement short answer'],
+        builds: [
+            (ctx) => {
+                const search = ctx.answer('unguarded_search') || 'what you search for when nobody is looking';
+                const study = ctx.answer('tiny_study') || 'the narrow study you would commit to';
+                return {
+                    core: `An essay where the unedited record of ${quoteDetail(search, 'unguarded curiosity', true)} is the evidence, and ${quoteDetail(study, 'a narrow committed study', true)} is what you would do with one year and no audience.`,
+                    tension: 'The tension is between curiosity that performs and curiosity that just is.',
+                    opening: `Open with the actual search query — typed, unedited. No setup. Trust the strangeness.`,
+                    distinctive: `It avoids the “lifelong fascination” cliché by being literally honest about a recent week.`,
+                };
+            },
+            (ctx) => {
+                const media = ctx.answer('repeat_media') || 'a piece of media you return to too often';
+                const search = ctx.answer('unguarded_search') || 'the thing you keep googling';
+                return {
+                    core: `An essay where the media you return to — ${quoteDetail(media, 'a piece of media', true)} — and the search bar history together describe a shape of mind.`,
+                    tension: 'The tension is between curiosity that earns prestige and curiosity that earns no points at all.',
+                    opening: 'Begin in the rewatch. The fifth time. The exact scene that pulls you back.',
+                    distinctive: 'It treats taste as data, not as decoration.',
+                };
+            },
+        ],
+    },
+    {
+        id: 'foundational-scene',
+        title: 'The five-minute scene that taught you what to notice',
+        weights: { setting: 1.8, motif: 1.6, voice: 1.2, value: .6 },
+        evidence: ['childhood_scene', 'place_detail', 'place_smell', 'kept_object', 'imitated_person'],
+        essayTypes: ['Personal statement', 'Background or identity', 'Diversity or identity'],
+        builds: [
+            (ctx) => {
+                const scene = ctx.answer('childhood_scene') || 'a five-minute childhood scene you can still see';
+                const detail = ctx.answer('place_detail') || ctx.answer('place_smell') || 'one sensory detail from inside it';
+                return {
+                    core: `An essay anchored in ${quoteDetail(scene, 'one five-minute scene', true)}, where ${quoteDetail(detail, 'a sensory detail', true)} is the recurring proof that this is the moment your way of noticing was set.`,
+                    tension: 'The tension is between the small scene and the long shadow it casts on how you see now.',
+                    opening: 'Drop the reader inside the scene at minute one. No flash-forward. No frame.',
+                    distinctive: 'Most childhood essays summarize. This one stays inside the five minutes long enough to earn the larger claim.',
+                };
+            },
+            (ctx) => {
+                const scene = ctx.answer('childhood_scene') || 'a foundational five-minute scene';
+                const person = ctx.answer('imitated_person') || 'the person whose way of being you copied';
+                return {
+                    core: `An essay where ${quoteDetail(scene, 'a foundational scene', true)} is replayed twice — once as a child, once as the person you have become — and ${lowerFragment(person)} is the figure who never moves between them.`,
+                    tension: 'The tension is the gap between the child who watched and the adult who can finally name what they were watching.',
+                    opening: 'Begin with the second version of the scene. Let the first arrive as memory inside it.',
+                    distinctive: 'It uses time as structure, which most personal essays do not.',
+                };
+            },
+        ],
     },
 ];
 
 let currentIndex = 0;
 let savePillTimer = null;
 
+function blankReveal() {
+    return { templateAdjustments: {}, variantIndices: {} };
+}
+
+function blankDraft() {
+    return { version: STORAGE_VERSION, currentIndex: 0, answers: {}, reveal: blankReveal() };
+}
+
 function readDraft() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         const parsed = raw ? JSON.parse(raw) : null;
-        if (!parsed || parsed.version !== 2) return { version: 2, currentIndex: 0, answers: {} };
+        if (!parsed) return blankDraft();
+        const answers = parsed.answers && typeof parsed.answers === 'object' ? parsed.answers : {};
+        const currentIdx = Number.isInteger(parsed.currentIndex) ? parsed.currentIndex : 0;
+        if (parsed.version === 2) {
+            // Forward-migrate v2 → v3 (preserve answers and position; default reveal state).
+            return { version: STORAGE_VERSION, currentIndex: currentIdx, answers, reveal: blankReveal() };
+        }
+        if (parsed.version !== STORAGE_VERSION) return blankDraft();
+        const revealRaw = parsed.reveal && typeof parsed.reveal === 'object' ? parsed.reveal : null;
         return {
-            version: 2,
-            currentIndex: Number.isInteger(parsed.currentIndex) ? parsed.currentIndex : 0,
-            answers: parsed.answers && typeof parsed.answers === 'object' ? parsed.answers : {},
+            version: STORAGE_VERSION,
+            currentIndex: currentIdx,
+            answers,
+            reveal: revealRaw
+                ? {
+                    templateAdjustments: revealRaw.templateAdjustments && typeof revealRaw.templateAdjustments === 'object' ? revealRaw.templateAdjustments : {},
+                    variantIndices: revealRaw.variantIndices && typeof revealRaw.variantIndices === 'object' ? revealRaw.variantIndices : {},
+                }
+                : blankReveal(),
         };
     } catch (e) {
-        return { version: 2, currentIndex: 0, answers: {} };
+        return blankDraft();
     }
 }
 
 function writeDraft(draft) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            version: 2,
+            version: STORAGE_VERSION,
             currentIndex,
             answers: draft.answers || {},
+            reveal: draft.reveal || blankReveal(),
             updatedAt: new Date().toISOString(),
         }));
         flashSaved();
@@ -1722,7 +2411,45 @@ function clearDraft() {
 function getDraft() {
     const draft = readDraft();
     if (!draft.answers) draft.answers = {};
+    if (!draft.reveal) draft.reveal = blankReveal();
+    if (!draft.reveal.templateAdjustments) draft.reveal.templateAdjustments = {};
+    if (!draft.reveal.variantIndices) draft.reveal.variantIndices = {};
     return draft;
+}
+
+function answerValue(questionId) {
+    const answer = getDraft().answers[questionId];
+    if (!isAnswered(answer)) return '';
+    if (Array.isArray(answer.value)) return answer.value[0] || '';
+    return String(answer.value || '').trim();
+}
+
+function getTemplateAdjustment(templateId) {
+    const adj = getDraft().reveal.templateAdjustments[templateId];
+    return typeof adj === 'number' && Number.isFinite(adj) ? adj : 1;
+}
+
+function setTemplateAdjustment(templateId, value) {
+    const draft = getDraft();
+    draft.reveal.templateAdjustments[templateId] = value;
+    writeDraft(draft);
+}
+
+function getVariantIndex(templateId) {
+    const idx = getDraft().reveal.variantIndices[templateId];
+    return Number.isInteger(idx) && idx >= 0 ? idx : 0;
+}
+
+function setVariantIndex(templateId, idx) {
+    const draft = getDraft();
+    draft.reveal.variantIndices[templateId] = idx;
+    writeDraft(draft);
+}
+
+function pickBuild(template, variantIndex) {
+    if (!Array.isArray(template.builds) || template.builds.length === 0) return null;
+    const i = ((variantIndex % template.builds.length) + template.builds.length) % template.builds.length;
+    return template.builds[i];
 }
 
 function getQuestion(id) {
@@ -1888,22 +2615,136 @@ function scoreTemplate(template, scores) {
     template.evidence.forEach(questionId => {
         if (answerText(questionId)) score += 1.6;
     });
-    return score;
+    return score * getTemplateAdjustment(template.id);
+}
+
+function buildIdeaContent(template, ctx, variantIndex) {
+    const builder = pickBuild(template, variantIndex);
+    const content = builder ? builder(ctx) : { core: '', tension: '', opening: '', distinctive: '' };
+    const formValue = answerValue('story_form');
+    const formNote = FORM_ADVICE[formValue];
+    if (formNote) {
+        content.opening = formNote + ' ' + (content.opening || '');
+    }
+    return content;
+}
+
+function buildIdea(template, ctx) {
+    const variantIndex = getVariantIndex(template.id);
+    return {
+        template,
+        variantIndex,
+        score: scoreTemplate(template, ctx.scores),
+        content: buildIdeaContent(template, ctx, variantIndex),
+        evidence: collectEvidence(template),
+    };
+}
+
+function getRankedIdeas() {
+    const ctx = buildContext();
+    return IDEA_TEMPLATES
+        .map(template => buildIdea(template, ctx))
+        .sort((a, b) => b.score - a.score);
 }
 
 function getIdeaCards() {
-    const ctx = buildContext();
     const count = answeredCount();
-    const targetCount = count >= 23 ? 5 : count >= 14 ? 4 : 3;
-    return IDEA_TEMPLATES
-        .map(template => ({
-            template,
-            score: scoreTemplate(template, ctx.scores),
-            content: template.build(ctx),
-            evidence: collectEvidence(template),
+    const targetCount = count >= 32 ? 5 : count >= 20 ? 4 : 3;
+    return getRankedIdeas().slice(0, targetCount);
+}
+
+function getCounterfactualIdea() {
+    const ranked = getRankedIdeas();
+    const count = answeredCount();
+    const targetCount = count >= 32 ? 5 : count >= 20 ? 4 : 3;
+    const remaining = ranked.slice(targetCount);
+    if (remaining.length === 0) return null;
+    return remaining[remaining.length - 1];
+}
+
+const MOTIF_STOPWORDS = new Set([
+    'about','above','after','again','against','also','always','another','around','because','before','being','below','between','both','came','come','could','does','doing','done','down','during','each','either','enough','even','ever','every','everyone','everything','from','gave','give','going','gone','have','having','here','huge','into','itself','just','keep','keeps','kept','knew','know','known','knows','last','later','least','left','like','liked','little','long','look','looked','make','makes','many','maybe','more','most','much','must','myself','need','needs','never','next','none','only','other','others','ours','ourselves','over','people','place','places','pretty','really','said','same','seem','seems','sense','since','some','someone','something','somewhere','still','such','take','taken','takes','than','that','their','theirs','them','themselves','then','there','these','they','thing','things','think','thinking','thinks','this','those','though','through','time','together','told','took','toward','until','upon','very','want','wanted','wants','went','were','what','whatever','when','where','which','while','whose','will','with','within','without','would','your','yourself','yourselves','says','say','tell','tells','telling','until','always','almost','first','second','third','years','little','their','before','after','someone','sometimes','though','today','toward','because','really','around','enough','before','during','because','through','better','everything','anything','nothing'
+]);
+
+function getTextAnswerEntries() {
+    const answers = getDraft().answers;
+    return QUESTIONS
+        .filter(q => q.type === 'text' || q.type === 'memory')
+        .map(q => ({
+            id: q.id,
+            prompt: q.prompt,
+            text: (() => {
+                const a = answers[q.id];
+                if (!isAnswered(a)) return '';
+                return Array.isArray(a.value) ? '' : String(a.value || '').trim();
+            })(),
         }))
-        .sort((a, b) => b.score - a.score)
-        .slice(0, targetCount);
+        .filter(entry => entry.text.length > 0);
+}
+
+function extractMotifs() {
+    const entries = getTextAnswerEntries();
+    const counts = {};
+    const sources = {};
+    entries.forEach(entry => {
+        const tokens = entry.text.toLowerCase().match(/[a-z][a-z'’]{3,}/g) || [];
+        const seenInEntry = new Set();
+        tokens.forEach(token => {
+            const word = token.replace(/['’]s?$/, '');
+            if (word.length < 4) return;
+            if (MOTIF_STOPWORDS.has(word)) return;
+            counts[word] = (counts[word] || 0) + 1;
+            if (!sources[word]) sources[word] = new Set();
+            if (!seenInEntry.has(word)) {
+                sources[word].add(entry.prompt);
+                seenInEntry.add(word);
+            }
+        });
+    });
+    return Object.entries(counts)
+        .filter(([word, n]) => n >= 2 && sources[word].size >= 1)
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, 6)
+        .map(([word, count]) => ({
+            word,
+            count,
+            prompts: Array.from(sources[word]).slice(0, 3),
+        }));
+}
+
+const VOICE_SOURCE_IDS = ['true_line', 'inherited_phrase', 'carried_dialogue', 'bad_label', 'place_detail', 'place_smell', 'two_truths', 'childhood_scene', 'tiny_fix', 'private_question', 'private_ritual'];
+
+function splitIntoSentences(text) {
+    return String(text || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .split(/(?<=[.!?…])\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+}
+
+function extractVoicePhrases() {
+    const seen = new Set();
+    const phrases = [];
+    VOICE_SOURCE_IDS.forEach(id => {
+        const text = answerValue(id);
+        if (!text) return;
+        const question = getQuestion(id);
+        const sentences = splitIntoSentences(text);
+        const candidates = sentences.length > 0 ? sentences : [text];
+        candidates.forEach(sentence => {
+            const words = sentence.split(/\s+/).filter(Boolean);
+            if (words.length < 4 || words.length > 22) return;
+            const key = sentence.toLowerCase();
+            if (seen.has(key)) return;
+            seen.add(key);
+            phrases.push({
+                phrase: sentence.replace(/^[‘’'"]|[‘’'"]$/g, ''),
+                source: question ? question.prompt : '',
+            });
+        });
+    });
+    return phrases.slice(0, 6);
 }
 
 function collectEvidence(template) {
@@ -1934,30 +2775,101 @@ function collectEvidence(template) {
     return picked.slice(0, 3);
 }
 
-function buildDiscardPile() {
-    const place = answerPreview('recurring_place') || answerPreview('place_detail') || 'a concrete scene';
-    const irritation = answerPreview('daily_irritation') || answerPreview('unfair_rule') || 'the exact irritation you named';
-    const question = answerPreview('private_question') || answerPreview('tiny_study') || 'your narrow question';
-    const line = answerPreview('true_line') || answerPreview('bad_label') || 'your own language';
-
+function buildDiscardPool() {
     return [
         {
+            tags: ['*'],
             title: 'The polished activity list',
-            body: `Do not lead by proving you were busy. Start with a concrete scene from ${lowerFragment(place)}, then let the achievement appear only if it earns its place.`,
+            build: () => {
+                const place = answerPreview('recurring_place') || answerPreview('place_detail') || 'a concrete scene';
+                return `Do not lead by proving you were busy. Start with a concrete scene from ${lowerFragment(place)}, then let the achievement appear only if it earns its place.`;
+            },
         },
         {
-            title: 'The generic problem-solver story',
-            body: `Avoid saying you like solving problems in general. The sharper angle is ${quoteDetail(lowerFragment(irritation), 'the exact irritation you named')} because it shows the standard you could not ignore.`,
-        },
-        {
-            title: 'The broad curiosity claim',
-            body: `Do not write that you are curious about everything. Let ${quoteDetail(question, 'your narrow question')} carry the curiosity because narrow questions feel lived-in.`,
-        },
-        {
+            tags: ['*'],
             title: 'The trait-summary ending',
-            body: `Avoid ending with "I became confident" or "I learned resilience." End closer to ${quoteDetail(line, 'your own language')} so the voice stays specific.`,
+            build: () => {
+                const line = answerPreview('true_line') || answerPreview('bad_label') || 'your own language';
+                return `Avoid ending with "I became confident" or "I learned resilience." End closer to ${quoteDetail(line, 'your own language')} so the voice stays specific.`;
+            },
+        },
+        {
+            tags: ['beautiful-irritation'],
+            title: 'The generic problem-solver story',
+            build: () => {
+                const irritation = answerPreview('daily_irritation') || answerPreview('unfair_rule') || 'the exact irritation you named';
+                return `Avoid saying you like solving problems in general. The sharper angle is ${quoteDetail(lowerFragment(irritation), 'the exact irritation you named')} because it shows the standard you could not ignore.`;
+            },
+        },
+        {
+            tags: ['private-question', 'unguarded-curiosity'],
+            title: 'The broad curiosity claim',
+            build: () => {
+                const question = answerPreview('private_question') || answerPreview('tiny_study') || 'your narrow question';
+                return `Do not widen the question to sound serious. Width is what makes it generic. Let ${quoteDetail(question, 'your narrow question')} carry the curiosity because narrow questions feel lived-in.`;
+            },
+        },
+        {
+            tags: ['borrowed-voice', 'inherited-language'],
+            title: 'The inspiring-grandparent cliché',
+            build: () => {
+                return 'The angle works only if their voice changed what you actually do, not just how you feel. If the essay still works after you delete the relative, you have not earned the inheritance.';
+            },
+        },
+        {
+            tags: ['quiet-pride'],
+            title: 'The made-public ending',
+            build: () => {
+                return 'Resist the temptation to make the moment public at the end. The whole point is that it stayed private. The reader rewards the restraint.';
+            },
+        },
+        {
+            tags: ['two-truths', 'livable-contradiction', 'changed-mind'],
+            title: 'The tidy resolution',
+            build: () => {
+                return 'Do not resolve the contradiction in the conclusion. Resolution kills the tension that made it interesting. End with the contradiction still alive — just better understood.';
+            },
+        },
+        {
+            tags: ['place-map', 'foundational-scene', 'sensory-thread'],
+            title: 'The hometown summary',
+            build: () => {
+                return 'Avoid summarizing the place. Stay inside one specific scene long enough that the reader can smell it. Wide shots make any setting interchangeable.';
+            },
+        },
+        {
+            tags: ['capable-beginner'],
+            title: 'The self-congratulating growth essay',
+            build: () => {
+                return 'Avoid framing this as “I learned.” Stay in the wanting. The strength of this angle is that you are still on the edge — not finished, on purpose.';
+            },
+        },
+        {
+            tags: ['private-ritual'],
+            title: 'The motivational-poster framing',
+            build: () => {
+                return 'Do not lift the ritual into a metaphor for discipline or grit. The ritual is more interesting when it stays small, physical, and ungrand.';
+            },
         },
     ];
+}
+
+function buildDiscardPile(pickedTemplateIds) {
+    const picked = new Set(pickedTemplateIds || []);
+    const pool = buildDiscardPool();
+    const tagged = pool.filter(item => item.tags.some(t => t === '*' || picked.has(t)));
+    const universal = tagged.filter(item => item.tags.includes('*'));
+    const specific = tagged.filter(item => !item.tags.includes('*'));
+    const ordered = specific.concat(universal);
+    const seen = new Set();
+    const out = [];
+    for (const item of ordered) {
+        if (seen.has(item.title)) continue;
+        seen.add(item.title);
+        out.push({ title: item.title, body: item.build() });
+        if (out.length >= 4) break;
+    }
+    return out;
 }
 
 function renderMoveRail() {
@@ -2237,12 +3149,148 @@ function renderIdeaBoard() {
 
     if (count < MIN_SIGNAL_COUNT) {
         renderLowSignal(board, count);
-    } else {
-        getIdeaCards().forEach((idea, idx) => renderIdeaCard(board, idea, idx));
-        renderDiscardPanel(board);
+        body.appendChild(board);
+        return;
     }
 
+    renderVoicePalette(board);
+    renderMotifPanel(board);
+
+    const ideas = getIdeaCards();
+    renderBoardToolbar(board, ideas);
+    ideas.forEach((idea, idx) => renderIdeaCard(board, idea, idx));
+
+    renderCounterfactualPanel(board, ideas);
+    renderDiscardPanel(board, ideas.map(i => i.template.id));
+
     body.appendChild(board);
+}
+
+function renderBoardToolbar(board, ideas) {
+    if (!ideas.length) return;
+    const bar = document.createElement('div');
+    bar.className = 'board-toolbar no-print';
+    const note = document.createElement('p');
+    note.className = 'board-toolbar-note';
+    note.textContent = 'React with 👍 / 👎 on any card to steer the next refresh. Tap 🔄 to see a different version of the same angle.';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'board-refresh';
+    button.innerHTML = '<i class="fa-solid fa-rotate text-xs"></i><span>Refresh whole board</span>';
+    button.addEventListener('click', () => {
+        const draft = getDraft();
+        IDEA_TEMPLATES.forEach(template => {
+            const builds = template.builds || [];
+            const cur = getVariantIndex(template.id);
+            const next = builds.length > 0 ? (cur + 1) % builds.length : 0;
+            draft.reveal.variantIndices[template.id] = next;
+        });
+        writeDraft(draft);
+        renderIdeaBoard();
+    });
+    bar.append(note, button);
+    board.appendChild(bar);
+}
+
+function renderVoicePalette(board) {
+    const phrases = extractVoicePhrases();
+    if (!phrases.length) return;
+    const panel = document.createElement('section');
+    panel.className = 'voice-palette';
+    const title = document.createElement('h4');
+    title.className = 'palette-title';
+    title.innerHTML = '<i class="fa-solid fa-feather"></i><span>Voice palette</span>';
+    const sub = document.createElement('p');
+    sub.className = 'palette-sub';
+    sub.textContent = 'Lines you have already written that sound like you. Use them as opening, closing, or transitions — your essay does not have to invent its own voice from scratch.';
+    panel.append(title, sub);
+
+    const list = document.createElement('div');
+    list.className = 'palette-list';
+    phrases.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'palette-row';
+        const phrase = document.createElement('blockquote');
+        phrase.className = 'palette-phrase';
+        phrase.textContent = '“' + item.phrase + '”';
+        const source = document.createElement('span');
+        source.className = 'palette-source';
+        source.textContent = item.source ? 'From: ' + item.source : '';
+        row.append(phrase, source);
+        list.appendChild(row);
+    });
+    panel.appendChild(list);
+    board.appendChild(panel);
+}
+
+function renderMotifPanel(board) {
+    const motifs = extractMotifs();
+    if (!motifs.length) return;
+    const panel = document.createElement('section');
+    panel.className = 'motif-panel';
+    const title = document.createElement('h4');
+    title.className = 'palette-title';
+    title.innerHTML = '<i class="fa-solid fa-tags"></i><span>Motifs that came up across your answers</span>';
+    const sub = document.createElement('p');
+    sub.className = 'palette-sub';
+    sub.textContent = 'Words you used in more than one answer, without being asked to. Recurring language is usually the cheapest, truest evidence of what an essay is actually about.';
+    panel.append(title, sub);
+
+    const grid = document.createElement('div');
+    grid.className = 'motif-grid';
+    motifs.forEach(item => {
+        const chip = document.createElement('div');
+        chip.className = 'motif-chip';
+        const word = document.createElement('strong');
+        word.textContent = item.word;
+        const count = document.createElement('span');
+        count.className = 'motif-count';
+        count.textContent = '×' + item.count;
+        const sources = document.createElement('span');
+        sources.className = 'motif-sources';
+        sources.textContent = item.prompts.length
+            ? 'Came up in: ' + item.prompts.join(' · ')
+            : '';
+        chip.append(word, count, sources);
+        grid.appendChild(chip);
+    });
+    panel.appendChild(grid);
+    board.appendChild(panel);
+}
+
+function renderCounterfactualPanel(board, pickedIdeas) {
+    const idea = getCounterfactualIdea();
+    if (!idea) return;
+    const pickedIds = new Set(pickedIdeas.map(i => i.template.id));
+    if (pickedIds.has(idea.template.id)) return;
+    const panel = document.createElement('section');
+    panel.className = 'counterfactual';
+    const title = document.createElement('h4');
+    title.className = 'counterfactual-title';
+    title.innerHTML = '<i class="fa-solid fa-shuffle"></i><span>An angle you might be avoiding</span>';
+    const note = document.createElement('p');
+    note.className = 'counterfactual-note';
+    note.textContent = 'This scored low for you. Sometimes the angle you didn’t expect is the most honest one — try writing the first 100 words and see what surfaces.';
+    panel.append(title, note);
+
+    const card = document.createElement('article');
+    card.className = 'idea-card is-counterfactual';
+    const body = document.createElement('div');
+    body.className = 'idea-card-body single';
+    const titleRow = document.createElement('div');
+    titleRow.className = 'cf-title-row';
+    const cardTitle = document.createElement('h5');
+    cardTitle.className = 'idea-title';
+    cardTitle.textContent = idea.template.title;
+    titleRow.appendChild(cardTitle);
+    const core = document.createElement('p');
+    core.className = 'idea-core';
+    core.textContent = idea.content.core;
+    body.append(titleRow, core);
+    addIdeaBlock(body, 'fa-solid fa-film', 'Possible opening scene', idea.content.opening);
+    card.appendChild(body);
+    panel.appendChild(card);
+    board.appendChild(panel);
 }
 
 function renderDimensionSnapshot(board) {
@@ -2270,7 +3318,7 @@ function renderLowSignal(board, count) {
     title.textContent = count === 0 ? 'Start with any small answer.' : 'A few more signals will make this sharper.';
     const copy = document.createElement('p');
     copy.textContent = count === 0
-        ? 'The editor needs at least eight answered signals before it can responsibly suggest essay angles.'
+        ? 'The editor needs at least eleven answered signals before it can responsibly suggest essay angles.'
         : 'The current pattern is still thin. Answer the next few questions that feel easiest; short answers are enough.';
     panel.append(title, copy);
 
@@ -2306,14 +3354,22 @@ function renderIdeaCard(board, idea, idx) {
     index.className = 'idea-index';
     index.textContent = String(idx + 1);
     const headerCopy = document.createElement('div');
+    headerCopy.className = 'idea-header-copy';
     const title = document.createElement('h4');
     title.className = 'idea-title';
     title.textContent = idea.template.title;
+    const variantTag = document.createElement('span');
+    variantTag.className = 'variant-tag';
+    const variantTotal = (idea.template.builds || []).length;
+    if (variantTotal > 1) {
+        variantTag.textContent = 'Version ' + (idea.variantIndex + 1) + ' of ' + variantTotal;
+    }
     const core = document.createElement('p');
     core.className = 'idea-core';
     core.textContent = idea.content.core;
-    headerCopy.append(title, core);
+    headerCopy.append(title, variantTag, core);
     header.append(index, headerCopy);
+    header.appendChild(buildIdeaCardControls(idea));
 
     const body = document.createElement('div');
     body.className = 'idea-card-body';
@@ -2324,6 +3380,52 @@ function renderIdeaCard(board, idea, idx) {
 
     card.append(header, body);
     board.appendChild(card);
+}
+
+function buildIdeaCardControls(idea) {
+    const controls = document.createElement('div');
+    controls.className = 'idea-controls no-print';
+    const adjustment = getTemplateAdjustment(idea.template.id);
+    const upState = adjustment > 1.05;
+    const downState = adjustment < 0.95;
+
+    const up = makeIdeaControl('👍', 'More like this', upState ? 'is-on' : '', () => {
+        const next = upState ? 1 : 1.3;
+        setTemplateAdjustment(idea.template.id, next);
+        renderIdeaBoard();
+    });
+    const down = makeIdeaControl('👎', 'Less like this', downState ? 'is-on' : '', () => {
+        const next = downState ? 1 : 0.4;
+        setTemplateAdjustment(idea.template.id, next);
+        renderIdeaBoard();
+    });
+    const variantTotal = (idea.template.builds || []).length;
+    const cycle = makeIdeaControl('🔄', variantTotal > 1 ? 'Different version' : 'Only one version', '', () => {
+        if (variantTotal <= 1) return;
+        setVariantIndex(idea.template.id, (idea.variantIndex + 1) % variantTotal);
+        renderIdeaBoard();
+    });
+    if (variantTotal <= 1) cycle.classList.add('is-disabled');
+
+    controls.append(up, down, cycle);
+    return controls;
+}
+
+function makeIdeaControl(emoji, label, extraClass, onClick) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'idea-control' + (extraClass ? ' ' + extraClass : '');
+    button.title = label;
+    button.setAttribute('aria-label', label);
+    const icon = document.createElement('span');
+    icon.className = 'idea-control-icon';
+    icon.textContent = emoji;
+    const text = document.createElement('span');
+    text.className = 'idea-control-label';
+    text.textContent = label;
+    button.append(icon, text);
+    button.addEventListener('click', onClick);
+    return button;
 }
 
 function addIdeaBlock(parent, icon, titleText, copyText) {
@@ -2370,7 +3472,7 @@ function addEvidenceBlock(parent, evidence, essayTypes) {
     parent.appendChild(block);
 }
 
-function renderDiscardPanel(board) {
+function renderDiscardPanel(board, pickedTemplateIds) {
     const panel = document.createElement('section');
     panel.className = 'discard-panel';
     const title = document.createElement('h4');
@@ -2380,7 +3482,7 @@ function renderDiscardPanel(board) {
 
     const grid = document.createElement('div');
     grid.className = 'discard-grid';
-    buildDiscardPile().forEach(item => {
+    buildDiscardPile(pickedTemplateIds).forEach(item => {
         const block = document.createElement('div');
         block.className = 'discard-item';
         const strong = document.createElement('strong');
