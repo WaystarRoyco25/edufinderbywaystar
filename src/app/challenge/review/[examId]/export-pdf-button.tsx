@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getScoreCommentaryBucket } from "./score-commentary";
+import { getScoreCommentaryBucket } from "./score-commentary-data";
 import type {
   ChoiceLetter,
   QuestionRow,
@@ -164,12 +164,54 @@ function renderQuestion(item: ReviewQuestion): string {
   `;
 }
 
+function renderCommentaryList(items: string[]): string {
+  return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+}
+
+function renderCommentaryTile(
+  label: string,
+  title: string,
+  contentHtml: string,
+): string {
+  return `
+    <article class="commentary-tile">
+      <span>${escapeHtml(label)}</span>
+      <h3>${escapeHtml(title)}</h3>
+      ${contentHtml}
+    </article>
+  `;
+}
+
 function buildExportHtml(
   summary: ReviewSummary,
   questions: ReviewQuestion[],
   assets: AssetUrls,
 ): string {
   const commentary = getScoreCommentaryBucket(summary.totalScore);
+  const boundedPct = Math.min(100, Math.max(0, summary.pct));
+  const satRange = commentary.range.replace("Equivalent SAT score ", "");
+  const commentaryTiles = [
+    renderCommentaryTile(
+      "What this means",
+      "Your current pattern",
+      `<p>${escapeHtml(commentary.meaning)}</p>`,
+    ),
+    renderCommentaryTile(
+      "This week",
+      "Your 3 priorities",
+      renderCommentaryList(commentary.priorities),
+    ),
+    renderCommentaryTile(
+      "Next 30 days",
+      "Practice routine",
+      `<p>${escapeHtml(commentary.routine)}</p>`,
+    ),
+    renderCommentaryTile(
+      "Avoid",
+      "What slows growth",
+      `<p>${escapeHtml(commentary.avoid)}</p>`,
+    ),
+  ].join("");
   const generatedAt = new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -279,7 +321,6 @@ function buildExportHtml(
     }
 
     .summary-grid div,
-    .commentary,
     .question-card {
       border: 1px solid #dbe4f0;
       border-radius: 10px;
@@ -308,20 +349,184 @@ function buildExportHtml(
 
     .commentary {
       margin-top: 0.16in;
-      padding: 0.22in;
+      overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 0.14);
+      border-radius: 10px;
+      background: #ffffff;
       break-inside: avoid-page;
     }
 
-    .commentary .range {
-      margin-bottom: 0.1in;
-      color: #3b82f6;
-      font-size: 9pt;
+    .commentary-hero {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.2in;
+      padding: 0.18in 0.2in;
+      background: #1f2937;
+      color: #ffffff;
+    }
+
+    .commentary-hero .eyebrow {
+      display: inline-block;
+      padding: 0.04in 0.08in;
+      border-radius: 6px;
+      background: #3b82f6;
+      color: #ffffff;
+      font-size: 7.5pt;
+      letter-spacing: 0.08em;
+    }
+
+    .commentary-hero h2 {
+      margin-top: 0.08in;
+      color: #ffffff;
+      font-size: 18pt;
+      line-height: 1.05;
+    }
+
+    .commentary-message {
+      margin-top: 0.08in;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 9.5pt;
+      font-weight: 650;
+    }
+
+    .commentary-score {
+      width: 1.3in;
+      min-width: 1.3in;
+      padding: 0.1in;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      text-align: right;
+    }
+
+    .commentary-score span {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 7.5pt;
       font-weight: 800;
       text-transform: uppercase;
     }
 
-    .commentary p + p {
-      margin-top: 0.12in;
+    .commentary-score strong {
+      display: block;
+      margin-top: 0.03in;
+      color: #ffffff;
+      font-size: 17pt;
+      line-height: 1;
+    }
+
+    .commentary-score small {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 9pt;
+    }
+
+    .commentary-progress {
+      margin-top: 0.08in;
+      height: 0.05in;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .commentary-progress i {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: #3b82f6;
+    }
+
+    .commentary-snapshot {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.08in;
+      padding: 0.12in 0.18in;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.1);
+    }
+
+    .commentary-snapshot div {
+      padding: 0.08in;
+      border: 1px solid rgba(31, 41, 55, 0.12);
+      border-radius: 8px;
+      background: rgba(31, 41, 55, 0.04);
+    }
+
+    .commentary-snapshot span {
+      display: block;
+      color: rgba(31, 41, 55, 0.62);
+      font-size: 7.2pt;
+      font-weight: 850;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .commentary-snapshot strong {
+      display: block;
+      margin-top: 0.03in;
+      color: #1f2937;
+      font-size: 8.8pt;
+      line-height: 1.2;
+    }
+
+    .commentary-tiles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.1in;
+      padding: 0.16in 0.18in 0.12in;
+    }
+
+    .commentary-tile {
+      padding: 0.12in;
+      border: 1px solid rgba(31, 41, 55, 0.12);
+      border-radius: 8px;
+      background: #ffffff;
+      break-inside: avoid;
+    }
+
+    .commentary-tile span {
+      display: block;
+      color: #3b82f6;
+      font-size: 7.4pt;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .commentary-tile h3 {
+      margin: 0.04in 0 0;
+      color: #1f2937;
+      font-size: 9.8pt;
+      line-height: 1.2;
+      text-transform: none;
+    }
+
+    .commentary-tile p,
+    .commentary-tile li {
+      color: rgba(31, 41, 55, 0.82);
+      font-size: 8.8pt;
+      line-height: 1.35;
+    }
+
+    .commentary-tile p {
+      margin-top: 0.06in;
+    }
+
+    .commentary-tile ul {
+      margin: 0.06in 0 0 0.14in;
+      padding: 0;
+    }
+
+    .commentary-tile li + li {
+      margin-top: 0.04in;
+    }
+
+    .commentary-cta {
+      margin: 0 0.18in 0.16in;
+      padding: 0.1in 0.12in;
+      border: 1px solid rgba(59, 130, 246, 0.22);
+      border-radius: 8px;
+      background: rgba(59, 130, 246, 0.08);
+      color: #1f2937;
+      font-size: 9pt;
+      font-weight: 750;
     }
 
     .questions {
@@ -501,8 +706,26 @@ function buildExportHtml(
       </section>
 
       <section class="commentary">
-        <p class="range">${escapeHtml(commentary.range)}</p>
-        ${commentary.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
+        <div class="commentary-hero">
+          <div>
+            <p class="eyebrow">Challenge! Score Coach</p>
+            <h2>${escapeHtml(commentary.identity)}</h2>
+            <p class="commentary-message">${escapeHtml(commentary.message)}</p>
+          </div>
+          <div class="commentary-score">
+            <span>Score</span>
+            <strong>${summary.totalScore}<small>/${summary.totalMax}</small></strong>
+            <div class="commentary-progress"><i style="width: ${boundedPct}%"></i></div>
+          </div>
+        </div>
+        <div class="commentary-snapshot">
+          <div><span>Raw score</span><strong>${summary.totalScore} / ${summary.totalMax}</strong></div>
+          <div><span>Correct</span><strong>${summary.pct}%</strong></div>
+          <div><span>Score identity</span><strong>${escapeHtml(commentary.identity)}</strong></div>
+          <div><span>SAT range</span><strong>${escapeHtml(satRange)}</strong></div>
+        </div>
+        <div class="commentary-tiles">${commentaryTiles}</div>
+        <p class="commentary-cta">${escapeHtml(commentary.cta)} Use the explanations that follow to locate the exact questions behind the pattern.</p>
       </section>
     </section>
 
