@@ -240,7 +240,7 @@ export default function ReviewClient({
                       onClick={() => goTo(index + 1)}
                       className={REVIEW_ACTION_BUTTON_CLASS}
                     >
-                      Next Explanation
+                      Next Question
                     </button>
                   ) : (
                     <Link
