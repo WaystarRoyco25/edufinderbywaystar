@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Genius! Editor — EduFinder</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/genius-tailwind.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" as="style" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
@@ -138,6 +138,17 @@
             padding: .6rem 0 .1rem;
         }
         .auth-helper-link:hover { text-decoration: underline; }
+        .auth-local-note {
+            display: none;
+            border-radius: .7rem;
+            border: 1px solid rgba(59, 130, 246, .22);
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: .82rem;
+            line-height: 1.5;
+            padding: .8rem .9rem;
+        }
+        .auth-local-note.is-visible { display: block; }
 
         /* ════════════════════════════════════════════════════════
            EDITOR (existing structure preserved; restyled to use only
@@ -975,6 +986,9 @@
 
         <div class="px-6 pt-6 pb-7 space-y-4">
             <p id="auth-message" class="hidden text-sm"></p>
+            <p id="auth-local-note" class="auth-local-note">
+                Local preview uses a separate login session from edufinderbywaystar.com. Sign in here once to test the editor on this device.
+            </p>
 
             <form id="auth-step-password" onsubmit="signInWithPassword(); return false;" class="space-y-3.5">
                 <div class="text-center -mt-1 mb-1">
@@ -2407,6 +2421,22 @@ let pendingEditorUnlock = false;
 
 const AUTH_STEPS = ['password', 'otp-email', 'otp-code', 'set-password'];
 
+function isLocalAuthOrigin() {
+    return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+}
+
+function getAuthRedirectUrl() {
+    const url = new URL(window.location.href);
+    url.hash = '';
+    return url.toString();
+}
+
+function syncLocalAuthNote() {
+    const note = document.getElementById('auth-local-note');
+    if (!note) return;
+    note.classList.toggle('is-visible', isLocalAuthOrigin());
+}
+
 function showAuthStep(name) {
     clearAuthMessage();
     AUTH_STEPS.forEach(s => {
@@ -2456,6 +2486,7 @@ function setAuthGateActive(active) {
 }
 
 function openAuthModal(options = {}) {
+    syncLocalAuthNote();
     if (options.unlockEditor) pendingEditorUnlock = true;
     if (options.reset !== false) {
         resetAuthFields();
@@ -2523,8 +2554,20 @@ async function sendAuthCode() {
     clearAuthMessage();
     if (!email || !email.includes('@')) { showAuthMessage('Please enter a valid email address.'); return; }
     pendingEmail = email;
-    const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
-    if (error) { showAuthMessage('An error occurred: ' + error.message); return; }
+    const { error } = await supabaseClient.auth.signInWithOtp({
+        email,
+        options: {
+            shouldCreateUser: true,
+            emailRedirectTo: getAuthRedirectUrl(),
+        },
+    });
+    if (error) {
+        const localHint = isLocalAuthOrigin()
+            ? ' If this mentions a redirect URL, add this localhost URL in Supabase Auth redirect settings.'
+            : '';
+        showAuthMessage('An error occurred: ' + error.message + localHint);
+        return;
+    }
     document.getElementById('sent-email-label').textContent = 'A 6-digit code was sent to ' + email + '.';
     document.getElementById('auth-code-input').value = '';
     showAuthStep('otp-code');
