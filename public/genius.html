@@ -877,7 +877,7 @@
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>An idea board with up to six essay angles, ranked</span></li>
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Hidden tension, opening scene, and proof for each angle</span></li>
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>A discard pile of generic angles to avoid</span></li>
-                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Saved as you answer — print or export the board</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Saved as you answer — print the board</span></li>
                     </ul>
                 </div>
 
@@ -1535,9 +1535,9 @@ const IDEA_TEMPLATES = [
             const place = ctx.answer('recurring_place') || 'a place you keep returning to';
             const detail = ctx.answer('place_detail') || ctx.answer('kept_object') || 'one detail only you would notice';
             return {
-                core: `A story about how ${lowerFirst(place)} became a private training ground for how you notice, care, and make meaning.`,
+                core: `A story about how ${lowerFragment(place)} became a private training ground for how you notice, care, and make meaning.`,
                 tension: 'The useful tension is quiet observation versus the moment you finally have to act on what you see.',
-                opening: `Start inside ${lowerFirst(place)}. Let ${lowerFirst(detail)} appear before you explain why it matters.`,
+                opening: `Start with a real scene from ${lowerFragment(place)}. Let ${quoteDetail(detail, 'one detail only you would notice')} appear before you explain why it matters.`,
                 distinctive: `This angle is specific because it begins with a real setting and a small object or detail, not a general claim about personality.`,
             };
         },
@@ -1552,9 +1552,9 @@ const IDEA_TEMPLATES = [
             const rule = ctx.answer('unfair_rule') || ctx.answer('daily_irritation') || 'a rule that bothered you';
             const fix = ctx.answer('tiny_fix') || 'the small fix you imagined';
             return {
-                core: `A story about the moment ${lowerFirst(rule)} stopped being background noise and became something you wanted to repair.`,
+                core: `A story about the moment ${quoteDetail(rule, 'a rule that bothered you')} stopped being background noise and became something you wanted to repair.`,
                 tension: 'The force here is not complaint. It is the gap between what everyone tolerates and what you cannot unsee.',
-                opening: `Open with ${lowerFirst(fix)} at the smallest possible scale, then widen the frame.`,
+                opening: `Open with ${quoteDetail(fix, 'the small fix you imagined')} at the smallest possible scale, then widen the frame.`,
                 distinctive: `This avoids the generic problem-solver angle because the standard comes from a precise irritation only you named.`,
             };
         },
@@ -1569,7 +1569,7 @@ const IDEA_TEMPLATES = [
             const question = ctx.answer('private_question') || ctx.answer('tiny_study') || 'a question that keeps returning';
             const collision = ctx.answer('world_collision') || 'two worlds that keep colliding';
             return {
-                core: `A story about following ${lowerFirst(question)} until it connects to ${lowerFirst(collision)} in a way that only your path would produce.`,
+                core: `A story about following ${quoteDetail(question, 'a question that keeps returning', true)} until it connects to ${listFragment(collision, 'two worlds that keep colliding')} in a way that only your path would produce.`,
                 tension: 'The tension is between curiosity as a private habit and curiosity as a public direction.',
                 opening: `Begin with the question itself. Then show the ordinary moment when it first refused to leave.`,
                 distinctive: `It sounds personal because the question is narrow and odd enough to resist becoming a generic academic interest.`,
@@ -1586,9 +1586,9 @@ const IDEA_TEMPLATES = [
             const person = ctx.answer('imitated_person') || ctx.answer('private_voice') || 'someone whose voice stayed with you';
             const reader = ctx.answer('private_voice') || 'the person whose reaction would matter';
             return {
-                core: `A story about how ${lowerFirst(person)} shaped the way you speak, notice, care, or decide.`,
+                core: `A story about how ${quoteDetail(person, 'someone whose voice stayed with you')} shaped the way you speak, notice, care, or decide.`,
                 tension: 'The tension is inheritance versus authorship: what you received, what you resisted, and what became yours.',
-                opening: `Start with a copied gesture, phrase, or habit. Let ${lowerFirst(reader)} appear later as the emotional test.`,
+                opening: `Start with a copied gesture, phrase, or habit. Let ${lowerFragment(reader)} appear later as the emotional test.`,
                 distinctive: `This angle works when the person is not just admired; they leave fingerprints on your actual behavior.`,
             };
         },
@@ -1603,9 +1603,9 @@ const IDEA_TEMPLATES = [
             const room = ctx.answer('beginner_room') || 'a room where you would be the least skilled person';
             const future = ctx.answer('tuesday_future') || 'the ordinary future you pictured';
             return {
-                core: `A story about choosing ${lowerFirst(room)} because the next version of you needs harder rooms, not louder praise.`,
+                core: `A story about choosing ${lowerFragment(room)} because the next version of you needs harder rooms, not louder praise.`,
                 tension: 'The tension is competence versus appetite. You are not proving you are finished; you are proving what you want to become capable of.',
-                opening: `Open at the edge of ${lowerFirst(room)} or in ${lowerFirst(future)}. Let uncertainty be visible.`,
+                opening: `Open at the edge of ${lowerFragment(room)}, or with ${quoteDetail(future, 'the ordinary future you pictured')}. Let uncertainty be visible.`,
                 distinctive: `This is stronger than a success story because the center is willingness to be unpolished in a meaningful direction.`,
             };
         },
@@ -1622,7 +1622,7 @@ const IDEA_TEMPLATES = [
             return {
                 core: `A story about the gap between ${quoteDetail(label, 'the label that never quite fit')} and the more accurate language you are trying to earn.`,
                 tension: 'The tension is not a problem to solve. It is the pressure that gives the story shape.',
-                opening: `Begin with the wrong label, then interrupt it with ${lowerFirst(line)}.`,
+                opening: `Begin with the wrong label, then interrupt it with ${quoteDetail(line, 'your own language')}.`,
                 distinctive: `It feels personal because it gives the reader your actual language instead of a polished trait summary.`,
             };
         },
@@ -1698,8 +1698,28 @@ function lowerFirst(text) {
     return clean.charAt(0).toLowerCase() + clean.slice(1);
 }
 
-function quoteDetail(text, fallback) {
-    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+function stripTerminalPunctuation(text) {
+    return String(text || '').replace(/\s+/g, ' ').trim().replace(/[.!?]+$/g, '');
+}
+
+function lowerFragment(text, fallback = '') {
+    const clean = stripTerminalPunctuation(text || fallback);
+    return clean ? lowerFirst(clean) : '';
+}
+
+function listFragment(text, fallback = '') {
+    const clean = stripTerminalPunctuation(text || fallback);
+    if (!clean) return '';
+    const parts = clean.split(/\s*,\s*/).map(part => lowerFragment(part)).filter(Boolean);
+    if (parts.length <= 1) return lowerFragment(clean);
+    if (parts.length === 2) return parts.join(' and ');
+    return parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1];
+}
+
+function quoteDetail(text, fallback, preserveTerminal = false) {
+    const clean = preserveTerminal
+        ? String(text || '').replace(/\s+/g, ' ').trim()
+        : stripTerminalPunctuation(text);
     return clean ? '"' + clean + '"' : fallback;
 }
 
@@ -1869,19 +1889,19 @@ function buildDiscardPile() {
     return [
         {
             title: 'The polished activity list',
-            body: `Do not lead by proving you were busy. Start with ${lowerFirst(place)} or another concrete scene, then let the achievement appear only if it earns its place.`,
+            body: `Do not lead by proving you were busy. Start with a concrete scene from ${lowerFragment(place)}, then let the achievement appear only if it earns its place.`,
         },
         {
             title: 'The generic problem-solver story',
-            body: `Avoid saying you like solving problems in general. The sharper angle is ${lowerFirst(irritation)} because it shows the standard you could not ignore.`,
+            body: `Avoid saying you like solving problems in general. The sharper angle is ${quoteDetail(lowerFragment(irritation), 'the exact irritation you named')} because it shows the standard you could not ignore.`,
         },
         {
             title: 'The broad curiosity claim',
-            body: `Do not write that you are curious about everything. Let ${lowerFirst(question)} carry the curiosity because narrow questions feel lived-in.`,
+            body: `Do not write that you are curious about everything. Let ${quoteDetail(question, 'your narrow question')} carry the curiosity because narrow questions feel lived-in.`,
         },
         {
             title: 'The trait-summary ending',
-            body: `Avoid ending with "I became confident" or "I learned resilience." End closer to ${lowerFirst(line)} so the voice stays specific.`,
+            body: `Avoid ending with "I became confident" or "I learned resilience." End closer to ${quoteDetail(line, 'your own language')} so the voice stays specific.`,
         },
     ];
 }
@@ -1936,12 +1956,17 @@ function render() {
         : move.label + ': ' + move.title;
     document.getElementById('progress-fill').style.width = ((currentIndex / QUESTIONS.length) * 100) + '%';
 
-    document.getElementById('back-btn').disabled = currentIndex === 0;
-    document.getElementById('back-btn').classList.toggle('opacity-40', currentIndex === 0);
+    const backButton = document.getElementById('back-btn');
+    const nextButton = document.getElementById('next-btn');
+    backButton.disabled = currentIndex === 0;
+    backButton.classList.toggle('opacity-40', currentIndex === 0);
+    backButton.innerHTML = isReveal
+        ? '<i class="fa-solid fa-pen-to-square text-xs"></i>Edit last answer'
+        : '<i class="fa-solid fa-arrow-left text-xs"></i>Back';
     document.getElementById('skip-btn').classList.toggle('hidden', isReveal);
     document.getElementById('print-btn').classList.toggle('hidden', !isReveal);
-    document.getElementById('next-btn').innerHTML = isReveal
-        ? 'Back to start<i class="fa-solid fa-arrow-up text-xs"></i>'
+    nextButton.innerHTML = isReveal
+        ? 'Review from start<i class="fa-solid fa-rotate-left text-xs"></i>'
         : currentIndex === QUESTIONS.length - 1
             ? 'Reveal board<i class="fa-solid fa-lightbulb text-xs"></i>'
             : 'Continue<i class="fa-solid fa-arrow-right text-xs"></i>';
