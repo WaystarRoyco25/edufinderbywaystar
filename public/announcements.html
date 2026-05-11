@@ -94,19 +94,23 @@
             gap: .75rem;
         }
         .post-avatar {
-            width: 2.4rem;
-            height: 2.4rem;
+            width: 2.6rem;
+            height: 2.6rem;
             border-radius: 999px;
-            background: var(--brand-navy);
-            color: #ffffff;
+            background: #ffffff;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: .95rem;
-            letter-spacing: -.01em;
             flex-shrink: 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
             box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+        }
+        .post-avatar img {
+            width: 92%;
+            height: 92%;
+            object-fit: contain;
+            display: block;
         }
         .post-meta {
             display: flex;
@@ -133,7 +137,7 @@
             font-weight: 500;
         }
         .post-title {
-            margin-top: .85rem;
+            margin-top: .9rem;
             color: var(--brand-navy);
             font-size: 1.08rem;
             font-weight: 700;
@@ -141,28 +145,13 @@
             line-height: 1.35;
         }
         .post-body {
-            margin-top: .55rem;
+            margin-top: .6rem;
             color: var(--text-secondary);
             font-size: .94rem;
             line-height: 1.65;
-            white-space: pre-wrap;
         }
-        .post-footer {
-            margin-top: .95rem;
-            padding-top: .75rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: var(--text-tertiary);
-            font-size: .8rem;
-        }
-        .post-footer .post-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: .35rem;
-            color: var(--brand-blue);
-            font-weight: 600;
+        .post-body p + p {
+            margin-top: .85rem;
         }
         .empty-state {
             text-align: center;
@@ -190,140 +179,6 @@
             .post-title { font-size: 1.02rem; }
             .post-body { font-size: .92rem; }
         }
-
-        /* ── Formula card ── */
-        .formula-card {
-            max-width: 36rem;
-            margin: 2.5rem auto 0;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: var(--shadow-warm-sm);
-            overflow: hidden;
-        }
-        .formula-card[open] {
-            box-shadow: var(--shadow-warm-md);
-        }
-        .formula-summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 1rem 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: .75rem;
-            color: var(--brand-navy);
-            font-weight: 700;
-            font-size: .98rem;
-            letter-spacing: -.005em;
-        }
-        .formula-summary::-webkit-details-marker { display: none; }
-        .formula-summary .formula-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-        }
-        .formula-summary .formula-eyebrow i {
-            color: var(--brand-blue);
-        }
-        .formula-summary .formula-chevron {
-            transition: transform .2s ease;
-            color: var(--text-tertiary);
-            font-size: .8rem;
-        }
-        .formula-card[open] .formula-chevron {
-            transform: rotate(180deg);
-        }
-        .formula-body {
-            padding: 0 1.25rem 1.25rem;
-            border-top: 1px solid var(--border);
-            color: var(--text-secondary);
-        }
-        .formula-body .formula-intro {
-            font-size: .92rem;
-            line-height: 1.65;
-            margin: 1rem 0 1.1rem;
-        }
-        .formula-section-title {
-            display: block;
-            font-size: .72rem;
-            font-weight: 800;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-            color: var(--brand-blue);
-            margin: 1.25rem 0 .5rem;
-        }
-        .formula-rules {
-            margin: 0;
-            padding-left: 1.1rem;
-            font-size: .9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-        .formula-rules li { margin-bottom: .25rem; }
-        .formula-rules code,
-        .formula-body code {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            background: var(--bg-warm);
-            padding: .08em .35em;
-            border-radius: .25rem;
-            font-size: .85em;
-            color: var(--brand-navy);
-        }
-        .formula-prompt-wrap {
-            position: relative;
-            margin-top: .5rem;
-        }
-        .formula-prompt {
-            background: var(--brand-navy);
-            color: #e2e8f0;
-            border-radius: 12px;
-            padding: 1rem 1.1rem;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            font-size: .82rem;
-            line-height: 1.55;
-            white-space: pre-wrap;
-            word-break: break-word;
-            max-height: 22rem;
-            overflow-y: auto;
-        }
-        .formula-copy-btn {
-            position: absolute;
-            top: .55rem;
-            right: .55rem;
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            padding: .42rem .7rem;
-            border-radius: 999px;
-            background: rgba(255,255,255,.12);
-            color: #ffffff;
-            font-size: .76rem;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,.2);
-            backdrop-filter: blur(4px);
-            transition: background .15s ease, color .15s ease;
-        }
-        .formula-copy-btn:hover {
-            background: var(--brand-blue);
-            border-color: var(--brand-blue);
-        }
-        .formula-copy-btn.is-copied {
-            background: #ffffff;
-            color: var(--brand-navy);
-            border-color: #ffffff;
-        }
-        .formula-schema {
-            background: var(--bg-warm);
-            border-radius: 12px;
-            padding: .85rem 1rem;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            font-size: .8rem;
-            line-height: 1.55;
-            color: var(--brand-navy);
-            white-space: pre;
-            overflow-x: auto;
-        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -332,7 +187,7 @@
     <div class="container mx-auto px-4 pt-8 pb-10 md:pt-12 md:pb-14 relative text-center">
         <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
         <h1 class="page-title">Announcements</h1>
-        <p class="page-subtitle">How Waystar Education is shaping EduFinder, post by post.</p>
+        <p class="page-subtitle">How Waystar Learning is shaping EduFinder, post by post.</p>
     </div>
 </header>
 
@@ -342,80 +197,6 @@
             <i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Loading the latest posts.
         </div>
     </section>
-
-    <!-- ════════════════════════════════════════════════════════════
-         FORMULA: how a new post is written
-         Designed to be self-contained, so any AI chatbot can use it
-         even without knowing the rest of this codebase.
-         ════════════════════════════════════════════════════════════ -->
-    <details class="formula-card" id="formula-card">
-        <summary class="formula-summary">
-            <span class="formula-eyebrow">
-                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-                <span>How a new post is written</span>
-            </span>
-            <i class="fa-solid fa-chevron-down formula-chevron" aria-hidden="true"></i>
-        </summary>
-        <div class="formula-body">
-            <p class="formula-intro">
-                Every post in this feed follows the same shape. To add one, copy the prompt below into any AI chatbot, paste a short description of what changed, and the chatbot will return a JSON object ready to drop into <code>public/announcements.json</code>.
-            </p>
-
-            <span class="formula-section-title">Entry shape</span>
-<pre class="formula-schema">{
-  "id": "YYYY-MM-DD-short-kebab-slug",
-  "author": "Waystar Education",
-  "date": "YYYY-MM-DD",
-  "commit": "",
-  "title": "&lt;one short English sentence&gt;",
-  "body": "&lt;2 to 4 plain English sentences&gt;"
-}</pre>
-
-            <span class="formula-section-title">Hard rules</span>
-            <ol class="formula-rules">
-                <li><code>author</code> is always the literal string <code>"Waystar Education"</code>. Never change it.</li>
-                <li><code>date</code> is today's date in ISO <code>YYYY-MM-DD</code>. The page renders it as <code>May 11, 2026</code>.</li>
-                <li><code>id</code> is <code>&lt;date&gt;-&lt;kebab slug&gt;</code>, lowercase ASCII only.</li>
-                <li>Leave <code>commit</code> as an empty string unless a short Git SHA is provided.</li>
-                <li>Write <code>title</code> and <code>body</code> in English. <code>title</code> is one sentence; <code>body</code> is 2 to 4 sentences.</li>
-                <li>The <code>body</code> covers (a) what changed in user-visible terms, and (b) how a regular site visitor benefits. No bullet lists, no links, no code.</li>
-                <li>Forbidden characters in <code>title</code> and <code>body</code>: the em dash (<code>—</code>, U+2014) and the en dash used as a sentence break (<code>–</code>, U+2013). Use commas, periods, parentheses, or semicolons instead.</li>
-            </ol>
-
-            <span class="formula-section-title">Copy this prompt into any AI chatbot</span>
-            <div class="formula-prompt-wrap">
-                <button type="button" class="formula-copy-btn" id="formula-copy-btn" aria-label="Copy prompt to clipboard">
-                    <i class="fa-regular fa-copy" aria-hidden="true"></i>
-                    <span>Copy</span>
-                </button>
-<pre class="formula-prompt" id="formula-prompt">You are writing one announcement entry for the EduFinder by Waystar website. Produce exactly one JSON object in the shape below, with no surrounding prose, ready to be appended to the "entries" array of public/announcements.json (the feed sorts latest first).
-
-Shape:
-{
-  "id": "YYYY-MM-DD-short-kebab-slug",
-  "author": "Waystar Education",
-  "date": "YYYY-MM-DD",
-  "commit": "",
-  "title": "<one short English sentence>",
-  "body": "<2 to 4 plain English sentences>"
-}
-
-Hard rules:
-1. "author" is the literal string "Waystar Education". Never change it.
-2. "date" is today in ISO YYYY-MM-DD format.
-3. "id" is "<date>-<short kebab slug>" using a to z, 0 to 9, and hyphens only.
-4. Leave "commit" as "" unless I give you a short Git SHA, in which case use that string.
-5. Write "title" and "body" in English. "title" is one sentence. "body" is 2 to 4 sentences.
-6. "body" covers (a) what changed in user-visible terms and (b) how a regular site visitor benefits. No bullet lists, no links, no code, no marketing fluff.
-7. Forbidden characters in "title" and "body": the em dash (the character U+2014) and the en dash (U+2013) used as a sentence break. Use commas, periods, parentheses, or semicolons instead.
-8. Before you finish, scan your "title" and "body" for U+2014 and U+2013 and rewrite any sentence that contains either character. Treat their presence as a failed answer.
-9. Output the JSON object only. No prose around it, no markdown code fence, no commentary.
-
-The change to announce:
-&lt;&lt;&lt; paste a short description of what changed here &gt;&gt;&gt;</pre>
-            </div>
-        </div>
-    </details>
 
     <div class="back-link-wrap">
         <a href="/" class="back-link">
@@ -455,18 +236,27 @@ The change to announce:
             .replace(/'/g, '&#39;');
     }
 
+    function renderBody(body) {
+        const text = String(body || '').trim();
+        if (!text) return '';
+        return text
+            .split(/\n\s*\n/)
+            .map(function (chunk) { return chunk.trim(); })
+            .filter(Boolean)
+            .map(function (chunk) { return '<p>' + escapeHtml(chunk) + '</p>'; })
+            .join('');
+    }
+
     function renderPost(entry) {
-        const author = entry.author || 'Waystar Education';
+        const author = entry.author || 'Waystar Learning';
         const date = formatDate(entry.date);
-        const initial = (author.match(/[A-Za-z]/) || ['W'])[0].toUpperCase();
-        const commit = entry.commit
-            ? '<span class="post-tag"><i class="fa-solid fa-code-commit text-[10px]"></i>' + escapeHtml(entry.commit) + '</span>'
-            : '<span></span>';
 
         return (
             '<article class="post">' +
                 '<header class="post-header">' +
-                    '<div class="post-avatar" aria-hidden="true">' + escapeHtml(initial) + '</div>' +
+                    '<div class="post-avatar" aria-hidden="true">' +
+                        '<img src="/waystar-learning.svg" alt="">' +
+                    '</div>' +
                     '<div class="post-meta">' +
                         '<span class="post-author">' +
                             escapeHtml(author) +
@@ -476,11 +266,7 @@ The change to announce:
                     '</div>' +
                 '</header>' +
                 '<h2 class="post-title">' + escapeHtml(entry.title || '') + '</h2>' +
-                '<p class="post-body">' + escapeHtml(entry.body || '') + '</p>' +
-                '<footer class="post-footer">' +
-                    commit +
-                    '<span><i class="fa-solid fa-bullhorn mr-1"></i>Update</span>' +
-                '</footer>' +
+                '<div class="post-body">' + renderBody(entry.body) + '</div>' +
             '</article>'
         );
     }
@@ -506,43 +292,6 @@ The change to announce:
             if (loading) loading.remove();
             feed.innerHTML = '<div class="empty-state">We could not load the feed. Please try again in a moment.</div>';
         });
-
-    // Copy-prompt button
-    const copyBtn = document.getElementById('formula-copy-btn');
-    const promptEl = document.getElementById('formula-prompt');
-    if (copyBtn && promptEl) {
-        copyBtn.addEventListener('click', async function () {
-            const text = promptEl.innerText;
-            const label = copyBtn.querySelector('span');
-            const icon = copyBtn.querySelector('i');
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(text);
-                } else {
-                    const ta = document.createElement('textarea');
-                    ta.value = text;
-                    ta.setAttribute('readonly', '');
-                    ta.style.position = 'absolute';
-                    ta.style.left = '-9999px';
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                }
-                if (label) label.textContent = 'Copied';
-                if (icon) { icon.classList.remove('fa-copy'); icon.classList.add('fa-check'); }
-                copyBtn.classList.add('is-copied');
-                setTimeout(function () {
-                    if (label) label.textContent = 'Copy';
-                    if (icon) { icon.classList.remove('fa-check'); icon.classList.add('fa-copy'); }
-                    copyBtn.classList.remove('is-copied');
-                }, 1800);
-            } catch (e) {
-                if (label) label.textContent = 'Copy failed';
-                setTimeout(function () { if (label) label.textContent = 'Copy'; }, 1800);
-            }
-        });
-    }
 })();
 </script>
 
