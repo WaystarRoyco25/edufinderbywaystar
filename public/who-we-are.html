@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who We Are · EduFinder</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        rel="stylesheet"
+        as="style"
+        crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+        :root {
+            --brand-blue: #3b82f6;
+            --brand-blue-hover: #2563eb;
+            --brand-navy: #1f2937;
+            --surface: #ffffff;
+            --bg: #ffffff;
+            --border: rgba(31, 41, 55, .12);
+            --text-primary: #1f2937;
+            --text-secondary: rgba(31, 41, 55, .78);
+            --text-tertiary: rgba(31, 41, 55, .62);
+            --shadow-warm-sm: 0 1px 3px rgba(31, 41, 55, .05), 0 1px 2px rgba(31, 41, 55, .04);
+            --shadow-warm-md: 0 4px 14px rgba(31, 41, 55, .06), 0 2px 4px rgba(31, 41, 55, .04);
+        }
+        body {
+            font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .brand-header {
+            position: relative;
+            background: var(--brand-navy);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 100% 0%, rgba(59,130,246,.28) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 60% at 0% 100%, rgba(59,130,246,.12) 0%, transparent 60%);
+            overflow: hidden;
+        }
+        .brand-header::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.55) 50%, transparent 100%);
+        }
+        .page-title {
+            color: #ffffff;
+            font-size: 1.85rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            margin-top: 1.25rem;
+            text-align: center;
+        }
+        .page-subtitle {
+            color: rgba(255,255,255,.78);
+            text-align: center;
+            font-size: .95rem;
+            margin-top: .35rem;
+        }
+        .scaffold-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow-warm-md);
+            padding: 2.25rem 1.75rem;
+            text-align: center;
+            max-width: 38rem;
+            margin: 0 auto;
+        }
+        .scaffold-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            color: var(--brand-blue);
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .scaffold-eyebrow::before {
+            content: '';
+            width: .42rem;
+            height: .42rem;
+            border-radius: 999px;
+            background: var(--brand-blue);
+        }
+        .scaffold-title {
+            color: var(--brand-navy);
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: -.01em;
+            margin-top: .85rem;
+        }
+        .scaffold-copy {
+            color: var(--text-secondary);
+            margin-top: .65rem;
+            font-size: .96rem;
+            line-height: 1.6;
+        }
+        .scaffold-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            margin-top: 1.5rem;
+            padding: .7rem 1.15rem;
+            border-radius: 999px;
+            background: var(--brand-blue);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: .92rem;
+            box-shadow: 0 4px 14px rgba(59,130,246,.25);
+            transition: background .15s ease, transform .05s ease;
+        }
+        .scaffold-btn:hover { background: var(--brand-blue-hover); }
+        .scaffold-btn:active { transform: translateY(1px); }
+        @media (min-width: 768px) {
+            .page-title { font-size: 2.4rem; }
+            .scaffold-card { padding: 2.75rem 2.25rem; }
+            .scaffold-title { font-size: 1.7rem; }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+<header class="brand-header text-white relative">
+    <div class="container mx-auto px-4 pt-8 pb-10 md:pt-12 md:pb-14 relative text-center">
+        <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
+        <h1 class="page-title">Who We Are</h1>
+        <p class="page-subtitle">에듀파인더와 웨이스타에 대한 이야기</p>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-12 md:py-16">
+    <section class="scaffold-card">
+        <span class="scaffold-eyebrow">Coming soon</span>
+        <h2 class="scaffold-title">소개 페이지를 준비하고 있어요</h2>
+        <p class="scaffold-copy">
+            웨이스타 팀이 어떤 사람들인지, 어떻게 에듀파인더를 만들고 있는지를 곧 이 자리에 담을 예정입니다.
+            지금은 자리만 잡아 두었어요.
+        </p>
+        <a href="/" class="scaffold-btn">
+            <i class="fa-solid fa-arrow-left text-xs"></i>
+            <span>홈으로 돌아가기</span>
+        </a>
+    </section>
+</main>
+
+</body>
+</html>

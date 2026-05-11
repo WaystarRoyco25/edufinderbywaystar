@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "notes": "Latest first. Author is always 'Waystar Education'. Date is ISO YYYY-MM-DD; the page renders it as 'May 11, 2026'. All title and body text is written in English, with no em dash (U+2014) or en dash (U+2013) anywhere. The on-page 'How a new post is written' section at the bottom of /announcements.html defines the formula any chatbot should follow.",
+  "entries": [
+    {
+      "id": "2026-05-11-genius-editor-expansion",
+      "author": "Waystar Education",
+      "date": "2026-05-11",
+      "commit": "77310c4",
+      "title": "The Genius! Editor just got a lot deeper",
+      "body": "Yesterday we expanded the Genius! Editor in a big way. The brainstorming side grew from 28 to 39 prompts, with new questions covering sensory grain, cultural fingerprint, inherited language, contradictions, and formative scenes, while the writing side gained more prose templates (6 to 14, with 34 build variants), a voice palette built from the student's own phrases, a motif map of repeated words, opening suggestions that adapt to the story's shape, an 'angle you might be avoiding' card, and a discard pile that quietly fades the angles already picked. Each card now has a like, dismiss, and refresh loop, and one button refreshes the whole board at once. The end result is a noticeably richer first draft, with less of the staring-at-a-blank-page feeling for students new to the editor."
+    }
+  ]
+}

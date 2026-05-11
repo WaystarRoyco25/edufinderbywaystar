@@ -905,6 +905,59 @@
                 font-size: 1.1rem;
             }
         }
+
+        /* ── Header nav links (Who We Are / Announcements) ── */
+        .header-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: .55rem;
+            margin: 1.25rem auto 0;
+            flex-wrap: wrap;
+        }
+        .header-nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem .95rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .18);
+            color: #ffffff;
+            font-size: .82rem;
+            font-weight: 600;
+            letter-spacing: -.005em;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+        }
+        .header-nav-link i {
+            font-size: .78rem;
+            color: var(--brand-blue);
+            transition: color .15s ease;
+        }
+        .header-nav-link:hover {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: var(--brand-navy);
+        }
+        .header-nav-link:hover i {
+            color: var(--brand-blue);
+        }
+        .header-nav-link:active {
+            transform: translateY(1px);
+        }
+        @media (min-width: 1024px) {
+            .header-nav {
+                margin-top: 1.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .header-nav-link {
+                font-size: .76rem;
+                padding: .45rem .8rem;
+            }
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -924,6 +977,16 @@
             <div>
                 <img src="EduFinder.svg" alt="EduFinder by Waystar" class="mx-auto h-auto w-full max-w-xs md:max-w-md">
             </div>
+            <nav class="header-nav" aria-label="Site sections">
+                <a href="/who-we-are.html" class="header-nav-link">
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    <span>Who We Are</span>
+                </a>
+                <a href="/announcements.html" class="header-nav-link">
+                    <i class="fa-solid fa-bullhorn" aria-hidden="true"></i>
+                    <span>Announcements</span>
+                </a>
+            </nav>
         </div>
     </div>
 </header>
