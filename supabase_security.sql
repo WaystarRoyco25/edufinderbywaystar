@@ -81,6 +81,83 @@ END $$;
 CREATE UNIQUE INDEX IF NOT EXISTS prediction_report_drafts_user_id_idx
     ON prediction_report_drafts(user_id);
 
+-- --- GENIUS EDITOR DRAFTS ----------------------------------------------
+CREATE TABLE IF NOT EXISTS genius_editor_drafts (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb
+);
+
+ALTER TABLE genius_editor_drafts
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT now(),
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now(),
+    ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    ADD COLUMN IF NOT EXISTS payload JSONB NOT NULL DEFAULT '{}'::jsonb;
+
+CREATE UNIQUE INDEX IF NOT EXISTS genius_editor_drafts_user_id_idx
+    ON genius_editor_drafts(user_id);
+
+-- --- GENIUS AI BOARDS ---------------------------------------------------
+CREATE TABLE IF NOT EXISTS genius_editor_boards (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    draft_id UUID NOT NULL REFERENCES genius_editor_drafts(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'queued'
+        CHECK (status IN ('queued', 'processing', 'completed', 'failed', 'needs_review')),
+    input_hash TEXT NOT NULL,
+    signal_profile JSONB,
+    board_json JSONB,
+    verification_json JSONB,
+    model_usage JSONB,
+    feedback_json JSONB,
+    error_message TEXT,
+    started_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ
+);
+
+ALTER TABLE genius_editor_boards
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT now(),
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now(),
+    ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    ADD COLUMN IF NOT EXISTS draft_id UUID REFERENCES genius_editor_drafts(id) ON DELETE CASCADE,
+    ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'queued',
+    ADD COLUMN IF NOT EXISTS input_hash TEXT,
+    ADD COLUMN IF NOT EXISTS signal_profile JSONB,
+    ADD COLUMN IF NOT EXISTS board_json JSONB,
+    ADD COLUMN IF NOT EXISTS verification_json JSONB,
+    ADD COLUMN IF NOT EXISTS model_usage JSONB,
+    ADD COLUMN IF NOT EXISTS feedback_json JSONB,
+    ADD COLUMN IF NOT EXISTS error_message TEXT,
+    ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.table_constraints
+        WHERE table_schema = 'public'
+          AND table_name = 'genius_editor_boards'
+          AND constraint_name = 'genius_editor_boards_status_check'
+    ) THEN
+        ALTER TABLE genius_editor_boards
+            ADD CONSTRAINT genius_editor_boards_status_check
+            CHECK (status IN ('queued', 'processing', 'completed', 'failed', 'needs_review'));
+    END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS genius_editor_boards_user_id_idx
+    ON genius_editor_boards(user_id);
+CREATE INDEX IF NOT EXISTS genius_editor_boards_draft_id_idx
+    ON genius_editor_boards(draft_id);
+CREATE INDEX IF NOT EXISTS genius_editor_boards_status_created_at_idx
+    ON genius_editor_boards(status, created_at);
+CREATE INDEX IF NOT EXISTS genius_editor_boards_input_hash_idx
+    ON genius_editor_boards(draft_id, input_hash);
 -- Migrate existing answer keys out of `modules` before dropping the column.
 DO $$
 BEGIN
@@ -133,3 +210,21 @@ DROP POLICY IF EXISTS "prediction drafts insert own" ON prediction_report_drafts
 DROP POLICY IF EXISTS "prediction drafts update own" ON prediction_report_drafts;
 DROP POLICY IF EXISTS "prediction drafts delete own" ON prediction_report_drafts;
 REVOKE ALL ON prediction_report_drafts FROM anon, authenticated;
+
+-- `genius_editor_drafts`: server routes own draft reads/writes with the
+-- service-role key after checking the authenticated user.
+ALTER TABLE genius_editor_drafts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "genius drafts select own" ON genius_editor_drafts;
+DROP POLICY IF EXISTS "genius drafts insert own" ON genius_editor_drafts;
+DROP POLICY IF EXISTS "genius drafts update own" ON genius_editor_drafts;
+DROP POLICY IF EXISTS "genius drafts delete own" ON genius_editor_drafts;
+REVOKE ALL ON genius_editor_drafts FROM anon, authenticated;
+
+-- `genius_editor_boards`: server routes and worker use the service-role key
+-- after checking ownership or worker secret.
+ALTER TABLE genius_editor_boards ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "genius boards select own" ON genius_editor_boards;
+DROP POLICY IF EXISTS "genius boards insert own" ON genius_editor_boards;
+DROP POLICY IF EXISTS "genius boards update own" ON genius_editor_boards;
+DROP POLICY IF EXISTS "genius boards delete own" ON genius_editor_boards;
+REVOKE ALL ON genius_editor_boards FROM anon, authenticated;

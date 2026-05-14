@@ -848,6 +848,150 @@
         }
         .board-refresh:hover { background: #111827; }
 
+        .ai-board-panel {
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            background: #eff6ff;
+            padding: 1rem;
+        }
+        .ai-board-panel.is-ready {
+            background: #ffffff;
+            border-color: #93c5fd;
+            box-shadow: 0 12px 34px rgba(59, 130, 246, .1);
+        }
+        .ai-board-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: .9rem;
+            flex-wrap: wrap;
+        }
+        .ai-board-title {
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            color: #1e3a8a;
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+        .ai-board-copy {
+            color: #1d4ed8;
+            font-size: .9rem;
+            line-height: 1.55;
+            margin-top: .35rem;
+            max-width: 46rem;
+        }
+        .ai-board-actions {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .ai-generate-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            min-height: 38px;
+            border-radius: 999px;
+            border: 1px solid #2563eb;
+            background: #2563eb;
+            color: #ffffff;
+            padding: .5rem .9rem;
+            font-size: .84rem;
+            font-weight: 800;
+        }
+        .ai-generate-btn:hover { background: #1d4ed8; }
+        .ai-generate-btn:disabled {
+            opacity: .62;
+            cursor: wait;
+        }
+        .ai-status-line {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            color: #1d4ed8;
+            font-size: .82rem;
+            font-weight: 700;
+            margin-top: .75rem;
+        }
+        .ai-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #2563eb;
+            box-shadow: 0 0 0 5px rgba(37, 99, 235, .12);
+        }
+        .ai-angle-list {
+            display: grid;
+            gap: .9rem;
+            margin-top: 1rem;
+        }
+        .ai-angle-card {
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+        .ai-angle-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            color: #1d4ed8;
+            font-size: .72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .ai-angle-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem;
+            margin-top: .45rem;
+        }
+        .ai-angle-tag {
+            border: 1px solid #e0e7ff;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3730a3;
+            padding: .22rem .5rem;
+            font-size: .7rem;
+            font-weight: 700;
+        }
+        .ai-section-grid {
+            display: grid;
+            gap: .8rem;
+            margin-top: .9rem;
+        }
+        @media (min-width: 820px) {
+            .ai-section-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        .ai-mini-panel {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+            padding: .85rem;
+        }
+        .ai-mini-panel strong {
+            display: block;
+            color: #1f2937;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            margin-bottom: .35rem;
+        }
+        .ai-mini-panel p,
+        .ai-mini-panel li {
+            color: #4b5563;
+            font-size: .86rem;
+            line-height: 1.55;
+        }
+        .ai-mini-panel ul {
+            display: grid;
+            gap: .35rem;
+            margin: 0;
+            padding-left: 1rem;
+        }
+
         .idea-header-copy {
             display: grid;
             gap: .15rem;
@@ -2375,6 +2519,22 @@ const IDEA_TEMPLATES = [
 
 let currentIndex = 0;
 let savePillTimer = null;
+let geniusDraftReady = false;
+let geniusSaveTimer = null;
+let lastSavedGeniusDraftJson = '';
+let geniusHydrating = false;
+let activeAiBoardId = '';
+let activeAiBoard = null;
+let activeAiBoardStatus = '';
+let activeAiBoardMessage = '';
+let activeAiFeedback = { likedAngleIds: [], dismissedAngleIds: [], refreshedAngleIds: [], notes: '' };
+let aiBoardPollTimer = null;
+let aiBoardGenerating = false;
+
+const GENIUS_DRAFT_ENDPOINT = '/genius/api/draft';
+const GENIUS_BOARD_START_ENDPOINT = '/genius/api/board/start';
+const GENIUS_BOARD_STATUS_ENDPOINT = '/genius/api/board/status';
+const GENIUS_BOARD_FEEDBACK_ENDPOINT = '/genius/api/board/feedback';
 
 function blankReveal() {
     return { templateAdjustments: {}, variantIndices: {} };
@@ -2407,6 +2567,7 @@ function readDraft() {
                     variantIndices: revealRaw.variantIndices && typeof revealRaw.variantIndices === 'object' ? revealRaw.variantIndices : {},
                 }
                 : blankReveal(),
+            updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : '',
         };
     } catch (e) {
         return blankDraft();
@@ -2423,6 +2584,7 @@ function writeDraft(draft) {
             updatedAt: new Date().toISOString(),
         }));
         flashSaved();
+        if (!geniusHydrating && typeof queueGeniusDraftSave === 'function') queueGeniusDraftSave();
     } catch (e) {
         /* localStorage unavailable */
     }
@@ -2542,7 +2704,7 @@ function flashSaved() {
     clearTimeout(savePillTimer);
     savePillTimer = setTimeout(() => {
         pill.classList.remove('is-hot');
-        pill.querySelector('span').textContent = 'Drafted locally';
+        pill.querySelector('span').textContent = geniusDraftReady ? 'Saved to account' : 'Drafted locally';
     }, 1400);
 }
 
@@ -2558,6 +2720,8 @@ function createAnswer(question, rawValue) {
         type: question.type,
         value: rawValue,
         labels,
+        prompt: question.prompt,
+        move: question.move,
         updatedAt: new Date().toISOString(),
     };
 }
@@ -2586,6 +2750,319 @@ function answerPreview(questionId) {
 
 function countWords(text) {
     return String(text || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function getAnswerForServer(question) {
+    const answer = getDraft().answers[question.id];
+    if (!isAnswered(answer)) return null;
+    return {
+        questionId: question.id,
+        type: question.type,
+        value: answer.value,
+        labels: Array.isArray(answer.labels) ? answer.labels : [],
+        prompt: question.prompt,
+        move: question.move,
+        updatedAt: answer.updatedAt || new Date().toISOString(),
+    };
+}
+
+function collectGeniusFeedback() {
+    const draft = getDraft();
+    const likedAngleIds = [];
+    const dismissedAngleIds = [];
+    Object.entries(draft.reveal.templateAdjustments || {}).forEach(([id, value]) => {
+        if (value > 1.05) likedAngleIds.push(id);
+        if (value < 0.95) dismissedAngleIds.push(id);
+    });
+    return {
+        likedAngleIds: Array.from(new Set(likedAngleIds.concat(activeAiFeedback.likedAngleIds || []))),
+        dismissedAngleIds: Array.from(new Set(dismissedAngleIds.concat(activeAiFeedback.dismissedAngleIds || []))),
+        refreshedAngleIds: Array.from(new Set(Object.keys(draft.reveal.variantIndices || {}).concat(activeAiFeedback.refreshedAngleIds || []))),
+        notes: activeAiFeedback.notes || '',
+    };
+}
+
+function collectDeterministicIdeasForServer() {
+    return getRankedIdeas().slice(0, 5).map((idea, index) => ({
+        id: idea.template.id,
+        rank: index + 1,
+        title: idea.template.title,
+        score: Number.isFinite(idea.score) ? idea.score : 0,
+        core: idea.content.core || '',
+        tension: idea.content.tension || '',
+        opening: idea.content.opening || '',
+        distinctive: idea.content.distinctive || '',
+        evidence: (idea.evidence || []).map(item => {
+            const question = QUESTIONS.find(q => q.prompt === item.prompt);
+            return {
+                questionId: question ? question.id : '',
+                prompt: item.prompt || '',
+                answer: item.answer || '',
+            };
+        }).filter(item => item.questionId),
+        essayTypes: idea.template.essayTypes || [],
+        adjustment: getTemplateAdjustment(idea.template.id),
+        variantIndex: idea.variantIndex || 0,
+    }));
+}
+
+function collectGeniusSignalProfile() {
+    const ctx = buildContext();
+    const answers = QUESTIONS.map(getAnswerForServer).filter(Boolean);
+    return {
+        version: 1,
+        generatedAt: new Date().toISOString(),
+        answeredCount: answeredCount(),
+        totalQuestions: QUESTIONS.length,
+        dimensions: scoreDimensions(),
+        topDimensions: ctx.topDimensions.map(([key, value]) => ({
+            key,
+            label: DIMENSIONS[key] || key,
+            score: value,
+        })),
+        answers,
+        deterministicIdeas: collectDeterministicIdeasForServer(),
+        voicePalette: extractVoicePhrases(),
+        motifs: extractMotifs(),
+        feedback: collectGeniusFeedback(),
+    };
+}
+
+function collectGeniusPayload() {
+    const draft = getDraft();
+    return {
+        version: STORAGE_VERSION,
+        currentIndex,
+        answers: Object.fromEntries(
+            QUESTIONS.map(question => {
+                const answer = getAnswerForServer(question);
+                return answer ? [question.id, answer] : null;
+            }).filter(Boolean)
+        ),
+        reveal: draft.reveal || blankReveal(),
+        signalProfile: collectGeniusSignalProfile(),
+    };
+}
+
+function setSavePillText(text) {
+    const pill = document.getElementById('save-pill');
+    if (!pill) return;
+    const label = pill.querySelector('span');
+    if (label) label.textContent = text;
+}
+
+async function loadGeniusCloudDraft() {
+    const response = await fetch(GENIUS_DRAFT_ENDPOINT, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' },
+    });
+    if (response.status === 401) return null;
+    if (!response.ok) throw new Error('Could not load Genius draft.');
+    return response.json();
+}
+
+function writeCloudPayloadLocally(payload) {
+    if (!payload || typeof payload !== 'object') return;
+    geniusHydrating = true;
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            version: STORAGE_VERSION,
+            currentIndex: Number.isInteger(payload.currentIndex) ? payload.currentIndex : 0,
+            answers: payload.answers || {},
+            reveal: payload.reveal || blankReveal(),
+            updatedAt: new Date().toISOString(),
+        }));
+    } finally {
+        geniusHydrating = false;
+    }
+}
+
+async function hydrateGeniusCloudDraft() {
+    const localDraft = readDraft();
+    const localCount = Object.values(localDraft.answers || {}).filter(isAnswered).length;
+    const data = await loadGeniusCloudDraft();
+    if (!data) return localDraft;
+
+    const cloudPayload = data.draft && data.draft.payload ? data.draft.payload : null;
+    const cloudAnswers = cloudPayload && cloudPayload.answers && typeof cloudPayload.answers === 'object'
+        ? cloudPayload.answers
+        : {};
+    const cloudCount = Object.values(cloudAnswers).filter(isAnswered).length;
+
+    if (cloudPayload && cloudCount >= localCount) {
+        writeCloudPayloadLocally(cloudPayload);
+        lastSavedGeniusDraftJson = JSON.stringify({ payload: collectGeniusPayload() });
+        setSavePillText('Loaded from account');
+        return readDraft();
+    }
+
+    if (localCount > 0) {
+        await saveGeniusCloudDraft(true);
+        setSavePillText(data.draft ? 'Local draft synced' : 'Saved to account');
+    }
+    return localDraft;
+}
+
+async function saveGeniusCloudDraft(force = false) {
+    if (!geniusDraftReady && !force) return false;
+    const payload = collectGeniusPayload();
+    const body = JSON.stringify({ payload });
+    if (!force && body === lastSavedGeniusDraftJson) {
+        setSavePillText('Saved to account');
+        return true;
+    }
+
+    const response = await fetch(GENIUS_DRAFT_ENDPOINT, {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body,
+    });
+    if (response.status === 401) return false;
+    if (!response.ok) {
+        setSavePillText('Cloud save failed');
+        return false;
+    }
+    lastSavedGeniusDraftJson = body;
+    setSavePillText('Saved to account');
+    return true;
+}
+
+function queueGeniusDraftSave() {
+    if (!geniusDraftReady) return;
+    window.clearTimeout(geniusSaveTimer);
+    setSavePillText('Saving to account...');
+    geniusSaveTimer = window.setTimeout(() => {
+        saveGeniusCloudDraft().catch(() => setSavePillText('Cloud save failed'));
+    }, 800);
+}
+
+async function startGeniusAiBoard() {
+    if (aiBoardGenerating) return;
+    if (answeredCount() < MIN_SIGNAL_COUNT) {
+        activeAiBoardMessage = 'Answer at least ' + MIN_SIGNAL_COUNT + ' signals before AI personalization.';
+        renderIdeaBoard();
+        return;
+    }
+    aiBoardGenerating = true;
+    activeAiBoard = null;
+    activeAiBoardStatus = 'queued';
+    activeAiBoardMessage = 'Saving your answer-backed signal profile...';
+    renderIdeaBoard();
+
+    try {
+        await saveGeniusCloudDraft(true);
+        activeAiBoardMessage = 'Queued for Gemini personalization.';
+        renderIdeaBoard();
+        const response = await fetch(GENIUS_BOARD_START_ENDPOINT, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Accept': 'application/json' },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Could not start AI board.');
+        activeAiBoardId = data.boardId || '';
+        activeAiBoardStatus = data.status || 'queued';
+        pollGeniusAiBoard(activeAiBoardId);
+    } catch (error) {
+        activeAiBoardStatus = 'failed';
+        activeAiBoardMessage = error.message || 'Could not start AI board.';
+        aiBoardGenerating = false;
+        renderIdeaBoard();
+    }
+}
+
+async function fetchGeniusAiBoard(boardId) {
+    if (!boardId) return null;
+    const url = GENIUS_BOARD_STATUS_ENDPOINT + '?boardId=' + encodeURIComponent(boardId);
+    const response = await fetch(url, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'Could not load AI board.');
+    return data;
+}
+
+async function pollGeniusAiBoard(boardId) {
+    window.clearTimeout(aiBoardPollTimer);
+    if (!boardId) return;
+    try {
+        const data = await fetchGeniusAiBoard(boardId);
+        activeAiBoardStatus = data.status || '';
+        activeAiBoardMessage = statusCopyForAiBoard(activeAiBoardStatus, data.error);
+        if (data.board && (data.status === 'completed' || data.status === 'needs_review')) {
+            activeAiBoard = data.board;
+            activeAiFeedback = data.feedback || activeAiFeedback;
+            aiBoardGenerating = false;
+            renderIdeaBoard();
+            return;
+        }
+        if (data.status === 'failed') {
+            aiBoardGenerating = false;
+            renderIdeaBoard();
+            return;
+        }
+        renderIdeaBoard();
+        aiBoardPollTimer = window.setTimeout(() => pollGeniusAiBoard(boardId), 2500);
+    } catch (error) {
+        activeAiBoardStatus = 'failed';
+        activeAiBoardMessage = error.message || 'Could not load AI board.';
+        aiBoardGenerating = false;
+        renderIdeaBoard();
+    }
+}
+
+function statusCopyForAiBoard(status, error) {
+    if (status === 'queued') return 'Queued for the AI worker.';
+    if (status === 'processing') return 'Gemini is personalizing the board from your Genius signals.';
+    if (status === 'completed') return 'AI-personalized board ready.';
+    if (status === 'needs_review') return 'AI board generated, with guardrail notes.';
+    if (status === 'failed') return error || 'AI generation failed.';
+    return '';
+}
+
+async function saveGeniusAiFeedback() {
+    if (!activeAiBoardId) return;
+    try {
+        await fetch(GENIUS_BOARD_FEEDBACK_ENDPOINT, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ boardId: activeAiBoardId, feedback: activeAiFeedback }),
+        });
+    } catch (e) {
+        /* Feedback is also included in the next draft save. */
+    }
+    queueGeniusDraftSave();
+}
+
+function toggleAiFeedback(kind, angleId) {
+    const key = kind === 'like' ? 'likedAngleIds' : 'dismissedAngleIds';
+    const otherKey = kind === 'like' ? 'dismissedAngleIds' : 'likedAngleIds';
+    const current = new Set(activeAiFeedback[key] || []);
+    const other = new Set(activeAiFeedback[otherKey] || []);
+    if (current.has(angleId)) current.delete(angleId);
+    else current.add(angleId);
+    other.delete(angleId);
+    activeAiFeedback[key] = Array.from(current);
+    activeAiFeedback[otherKey] = Array.from(other);
+    saveGeniusAiFeedback();
+    renderIdeaBoard();
+}
+
+function refreshAiAngle(angleId) {
+    activeAiFeedback.refreshedAngleIds = Array.from(new Set((activeAiFeedback.refreshedAngleIds || []).concat(angleId)));
+    saveGeniusAiFeedback();
+    startGeniusAiBoard();
 }
 
 function addDimensions(target, source, multiplier) {
@@ -2710,6 +3187,7 @@ function extractMotifs() {
     const entries = getTextAnswerEntries();
     const counts = {};
     const sources = {};
+    const sourceIds = {};
     entries.forEach(entry => {
         const tokens = entry.text.toLowerCase().match(/[a-z][a-z'’]{3,}/g) || [];
         const seenInEntry = new Set();
@@ -2719,8 +3197,10 @@ function extractMotifs() {
             if (MOTIF_STOPWORDS.has(word)) return;
             counts[word] = (counts[word] || 0) + 1;
             if (!sources[word]) sources[word] = new Set();
+            if (!sourceIds[word]) sourceIds[word] = new Set();
             if (!seenInEntry.has(word)) {
                 sources[word].add(entry.prompt);
+                sourceIds[word].add(entry.id);
                 seenInEntry.add(word);
             }
         });
@@ -2733,6 +3213,7 @@ function extractMotifs() {
             word,
             count,
             prompts: Array.from(sources[word]).slice(0, 3),
+            questionIds: Array.from(sourceIds[word] || []).slice(0, 3),
         }));
 }
 
@@ -2765,6 +3246,7 @@ function extractVoicePhrases() {
             phrases.push({
                 phrase: sentence.replace(/^[‘’'"]|[‘’'"]$/g, ''),
                 source: question ? question.prompt : '',
+                questionId: id,
             });
         });
     });
@@ -3169,6 +3651,7 @@ function renderIdeaBoard() {
     header.append(headerText, meter);
     board.appendChild(header);
 
+    renderAiBoardPanel(board, count);
     renderDimensionSnapshot(board);
 
     if (count < MIN_SIGNAL_COUNT) {
@@ -3188,6 +3671,181 @@ function renderIdeaBoard() {
     renderDiscardPanel(board, ideas.map(i => i.template.id));
 
     body.appendChild(board);
+}
+
+function renderAiBoardPanel(board, count) {
+    const panel = document.createElement('section');
+    panel.className = 'ai-board-panel no-print' + (activeAiBoard ? ' is-ready' : '');
+
+    const header = document.createElement('div');
+    header.className = 'ai-board-header';
+    const text = document.createElement('div');
+    const title = document.createElement('h4');
+    title.className = 'ai-board-title';
+    title.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span>AI personalization layer</span>';
+    const copy = document.createElement('p');
+    copy.className = 'ai-board-copy';
+    copy.textContent = activeAiBoard
+        ? (activeAiBoard.readiness?.summary || 'Gemini personalized the board using the existing Genius signals and answer evidence.')
+        : count < MIN_SIGNAL_COUNT
+            ? 'Answer-backed AI personalization unlocks after eleven Genius signals. The original editor remains available as you answer.'
+            : 'Generate a Gemini-personalized board from the existing Genius algorithm, answer evidence, voice palette, motifs, and your card feedback.';
+    text.append(title, copy);
+
+    const actions = document.createElement('div');
+    actions.className = 'ai-board-actions';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'ai-generate-btn';
+    button.disabled = count < MIN_SIGNAL_COUNT || aiBoardGenerating;
+    button.innerHTML = aiBoardGenerating
+        ? '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Generating</span>'
+        : activeAiBoard
+            ? '<i class="fa-solid fa-rotate"></i><span>Regenerate AI board</span>'
+            : '<i class="fa-solid fa-wand-magic-sparkles"></i><span>Generate AI board</span>';
+    button.addEventListener('click', startGeniusAiBoard);
+    actions.appendChild(button);
+    header.append(text, actions);
+    panel.appendChild(header);
+
+    if (activeAiBoardStatus || activeAiBoardMessage) {
+        const status = document.createElement('div');
+        status.className = 'ai-status-line';
+        status.innerHTML = '<span class="ai-status-dot"></span><span></span>';
+        status.querySelector('span:last-child').textContent = activeAiBoardMessage || statusCopyForAiBoard(activeAiBoardStatus);
+        panel.appendChild(status);
+    }
+
+    if (activeAiBoard) {
+        renderAiBoardContent(panel, activeAiBoard);
+    }
+
+    board.appendChild(panel);
+}
+
+function renderAiBoardContent(panel, aiBoard) {
+    const list = document.createElement('div');
+    list.className = 'ai-angle-list';
+    (aiBoard.angles || []).forEach((angle, index) => {
+        const card = document.createElement('article');
+        card.className = 'ai-angle-card';
+
+        const header = document.createElement('div');
+        header.className = 'idea-card-header';
+        const number = document.createElement('span');
+        number.className = 'idea-index';
+        number.textContent = String(index + 1);
+
+        const copy = document.createElement('div');
+        copy.className = 'idea-header-copy';
+        const kicker = document.createElement('span');
+        kicker.className = 'ai-angle-kicker';
+        kicker.innerHTML = '<i class="fa-solid fa-sparkles"></i><span>Gemini, grounded in answers</span>';
+        const title = document.createElement('h4');
+        title.className = 'idea-title';
+        title.textContent = angle.title || 'Personalized angle';
+        const core = document.createElement('p');
+        core.className = 'idea-core';
+        core.textContent = angle.core || '';
+        copy.append(kicker, title, core);
+        if (Array.isArray(angle.tags) && angle.tags.length) {
+            const tags = document.createElement('div');
+            tags.className = 'ai-angle-tags';
+            angle.tags.slice(0, 6).forEach(tagText => {
+                const tag = document.createElement('span');
+                tag.className = 'ai-angle-tag';
+                tag.textContent = tagText;
+                tags.appendChild(tag);
+            });
+            copy.appendChild(tags);
+        }
+
+        header.append(number, copy, buildAiAngleControls(angle));
+
+        const body = document.createElement('div');
+        body.className = 'idea-card-body';
+        addIdeaBlock(body, 'fa-solid fa-arrows-left-right', 'Hidden tension', angle.hiddenTension || '');
+        addIdeaBlock(body, 'fa-solid fa-film', 'Possible opening scene', angle.openingScene || '');
+        addIdeaBlock(body, 'fa-solid fa-fingerprint', 'Why it is yours', angle.whyItIsYours || '');
+        addAiEvidenceBlock(body, angle.evidenceAnswerIds || []);
+        addListIdeaBlock(body, 'fa-solid fa-pen-nib', 'Coaching moves', angle.coachingMoves || []);
+        addListIdeaBlock(body, 'fa-solid fa-ban', 'Avoid', angle.avoid || []);
+
+        card.append(header, body);
+        list.appendChild(card);
+    });
+    panel.appendChild(list);
+    renderAiSupplementPanels(panel, aiBoard);
+}
+
+function buildAiAngleControls(angle) {
+    const controls = document.createElement('div');
+    controls.className = 'idea-controls no-print';
+    const liked = (activeAiFeedback.likedAngleIds || []).includes(angle.id);
+    const dismissed = (activeAiFeedback.dismissedAngleIds || []).includes(angle.id);
+    const up = makeIdeaControl('👍', 'More like this', liked ? 'is-on' : '', () => toggleAiFeedback('like', angle.id));
+    const down = makeIdeaControl('👎', 'Less like this', dismissed ? 'is-on' : '', () => toggleAiFeedback('dismiss', angle.id));
+    const refresh = makeIdeaControl('🔄', 'Regenerate with this feedback', '', () => refreshAiAngle(angle.id));
+    controls.append(up, down, refresh);
+    return controls;
+}
+
+function addAiEvidenceBlock(parent, answerIds) {
+    const evidence = (answerIds || []).map(id => {
+        const question = getQuestion(id);
+        return {
+            prompt: question ? question.prompt : id,
+            answer: answerPreview(id),
+        };
+    }).filter(item => item.answer);
+    addEvidenceBlock(parent, evidence, ['Answer-backed']);
+}
+
+function addListIdeaBlock(parent, icon, titleText, items) {
+    if (!Array.isArray(items) || !items.length) return;
+    const block = document.createElement('div');
+    block.className = 'idea-block';
+    const title = document.createElement('p');
+    title.className = 'idea-block-title';
+    title.innerHTML = '<i class="' + icon + '"></i><span></span>';
+    title.querySelector('span').textContent = titleText;
+    const list = document.createElement('ul');
+    list.className = 'idea-block-copy';
+    items.slice(0, 5).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+    });
+    block.append(title, list);
+    parent.appendChild(block);
+}
+
+function renderAiSupplementPanels(panel, aiBoard) {
+    const grid = document.createElement('div');
+    grid.className = 'ai-section-grid';
+    addAiMiniPanel(grid, 'Voice read', (aiBoard.voicePalette || []).map(item => item.phrase + (item.whyItMatters ? ': ' + item.whyItMatters : '')));
+    addAiMiniPanel(grid, 'Motifs', (aiBoard.motifs || []).map(item => item.motif + (item.interpretation ? ': ' + item.interpretation : '')));
+    addAiMiniPanel(grid, 'Follow-up questions', (aiBoard.followUpQuestions || []).map(item => item.question));
+    addAiMiniPanel(grid, 'Next writing moves', aiBoard.nextWritingMoves || []);
+    addAiMiniPanel(grid, 'Discard pile', (aiBoard.discardPile || []).map(item => item.title + (item.reason ? ': ' + item.reason : '')));
+    addAiMiniPanel(grid, 'Guardrails', aiBoard.safetyNotes || []);
+    if (grid.childElementCount) panel.appendChild(grid);
+}
+
+function addAiMiniPanel(parent, titleText, items) {
+    if (!Array.isArray(items) || !items.length) return;
+    const panel = document.createElement('div');
+    panel.className = 'ai-mini-panel';
+    const title = document.createElement('strong');
+    title.textContent = titleText;
+    const list = document.createElement('ul');
+    items.slice(0, 5).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+    });
+    panel.append(title, list);
+    parent.appendChild(panel);
 }
 
 function renderBoardToolbar(board, ideas) {
@@ -3546,8 +4204,14 @@ function resetStudio() {
     const ok = window.confirm('Erase every answer in this local draft? This cannot be undone.');
     if (!ok) return;
     clearDraft();
+    activeAiBoardId = '';
+    activeAiBoard = null;
+    activeAiBoardStatus = '';
+    activeAiBoardMessage = '';
+    activeAiFeedback = { likedAngleIds: [], dismissedAngleIds: [], refreshedAngleIds: [], notes: '' };
     currentIndex = 0;
     render();
+    saveGeniusCloudDraft(true).catch(() => setSavePillText('Cloud save failed'));
 }
 
 document.getElementById('next-btn').addEventListener('click', goNext);
@@ -3567,12 +4231,27 @@ document.getElementById('print-btn').addEventListener('click', printIdeaBoard);
 /* The editor stays hidden until the user signs in; render() is
    deferred to initEditor() so the hidden DOM is not painted early. */
 let editorInitialized = false;
-function initEditor() {
+async function initEditor() {
     if (editorInitialized) return;
     editorInitialized = true;
-    const initialDraft = readDraft();
+    let initialDraft = readDraft();
+    try {
+        initialDraft = await hydrateGeniusCloudDraft();
+    } catch (error) {
+        console.error(error);
+        setSavePillText('Local draft only');
+    }
+    geniusDraftReady = true;
     currentIndex = Math.max(0, Math.min(initialDraft.currentIndex || 0, QUESTIONS.length));
+    const boardId = new URLSearchParams(window.location.search).get('boardId');
+    if (boardId) {
+        activeAiBoardId = boardId;
+        activeAiBoardStatus = 'queued';
+        activeAiBoardMessage = 'Loading AI board...';
+        pollGeniusAiBoard(boardId);
+    }
     render();
+    queueGeniusDraftSave();
 }
 window.initEditor = initEditor;
 </script>
