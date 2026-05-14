@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
@@ -17,6 +18,7 @@ function safeAuthNext(value: string | null): string {
     const isAllowedPath =
       parsed.pathname === "/prediction" ||
       parsed.pathname === "/prediction.html" ||
+      parsed.pathname.startsWith("/prediction/report/") ||
       parsed.pathname === "/challenge" ||
       parsed.pathname.startsWith("/challenge/");
 
@@ -166,9 +168,12 @@ export default function LoginForm() {
 
         {/* Header with horizontal EduFinder logo on blue background */}
         <div className="relative bg-[#3b82f6] px-6 pt-7 pb-6 text-center">
-          <img
+          <Image
             src="/EduFinder.svg"
             alt="EduFinder by Waystar"
+            width={2000}
+            height={384}
+            unoptimized
             className="mx-auto h-auto w-44 md:w-48"
           />
         </div>

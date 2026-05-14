@@ -81,6 +81,99 @@ END $$;
 CREATE UNIQUE INDEX IF NOT EXISTS prediction_report_drafts_user_id_idx
     ON prediction_report_drafts(user_id);
 
+-- --- PREDICTION REPORTS -------------------------------------------------
+CREATE TABLE IF NOT EXISTS prediction_reports (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    draft_id UUID NOT NULL REFERENCES prediction_report_drafts(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'queued'
+        CHECK (status IN ('queued', 'processing', 'completed', 'failed', 'needs_review')),
+    applicant_profile JSONB,
+    report_json JSONB,
+    verification_json JSONB,
+    model_usage JSONB,
+    error_message TEXT,
+    started_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ
+);
+
+ALTER TABLE prediction_reports
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now(),
+    ADD COLUMN IF NOT EXISTS draft_id UUID REFERENCES prediction_report_drafts(id) ON DELETE CASCADE,
+    ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'queued',
+    ADD COLUMN IF NOT EXISTS applicant_profile JSONB,
+    ADD COLUMN IF NOT EXISTS report_json JSONB,
+    ADD COLUMN IF NOT EXISTS verification_json JSONB,
+    ADD COLUMN IF NOT EXISTS model_usage JSONB,
+    ADD COLUMN IF NOT EXISTS error_message TEXT,
+    ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.table_constraints
+        WHERE table_schema = 'public'
+          AND table_name = 'prediction_reports'
+          AND constraint_name = 'prediction_reports_status_check'
+    ) THEN
+        ALTER TABLE prediction_reports
+            ADD CONSTRAINT prediction_reports_status_check
+            CHECK (status IN ('queued', 'processing', 'completed', 'failed', 'needs_review'));
+    END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS prediction_reports_user_id_idx
+    ON prediction_reports(user_id);
+CREATE INDEX IF NOT EXISTS prediction_reports_draft_id_idx
+    ON prediction_reports(draft_id);
+CREATE INDEX IF NOT EXISTS prediction_reports_status_created_at_idx
+    ON prediction_reports(status, created_at);
+
+CREATE TABLE IF NOT EXISTS prediction_report_evidence (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    report_id UUID NOT NULL REFERENCES prediction_reports(id) ON DELETE CASCADE,
+    evidence_key TEXT NOT NULL,
+    source_type TEXT NOT NULL CHECK (source_type IN ('google', 'reddit', 'x')),
+    school TEXT NOT NULL,
+    cycle TEXT,
+    outcome TEXT,
+    round TEXT,
+    program TEXT,
+    applicant_facts JSONB NOT NULL DEFAULT '{}'::jsonb,
+    quote_excerpt TEXT NOT NULL,
+    url TEXT NOT NULL,
+    retrieved_at TIMESTAMPTZ NOT NULL,
+    credibility_score NUMERIC,
+    model_id TEXT,
+    raw JSONB
+);
+
+ALTER TABLE prediction_report_evidence
+    ADD COLUMN IF NOT EXISTS evidence_key TEXT,
+    ADD COLUMN IF NOT EXISTS source_type TEXT,
+    ADD COLUMN IF NOT EXISTS school TEXT,
+    ADD COLUMN IF NOT EXISTS cycle TEXT,
+    ADD COLUMN IF NOT EXISTS outcome TEXT,
+    ADD COLUMN IF NOT EXISTS round TEXT,
+    ADD COLUMN IF NOT EXISTS program TEXT,
+    ADD COLUMN IF NOT EXISTS applicant_facts JSONB NOT NULL DEFAULT '{}'::jsonb,
+    ADD COLUMN IF NOT EXISTS quote_excerpt TEXT,
+    ADD COLUMN IF NOT EXISTS url TEXT,
+    ADD COLUMN IF NOT EXISTS retrieved_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS credibility_score NUMERIC,
+    ADD COLUMN IF NOT EXISTS model_id TEXT,
+    ADD COLUMN IF NOT EXISTS raw JSONB;
+
+CREATE INDEX IF NOT EXISTS prediction_report_evidence_report_id_idx
+    ON prediction_report_evidence(report_id);
+CREATE INDEX IF NOT EXISTS prediction_report_evidence_school_idx
+    ON prediction_report_evidence(school);
+
 -- --- GENIUS EDITOR DRAFTS ----------------------------------------------
 CREATE TABLE IF NOT EXISTS genius_editor_drafts (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -158,6 +251,7 @@ CREATE INDEX IF NOT EXISTS genius_editor_boards_status_created_at_idx
     ON genius_editor_boards(status, created_at);
 CREATE INDEX IF NOT EXISTS genius_editor_boards_input_hash_idx
     ON genius_editor_boards(draft_id, input_hash);
+
 -- Migrate existing answer keys out of `modules` before dropping the column.
 DO $$
 BEGIN
@@ -210,6 +304,22 @@ DROP POLICY IF EXISTS "prediction drafts insert own" ON prediction_report_drafts
 DROP POLICY IF EXISTS "prediction drafts update own" ON prediction_report_drafts;
 DROP POLICY IF EXISTS "prediction drafts delete own" ON prediction_report_drafts;
 REVOKE ALL ON prediction_report_drafts FROM anon, authenticated;
+
+-- `prediction_reports` and `prediction_report_evidence`: server routes and
+-- worker use the service-role key after checking ownership or worker secret.
+ALTER TABLE prediction_reports ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "prediction reports select own" ON prediction_reports;
+DROP POLICY IF EXISTS "prediction reports insert own" ON prediction_reports;
+DROP POLICY IF EXISTS "prediction reports update own" ON prediction_reports;
+DROP POLICY IF EXISTS "prediction reports delete own" ON prediction_reports;
+REVOKE ALL ON prediction_reports FROM anon, authenticated;
+
+ALTER TABLE prediction_report_evidence ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "prediction evidence select own" ON prediction_report_evidence;
+DROP POLICY IF EXISTS "prediction evidence insert own" ON prediction_report_evidence;
+DROP POLICY IF EXISTS "prediction evidence update own" ON prediction_report_evidence;
+DROP POLICY IF EXISTS "prediction evidence delete own" ON prediction_report_evidence;
+REVOKE ALL ON prediction_report_evidence FROM anon, authenticated;
 
 -- `genius_editor_drafts`: server routes own draft reads/writes with the
 -- service-role key after checking the authenticated user.

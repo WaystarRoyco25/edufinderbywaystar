@@ -31,7 +31,9 @@ export async function proxy(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isProtected =
-    path.startsWith("/challenge/module") || path.startsWith("/challenge/dashboard");
+    path.startsWith("/challenge/module") ||
+    path.startsWith("/challenge/dashboard") ||
+    path.startsWith("/prediction/report");
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();

@@ -1,74 +1,16 @@
 import { NextResponse } from "next/server";
+import { normalizeReportPayload } from "@/lib/report/intake";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-const FIELD_NAMES = [
-  "name",
-  "email",
-  "grade",
-  "graduationYear",
-  "school",
-  "citizenship",
-  "intendedMajor",
-  "applicationType",
-  "gpaUnweighted",
-  "gpaWeighted",
-  "gradingScale",
-  "gradeTrend",
-  "classRank",
-  "courseRigor",
-  "satTotal",
-  "satSection",
-  "actTotal",
-  "englishTest",
-  "testingPlan",
-  "currentCourses",
-  "apIbTrack",
-  "apIbDetail",
-  "extracurriculars",
-  "awards",
-  "leadership",
-  "school1",
-  "school1Program",
-  "school1Round",
-  "school2",
-  "school2Program",
-  "school2Round",
-  "school3",
-  "school3Program",
-  "school3Round",
-  "school4",
-  "school4Program",
-  "school4Round",
-  "school5",
-  "school5Program",
-  "school5Round",
-  "notes",
-] as const;
-
-const FIELD_NAME_SET = new Set<string>(FIELD_NAMES);
 const DRAFT_COLUMNS = "id, payload, status, updated_at, submitted_at";
-const MAX_FIELD_LENGTH = 5000;
 
 type DraftStatus = "draft" | "submitted";
 
 function normalizeStatus(value: unknown): DraftStatus {
   return value === "submitted" ? "submitted" : "draft";
-}
-
-function normalizePayload(value: unknown): Record<string, string> {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return {};
-  }
-
-  const payload: Record<string, string> = {};
-  Object.entries(value as Record<string, unknown>).forEach(([key, raw]) => {
-    if (!FIELD_NAME_SET.has(key) || typeof raw !== "string") return;
-    payload[key] = raw.slice(0, MAX_FIELD_LENGTH);
-  });
-  return payload;
 }
 
 async function getAuthenticatedUser() {
@@ -122,7 +64,7 @@ export async function PUT(request: Request) {
     .upsert(
       {
         user_id: user.id,
-        payload: normalizePayload(body.payload),
+        payload: normalizeReportPayload(body.payload),
         status,
         submitted_at: submittedAt,
         updated_at: new Date().toISOString(),
