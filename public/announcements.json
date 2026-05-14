@@ -3,6 +3,13 @@
   "notes": "Latest first. Author is always 'Waystar Learning'. Date is ISO YYYY-MM-DD; the page renders it as 'May 11, 2026'. body is two short English paragraphs, separated by a blank line (\\n\\n). No em dash (U+2014) or en dash (U+2013) anywhere in title or body. The formula AI agents must follow when adding a new entry lives in /AGENTS.md under the announcements-protocol section.",
   "entries": [
     {
+      "id": "2026-05-14-genius-ai-personalization",
+      "author": "Waystar Learning",
+      "date": "2026-05-14",
+      "title": "The Genius! Editor now includes answer-backed AI personalization.",
+      "body": "The Genius! Editor now keeps its original 39-question idea engine, then adds a Gemini personalization layer after enough answers are saved. The new layer reads the existing signal profile, voice palette, motifs, top angle candidates, and card feedback to produce coaching angles above the deterministic board.\n\nEvery AI angle must cite real answer IDs, and the server rejects unknown or missing citations before the board is shown. Signed-in students can save drafts to their account, generate a queued AI board, and use like, dismiss, and refresh feedback for regeneration."
+    },
+    {
       "id": "2026-05-11-genius-editor-expansion",
       "author": "Waystar Learning",
       "date": "2026-05-11",

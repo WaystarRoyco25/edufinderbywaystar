@@ -1122,7 +1122,7 @@
             The Genius! Editor
         </h1>
         <p class="text-blue-50 text-lg md:text-xl font-light max-w-xl mx-auto mb-12 leading-relaxed">
-            Where the Insight! Report measures the numbers, the Genius! Editor finds the story.
+            Where the Insight! Report measures the numbers, the Genius! Editor now pairs its original story engine with answer-backed AI coaching.
         </p>
 
         <div class="grid grid-cols-3 gap-3 md:gap-5 max-w-3xl mx-auto">
@@ -1138,8 +1138,8 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number" data-target="14" data-suffix="">0</div>
-                <div class="stat-unit">essay angles</div>
-                <div class="stat-label">ranked, with evidence</div>
+                <div class="stat-unit">ranked angles</div>
+                <div class="stat-label">plus AI coaching</div>
             </div>
         </div>
     </div>
@@ -1157,7 +1157,7 @@
             Not your odds. Your angle.
         </h2>
         <p class="text-gray-500 text-base md:text-lg mb-10 max-w-2xl leading-relaxed">
-            The Insight! Report tells you where you stand. The Genius! Editor turns 39 small signals into the story only you can write.
+            The Insight! Report tells you where you stand. The Genius! Editor turns 39 small signals into a deterministic idea board, then lets Gemini personalize coaching without replacing the original logic.
         </p>
 
         <div class="grid md:grid-cols-2 gap-5">
@@ -1184,10 +1184,10 @@
             </div>
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 md:p-8">
                 <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#3b82f6] mb-4">
-                    <i class="fa-solid fa-ban text-base"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
                 </div>
-                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">Counterfactual and discard pile</h3>
-                <p class="text-sm text-gray-600 leading-relaxed">You also get an angle you might be avoiding and a named list of predictable traps pulled from your own answers.</p>
+                <h3 class="text-lg font-bold text-[#1f2937] mb-1.5">AI personalization layer</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">After enough signals are saved, Gemini can personalize coaching angles from the answer evidence, voice palette, motifs, and card feedback.</p>
             </div>
         </div>
     </section>
@@ -1282,9 +1282,10 @@
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>39 small questions across 7 discovery moves</span></li>
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>An idea board with up to five ranked angles, plus a counterfactual you might be avoiding</span></li>
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Voice palette and motif map pulled from your own answers</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Optional Gemini coaching that cites your real answer IDs and keeps the original Genius board intact</span></li>
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>React with 👍 / 👎 to steer the board, cycle through prose variants</span></li>
                         <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Adaptive discard pile of generic angles to avoid</span></li>
-                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Saved as you answer — print the board</span></li>
+                        <li class="flex gap-2.5"><i class="fa-solid fa-check text-[#3b82f6] mt-1 text-xs"></i><span>Saved to your account as you answer, with print-ready board export</span></li>
                     </ul>
                 </div>
 
@@ -3020,8 +3021,8 @@ async function pollGeniusAiBoard(boardId) {
 
 function statusCopyForAiBoard(status, error) {
     if (status === 'queued') return 'Queued for the AI worker.';
-    if (status === 'processing') return 'Gemini is personalizing the board from your Genius signals.';
-    if (status === 'completed') return 'AI-personalized board ready.';
+    if (status === 'processing') return 'Gemini is personalizing coaching from your saved Genius signals.';
+    if (status === 'completed') return 'AI-personalized coaching board ready.';
     if (status === 'needs_review') return 'AI board generated, with guardrail notes.';
     if (status === 'failed') return error || 'AI generation failed.';
     return '';
@@ -3635,7 +3636,7 @@ function renderIdeaBoard() {
     copy.className = 'reveal-copy';
     copy.textContent = count < MIN_SIGNAL_COUNT
         ? 'There is not enough signal yet for honest idea cards. Answer a few more small questions and the board will become more specific.'
-        : 'These are not drafts. They are starting angles with evidence, opening scenes, and traps to avoid.';
+        : 'These are not drafts. The original Genius board ranks starting angles first, then the AI layer can add grounded coaching above it.';
     headerText.append(title, copy);
 
     const meter = document.createElement('div');
@@ -3682,14 +3683,14 @@ function renderAiBoardPanel(board, count) {
     const text = document.createElement('div');
     const title = document.createElement('h4');
     title.className = 'ai-board-title';
-    title.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span>AI personalization layer</span>';
+    title.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span>AI personalization layer, powered by Gemini</span>';
     const copy = document.createElement('p');
     copy.className = 'ai-board-copy';
     copy.textContent = activeAiBoard
-        ? (activeAiBoard.readiness?.summary || 'Gemini personalized the board using the existing Genius signals and answer evidence.')
+        ? (activeAiBoard.readiness?.summary || 'Gemini personalized coaching angles from your saved Genius signals, while the original board stays below as the source of truth.')
         : count < MIN_SIGNAL_COUNT
-            ? 'Answer-backed AI personalization unlocks after eleven Genius signals. The original editor remains available as you answer.'
-            : 'Generate a Gemini-personalized board from the existing Genius algorithm, answer evidence, voice palette, motifs, and your card feedback.';
+            ? 'Answer-backed AI personalization unlocks after eleven Genius signals. Until then, the original editor keeps building your deterministic board.'
+            : 'Generate Gemini coaching from the existing Genius algorithm, answer evidence, voice palette, motifs, and card feedback. Every AI angle must cite real answers.';
     text.append(title, copy);
 
     const actions = document.createElement('div');
@@ -3740,7 +3741,7 @@ function renderAiBoardContent(panel, aiBoard) {
         copy.className = 'idea-header-copy';
         const kicker = document.createElement('span');
         kicker.className = 'ai-angle-kicker';
-        kicker.innerHTML = '<i class="fa-solid fa-sparkles"></i><span>Gemini, grounded in answers</span>';
+        kicker.innerHTML = '<i class="fa-solid fa-sparkles"></i><span>Gemini coaching, answer-cited</span>';
         const title = document.createElement('h4');
         title.className = 'idea-title';
         title.textContent = angle.title || 'Personalized angle';
@@ -3854,7 +3855,7 @@ function renderBoardToolbar(board, ideas) {
     bar.className = 'board-toolbar no-print';
     const note = document.createElement('p');
     note.className = 'board-toolbar-note';
-    note.textContent = 'React with 👍 / 👎 on any card to steer the next refresh. Tap 🔄 to see a different version of the same angle.';
+    note.textContent = 'React with 👍 / 👎 on any card to steer the next refresh. Your feedback also helps the AI layer regenerate more relevant coaching.';
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'board-refresh';
