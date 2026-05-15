@@ -25,9 +25,11 @@ The marketing pages are plain HTML files in `public/`, served at clean URLs via 
 - `/` → `public/index.html`
 - `/prediction` → `public/prediction.html`
 - `/genius` → `public/genius.html`
+- `/who-we-are` → `public/who-we-are.html`
+- `/announcements` → `public/announcements.html`
 - `/challenge` is special — it cannot use a rewrite because `src/app/challenge/` intercepts it first. Instead, [`src/app/challenge/route.ts`](src/app/challenge/route.ts) reads `public/challenge.html` and serves it directly.
 
-`/who-we-are.html`, `/reviews.html`, `/announcements.html` are served straight from `public/` by Next.js static-file handling.
+`/reviews.html` is served straight from `public/` by Next.js static-file handling.
 
 **Rule of thumb:** if the page is marketing/content and doesn't need a login, add it to `public/`. If it needs Supabase auth or hits an AI pipeline, add it under `src/app/`.
 

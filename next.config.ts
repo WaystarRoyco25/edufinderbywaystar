@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/prediction.html", destination: "/prediction", permanent: true },
       { source: "/genius.html", destination: "/genius", permanent: true },
+      { source: "/who-we-are.html", destination: "/who-we-are", permanent: true },
+      { source: "/announcements.html", destination: "/announcements", permanent: true },
     ];
   },
   async rewrites() {
@@ -16,6 +18,8 @@ const nextConfig: NextConfig = {
       { source: "/", destination: "/index.html" },
       { source: "/prediction", destination: "/prediction.html" },
       { source: "/genius", destination: "/genius.html" },
+      { source: "/who-we-are", destination: "/who-we-are.html" },
+      { source: "/announcements", destination: "/announcements.html" },
     ];
   },
 };
