@@ -31,15 +31,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  // One-time sanity check: if the service role key is missing at runtime the
-  // admin client silently falls back to anon, which hits RLS and returns 0
-  // rows for every lookup. That shows up as a 404 here and is very easy to
-  // miss, so log a boolean (never the value itself).
-  console.log("save-progress:start", {
-    module_id: body.module_id,
-    has_service_role_key: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-  });
-
   const admin = createSupabaseAdminClient();
 
   const { data: mod, error } = await admin
@@ -99,15 +90,6 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-
-  console.log("save-progress:updated", {
-    module_id: mod.id,
-    current_index: update.current_index,
-    answer_count:
-      update.answers && typeof update.answers === "object"
-        ? Object.keys(update.answers as Record<string, string>).length
-        : undefined,
-  });
 
   return NextResponse.json({ ok: true });
 }

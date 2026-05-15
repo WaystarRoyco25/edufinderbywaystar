@@ -34,7 +34,7 @@ function payload(answerCount = 11) {
     answers,
     reveal: { templateAdjustments: {}, variantIndices: {} },
     signalProfile: {
-      version: 1,
+      version: 1 as const,
       generatedAt: NOW.toISOString(),
       answeredCount: answerCount,
       totalQuestions: 39,
@@ -115,7 +115,7 @@ test("generates a completed Genius board with valid answer citations", async () 
 });
 
 test("Gemini HTTP client requests high thinking level", async () => {
-  let requestBody: Record<string, unknown> | null = null;
+  let requestBody: { generationConfig?: { thinkingConfig?: unknown } } | undefined;
   const fetchImpl: typeof fetch = async (_input, init) => {
     requestBody = JSON.parse(String(init?.body));
     return new Response(
@@ -143,7 +143,7 @@ test("Gemini HTTP client requests high thinking level", async () => {
   });
 
   assert.deepEqual(
-    (requestBody?.generationConfig as { thinkingConfig?: unknown } | undefined)?.thinkingConfig,
+    requestBody?.generationConfig?.thinkingConfig,
     { thinkingLevel: "high" },
   );
 });
