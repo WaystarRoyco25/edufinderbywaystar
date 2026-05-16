@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import {
   stableGeniusInputHash,
   validateGeniusStartProfile,
@@ -9,6 +9,7 @@ import {
   geniusBoardUrl,
   loadGeniusDraftForUser,
   normalizeStoredGeniusPayload,
+  processNextQueuedGeniusBoard,
 } from "@/lib/genius/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -46,6 +47,8 @@ export async function POST() {
     const inputHash = stableGeniusInputHash(payload.signalProfile);
     const reusable = await findReusableGeniusBoard(admin, draft.id, inputHash);
     const board = reusable ?? (await createQueuedGeniusBoard(admin, draft));
+
+    after(() => processNextQueuedGeniusBoard());
 
     return NextResponse.json({
       boardId: board.id,
