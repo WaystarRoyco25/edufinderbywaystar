@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import {
   normalizeApplicantProfile,
   validateReportStartProfile,
@@ -7,12 +7,14 @@ import {
   createQueuedReport,
   findExistingReportForDraft,
   loadSubmittedDraftForUser,
+  processNextQueuedReport,
   reportUrl,
 } from "@/lib/report/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 360;
 
 async function getAuthenticatedUser() {
   const authed = await createSupabaseServerClient();
@@ -46,6 +48,8 @@ export async function POST() {
 
     const existing = await findExistingReportForDraft(admin, draft.id);
     const report = existing ?? (await createQueuedReport(admin, draft));
+
+    after(() => processNextQueuedReport());
 
     return NextResponse.json({
       reportId: report.id,
