@@ -6,3 +6,17 @@ body {
   font-family: "Pretendard", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, sans-serif;
 }
+
+/* Export as PDF uses the browser print dialog. Keep brand colors (the blue
+   report header and badges) in the PDF, and drop the gray canvas so the
+   printed page starts on clean white. */
+@media print {
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    background: #ffffff;
+  }
+}

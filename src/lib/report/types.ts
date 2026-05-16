@@ -113,6 +113,7 @@ export type SimilarCase = {
   evidenceId: string;
   sourceType: SourceType;
   outcome: string;
+  summary: string;
   quoteExcerpt: string;
   url: string;
 };
@@ -204,6 +205,13 @@ export type VerificationResult = {
   passed: boolean;
   checkedAt: string;
   modelId: string;
+  issues: string[];
+};
+
+// Grok's second-opinion read on whether the report is sound. Advisory only:
+// its issues are handed to the fixer, but the local rules remain the gate.
+export type ReportReviewResult = {
+  makesSense: boolean;
   issues: string[];
 };
 

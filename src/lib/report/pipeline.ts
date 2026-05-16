@@ -24,6 +24,7 @@ import type {
   EvidenceCase,
   ModelRole,
   ModelSelection,
+  ReportReviewResult,
   ReportStatus,
   SchoolReport,
   VerificationResult,
@@ -355,15 +356,35 @@ async function draftWithLocalVerify(
   );
 
   let verification = verifyReportIntegrity(report, evidence, now);
-  if (verification.passed) return { report, verification };
 
-  const fixerModelId = modelSelections.xEvidence.modelId;
+  // Grok reads the draft for plausibility. Public X cases are sparse, so we
+  // lean on Grok's own admissions knowledge to catch reasoning errors the
+  // local rules cannot see. The review is advisory: a failure here must never
+  // block an otherwise-clean draft, and the local rules stay the final gate.
+  const grokModelId = modelSelections.xEvidence.modelId;
+  let review: ReportReviewResult = { makesSense: true, issues: [] };
+  try {
+    review = await providerClient.reviewReport({
+      profile,
+      evidence,
+      report,
+      modelId: grokModelId,
+    });
+  } catch {
+    review = { makesSense: true, issues: [] };
+  }
+
+  const issuesToFix = Array.from(
+    new Set([...verification.issues, ...review.issues]),
+  );
+  if (issuesToFix.length === 0) return { report, verification };
+
   const fixed = await providerClient.fixReportIssues({
     profile,
     evidence,
     report,
-    issues: verification.issues,
-    modelId: fixerModelId,
+    issues: issuesToFix,
+    modelId: grokModelId,
   });
   report = applyEvidenceGuardrails(
     {
@@ -376,7 +397,7 @@ async function draftWithLocalVerify(
     },
     evidence,
   );
-  verification = verifyReportIntegrity(report, evidence, now, `${fixerModelId}+local`);
+  verification = verifyReportIntegrity(report, evidence, now, `${grokModelId}+local`);
   return { report, verification };
 }
 

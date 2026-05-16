@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { canUserAccessReport } from "./access";
 import { normalizeApplicantProfile } from "./intake";
 import { generateAdmissionReport } from "./pipeline";
 import type {
@@ -42,6 +43,25 @@ type SupabaseAdmin = ReturnType<typeof createSupabaseAdminClient>;
 
 export function reportUrl(reportId: string): string {
   return `/prediction/report/${reportId}`;
+}
+
+// Loads a single report and enforces ownership. Returns null when the report
+// does not exist or belongs to another user, so callers can render notFound().
+export async function loadReportForUser(
+  reportId: string,
+  userId: string,
+): Promise<PredictionReportRow | null> {
+  const admin = createSupabaseAdminClient();
+  const { data, error } = await admin
+    .from("prediction_reports")
+    .select(REPORT_ROW_COLUMNS)
+    .eq("id", reportId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  const report = data as PredictionReportRow | null;
+  if (!report || !canUserAccessReport(userId, report)) return null;
+  return report;
 }
 
 export async function loadSubmittedDraftForUser(

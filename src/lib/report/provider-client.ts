@@ -7,6 +7,7 @@ import type {
   GapRecommendations,
   ModelProvider,
   ModelSelection,
+  ReportReviewResult,
   SchoolReport,
   TargetSchool,
 } from "./types";
@@ -27,6 +28,12 @@ export type FixReportIssuesInput = {
   evidence: EvidenceCase[];
   report: AdmissionReportJson;
   issues: string[];
+};
+
+export type ReviewReportInput = {
+  profile: ApplicantProfile;
+  evidence: EvidenceCase[];
+  report: AdmissionReportJson;
 };
 
 export type GapRecommendationsInput = {
@@ -50,6 +57,7 @@ export type ReportProviderClient = ModelAvailabilityClient & {
   }): Promise<EvidenceCase[]>;
   draftReport(args: DraftReportInput & { modelId: string }): Promise<AdmissionReportJson>;
   fixReportIssues(args: FixReportIssuesInput & { modelId: string }): Promise<AdmissionReportJson>;
+  reviewReport(args: ReviewReportInput & { modelId: string }): Promise<ReportReviewResult>;
   collectGapRecommendations(
     args: GapRecommendationsInput & { modelId: string },
   ): Promise<GapRecommendations>;
@@ -60,13 +68,14 @@ type HttpClientOptions = {
   fetchImpl?: typeof fetch;
 };
 
-type ProviderRequestKind = "models" | "evidence" | "draft" | "fixer";
+type ProviderRequestKind = "models" | "evidence" | "draft" | "fixer" | "review";
 
 const DEFAULT_TIMEOUT_MS: Record<ProviderRequestKind, number> = {
   models: 10_000,
   evidence: 120_000,
   draft: 120_000,
   fixer: 90_000,
+  review: 90_000,
 };
 
 const TIMEOUT_ENV_KEY: Record<ProviderRequestKind, string> = {
@@ -74,6 +83,7 @@ const TIMEOUT_ENV_KEY: Record<ProviderRequestKind, string> = {
   evidence: "REPORT_EVIDENCE_TIMEOUT_MS",
   draft: "REPORT_DRAFT_TIMEOUT_MS",
   fixer: "REPORT_FIXER_TIMEOUT_MS",
+  review: "REPORT_REVIEW_TIMEOUT_MS",
 };
 
 const PROVIDER_CONFIG = {
@@ -328,6 +338,8 @@ function buildDraftPrompt(input: DraftReportInput): string {
     "Do not write HTML. Every evidence-dependent claim must cite evidenceIds already present in the evidence list.",
     "Use chance bands only from: Very High Reach, High Reach, Reach, Borderline Target, Target, Likely.",
     "Cite google, reddit, and x evidence appropriately. Quote excerpts must be byte-equal to the supplied evidence.",
+    "For every similarCases entry, write a `summary`: two to three plain-English sentences covering who the applicant was, what the outcome was, and why the case is comparable to this student. The reader only sees this summary, never the link, so make it self-contained.",
+    "Readability: in the multi-sentence narrative fields (each applicantRead value, studentFit, officialBaseline.notes, every reasons and actions item, similarCases.summary, the strategy fields, every actionPlan item), wrap the two or three most important words or phrases of each paragraph in double asterisks like **this** so they render bold. Do not bold whole sentences. Never put asterisks inside school names, chanceBand values, dates, URLs, evidenceId values, or any quoteExcerpt.",
     "Self-audit before returning: no guarantee language; chance bands for schools with admit rate < 10% cannot be Likely; every similarCases.quoteExcerpt must match its source exactly.",
     "Also set gapFocus: identify the SINGLE most movable gap in this applicant's profile.",
     "gapFocus.lane must be one of: extracurriculars, testing, essays, longer_term. Choose extracurriculars only for 9th or 10th graders who still have years to build a real activity record. For 11th and 12th graders prefer testing (scores are weak or missing and a test date is still reachable) or essays (the personal narrative is the realistic remaining lever). Use longer_term when the binding constraint is GPA or course rigor, which cannot move before the upcoming round.",
@@ -340,15 +352,44 @@ function buildDraftPrompt(input: DraftReportInput): string {
 
 function buildFixerPrompt(input: FixReportIssuesInput): string {
   return [
-    "You are repairing an admissions report draft that failed local rule-based verification.",
+    "You are repairing an admissions report draft that failed verification or a reviewer's read.",
     "Return ONLY the corrected full AdmissionReportJson (version 1) as strict JSON.",
     "Address each listed issue without changing unrelated content. Preserve the report structure.",
+    "Some issues are plausibility or reasoning problems flagged by a senior reviewer, not just rule violations; fix those by correcting the analysis itself, not by deleting the affected content.",
+    "Preserve the **double-asterisk** keyword emphasis already present in narrative fields, and apply the same bold emphasis to any narrative text you rewrite. Never add asterisks to quoteExcerpt values.",
     "Rules: chance bands only from {Very High Reach, High Reach, Reach, Borderline Target, Target, Likely}; no guarantee language; for any school with admit rate < 10%, chanceBand cannot be Likely; every similarCases.quoteExcerpt must be byte-equal to the matching evidence.quoteExcerpt; every cited evidenceId must exist in the evidence list.",
-    `Verifier issues to fix:\n- ${input.issues.join("\n- ")}`,
+    `Issues to fix:\n- ${input.issues.join("\n- ")}`,
     `Evidence JSON:\n${JSON.stringify(input.evidence)}`,
     `Report JSON to repair:\n${JSON.stringify(input.report)}`,
     `Applicant profile JSON:\n${JSON.stringify(input.profile)}`,
   ].join("\n\n");
+}
+
+function buildReviewPrompt(input: ReviewReportInput): string {
+  return [
+    "You are grok-4.3, the critical second reader for an EduFinder admissions report that another model drafted.",
+    "Public acceptance and rejection posts are sparse, so do not lean only on the evidence list. Use your own broad knowledge of US college admissions to judge whether this report holds up.",
+    "Check: are the chance bands plausible given the applicant's GPA, testing, course rigor, and each school's real selectivity? Is the reasoning internally consistent? Does the applicantRead match the per-school verdicts? Are any claims factually wrong, overconfident, or misleading?",
+    'Return ONLY JSON: {"makesSense": boolean, "issues": ["specific, actionable problem", ...]}.',
+    "Each issue must be a concrete instruction the drafting model can act on. List only real problems a knowledgeable counselor would flag. If the report is sound, return makesSense true with an empty issues array. Do not nitpick wording or style, and ignore the **double-asterisk** emphasis markers, which are intentional.",
+    `Applicant profile JSON:\n${JSON.stringify(input.profile)}`,
+    `Evidence JSON:\n${JSON.stringify(input.evidence)}`,
+    `Report JSON to review:\n${JSON.stringify(input.report)}`,
+  ].join("\n\n");
+}
+
+function parseReviewResult(parsed: unknown): ReportReviewResult {
+  const root =
+    parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  const issues = (Array.isArray(root.issues) ? root.issues : [])
+    .filter((issue): issue is string => typeof issue === "string")
+    .map((issue) => issue.trim())
+    .filter(Boolean);
+  const makesSense =
+    typeof root.makesSense === "boolean" ? root.makesSense : issues.length === 0;
+  return { makesSense, issues };
 }
 
 function buildGapRecommendationsPrompt(input: GapRecommendationsInput): string {
@@ -471,11 +512,19 @@ const similarCaseSchema: GeminiSchema = {
     evidenceId: stringSchema,
     sourceType: sourceTypeSchema,
     outcome: stringSchema,
+    summary: stringSchema,
     quoteExcerpt: stringSchema,
     url: stringSchema,
   },
-  required: ["evidenceId", "sourceType", "outcome", "quoteExcerpt", "url"],
-  propertyOrdering: ["evidenceId", "sourceType", "outcome", "quoteExcerpt", "url"],
+  required: ["evidenceId", "sourceType", "outcome", "summary", "quoteExcerpt", "url"],
+  propertyOrdering: [
+    "evidenceId",
+    "sourceType",
+    "outcome",
+    "summary",
+    "quoteExcerpt",
+    "url",
+  ],
 };
 
 const schoolReportSchema: GeminiSchema = {
@@ -936,6 +985,35 @@ export class HttpReportProviderClient implements ReportProviderClient {
     const json = await response.json();
     const parsed = parseJsonFromText<AdmissionReportJson>(extractResponseOutputText(json));
     return coerceReport(parsed);
+  }
+
+  async reviewReport(
+    args: ReviewReportInput & { modelId: string },
+  ): Promise<ReportReviewResult> {
+    const key = this.requiredKey("xai");
+    const baseUrl = this.baseUrl("xai");
+    const response = await this.fetchImpl(`${baseUrl}/responses`, {
+      method: "POST",
+      headers: {
+        ...this.authHeaders("xai", key),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: args.modelId,
+        input: [{ role: "user", content: buildReviewPrompt(args) }],
+        reasoning: { effort: "high" },
+        text: { format: { type: "json_object" } },
+      }),
+      signal: this.timeoutSignal("review"),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Grok report review failed with ${response.status}.`);
+    }
+
+    const json = await response.json();
+    const parsed = parseJsonFromText<unknown>(extractResponseOutputText(json));
+    return parseReviewResult(parsed);
   }
 
   async collectGapRecommendations(

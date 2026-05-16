@@ -16,6 +16,7 @@ import type {
   FixReportIssuesInput,
   GapRecommendationsInput,
   ReportProviderClient,
+  ReviewReportInput,
 } from "../src/lib/report/provider-client.ts";
 
 const NOW = new Date("2026-05-02T00:00:00.000Z");
@@ -84,6 +85,7 @@ function makeReport(args: {
           evidenceId: social.id,
           sourceType: social.sourceType,
           outcome: social.outcome,
+          summary: "A comparable applicant with a similar profile and outcome.",
           quoteExcerpt: args.alterQuote ? "changed quote" : social.quoteExcerpt,
           url: social.url,
         },
@@ -162,6 +164,7 @@ type MockOptions = {
   evidenceMode?: "full" | "none";
   alterQuote?: boolean;
   fixerRepairs?: boolean;
+  reviewIssues?: string[];
   gapLane?: GapLane;
   gapItemsMode?: "valid" | "stale" | "noUrl" | "empty";
   gapThrows?: boolean;
@@ -170,6 +173,7 @@ type MockOptions = {
 class MockProvider implements ReportProviderClient {
   fixerCalls = 0;
   draftCalls = 0;
+  reviewCalls = 0;
   gapCalls = 0;
   protected readonly options: MockOptions;
 
@@ -239,6 +243,13 @@ class MockProvider implements ReportProviderClient {
     });
   }
 
+  async reviewReport(args: ReviewReportInput & { modelId: string }) {
+    this.reviewCalls += 1;
+    assert.equal(args.modelId, "grok-4.3");
+    const issues = this.options.reviewIssues ?? [];
+    return { makesSense: issues.length === 0, issues };
+  }
+
   async collectGapRecommendations(
     args: GapRecommendationsInput & { modelId: string },
   ): Promise<GapRecommendations> {
@@ -289,6 +300,7 @@ test("pipeline uses Gemini drafting and Grok X search, returns verified report",
   assert.equal(result.report.schools[0].confidence, "high");
   assert.equal(provider.fixerCalls, 0);
   assert.equal(provider.draftCalls, 1);
+  assert.equal(provider.reviewCalls, 1, "Grok always reviews the draft");
 });
 
 test("pipeline lowers confidence when evidence sources are missing", async () => {
@@ -326,6 +338,20 @@ test("Grok fixer repairs the issue and produces a completed report", async () =>
   assert.equal(provider.fixerCalls, 1);
   assert.equal(result.status, "completed");
   assert.equal(result.verification.passed, true);
+});
+
+test("Grok review feeds plausibility issues into the fixer", async () => {
+  const provider = new MockProvider({
+    reviewIssues: ["Stanford's chance band looks too optimistic for this GPA."],
+  });
+  const result = await generateAdmissionReport(payload, {
+    providerClient: provider,
+    now: NOW,
+  });
+
+  assert.equal(provider.reviewCalls, 1);
+  assert.equal(provider.fixerCalls, 1, "review issues should trigger one fix pass");
+  assert.equal(result.status, "completed");
 });
 
 test("evidence collection fans out across schools in parallel", async () => {
