@@ -5,6 +5,8 @@ import type {
   AdmissionReportJson,
   ApplicantProfile,
   EvidenceCase,
+  GapLane,
+  GapRecommendations,
   ModelProvider,
   SourceType,
   TargetSchool,
@@ -12,6 +14,7 @@ import type {
 import type {
   DraftReportInput,
   FixReportIssuesInput,
+  GapRecommendationsInput,
   ReportProviderClient,
 } from "../src/lib/report/provider-client.ts";
 
@@ -34,6 +37,9 @@ const payload = {
   school1Program: "Computer Science",
   school1Round: "Regular Decision",
 };
+
+const tenthGraderPayload = { ...payload, grade: "10th grade" };
+const twelfthGraderPayload = { ...payload, grade: "12th grade" };
 
 function evidence(
   id: string,
@@ -67,6 +73,7 @@ function makeReport(args: {
   evidence: EvidenceCase[];
   alterQuote?: boolean;
   confidence?: "high" | "medium" | "low";
+  gapLane?: GapLane;
 }): AdmissionReportJson {
   const school = args.profile.targetSchools[0];
   const googleSource = args.evidence.find((item) => item.sourceType === "google");
@@ -143,6 +150,11 @@ function makeReport(args: {
       retrievedAt: item.retrievedAt,
       quoteExcerpt: item.quoteExcerpt,
     })),
+    gapFocus: {
+      lane: args.gapLane ?? "essays",
+      rationale: "Mock gap rationale.",
+      weaknessSummary: "Mock weakness summary.",
+    },
   };
 }
 
@@ -150,11 +162,15 @@ type MockOptions = {
   evidenceMode?: "full" | "none";
   alterQuote?: boolean;
   fixerRepairs?: boolean;
+  gapLane?: GapLane;
+  gapItemsMode?: "valid" | "stale" | "noUrl" | "empty";
+  gapThrows?: boolean;
 };
 
 class MockProvider implements ReportProviderClient {
   fixerCalls = 0;
   draftCalls = 0;
+  gapCalls = 0;
   protected readonly options: MockOptions;
 
   constructor(options: MockOptions = {}) {
@@ -207,6 +223,7 @@ class MockProvider implements ReportProviderClient {
       evidence: args.evidence,
       alterQuote: this.options.alterQuote,
       confidence: "high",
+      gapLane: this.options.gapLane,
     });
   }
 
@@ -218,7 +235,43 @@ class MockProvider implements ReportProviderClient {
       evidence: args.evidence,
       alterQuote: this.options.fixerRepairs ? false : this.options.alterQuote,
       confidence: "high",
+      gapLane: this.options.gapLane,
     });
+  }
+
+  async collectGapRecommendations(
+    args: GapRecommendationsInput & { modelId: string },
+  ): Promise<GapRecommendations> {
+    this.gapCalls += 1;
+    assert.equal(args.modelId, "gemini-3.1-pro-preview");
+    if (this.options.gapThrows) {
+      throw new Error("mock gap recommendation failure");
+    }
+    const mode = this.options.gapItemsMode ?? "valid";
+    const items =
+      mode === "empty"
+        ? []
+        : [
+            {
+              title: "Mock STEM Challenge",
+              summary: "A national competition aligned with the major.",
+              eventDate: mode === "stale" ? "2026-01-10" : "2026-08-15",
+              dateKind: "event",
+              sourceUrl:
+                mode === "noUrl" ? "" : "https://example.org/stem-challenge",
+              eligibilityNote: "Open to international applicants.",
+            },
+          ];
+    return {
+      lane: args.gapFocus.lane,
+      headline: "Mock recommendations",
+      body: "Mock body.",
+      items,
+      handoffUrl: null,
+      verifyNote: "",
+      generatedAt: args.now.toISOString(),
+      source: "model",
+    };
   }
 }
 
@@ -316,4 +369,108 @@ test("evidence collection fans out across schools in parallel", async () => {
   });
 
   assert.equal(peakInFlight, 6, "all 6 evidence calls should be in flight simultaneously");
+});
+
+test("extracurriculars lane returns dated, sourced items for a younger student", async () => {
+  const provider = new MockProvider({
+    gapLane: "extracurriculars",
+    gapItemsMode: "valid",
+  });
+  const result = await generateAdmissionReport(tenthGraderPayload, {
+    providerClient: provider,
+    now: NOW,
+  });
+
+  assert.equal(result.report.gapFocus?.lane, "extracurriculars");
+  const gap = result.report.gapRecommendations;
+  assert(gap, "expected gap recommendations to be attached");
+  assert.equal(gap.lane, "extracurriculars");
+  assert.equal(gap.items.length, 1);
+  assert.ok(gap.items[0].sourceUrl, "item should carry an official source url");
+  assert.ok(gap.items[0].eligibilityNote, "item should carry an eligibility note");
+  assert.equal(provider.gapCalls, 1);
+});
+
+test("grade rule downgrades extracurriculars for a 12th grader", async () => {
+  const result = await generateAdmissionReport(twelfthGraderPayload, {
+    providerClient: new MockProvider({ gapLane: "extracurriculars" }),
+    now: NOW,
+  });
+
+  assert.notEqual(result.report.gapFocus?.lane, "extracurriculars");
+  assert.equal(result.report.gapFocus?.lane, "testing");
+});
+
+test("gap items dated outside the window are dropped", async () => {
+  const result = await generateAdmissionReport(tenthGraderPayload, {
+    providerClient: new MockProvider({
+      gapLane: "extracurriculars",
+      gapItemsMode: "stale",
+    }),
+    now: NOW,
+  });
+
+  const gap = result.report.gapRecommendations;
+  assert(gap, "expected gap recommendations to be attached");
+  assert.equal(gap.items.length, 0);
+});
+
+test("gap items without an official source url are dropped", async () => {
+  const result = await generateAdmissionReport(tenthGraderPayload, {
+    providerClient: new MockProvider({
+      gapLane: "extracurriculars",
+      gapItemsMode: "noUrl",
+    }),
+    now: NOW,
+  });
+
+  const gap = result.report.gapRecommendations;
+  assert(gap, "expected gap recommendations to be attached");
+  assert.equal(gap.items.length, 0);
+});
+
+test("essays lane produces a static handoff with no search call", async () => {
+  const provider = new MockProvider({ gapLane: "essays" });
+  const result = await generateAdmissionReport(payload, {
+    providerClient: provider,
+    now: NOW,
+  });
+
+  const gap = result.report.gapRecommendations;
+  assert(gap, "expected gap recommendations to be attached");
+  assert.equal(gap.source, "static");
+  assert.equal(gap.lane, "essays");
+  assert.equal(gap.handoffUrl, "/genius");
+  assert.equal(gap.items.length, 0);
+  assert.equal(provider.gapCalls, 0);
+});
+
+test("longer_term lane produces static framing with no search call", async () => {
+  const provider = new MockProvider({ gapLane: "longer_term" });
+  const result = await generateAdmissionReport(payload, {
+    providerClient: provider,
+    now: NOW,
+  });
+
+  const gap = result.report.gapRecommendations;
+  assert(gap, "expected gap recommendations to be attached");
+  assert.equal(gap.source, "static");
+  assert.equal(gap.lane, "longer_term");
+  assert.equal(gap.handoffUrl, null);
+  assert.ok(gap.body.length > 0);
+  assert.equal(provider.gapCalls, 0);
+});
+
+test("a gap recommendation failure does not demote the report", async () => {
+  const result = await generateAdmissionReport(tenthGraderPayload, {
+    providerClient: new MockProvider({
+      gapLane: "extracurriculars",
+      gapThrows: true,
+    }),
+    now: NOW,
+  });
+
+  assert.equal(result.status, "completed");
+  assert.equal(result.report.gapRecommendations, undefined);
+  assert.equal(result.report.gapFocus?.lane, "extracurriculars");
 });

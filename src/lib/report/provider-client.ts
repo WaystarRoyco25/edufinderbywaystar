@@ -2,6 +2,9 @@ import type {
   AdmissionReportJson,
   ApplicantProfile,
   EvidenceCase,
+  GapFocus,
+  GapRecommendationItem,
+  GapRecommendations,
   ModelProvider,
   ModelSelection,
   SchoolReport,
@@ -11,6 +14,7 @@ import type {
   AvailableModelsResult,
   ModelAvailabilityClient,
 } from "./provider-registry";
+import { gapDateWindow } from "./gap";
 
 export type DraftReportInput = {
   profile: ApplicantProfile;
@@ -23,6 +27,12 @@ export type FixReportIssuesInput = {
   evidence: EvidenceCase[];
   report: AdmissionReportJson;
   issues: string[];
+};
+
+export type GapRecommendationsInput = {
+  profile: ApplicantProfile;
+  gapFocus: GapFocus;
+  now: Date;
 };
 
 export type ReportProviderClient = ModelAvailabilityClient & {
@@ -40,6 +50,9 @@ export type ReportProviderClient = ModelAvailabilityClient & {
   }): Promise<EvidenceCase[]>;
   draftReport(args: DraftReportInput & { modelId: string }): Promise<AdmissionReportJson>;
   fixReportIssues(args: FixReportIssuesInput & { modelId: string }): Promise<AdmissionReportJson>;
+  collectGapRecommendations(
+    args: GapRecommendationsInput & { modelId: string },
+  ): Promise<GapRecommendations>;
 };
 
 type HttpClientOptions = {
@@ -316,6 +329,9 @@ function buildDraftPrompt(input: DraftReportInput): string {
     "Use chance bands only from: Very High Reach, High Reach, Reach, Borderline Target, Target, Likely.",
     "Cite google, reddit, and x evidence appropriately. Quote excerpts must be byte-equal to the supplied evidence.",
     "Self-audit before returning: no guarantee language; chance bands for schools with admit rate < 10% cannot be Likely; every similarCases.quoteExcerpt must match its source exactly.",
+    "Also set gapFocus: identify the SINGLE most movable gap in this applicant's profile.",
+    "gapFocus.lane must be one of: extracurriculars, testing, essays, longer_term. Choose extracurriculars only for 9th or 10th graders who still have years to build a real activity record. For 11th and 12th graders prefer testing (scores are weak or missing and a test date is still reachable) or essays (the personal narrative is the realistic remaining lever). Use longer_term when the binding constraint is GPA or course rigor, which cannot move before the upcoming round.",
+    "gapFocus.lane must be consistent with the applicantRead section. gapFocus.rationale is one to three student-facing sentences. gapFocus.weaknessSummary is a short, search-friendly description of the specific weakness.",
     `Applicant profile JSON:\n${JSON.stringify(input.profile)}`,
     `Evidence JSON:\n${JSON.stringify(input.evidence)}`,
     `Model selections JSON:\n${JSON.stringify(input.modelSelections)}`,
@@ -333,6 +349,75 @@ function buildFixerPrompt(input: FixReportIssuesInput): string {
     `Report JSON to repair:\n${JSON.stringify(input.report)}`,
     `Applicant profile JSON:\n${JSON.stringify(input.profile)}`,
   ].join("\n\n");
+}
+
+function buildGapRecommendationsPrompt(input: GapRecommendationsInput): string {
+  const { profile, gapFocus, now } = input;
+  const today = now.toISOString().slice(0, 10);
+  const { windowStart, windowEnd } = gapDateWindow(now);
+  const rounds = profile.targetSchools
+    .filter((school) => school.name)
+    .map((school) => `${school.name} (${school.round || "round unspecified"})`)
+    .join("; ");
+  const laneTask =
+    gapFocus.lane === "testing"
+      ? "The applicant needs stronger or additional standardized test scores. Find upcoming official SAT, ACT, and TOEFL test dates and their registration deadlines that the applicant can still prepare for and use this cycle. Prefer official testing-organization pages (College Board, ACT, ETS TOEFL)."
+      : `The applicant needs deeper, more meaningful extracurricular involvement. Find real, currently-open competitions, programs, or structured opportunities aligned with the intended major (${profile.major || "unspecified"}) and this specific weakness: ${gapFocus.weaknessSummary || "limited activity depth"}. Prefer official program or competition pages with confirmed dates.`;
+  return [
+    "You are finding timely, real-world next steps for an EduFinder college applicant.",
+    "Use Google web search to find current, real opportunities. Return only JSON.",
+    laneTask,
+    `Today's date is ${today}. Only include items whose date falls between ${windowStart} and ${windowEnd}. Aim for the 2 to 3 month range so the family has real preparation time; never include anything already past or outside that window.`,
+    rounds
+      ? `The applicant is applying to: ${rounds}. Prefer items that conclude before the relevant application deadline.`
+      : "",
+    `Applicant context: grade ${profile.education.grade || "unspecified"}, citizenship ${profile.education.citizenship || "unspecified"}, application type ${profile.education.applicationType || "unspecified"}, intended major ${profile.major || "unspecified"}.`,
+    "Many competitions and programs are restricted by citizenship or country. For every item, state in eligibilityNote whether THIS applicant is eligible.",
+    "Every item MUST include an official sourceUrl the family can open to verify the date. If you cannot find a confirmed official date, omit the item rather than guessing.",
+    'Shape: {"headline":"one short sentence","body":"one or two sentences of framing","items":[{"title":"...","summary":"what it is and why it fits this student","eventDate":"YYYY-MM-DD","dateKind":"event|registration_deadline|test_date","sourceUrl":"https://official...","eligibilityNote":"..."}]}',
+    "Return at most 6 items, best first.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function coerceGapItem(raw: unknown): GapRecommendationItem | null {
+  if (!raw || typeof raw !== "object") return null;
+  const row = raw as Record<string, unknown>;
+  const str = (value: unknown): string =>
+    typeof value === "string" ? value.trim() : "";
+  return {
+    title: str(row.title).slice(0, 160),
+    summary: str(row.summary).slice(0, 400),
+    eventDate: str(row.eventDate),
+    dateKind: str(row.dateKind) || "event",
+    sourceUrl: str(row.sourceUrl),
+    eligibilityNote: str(row.eligibilityNote),
+  };
+}
+
+function parseGapRecommendations(
+  parsed: unknown,
+  gapFocus: GapFocus,
+  now: Date,
+): GapRecommendations {
+  const root =
+    parsed && typeof parsed === "object"
+      ? (parsed as Record<string, unknown>)
+      : {};
+  const items = (Array.isArray(root.items) ? root.items : [])
+    .map((item) => coerceGapItem(item))
+    .filter((item): item is GapRecommendationItem => Boolean(item));
+  return {
+    lane: gapFocus.lane,
+    headline: typeof root.headline === "string" ? root.headline.trim() : "",
+    body: typeof root.body === "string" ? root.body.trim() : "",
+    items,
+    handoffUrl: null,
+    verifyNote: "",
+    generatedAt: now.toISOString(),
+    source: "model",
+  };
 }
 
 type GeminiSchema = Record<string, unknown>;
@@ -364,6 +449,20 @@ const chanceBandSchema: GeminiSchema = {
 const confidenceSchema: GeminiSchema = {
   type: "STRING",
   enum: ["high", "medium", "low"],
+};
+const gapLaneSchema: GeminiSchema = {
+  type: "STRING",
+  enum: ["extracurriculars", "testing", "essays", "longer_term"],
+};
+const gapFocusSchema: GeminiSchema = {
+  type: "OBJECT",
+  properties: {
+    lane: gapLaneSchema,
+    rationale: stringSchema,
+    weaknessSummary: stringSchema,
+  },
+  required: ["lane", "rationale", "weaknessSummary"],
+  propertyOrdering: ["lane", "rationale", "weaknessSummary"],
 };
 
 const similarCaseSchema: GeminiSchema = {
@@ -569,6 +668,7 @@ const admissionReportResponseSchema: GeminiSchema = {
         ],
       },
     },
+    gapFocus: gapFocusSchema,
   },
   required: [
     "version",
@@ -579,6 +679,7 @@ const admissionReportResponseSchema: GeminiSchema = {
     "strategy",
     "actionPlan",
     "evidenceAppendix",
+    "gapFocus",
   ],
   propertyOrdering: [
     "version",
@@ -589,6 +690,7 @@ const admissionReportResponseSchema: GeminiSchema = {
     "strategy",
     "actionPlan",
     "evidenceAppendix",
+    "gapFocus",
   ],
 };
 
@@ -834,6 +936,45 @@ export class HttpReportProviderClient implements ReportProviderClient {
     const json = await response.json();
     const parsed = parseJsonFromText<AdmissionReportJson>(extractResponseOutputText(json));
     return coerceReport(parsed);
+  }
+
+  async collectGapRecommendations(
+    args: GapRecommendationsInput & { modelId: string },
+  ): Promise<GapRecommendations> {
+    const key = this.requiredKey("gemini");
+    const baseUrl = this.baseUrl("gemini");
+    const response = await this.fetchImpl(
+      `${baseUrl}/models/${encodeURIComponent(args.modelId)}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": key,
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: buildGapRecommendationsPrompt(args) }],
+            },
+          ],
+          tools: [{ google_search: {} }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            thinkingConfig: { thinkingLevel: "high" },
+          },
+        }),
+        signal: this.timeoutSignal("evidence"),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Gemini gap recommendations failed with ${response.status}.`);
+    }
+
+    const json = await response.json();
+    const parsed = parseJsonFromText<unknown>(extractGeminiText(json));
+    return parseGapRecommendations(parsed, args.gapFocus, args.now);
   }
 
   private modelsUrl(_provider: ModelProvider, baseUrl: string): string {

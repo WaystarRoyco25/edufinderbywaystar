@@ -11,6 +11,11 @@ import {
   makeEmptySchoolReport,
   type ReportProviderClient,
 } from "./provider-client";
+import {
+  buildStaticGapRecommendations,
+  resolveGapFocus,
+  validateGapRecommendations,
+} from "./gap";
 import type {
   AdmissionReportJson,
   ApplicantProfile,
@@ -364,6 +369,7 @@ async function draftWithLocalVerify(
     {
       ...fixed,
       generatedAt: fixed.generatedAt || report.generatedAt,
+      gapFocus: fixed.gapFocus ?? report.gapFocus,
       evidenceAppendix: fixed.evidenceAppendix?.length
         ? fixed.evidenceAppendix
         : report.evidenceAppendix,
@@ -372,6 +378,42 @@ async function draftWithLocalVerify(
   );
   verification = verifyReportIntegrity(report, evidence, now, `${fixerModelId}+local`);
   return { report, verification };
+}
+
+// Best-effort enrichment computed after the report is already verified. A
+// failure here must never demote the report — it just omits the recommendations.
+async function attachGapRecommendations(
+  report: AdmissionReportJson,
+  profile: ApplicantProfile,
+  providerClient: ReportProviderClient,
+  modelSelections: Record<ModelRole, ModelSelection>,
+  now: Date,
+): Promise<AdmissionReportJson> {
+  const gapFocus = resolveGapFocus(report, profile);
+
+  if (gapFocus.lane === "essays" || gapFocus.lane === "longer_term") {
+    return {
+      ...report,
+      gapFocus,
+      gapRecommendations: buildStaticGapRecommendations(gapFocus, now),
+    };
+  }
+
+  try {
+    const raw = await providerClient.collectGapRecommendations({
+      profile,
+      gapFocus,
+      modelId: modelSelections.drafting.modelId,
+      now,
+    });
+    return {
+      ...report,
+      gapFocus,
+      gapRecommendations: validateGapRecommendations(raw, gapFocus, now),
+    };
+  } catch {
+    return { ...report, gapFocus };
+  }
 }
 
 export async function generateAdmissionReport(
@@ -407,11 +449,19 @@ export async function generateAdmissionReport(
     now,
   );
 
+  const reportWithGap = await attachGapRecommendations(
+    result.report,
+    profile,
+    providerClient,
+    modelSelections,
+    now,
+  );
+
   return {
     status: result.verification.passed ? "completed" : "needs_review",
     applicantProfile: profile,
     evidence,
-    report: result.report,
+    report: reportWithGap,
     verification: result.verification,
     modelSelections,
   };

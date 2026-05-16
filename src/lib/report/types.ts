@@ -136,6 +136,34 @@ export type SchoolReport = {
   actions: string[];
 };
 
+export type GapLane = "extracurriculars" | "testing" | "essays" | "longer_term";
+
+export type GapFocus = {
+  lane: GapLane;
+  rationale: string;
+  weaknessSummary: string;
+};
+
+export type GapRecommendationItem = {
+  title: string;
+  summary: string;
+  eventDate: string;
+  dateKind: string;
+  sourceUrl: string;
+  eligibilityNote: string;
+};
+
+export type GapRecommendations = {
+  lane: GapLane;
+  headline: string;
+  body: string;
+  items: GapRecommendationItem[];
+  handoffUrl: string | null;
+  verifyNote: string;
+  generatedAt: string;
+  source: "model" | "static";
+};
+
 export type AdmissionReportJson = {
   version: 1;
   generatedAt: string;
@@ -168,6 +196,8 @@ export type AdmissionReportJson = {
     retrievedAt: string;
     quoteExcerpt: string;
   }>;
+  gapFocus?: GapFocus;
+  gapRecommendations?: GapRecommendations;
 };
 
 export type VerificationResult = {

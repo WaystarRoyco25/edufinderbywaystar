@@ -91,6 +91,17 @@ function formatDate(value: string | null): string {
   });
 }
 
+function formatDay(value: string): string {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 async function loadReport(id: string, userId: string) {
   const admin = createSupabaseAdminClient();
   const { data, error } = await admin
@@ -380,6 +391,85 @@ export default async function PredictionReportPage({ params }: PageProps) {
               </ul>
             </div>
           </section>
+
+          {reportJson.gapRecommendations && (
+            <section className="rounded-lg border border-amber-200 bg-white p-5 shadow-sm">
+              <details className="group">
+                <summary className="cursor-pointer text-xl font-bold text-amber-900">
+                  Want to know how to close the gap?
+                </summary>
+                <div className="mt-4 space-y-4">
+                  {reportJson.gapFocus?.rationale && (
+                    <p className="text-sm leading-6 text-amber-900">
+                      {reportJson.gapFocus.rationale}
+                    </p>
+                  )}
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      {reportJson.gapRecommendations.headline}
+                    </h3>
+                    {reportJson.gapRecommendations.body && (
+                      <p className="mt-1 text-sm leading-6 text-gray-700">
+                        {reportJson.gapRecommendations.body}
+                      </p>
+                    )}
+                  </div>
+
+                  {reportJson.gapRecommendations.items.length > 0 && (
+                    <ul className="space-y-3">
+                      {reportJson.gapRecommendations.items.map((item) => (
+                        <li
+                          key={`${item.title}-${item.eventDate}`}
+                          className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                        >
+                          <div className="flex flex-col gap-1 md:flex-row md:items-start md:justify-between">
+                            <h4 className="text-sm font-bold text-gray-900">
+                              {item.title}
+                            </h4>
+                            <span className="shrink-0 text-xs font-semibold text-amber-700">
+                              {item.dateKind.replace(/_/g, " ")}:{" "}
+                              {formatDay(item.eventDate)}
+                            </span>
+                          </div>
+                          {item.summary && (
+                            <p className="mt-1 text-sm leading-6 text-gray-600">
+                              {item.summary}
+                            </p>
+                          )}
+                          <p className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs text-amber-800">
+                            Eligibility: {item.eligibilityNote}
+                          </p>
+                          <a
+                            href={item.sourceUrl}
+                            className="mt-2 inline-block text-xs font-semibold text-amber-700"
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            Verify on the official site
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {reportJson.gapRecommendations.handoffUrl && (
+                    <Link
+                      href={reportJson.gapRecommendations.handoffUrl}
+                      className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
+                    >
+                      Open the Genius! Editor
+                    </Link>
+                  )}
+
+                  {reportJson.gapRecommendations.verifyNote && (
+                    <p className="text-xs text-gray-500">
+                      {reportJson.gapRecommendations.verifyNote}
+                    </p>
+                  )}
+                </div>
+              </details>
+            </section>
+          )}
         </>
       )}
 
