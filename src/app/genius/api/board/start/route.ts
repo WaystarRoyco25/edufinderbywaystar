@@ -15,6 +15,9 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
+// 800s is the Vercel Fluid compute ceiling. The start route kicks off board
+// generation via after(), so it needs the same long runway as the worker.
+export const maxDuration = 800;
 
 async function getAuthenticatedUser() {
   const authed = await createSupabaseServerClient();

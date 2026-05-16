@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { processNextQueuedGeniusBoard } from "@/lib/genius/server";
 
 export const dynamic = "force-dynamic";
+// 800s is the Vercel Fluid compute ceiling. Board generation can call Gemini
+// twice (generate, then verify-retry), so we give it the longest runway allowed.
+export const maxDuration = 800;
 
 function workerToken(request: Request): string | null {
   const authorization = request.headers.get("authorization");

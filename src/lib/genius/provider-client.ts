@@ -120,7 +120,8 @@ export class HttpGeniusProviderClient implements GeniusProviderClient {
             maxOutputTokens: 8192,
           },
         }),
-        signal: AbortSignal.timeout(90_000),
+        // 360s keeps generate + verify-retry within the 800s route maxDuration.
+        signal: AbortSignal.timeout(360_000),
       },
     );
 
