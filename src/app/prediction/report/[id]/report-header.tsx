@@ -5,16 +5,18 @@ import type { ReactNode } from "react";
 export function ReportHeader({
   title,
   eyebrow,
+  subject,
   meta,
   actions,
 }: {
   title: string;
   eyebrow?: string;
+  subject?: ReactNode;
   meta?: ReactNode;
   actions?: ReactNode;
 }) {
   return (
-    <header className="overflow-hidden rounded-lg bg-[#3b82f6] shadow-sm">
+    <header className="overflow-hidden break-inside-avoid rounded-lg bg-[#3b82f6] shadow-sm">
       <div className="flex flex-col gap-5 px-5 py-6 sm:px-7 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
           <Link href="/prediction" className="shrink-0">
@@ -37,6 +39,11 @@ export function ReportHeader({
             <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
               {title}
             </h1>
+            {subject && (
+              <p className="mt-1 text-sm font-semibold text-blue-50">
+                {subject}
+              </p>
+            )}
             {meta && <div className="mt-1 text-sm text-blue-50">{meta}</div>}
           </div>
         </div>
