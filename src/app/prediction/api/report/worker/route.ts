@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { processNextQueuedReport } from "@/lib/report/server";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 360;
+// 800s is the Vercel Fluid compute ceiling. A thorough report can run several
+// minutes, so we give generation the longest runway the platform allows.
+export const maxDuration = 800;
 
 function workerToken(request: Request): string | null {
   const authorization = request.headers.get("authorization");
