@@ -110,14 +110,21 @@ export default async function DashboardPage() {
   }
 
   const admin = createSupabaseAdminClient();
-  const { data: modules } = await admin
-    .from("modules")
-    .select(
-      "id, created_at, difficulty, score, total, submitted_at, module_number, parent_module_id, expires_at",
-    )
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(200);
+  const [modulesResult, purchasesResult] = await Promise.all([
+    admin
+      .from("modules")
+      .select(
+        "id, created_at, difficulty, score, total, submitted_at, module_number, parent_module_id, expires_at",
+      )
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(200),
+    admin.from("purchases").select("tests_granted").eq("user_id", user.id),
+  ]);
+  const modules = modulesResult.data;
+  const purchaseRows = (purchasesResult.data ?? []) as {
+    tests_granted: number;
+  }[];
 
   // Read once per request so every row on the page is judged against the
   // same "now". The linter would prefer a pure render, but this is an
@@ -151,6 +158,14 @@ export default async function DashboardPage() {
     .slice(0, 5)
     .map((exam) => scoreSummary(exam));
 
+  // One purchased "test" is one full exam; starting a Module 1 consumes it.
+  const testsPurchased = purchaseRows.reduce(
+    (sum, row) => sum + row.tests_granted,
+    0,
+  );
+  const testsUsed = m1List.length;
+  const testsAvailable = Math.max(0, testsPurchased - testsUsed);
+
   return (
     <main className="mx-auto w-full max-w-6xl p-6 space-y-8">
       <header className="flex items-center justify-between">
@@ -160,16 +175,23 @@ export default async function DashboardPage() {
 
       <p className="text-sm text-gray-600">Logged in as {user.email}</p>
 
-      <div>
-        <Link
-          href="/challenge/module?new=1"
-          className="inline-block rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
-        >
-          Start a New Practice Test
-        </Link>
-        <p className="mt-1 text-xs text-gray-500">
-          If you already have a practice test in progress, it will resume automatically.
-        </p>
+      <div className="space-y-3">
+        <TestsAvailableNotice
+          purchased={testsPurchased}
+          used={testsUsed}
+          available={testsAvailable}
+        />
+        <div>
+          <Link
+            href="/challenge/module?new=1"
+            className="inline-block rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
+          >
+            Start a New Practice Test
+          </Link>
+          <p className="mt-1 text-xs text-gray-500">
+            If you already have a practice test in progress, it will resume automatically.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:items-start">
@@ -277,4 +299,63 @@ function InProgressAction({ exam }: { exam: Exam }) {
     );
   }
   return null;
+}
+
+function TestsAvailableNotice({
+  purchased,
+  used,
+  available,
+}: {
+  purchased: number;
+  used: number;
+  available: number;
+}) {
+  if (purchased === 0) {
+    return (
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
+        <p className="text-base font-semibold text-amber-900">
+          You do not have any practice tests yet.
+        </p>
+        <p className="mt-1 text-amber-800">
+          Purchase a Challenge! Series package to start practicing.{" "}
+          <Link href="/challenge/purchase" className="font-semibold underline">
+            View packages
+          </Link>
+        </p>
+      </div>
+    );
+  }
+  if (available <= 0) {
+    return (
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
+        <p className="text-base font-semibold text-amber-900">
+          You have no practice tests available.
+        </p>
+        <p className="mt-1 text-amber-800">
+          You have used {used} of your {purchased} purchased{" "}
+          {purchased === 1 ? "test" : "tests"}. Need more?{" "}
+          <Link href="/challenge/purchase" className="font-semibold underline">
+            Buy another package
+          </Link>
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm">
+      <p className="text-base font-semibold text-[#1e3a8a]">
+        You have {available} practice {available === 1 ? "test" : "tests"}{" "}
+        available.
+      </p>
+      <p className="mt-1 text-gray-600">
+        {purchased} purchased{used > 0 ? ` · ${used} used` : ""} ·{" "}
+        <Link
+          href="/challenge/purchase"
+          className="font-semibold text-[#3b82f6] hover:underline"
+        >
+          Buy more
+        </Link>
+      </p>
+    </div>
+  );
 }
