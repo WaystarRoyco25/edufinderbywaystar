@@ -1457,10 +1457,10 @@
          ════════════════════════════════════════════════════════ -->
     <section class="fade-up">
         <h2 class="text-3xl md:text-4xl font-bold text-[#1f2937] mb-3 tracking-tight">
-            One editor. One price.
+            One board. One price.
         </h2>
         <p class="text-gray-500 text-base md:text-lg mb-10">
-            Buy once. Yours forever.
+            Pay per board. Keep it forever.
         </p>
 
         <div class="bg-[#1f2937] rounded-2xl p-7 md:p-10 relative shadow-lg">
@@ -1484,7 +1484,7 @@
                     <p class="text-5xl md:text-6xl font-bold text-white tracking-tight leading-none mb-2">
                         <span class="text-2xl align-top text-gray-400 font-medium">$</span>59
                     </p>
-                    <p class="text-xs text-gray-400 mb-5">One-time. No subscription.</p>
+                    <p class="text-xs text-gray-400 mb-5">Per board. No subscription.</p>
                     <button id="editor-start-button"
                             type="button"
                             onclick="handleEditorStart()"
@@ -3156,6 +3156,12 @@ async function startGeniusAiBoard() {
             headers: { 'Accept': 'application/json' },
         });
         const data = await response.json().catch(() => ({}));
+        // The editor credit was spent or never bought — send the user to
+        // checkout, the same redirect the Insight! Report uses on a 402.
+        if (response.status === 402) {
+            window.location.href = '/genius/purchase';
+            return;
+        }
         if (!response.ok) throw new Error(data.error || 'Could not start AI board.');
         activeAiBoardId = data.boardId || '';
         activeAiBoardStatus = data.status || 'queued';
@@ -4559,6 +4565,21 @@ let editorInitialized = false;
 async function initEditor() {
     if (editorInitialized) return;
     editorInitialized = true;
+    const startParams = new URLSearchParams(window.location.search);
+    // A returning buyer who paid to start over arrives with ?reset=1. The
+    // cloud draft was already scrapped server-side; clear the locally
+    // cached answers too so the editor truly begins from a blank slate.
+    if (startParams.get('reset') === '1') {
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+    }
+    // Drop the one-shot ?start / ?reset params so a manual reload does not
+    // re-clear a draft the buyer has since started filling in.
+    if (startParams.has('start') || startParams.has('reset')) {
+        startParams.delete('start');
+        startParams.delete('reset');
+        const qs = startParams.toString();
+        history.replaceState({}, '', window.location.pathname + (qs ? '?' + qs : ''));
+    }
     let initialDraft = readDraft();
     try {
         initialDraft = await hydrateGeniusCloudDraft();
@@ -4568,7 +4589,7 @@ async function initEditor() {
     }
     geniusDraftReady = true;
     currentIndex = Math.max(0, Math.min(initialDraft.currentIndex || 0, QUESTIONS.length));
-    const boardId = new URLSearchParams(window.location.search).get('boardId');
+    const boardId = startParams.get('boardId');
     if (boardId) {
         activeAiBoardId = boardId;
         activeAiBoardStatus = 'queued';
@@ -4685,18 +4706,50 @@ function closeAuthModal() {
     setAuthGateActive(false);
 }
 
+/* ── Paywall gate ──
+   The Genius! Editor is paywalled. Once the user is signed in, the editor
+   is revealed only if they hold an unused editor credit; otherwise they
+   are sent to the PayPal checkout page, the same flow the Insight! Report
+   uses. GET /genius/api/draft reports the credit as `canStartEditor`. */
+const GENIUS_EDITOR_PURCHASE_URL = '/genius/purchase';
+
+async function signedInUserHasEditorCredit() {
+    const response = await fetch('/genius/api/draft', {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' },
+    });
+    if (!response.ok) return false;
+    const data = await response.json().catch(() => null);
+    return Boolean(data && data.canStartEditor);
+}
+
+async function enterEditorAfterAuth() {
+    let hasCredit = false;
+    try {
+        hasCredit = await signedInUserHasEditorCredit();
+    } catch (e) {
+        hasCredit = false;
+    }
+    if (!hasCredit) {
+        window.location.href = GENIUS_EDITOR_PURCHASE_URL;
+        return;
+    }
+    if (typeof window.unlockEditor === 'function') window.unlockEditor();
+}
+
 function completeAuthFlow() {
     const shouldUnlock = pendingEditorUnlock;
     pendingEditorUnlock = false;
     setAuthGateActive(false);
-    if (shouldUnlock && typeof window.unlockEditor === 'function') {
-        setTimeout(() => window.unlockEditor(), 50);
+    if (shouldUnlock) {
+        setTimeout(() => enterEditorAfterAuth(), 50);
     }
 }
 
 function requestEditorAuth() {
     if (currentUser && currentUserHasPassword) {
-        if (typeof window.unlockEditor === 'function') window.unlockEditor();
+        enterEditorAfterAuth();
         return;
     }
     openAuthModal({ unlockEditor: true, reset: true });
@@ -4802,6 +4855,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && document.body.classList.contains('auth-gate-active')) closeAuthModal();
 });
 
+let initialAuthHandled = false;
 supabaseClient.auth.onAuthStateChange((event, session) => {
     if (session) {
         currentUser = session.user.email || null;
@@ -4817,6 +4871,15 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     } else {
         currentUser = null;
         currentUserHasPassword = false;
+    }
+    // After a PayPal purchase the buyer is sent back to /genius?start=1.
+    // Once the initial auth state is known, resume the editor-start flow
+    // so they do not have to click "Start your editor" again.
+    if (!initialAuthHandled) {
+        initialAuthHandled = true;
+        if (new URLSearchParams(window.location.search).get('start') === '1') {
+            requestEditorAuth();
+        }
     }
 });
 

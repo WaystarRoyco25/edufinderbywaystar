@@ -11,6 +11,10 @@ import {
   normalizeStoredGeniusPayload,
   processNextQueuedGeniusBoard,
 } from "@/lib/genius/server";
+import {
+  consumeGeniusCredit,
+  countAvailableGeniusCredits,
+} from "@/lib/genius/purchase";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -48,8 +52,22 @@ export async function POST() {
     }
 
     const inputHash = stableGeniusInputHash(payload.signalProfile);
-    const reusable = await findReusableGeniusBoard(admin, draft.id, inputHash);
-    const board = reusable ?? (await createQueuedGeniusBoard(admin, draft));
+
+    // Returning the board already generated for these exact answers is
+    // idempotent and spends no new credit, so the credit check only gates
+    // a brand-new board.
+    let board = await findReusableGeniusBoard(admin, draft.id, inputHash);
+    if (!board) {
+      const credits = await countAvailableGeniusCredits(admin, user.id);
+      if (credits < 1) {
+        return NextResponse.json(
+          { error: "Purchase the Genius! Editor to generate your idea board." },
+          { status: 402 },
+        );
+      }
+      board = await createQueuedGeniusBoard(admin, draft);
+      await consumeGeniusCredit(admin, user.id, board.id);
+    }
 
     after(() => processNextQueuedGeniusBoard());
 

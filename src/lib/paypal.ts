@@ -6,8 +6,8 @@ import "server-only";
  * server-set price, and captures it. The browser only ever sees the
  * opaque order id, so a buyer cannot tamper with the product or amount.
  *
- * Two products run through here: the Challenge! Series test packages and
- * the single-price Insight! Report.
+ * Three products run through here: the Challenge! Series test packages,
+ * the single-price Insight! Report, and the single-price Genius! Editor.
  */
 
 export const CURRENCY = "USD";
@@ -35,6 +35,10 @@ export function isPackageKey(value: unknown): value is PackageKey {
 // ── Insight! Report ────────────────────────────────────────────────────
 // A single flat price; one purchase unlocks one report.
 export const REPORT_PRICE = "59.00";
+
+// ── Genius! Editor ─────────────────────────────────────────────────────
+// A single flat price; one purchase unlocks one editor run.
+export const GENIUS_PRICE = "59.00";
 
 // ── PayPal REST plumbing ───────────────────────────────────────────────
 function apiBase(): string {
@@ -285,6 +289,45 @@ export type ReportCaptureResult =
 export async function captureReportPayPalOrder(
   orderId: string,
 ): Promise<ReportCaptureResult> {
+  const result = await captureOrder(orderId);
+  if (!result.ok) return { ok: false, error: result.error };
+  return {
+    ok: true,
+    orderId: result.orderId,
+    captureId: result.captureId,
+    userId: result.customId,
+    amountValue: result.amountValue,
+    amountCurrency: result.amountCurrency,
+  };
+}
+
+// ── Genius! Editor wrappers ────────────────────────────────────────────
+// A Genius! Editor order stamps the bare buyer id onto `custom_id`; the
+// flat GENIUS_PRICE is what the capture step verifies.
+export function createGeniusPayPalOrder(
+  userId: string,
+): Promise<CreateOrderResult> {
+  return createOrder({
+    customId: userId,
+    description: "EduFinder The Genius! Editor",
+    value: GENIUS_PRICE,
+  });
+}
+
+export type GeniusCaptureResult =
+  | {
+      ok: true;
+      orderId: string;
+      captureId: string | null;
+      userId: string | null;
+      amountValue: string | null;
+      amountCurrency: string | null;
+    }
+  | { ok: false; error: string };
+
+export async function captureGeniusPayPalOrder(
+  orderId: string,
+): Promise<GeniusCaptureResult> {
   const result = await captureOrder(orderId);
   if (!result.ok) return { ok: false, error: result.error };
   return {

@@ -4,6 +4,7 @@ import {
   loadGeniusDraftForUser,
   upsertGeniusDraftForUser,
 } from "@/lib/genius/server";
+import { countAvailableGeniusCredits } from "@/lib/genius/purchase";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -24,7 +25,11 @@ export async function GET() {
   const admin = createSupabaseAdminClient();
   try {
     const draft = await loadGeniusDraftForUser(admin, user.id);
-    return NextResponse.json({ draft });
+    // The editor is paywalled: it only opens for a user holding an unused
+    // editor credit, so the Genius page can route an unpaid user to
+    // checkout before revealing any questions.
+    const credits = await countAvailableGeniusCredits(admin, user.id);
+    return NextResponse.json({ draft, canStartEditor: credits > 0 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not load Genius draft.";
     console.error("genius draft lookup failed", error);
