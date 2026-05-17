@@ -105,7 +105,7 @@ export async function createPayPalOrder(
         purchase_units: [
           {
             custom_id: encodeCustomId(userId, packageKey),
-            description: `EduFinder Challenge! Series ${pkg.name}`,
+            description: `EduFinder The Challenge! Series ${pkg.name}`,
             amount: { currency_code: CURRENCY, value: pkg.price },
           },
         ],

@@ -19,7 +19,7 @@ export default async function PurchasePage() {
     <main className="mx-auto w-full max-w-3xl p-6 space-y-8">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold tracking-wide">
-          Challenge! Series Practice Tests
+          The Challenge! Series Practice Tests
         </h1>
         <p className="text-sm text-gray-600">
           Each practice test is one full adaptive exam (Module 1 and Module 2).

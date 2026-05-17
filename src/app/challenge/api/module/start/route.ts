@@ -488,6 +488,34 @@ export async function POST(request: Request) {
     // Fall through to create a fresh M1.
   }
 
+  // A fresh M1 consumes one purchased test. The dashboard disables the
+  // "Start a New Practice Test" button when none are left, but a direct POST
+  // would still reach here, so enforce the limit server-side too. A live
+  // in-progress M1 is resumed above and never reaches this line.
+  const [purchasesResult, m1CountResult] = await Promise.all([
+    admin.from("purchases").select("tests_granted").eq("user_id", user.id),
+    admin
+      .from("modules")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("module_number", 1),
+  ]);
+  const purchaseRows = (purchasesResult.data ?? []) as { tests_granted: number }[];
+  const testsPurchased = purchaseRows.reduce(
+    (sum, row) => sum + row.tests_granted,
+    0,
+  );
+  const testsUsed = m1CountResult.count ?? 0;
+  if (testsUsed >= testsPurchased) {
+    return NextResponse.json(
+      {
+        error:
+          "You have no practice tests available. Purchase a package to start a new one.",
+      },
+      { status: 403 },
+    );
+  }
+
   const created = await createNewModule(admin, user.id, null, "standard", 1, []);
   if ("error" in created) {
     return NextResponse.json({ error: created.error }, { status: created.status });

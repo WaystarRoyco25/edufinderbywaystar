@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "EduFinder",
-  description: "EduFinder — honest reviews and the Challenge! Series.",
+  description: "EduFinder — honest reviews and The Challenge! Series.",
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml", sizes: "any" }],
   },

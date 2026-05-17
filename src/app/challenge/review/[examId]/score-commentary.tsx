@@ -107,7 +107,7 @@ export default function ScoreCommentaryModal({
           <div className="flex flex-wrap items-start justify-between gap-5">
             <div className="min-w-0 flex-1">
               <p className="inline-flex rounded-lg bg-[#3b82f6] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white">
-                Challenge! Score Coach
+                The Challenge! Score Coach
               </p>
               <h2
                 id="score-commentary-title"

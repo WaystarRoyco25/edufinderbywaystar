@@ -690,7 +690,7 @@ function buildExportHtml(
     <section class="cover${hasMissedQuestions ? " has-questions" : ""}">
       <header class="brand-header">
         <img src="${assets.logo}" alt="EduFinder by Waystar">
-        <p>Challenge! Series<br>Practice Test Review Packet<br>Generated ${escapeHtml(generatedAt)}</p>
+        <p>The Challenge! Series<br>Practice Test Review Packet<br>Generated ${escapeHtml(generatedAt)}</p>
       </header>
 
       <div>
@@ -708,7 +708,7 @@ function buildExportHtml(
       <section class="commentary">
         <div class="commentary-hero">
           <div>
-            <p class="eyebrow">Challenge! Score Coach</p>
+            <p class="eyebrow">The Challenge! Score Coach</p>
             <h2>${escapeHtml(commentary.identity)}</h2>
             <p class="commentary-message">${escapeHtml(commentary.message)}</p>
           </div>

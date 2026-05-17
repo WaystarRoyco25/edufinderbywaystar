@@ -190,14 +190,26 @@ export default async function DashboardPage() {
               available={testsAvailable}
             />
             <div className="shrink-0">
-              <Link
-                href="/challenge/module?new=1"
-                className="block w-full rounded-lg bg-[#3b82f6] px-5 py-2.5 text-center font-semibold text-white shadow transition hover:bg-[#2563eb] sm:inline-block sm:w-auto"
-              >
-                Start a New Practice Test
-              </Link>
+              {testsAvailable > 0 ? (
+                <Link
+                  href="/challenge/module?new=1"
+                  className="block w-full rounded-lg bg-[#3b82f6] px-5 py-2.5 text-center font-semibold text-white shadow transition hover:bg-[#2563eb] sm:inline-block sm:w-auto"
+                >
+                  Start a New Practice Test
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="block w-full cursor-not-allowed rounded-lg bg-[#3b82f6] px-5 py-2.5 text-center font-semibold text-white opacity-50 shadow sm:inline-block sm:w-auto"
+                >
+                  Start a New Practice Test
+                </button>
+              )}
               <p className="mt-2 text-xs text-gray-500 sm:text-right">
-                A practice test in progress resumes automatically.
+                {testsAvailable > 0
+                  ? "A practice test in progress resumes automatically."
+                  : "Purchase a package to start a new practice test."}
               </p>
             </div>
           </div>
@@ -358,6 +370,7 @@ function TestsAvailableStatus({
         >
           Buy more
         </Link>
+        .
       </>
     );
   }
