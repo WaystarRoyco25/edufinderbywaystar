@@ -1186,6 +1186,7 @@
 const REPORT_LOGIN_NEXT = '/prediction?start=1';
 const REPORT_DRAFT_ENDPOINT = '/prediction/api/draft';
 const REPORT_START_ENDPOINT = '/prediction/api/report/start';
+const REPORT_PURCHASE_URL = '/prediction/purchase';
 const REPORT_FIELD_NAMES = [
     'name',
     'email',
@@ -1610,6 +1611,12 @@ async function startReportGeneration() {
         return null;
     }
 
+    // The credit was spent or never bought — send the user back to checkout.
+    if (response.status === 402) {
+        window.location.href = REPORT_PURCHASE_URL;
+        return null;
+    }
+
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
         throw new Error(data.error || 'Could not start report generation.');
@@ -1636,6 +1643,13 @@ async function handleReportStart() {
     try {
         const data = await loadReportDraft();
         if (!data) return;
+
+        // The intake is paywalled. A signed-in user without a paid report
+        // credit is sent to checkout before any question is shown.
+        if (!data.canStartIntake) {
+            window.location.href = REPORT_PURCHASE_URL;
+            return;
+        }
 
         const savedPayload = data.draft && data.draft.payload ? data.draft.payload : {};
         fillReportForm(savedPayload);

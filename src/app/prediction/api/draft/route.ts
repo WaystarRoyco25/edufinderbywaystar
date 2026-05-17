@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { normalizeReportPayload } from "@/lib/report/intake";
+import { countAvailableReportCredits } from "@/lib/report/purchase";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -37,7 +38,15 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ draft: data ?? null });
+  // The intake is paywalled: it only opens for a user holding an unused
+  // report credit, so the prediction page can route an unpaid user to
+  // checkout before showing any questions.
+  const credits = await countAvailableReportCredits(admin, user.id);
+
+  return NextResponse.json({
+    draft: data ?? null,
+    canStartIntake: credits > 0,
+  });
 }
 
 export async function PUT(request: Request) {

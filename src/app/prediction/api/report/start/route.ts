@@ -10,6 +10,10 @@ import {
   processNextQueuedReport,
   reportUrl,
 } from "@/lib/report/server";
+import {
+  consumeReportCredit,
+  countAvailableReportCredits,
+} from "@/lib/report/purchase";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -48,8 +52,21 @@ export async function POST() {
       return NextResponse.json({ error: profileIssues.join(" ") }, { status: 400 });
     }
 
-    const existing = await findExistingReportForDraft(admin, draft.id);
-    const report = existing ?? (await createQueuedReport(admin, draft));
+    // Returning the report already generated for this draft is idempotent
+    // and spends no new credit, so the credit check only gates a brand-new
+    // report.
+    let report = await findExistingReportForDraft(admin, draft.id);
+    if (!report) {
+      const credits = await countAvailableReportCredits(admin, user.id);
+      if (credits < 1) {
+        return NextResponse.json(
+          { error: "Purchase an Insight! Report to generate your results." },
+          { status: 402 },
+        );
+      }
+      report = await createQueuedReport(admin, draft);
+      await consumeReportCredit(admin, user.id, report.id);
+    }
 
     after(() => processNextQueuedReport());
 
