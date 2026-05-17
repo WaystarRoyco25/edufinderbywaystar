@@ -8,12 +8,12 @@ If you are new to the codebase, read this file, then `AGENTS.md` (the announceme
 
 | Path | What lives here |
 |---|---|
-| `public/` | The user-visible site: `index.html`, `prediction.html`, `genius.html`, `challenge.html`, `reviews.html`, `who-we-are.html`, `announcements.html`, plus SVG logos/icons, the `announcements.json` feed data, and the generated `genius-tailwind.css`. |
+| `public/` | The user-visible site: `index.html`, `prediction.html`, `genius.html`, `challenge.html`, `reviews.html`, `who-we-are.html`, `announcements.html`, plus SVG logos/icons, the `announcements.json` feed data, and the generated `site-tailwind.css`. |
 | `src/app/` | Next.js App Router. Authenticated pages (Challenge dashboard, module, review) and the API routes that back the Challenge, Genius, and Insight Report pipelines. Components are colocated with their pages. |
 | `src/lib/` | Server-only library code, grouped by domain: `supabase/` (DB clients), `genius/` (essay AI board pipeline), `report/` (admission insight pipeline), plus `blueprint.ts` (SAT question-type selection). |
 | `src/proxy.ts` | Standalone request/response forwarding utility. Lives at the `src/` root rather than under `src/lib/` for historical reasons. |
 | `db/` | Supabase schema and RLS policy snapshots. Applied manually via the Supabase SQL editor; not part of the build. See [`db/README.md`](db/README.md). |
-| `scripts/` | Build tooling. Currently just `build-genius-tailwind.mjs`. |
+| `scripts/` | Build tooling. Currently just `build-site-tailwind.mjs`. |
 | `tests/` | `node --test` suite covering `src/lib/genius/` and `src/lib/report/`. |
 | `AGENTS.md` | The announcements-feed protocol, required reading for AI agents. |
 | `CLAUDE.md` | Points to `AGENTS.md`. |
@@ -52,10 +52,10 @@ npm test        # node --test on tests/*.test.ts
 npm run lint    # eslint
 ```
 
-When you change Tailwind utility classes inside `public/genius.html`, regenerate the stylesheet:
+The `public/*.html` pages share a prebuilt Tailwind stylesheet (`public/site-tailwind.css`) instead of the Tailwind CDN. When you change Tailwind utility classes in any `public/*.html` page, regenerate it:
 
 ```bash
-node scripts/build-genius-tailwind.mjs
+node scripts/build-site-tailwind.mjs
 ```
 
 Environment variables live in `.env.local` (Supabase keys and AI provider keys). Both `.env` and `.env.local` are gitignored.
