@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -168,31 +169,40 @@ export default async function DashboardPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl p-6 space-y-8">
-      <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-wide">Dashboard</h1>
-        <SignOutButton />
-      </header>
-
-      <p className="text-sm text-gray-600">Logged in as {user.email}</p>
-
-      <div className="space-y-3">
-        <TestsAvailableNotice
-          purchased={testsPurchased}
-          used={testsUsed}
-          available={testsAvailable}
-        />
-        <div>
-          <Link
-            href="/challenge/module?new=1"
-            className="inline-block rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
-          >
-            Start a New Practice Test
-          </Link>
-          <p className="mt-1 text-xs text-gray-500">
-            If you already have a practice test in progress, it will resume automatically.
+      <section className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
+        <div className="flex items-center justify-between gap-3 border-b border-gray-100 bg-gray-50 px-6 py-3">
+          <p className="min-w-0 truncate text-xs text-gray-500">
+            Signed in as{" "}
+            <span className="font-medium text-gray-700">{user.email}</span>
           </p>
+          <div className="shrink-0">
+            <SignOutButton />
+          </div>
         </div>
-      </div>
+
+        <div className="space-y-5 p-6">
+          <h1 className="text-3xl font-bold tracking-wide">Dashboard</h1>
+
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <TestsAvailableStatus
+              purchased={testsPurchased}
+              used={testsUsed}
+              available={testsAvailable}
+            />
+            <div className="shrink-0">
+              <Link
+                href="/challenge/module?new=1"
+                className="block w-full rounded-lg bg-[#3b82f6] px-5 py-2.5 text-center font-semibold text-white shadow transition hover:bg-[#2563eb] sm:inline-block sm:w-auto"
+              >
+                Start a New Practice Test
+              </Link>
+              <p className="mt-2 text-xs text-gray-500 sm:text-right">
+                A practice test in progress resumes automatically.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:items-start">
         <section className="space-y-4">
@@ -301,7 +311,7 @@ function InProgressAction({ exam }: { exam: Exam }) {
   return null;
 }
 
-function TestsAvailableNotice({
+function TestsAvailableStatus({
   purchased,
   used,
   available,
@@ -310,52 +320,63 @@ function TestsAvailableNotice({
   used: number;
   available: number;
 }) {
+  const positive = available > 0;
+  const testWord = (n: number) => (n === 1 ? "test" : "tests");
+
+  let detail: ReactNode;
   if (purchased === 0) {
-    return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
-        <p className="text-base font-semibold text-amber-900">
-          You do not have any practice tests yet.
-        </p>
-        <p className="mt-1 text-amber-800">
-          Purchase a Challenge! Series package to start practicing.{" "}
-          <Link href="/challenge/purchase" className="font-semibold underline">
-            View packages
-          </Link>
-        </p>
-      </div>
+    detail = (
+      <>
+        Purchase a package to get started.{" "}
+        <Link
+          href="/challenge/purchase"
+          className="font-medium text-[#3b82f6] hover:underline"
+        >
+          View packages
+        </Link>
+      </>
     );
-  }
-  if (available <= 0) {
-    return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
-        <p className="text-base font-semibold text-amber-900">
-          You have no practice tests available.
-        </p>
-        <p className="mt-1 text-amber-800">
-          You have used {used} of your {purchased} purchased{" "}
-          {purchased === 1 ? "test" : "tests"}. Need more?{" "}
-          <Link href="/challenge/purchase" className="font-semibold underline">
-            Buy another package
-          </Link>
-        </p>
-      </div>
+  } else if (!positive) {
+    detail = (
+      <>
+        {used} of {purchased} purchased {testWord(purchased)} used.{" "}
+        <Link
+          href="/challenge/purchase"
+          className="font-medium text-[#3b82f6] hover:underline"
+        >
+          Buy another package
+        </Link>
+      </>
     );
-  }
-  return (
-    <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm">
-      <p className="text-base font-semibold text-[#1e3a8a]">
-        You have {available} practice {available === 1 ? "test" : "tests"}{" "}
-        available.
-      </p>
-      <p className="mt-1 text-gray-600">
+  } else {
+    detail = (
+      <>
         {purchased} purchased{used > 0 ? ` · ${used} used` : ""} ·{" "}
         <Link
           href="/challenge/purchase"
-          className="font-semibold text-[#3b82f6] hover:underline"
+          className="font-medium text-[#3b82f6] hover:underline"
         >
           Buy more
         </Link>
-      </p>
+      </>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-4">
+      <div
+        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-lg text-2xl font-bold ${
+          positive ? "bg-blue-50 text-[#3b82f6]" : "bg-amber-50 text-amber-600"
+        }`}
+      >
+        {available}
+      </div>
+      <div className="text-sm">
+        <p className="text-base font-semibold">
+          Practice {testWord(available)} available
+        </p>
+        <p className="mt-0.5 text-gray-500">{detail}</p>
+      </div>
     </div>
   );
 }
