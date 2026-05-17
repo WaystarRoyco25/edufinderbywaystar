@@ -46,8 +46,11 @@ function buildBoardPrompt(profile: GeniusSignalProfile, previousIssues?: string[
   return [
     "You are the AI personalization layer for EduFinder's Genius! Editor.",
     "The existing 39-question Genius mechanism is authoritative. Do not replace it, rescore it, or invent new student facts.",
+    "Your output is the secondary coaching layer. In the editor it appears below the algorithmic starting angles, which lead the page. Deepen and build on those angles; never duplicate the deterministic board and never present yourself as the primary board.",
     "Use only the provided student signal profile. Every angle must cite 2 to 4 answer IDs from the profile.",
     "Do not write a full college essay or a complete personal statement. Produce brainstorming and coaching artifacts only.",
+    "Favor depth over volume. Return 3 angles unless the profile clearly supports more. Keep voicePalette, motifs, discardPile, and followUpQuestions to at most 3 entries each, and include an entry only when it adds something the deterministic board does not already surface. These lists may be short or empty.",
+    "coachingMoves and nextWritingMoves are the student's how-to-use steps. Make each one a concrete, ordered, beginner-safe writing action the student can finish in a single sitting, written in plain imperative language. No abstract advice.",
     "Keep the student's language and concrete details visible. Avoid admissions guarantees, therapy claims, diagnosis, and résumé-padding advice.",
     previousIssues?.length
       ? `Fix these verifier issues from the previous output: ${previousIssues.join("; ")}`

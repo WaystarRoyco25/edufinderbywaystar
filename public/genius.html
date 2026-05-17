@@ -932,16 +932,6 @@
             background: #ffffff;
             overflow: hidden;
         }
-        .ai-angle-kicker {
-            display: inline-flex;
-            align-items: center;
-            gap: .35rem;
-            color: #1d4ed8;
-            font-size: .72rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-        }
         .ai-angle-tags {
             display: flex;
             flex-wrap: wrap;
@@ -1041,6 +1031,204 @@
             .idea-control-label { display: none; }
         }
 
+        /* ── Reveal board: how-to strip, zones, source badges, guidance ── */
+        .howto-strip {
+            display: grid;
+            gap: .7rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 1rem;
+        }
+        @media (min-width: 760px) {
+            .howto-strip {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                align-items: start;
+            }
+        }
+        .howto-eyebrow {
+            grid-column: 1 / -1;
+            color: #1f2937;
+            font-size: .78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .howto-step {
+            display: flex;
+            gap: .55rem;
+            align-items: flex-start;
+        }
+        .howto-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            flex: 0 0 auto;
+            border-radius: 999px;
+            background: #3b82f6;
+            color: #ffffff;
+            font-size: .8rem;
+            font-weight: 800;
+        }
+        .howto-step-text strong {
+            display: block;
+            color: #1f2937;
+            font-size: .88rem;
+            font-weight: 800;
+        }
+        .howto-step-text span {
+            display: block;
+            color: #6b7280;
+            font-size: .82rem;
+            line-height: 1.5;
+            margin-top: .1rem;
+        }
+
+        .board-zone {
+            display: grid;
+            gap: 1rem;
+        }
+        .zone-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: .8rem;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: .55rem;
+        }
+        .zone-eyebrow {
+            color: #1f2937;
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+        .zone-caption {
+            color: #6b7280;
+            font-size: .85rem;
+            line-height: 1.5;
+            margin-top: .15rem;
+            max-width: 44rem;
+        }
+        .zone-body {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: #374151;
+            padding: .25rem .6rem;
+            font-size: .7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            white-space: nowrap;
+        }
+        .source-badge.is-ai {
+            border-color: #bfdbfe;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .idea-badge-row {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            flex-wrap: wrap;
+            margin-bottom: .15rem;
+        }
+        .angle-rank-flag {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            color: #b45309;
+            font-size: .7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .angle-nextstep {
+            display: flex;
+            gap: .6rem;
+            align-items: flex-start;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: .85rem 1rem;
+        }
+        .angle-nextstep > i {
+            color: #3b82f6;
+            margin-top: .15rem;
+            font-size: .95rem;
+        }
+        .angle-nextstep strong {
+            display: block;
+            color: #1f2937;
+            font-size: .76rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .angle-nextstep p {
+            color: #4b5563;
+            font-size: .87rem;
+            line-height: 1.55;
+            margin-top: .15rem;
+        }
+
+        .board-reference {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
+            overflow: hidden;
+        }
+        .board-reference > summary {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            padding: .9rem 1rem;
+            cursor: pointer;
+            list-style: none;
+        }
+        .board-reference > summary::-webkit-details-marker { display: none; }
+        .ref-main {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: grid;
+            gap: .25rem;
+        }
+        .ref-name {
+            color: #1f2937;
+            font-size: .95rem;
+            font-weight: 800;
+        }
+        .ref-hint {
+            color: #6b7280;
+            font-size: .8rem;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+        .ref-chevron {
+            flex: 0 0 auto;
+            color: #6b7280;
+            transition: transform .2s ease;
+        }
+        .board-reference[open] > summary .ref-chevron { transform: rotate(180deg); }
+        .board-reference-body {
+            display: grid;
+            gap: 1rem;
+            padding: 0 1rem 1rem;
+        }
+        .board-reference-body .dimension-grid { margin-top: 0; }
+
         @page {
             size: letter;
             margin: 0.55in;
@@ -1089,7 +1277,10 @@
             .reveal-header,
             .voice-palette,
             .motif-panel,
+            .howto-strip,
+            .board-reference,
             .counterfactual { break-inside: avoid; box-shadow: none; }
+            .board-reference-body { padding-top: .5rem; }
         }
     </style>
 </head>
@@ -3626,6 +3817,41 @@ function renderIdeaBoard() {
     const board = document.createElement('div');
     board.className = 'idea-board';
 
+    renderRevealHeader(board, count);
+
+    if (count < MIN_SIGNAL_COUNT) {
+        renderLowSignal(board, count);
+        body.appendChild(board);
+        return;
+    }
+
+    renderHowToUse(board);
+
+    const ideas = getIdeaCards();
+    const anglesZone = makeBoardZone(board, {
+        eyebrow: 'Your starting angles',
+        caption: 'Ranked by the Genius algorithm from your 39 answers, strongest match first. Each card is a direction to write, not a draft.',
+        badge: 'answers',
+    });
+    renderBoardToolbar(anglesZone.body, ideas);
+    ideas.forEach((idea, idx) => renderIdeaCard(anglesZone.body, idea, idx));
+    renderCounterfactualPanel(anglesZone.body, ideas);
+
+    const aiZone = makeBoardZone(board, {
+        eyebrow: 'AI coaching',
+        caption: 'Optional. A separate layer our fine-tuned AI adds on top of your starting angles. Every AI card is labeled.',
+        badge: 'ai',
+        noPrint: true,
+    });
+    renderAiBoardPanel(aiZone.body, count);
+
+    renderReferenceZone(board);
+    renderDiscardPanel(board, ideas.map(i => i.template.id));
+
+    body.appendChild(board);
+}
+
+function renderRevealHeader(board, count) {
     const header = document.createElement('section');
     header.className = 'reveal-header';
     const headerText = document.createElement('div');
@@ -3636,7 +3862,7 @@ function renderIdeaBoard() {
     copy.className = 'reveal-copy';
     copy.textContent = count < MIN_SIGNAL_COUNT
         ? 'There is not enough signal yet for honest idea cards. Answer a few more small questions and the board will become more specific.'
-        : 'These are not drafts. The original Genius board ranks starting angles first, then the AI layer can add grounded coaching above it.';
+        : 'Nothing on this board is a finished essay or a draft. Each card below is a starting angle: a direction your essay could take, drawn straight from your own answers. Pick the one angle that makes you want to write, and write it yourself. The rest are there if the first one stalls.';
     headerText.append(title, copy);
 
     const meter = document.createElement('div');
@@ -3651,27 +3877,102 @@ function renderIdeaBoard() {
 
     header.append(headerText, meter);
     board.appendChild(header);
+}
 
-    renderAiBoardPanel(board, count);
-    renderDimensionSnapshot(board);
+function renderHowToUse(board) {
+    const strip = document.createElement('section');
+    strip.className = 'howto-strip';
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'howto-eyebrow';
+    eyebrow.textContent = 'How to use this board';
+    strip.appendChild(eyebrow);
 
-    if (count < MIN_SIGNAL_COUNT) {
-        renderLowSignal(board, count);
-        body.appendChild(board);
-        return;
+    const steps = [
+        ['Pick one angle.', 'Choose the single card that makes you want to write. Ignore the others for now.'],
+        ['Write the opening scene.', 'Open a blank doc and spend 15 minutes writing that angle’s scene. Describe the moment; do not explain it yet.'],
+        ['Add AI coaching (optional).', 'Generate the AI layer below for line-level moves on the angle you chose.'],
+    ];
+    steps.forEach((step, idx) => {
+        const item = document.createElement('div');
+        item.className = 'howto-step';
+        const num = document.createElement('span');
+        num.className = 'howto-step-num';
+        num.textContent = String(idx + 1);
+        const text = document.createElement('div');
+        text.className = 'howto-step-text';
+        const strong = document.createElement('strong');
+        strong.textContent = step[0];
+        const detail = document.createElement('span');
+        detail.textContent = step[1];
+        text.append(strong, detail);
+        item.append(num, text);
+        strip.appendChild(item);
+    });
+    board.appendChild(strip);
+}
+
+function makeSourceBadge(kind) {
+    const badge = document.createElement('span');
+    if (kind === 'ai') {
+        badge.className = 'source-badge is-ai';
+        badge.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span>Added by AI</span>';
+    } else {
+        badge.className = 'source-badge';
+        badge.innerHTML = '<i class="fa-solid fa-file-lines"></i><span>From your answers</span>';
     }
+    return badge;
+}
 
-    renderVoicePalette(board);
-    renderMotifPanel(board);
+function makeBoardZone(board, options) {
+    const section = document.createElement('section');
+    section.className = 'board-zone' + (options.noPrint ? ' no-print' : '');
+    const header = document.createElement('div');
+    header.className = 'zone-header';
+    const headerText = document.createElement('div');
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'zone-eyebrow';
+    eyebrow.textContent = options.eyebrow;
+    const caption = document.createElement('p');
+    caption.className = 'zone-caption';
+    caption.textContent = options.caption;
+    headerText.append(eyebrow, caption);
+    header.append(headerText, makeSourceBadge(options.badge));
 
-    const ideas = getIdeaCards();
-    renderBoardToolbar(board, ideas);
-    ideas.forEach((idea, idx) => renderIdeaCard(board, idea, idx));
+    const zoneBody = document.createElement('div');
+    zoneBody.className = 'zone-body';
+    section.append(header, zoneBody);
+    board.appendChild(section);
+    return { section, header, body: zoneBody };
+}
 
-    renderCounterfactualPanel(board, ideas);
-    renderDiscardPanel(board, ideas.map(i => i.template.id));
+function renderReferenceZone(board) {
+    const inner = document.createElement('div');
+    inner.className = 'board-reference-body';
+    renderDimensionSnapshot(inner);
+    renderVoicePalette(inner);
+    renderMotifPanel(inner);
+    if (!inner.childElementCount) return;
 
-    body.appendChild(board);
+    const details = document.createElement('details');
+    details.className = 'board-reference';
+    const summary = document.createElement('summary');
+    const main = document.createElement('div');
+    main.className = 'ref-main';
+    const badgeRow = document.createElement('div');
+    badgeRow.className = 'idea-badge-row';
+    badgeRow.appendChild(makeSourceBadge('answers'));
+    const name = document.createElement('span');
+    name.className = 'ref-name';
+    name.textContent = 'What the board noticed about you';
+    const hint = document.createElement('span');
+    hint.className = 'ref-hint';
+    hint.textContent = 'The patterns and raw material behind the angles. Open this if you want the evidence.';
+    main.append(badgeRow, name, hint);
+    const chevron = document.createElement('i');
+    chevron.className = 'fa-solid fa-chevron-down ref-chevron';
+    summary.append(main, chevron);
+    details.append(summary, inner);
+    board.appendChild(details);
 }
 
 function renderAiBoardPanel(board, count) {
@@ -3681,24 +3982,19 @@ function renderAiBoardPanel(board, count) {
     const header = document.createElement('div');
     header.className = 'ai-board-header';
     const text = document.createElement('div');
-    const title = document.createElement('h4');
-    title.className = 'ai-board-title';
-    title.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span>AI personalization layer, fine-tuned by EduFinder experts for the Genius! Editor</span>';
     const copy = document.createElement('p');
     copy.className = 'ai-board-copy';
     copy.textContent = activeAiBoard
-        ? (activeAiBoard.readiness?.summary || 'Our fine-tuned AI personalized coaching angles from your saved Genius signals, while the original board stays below as the source of truth.')
-        : count < MIN_SIGNAL_COUNT
-            ? 'Answer-backed AI personalization unlocks after eleven Genius signals. Until then, the original editor keeps building your deterministic board.'
-            : 'Generate AI coaching from the existing Genius algorithm, answer evidence, voice palette, motifs, and card feedback. Every AI angle must cite real answers.';
-    text.append(title, copy);
+        ? (activeAiBoard.readiness?.summary || 'Our fine-tuned AI personalized coaching angles from your saved Genius signals. Your starting angles above stay as the source of truth.')
+        : 'Generate AI coaching from the existing Genius algorithm, answer evidence, voice palette, motifs, and card feedback. Every AI angle must cite real answers.';
+    text.appendChild(copy);
 
     const actions = document.createElement('div');
     actions.className = 'ai-board-actions';
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'ai-generate-btn';
-    button.disabled = count < MIN_SIGNAL_COUNT || aiBoardGenerating;
+    button.disabled = aiBoardGenerating;
     button.innerHTML = aiBoardGenerating
         ? '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Generating</span>'
         : activeAiBoard
@@ -3739,16 +4035,16 @@ function renderAiBoardContent(panel, aiBoard) {
 
         const copy = document.createElement('div');
         copy.className = 'idea-header-copy';
-        const kicker = document.createElement('span');
-        kicker.className = 'ai-angle-kicker';
-        kicker.innerHTML = '<i class="fa-solid fa-sparkles"></i><span>AI coaching, answer-cited</span>';
+        const badgeRow = document.createElement('div');
+        badgeRow.className = 'idea-badge-row';
+        badgeRow.appendChild(makeSourceBadge('ai'));
         const title = document.createElement('h4');
         title.className = 'idea-title';
         title.textContent = angle.title || 'Personalized angle';
         const core = document.createElement('p');
         core.className = 'idea-core';
         core.textContent = angle.core || '';
-        copy.append(kicker, title, core);
+        copy.append(badgeRow, title, core);
         if (Array.isArray(angle.tags) && angle.tags.length) {
             const tags = document.createElement('div');
             tags.className = 'ai-angle-tags';
@@ -3824,11 +4120,8 @@ function addListIdeaBlock(parent, icon, titleText, items) {
 function renderAiSupplementPanels(panel, aiBoard) {
     const grid = document.createElement('div');
     grid.className = 'ai-section-grid';
-    addAiMiniPanel(grid, 'Voice read', (aiBoard.voicePalette || []).map(item => item.phrase + (item.whyItMatters ? ': ' + item.whyItMatters : '')));
-    addAiMiniPanel(grid, 'Motifs', (aiBoard.motifs || []).map(item => item.motif + (item.interpretation ? ': ' + item.interpretation : '')));
-    addAiMiniPanel(grid, 'Follow-up questions', (aiBoard.followUpQuestions || []).map(item => item.question));
-    addAiMiniPanel(grid, 'Next writing moves', aiBoard.nextWritingMoves || []);
-    addAiMiniPanel(grid, 'Discard pile', (aiBoard.discardPile || []).map(item => item.title + (item.reason ? ': ' + item.reason : '')));
+    addAiMiniPanel(grid, 'Your next writing moves', aiBoard.nextWritingMoves || []);
+    addAiMiniPanel(grid, 'Follow-up questions to answer', (aiBoard.followUpQuestions || []).map(item => item.question));
     addAiMiniPanel(grid, 'Guardrails', aiBoard.safetyNotes || []);
     if (grid.childElementCount) panel.appendChild(grid);
 }
@@ -3948,13 +4241,16 @@ function renderCounterfactualPanel(board, pickedIdeas) {
     if (pickedIds.has(idea.template.id)) return;
     const panel = document.createElement('section');
     panel.className = 'counterfactual';
+    const badgeRow = document.createElement('div');
+    badgeRow.className = 'idea-badge-row';
+    badgeRow.appendChild(makeSourceBadge('answers'));
     const title = document.createElement('h4');
     title.className = 'counterfactual-title';
-    title.innerHTML = '<i class="fa-solid fa-shuffle"></i><span>An angle you might be avoiding</span>';
+    title.innerHTML = '<i class="fa-solid fa-shuffle"></i><span>A stretch angle you might be avoiding</span>';
     const note = document.createElement('p');
     note.className = 'counterfactual-note';
     note.textContent = 'This scored low for you. Sometimes the angle you didn’t expect is the most honest one — try writing the first 100 words and see what surfaces.';
-    panel.append(title, note);
+    panel.append(badgeRow, title, note);
 
     const card = document.createElement('article');
     card.className = 'idea-card is-counterfactual';
@@ -4038,6 +4334,17 @@ function renderIdeaCard(board, idea, idx) {
     index.textContent = String(idx + 1);
     const headerCopy = document.createElement('div');
     headerCopy.className = 'idea-header-copy';
+
+    const badgeRow = document.createElement('div');
+    badgeRow.className = 'idea-badge-row';
+    badgeRow.appendChild(makeSourceBadge('answers'));
+    if (idx === 0) {
+        const flag = document.createElement('span');
+        flag.className = 'angle-rank-flag';
+        flag.innerHTML = '<i class="fa-solid fa-star"></i><span>Strongest match</span>';
+        badgeRow.appendChild(flag);
+    }
+
     const title = document.createElement('h4');
     title.className = 'idea-title';
     title.textContent = idea.template.title;
@@ -4050,7 +4357,7 @@ function renderIdeaCard(board, idea, idx) {
     const core = document.createElement('p');
     core.className = 'idea-core';
     core.textContent = idea.content.core;
-    headerCopy.append(title, variantTag, core);
+    headerCopy.append(badgeRow, title, variantTag, core);
     header.append(index, headerCopy);
     header.appendChild(buildIdeaCardControls(idea));
 
@@ -4062,7 +4369,23 @@ function renderIdeaCard(board, idea, idx) {
     addEvidenceBlock(body, idea.evidence, idea.template.essayTypes);
 
     card.append(header, body);
+    addNextStepBlock(card);
     board.appendChild(card);
+}
+
+function addNextStepBlock(card) {
+    const block = document.createElement('div');
+    block.className = 'angle-nextstep';
+    const icon = document.createElement('i');
+    icon.className = 'fa-solid fa-pen-nib';
+    const text = document.createElement('div');
+    const strong = document.createElement('strong');
+    strong.textContent = 'Start here';
+    const copy = document.createElement('p');
+    copy.textContent = 'Open a blank doc and write this angle’s opening scene for about 15 minutes. Stay inside the moment; save the lesson and the reflection for later.';
+    text.append(strong, copy);
+    block.append(icon, text);
+    card.appendChild(block);
 }
 
 function buildIdeaCardControls(idea) {
@@ -4160,7 +4483,7 @@ function renderDiscardPanel(board, pickedTemplateIds) {
     panel.className = 'discard-panel';
     const title = document.createElement('h4');
     title.className = 'discard-title';
-    title.innerHTML = '<i class="fa-solid fa-ban"></i><span>Discard pile</span>';
+    title.innerHTML = '<i class="fa-solid fa-ban"></i><span>Angles to skip</span>';
     panel.appendChild(title);
 
     const grid = document.createElement('div');
@@ -4225,6 +4548,7 @@ function printIdeaBoard() {
         timeStyle: 'short'
     }).format(new Date());
     document.getElementById('print-generated-at').textContent = 'Generated ' + generatedAt;
+    document.querySelectorAll('details.board-reference').forEach((el) => { el.open = true; });
     window.print();
 }
 document.getElementById('print-btn').addEventListener('click', printIdeaBoard);
