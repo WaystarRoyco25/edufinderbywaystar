@@ -96,7 +96,7 @@ export default function ModuleClient() {
           // If the server already finalized this module (expired) we just
           // bounce to the dashboard — nothing useful to show here.
           if (res.status === 409) {
-            router.push("/challenge/dashboard");
+            router.push("/dashboard/challenge");
             return;
           }
           throw new Error((await res.json()).error ?? "Submit failed");
@@ -131,7 +131,7 @@ export default function ModuleClient() {
     // Without any of these query params we have no idea what the user
     // wants — send them back to the dashboard to pick.
     if (!moduleId && !parentId && !isNew) {
-      router.replace("/challenge/dashboard");
+      router.replace("/dashboard/challenge");
       return;
     }
 
@@ -154,7 +154,7 @@ export default function ModuleClient() {
         if (data.kind === "submitted") {
           // Already done (or auto-graded on resume). Dashboard is the right
           // place to view the score.
-          router.replace("/challenge/dashboard");
+          router.replace("/dashboard/challenge");
           return;
         }
 
@@ -294,7 +294,7 @@ export default function ModuleClient() {
           <h1 className="text-2xl font-bold tracking-wide text-red-600">Error</h1>
           <p className="text-sm text-gray-700">{error}</p>
           <Link
-            href="/challenge/dashboard"
+            href="/dashboard/challenge"
             className="inline-block rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
             Back to Dashboard
@@ -321,7 +321,7 @@ export default function ModuleClient() {
           </p>
           <div className="flex gap-2 pt-2">
             <Link
-              href="/challenge/dashboard"
+              href="/dashboard/challenge"
               className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
             >
               Dashboard
@@ -360,7 +360,7 @@ export default function ModuleClient() {
             </p>
           </div>
           <Link
-            href="/challenge/dashboard"
+            href="/dashboard/challenge"
             className="inline-block rounded-lg bg-[#3b82f6] px-4 py-2 text-white font-semibold shadow hover:bg-[#3b82f6] transition"
           >
             Back to Dashboard
@@ -380,7 +380,7 @@ export default function ModuleClient() {
     <main className="mx-auto max-w-6xl p-6 space-y-6">
       <header className="flex items-center justify-between gap-4 border-b border-gray-200 pb-3">
         <Link
-          href="/challenge/dashboard"
+          href="/dashboard/challenge"
           className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           title="Your progress is saved automatically"
         >

@@ -41,7 +41,7 @@ export default async function PurchasePage() {
 
       <p className="text-sm">
         <Link
-          href="/challenge/dashboard"
+          href="/dashboard/challenge"
           className="font-semibold text-[#3b82f6] hover:underline"
         >
           ← Back to your dashboard

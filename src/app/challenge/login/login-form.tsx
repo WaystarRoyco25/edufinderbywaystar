@@ -7,7 +7,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type Step = "password" | "otp-email" | "otp-code" | "set-password";
 
-const DEFAULT_NEXT = "/challenge/dashboard";
+const DEFAULT_NEXT = "/dashboard/challenge";
 
 function safeAuthNext(value: string | null): string {
   if (!value) return DEFAULT_NEXT;

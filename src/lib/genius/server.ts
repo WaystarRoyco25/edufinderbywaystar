@@ -34,7 +34,9 @@ export type GeniusDraftRow = {
 export type GeniusBoardRow = {
   id: string;
   user_id: string;
-  draft_id: string;
+  // Null once the editor draft is scrapped on re-purchase; the board row and
+  // its snapshotted signal_profile/board_json survive (history is kept).
+  draft_id: string | null;
   status: GeniusBoardStatus;
   input_hash: string;
   signal_profile: unknown;
@@ -156,6 +158,21 @@ export async function loadGeniusBoardById(
   return (data as GeniusBoardRow | null) ?? null;
 }
 
+// Every board the user has generated, newest first, for the dashboard.
+export async function listGeniusBoardsForUser(
+  admin: SupabaseAdmin,
+  userId: string,
+): Promise<GeniusBoardRow[]> {
+  const { data, error } = await admin
+    .from("genius_editor_boards")
+    .select(GENIUS_BOARD_COLUMNS)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) throw new Error(error.message);
+  return (data as GeniusBoardRow[] | null) ?? [];
+}
+
 async function loadOldestQueuedGeniusBoard(
   admin: SupabaseAdmin,
 ): Promise<GeniusBoardRow | null> {
@@ -267,6 +284,11 @@ export async function processNextQueuedGeniusBoard(): Promise<{
   if (!board) return { processed: false, boardId: queued.id, status: null };
 
   try {
+    if (!board.draft_id) {
+      throw new Error(
+        "The board's editor draft was removed before generation could start.",
+      );
+    }
     const draft = await loadGeniusDraftById(admin, board.draft_id);
     const result = await generateGeniusBoard(draft.payload);
     await markGeniusBoardDone(admin, board.id, result);

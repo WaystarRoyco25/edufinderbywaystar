@@ -68,10 +68,10 @@ export async function userHasGeneratedReport(
   return (count ?? 0) > 0;
 }
 
-// Deletes the user's report intake draft. The `prediction_reports.draft_id`
-// and `prediction_report_evidence.report_id` foreign keys cascade, so this
-// also removes every generated report and its evidence — the "scrap and
-// start fresh" path that a new purchase triggers for a returning buyer.
+// Deletes the user's report intake draft so a returning buyer starts from a
+// blank intake. The `prediction_reports.draft_id` foreign key is ON DELETE
+// SET NULL, so previously generated reports (and their evidence) are kept and
+// stay visible in the dashboard; only the draft is scrapped.
 export async function scrapUserReportData(
   admin: SupabaseAdmin,
   userId: string,

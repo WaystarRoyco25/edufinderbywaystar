@@ -17,8 +17,9 @@ export const dynamic = "force-dynamic";
  * retried or double-fired capture grants the credit only once.
  *
  * When the buyer already has a generated report, the purchase is them
- * choosing to start over, so the old report and saved intake answers are
- * scrapped right after the credit is recorded.
+ * choosing to start over, so their saved intake answers are scrapped right
+ * after the credit is recorded. Previously generated reports are kept and
+ * stay visible in the dashboard.
  */
 export async function POST(request: Request) {
   const authed = await createSupabaseServerClient();
@@ -103,9 +104,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: insert.error.message }, { status: 500 });
   }
 
-  // Starting over clears the previous report and its saved intake answers
-  // so the buyer returns to a blank intake. Best effort: the payment is
-  // already recorded, so a scrap failure must not fail the whole capture.
+  // Starting over clears the saved intake answers so the buyer returns to a
+  // blank intake; previously generated reports are kept. Best effort: the
+  // payment is already recorded, so a scrap failure must not fail the whole
+  // capture.
   if (startingOver) {
     try {
       await scrapUserReportData(admin, user.id);

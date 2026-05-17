@@ -37,9 +37,9 @@ export default async function GeniusPurchasePage() {
           <p className="text-sm text-gray-600">
             You already have a Genius! Editor idea board. To build a brand-new
             one, pay for a fresh editor run below. Starting over clears your
-            current board and the editor answers saved for it, so you begin
-            from a clean slate. Pay securely with PayPal and your new editor
-            opens as soon as the payment clears.
+            saved editor answers so you begin from a clean slate; your previous
+            board stays saved in your dashboard. Pay securely with PayPal and
+            your new editor opens as soon as the payment clears.
           </p>
         ) : (
           <p className="text-sm text-gray-600">

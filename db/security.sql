@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS prediction_reports (
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    draft_id UUID NOT NULL REFERENCES prediction_report_drafts(id) ON DELETE CASCADE,
+    draft_id UUID REFERENCES prediction_report_drafts(id) ON DELETE SET NULL,
     status TEXT NOT NULL DEFAULT 'queued'
         CHECK (status IN ('queued', 'processing', 'completed', 'failed', 'needs_review')),
     applicant_profile JSONB,
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS prediction_reports (
 
 ALTER TABLE prediction_reports
     ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now(),
-    ADD COLUMN IF NOT EXISTS draft_id UUID REFERENCES prediction_report_drafts(id) ON DELETE CASCADE,
+    ADD COLUMN IF NOT EXISTS draft_id UUID REFERENCES prediction_report_drafts(id) ON DELETE SET NULL,
     ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'queued',
     ADD COLUMN IF NOT EXISTS applicant_profile JSONB,
     ADD COLUMN IF NOT EXISTS report_json JSONB,
@@ -132,6 +132,36 @@ CREATE INDEX IF NOT EXISTS prediction_reports_draft_id_idx
     ON prediction_reports(draft_id);
 CREATE INDEX IF NOT EXISTS prediction_reports_status_created_at_idx
     ON prediction_reports(status, created_at);
+
+-- Keep generated reports when their intake draft is scrapped on re-purchase.
+-- Reconciles prediction_reports.draft_id from ON DELETE CASCADE to SET NULL so
+-- a returning buyer's blank-slate scrap no longer destroys past reports. The
+-- constraint name is looked up, so this survives schema drift. Idempotent.
+DO $$
+DECLARE
+    conname text;
+BEGIN
+    SELECT tc.constraint_name INTO conname
+      FROM information_schema.table_constraints tc
+      JOIN information_schema.key_column_usage kcu
+        ON tc.constraint_name = kcu.constraint_name
+       AND tc.table_schema = kcu.table_schema
+     WHERE tc.table_schema = 'public'
+       AND tc.table_name = 'prediction_reports'
+       AND tc.constraint_type = 'FOREIGN KEY'
+       AND kcu.column_name = 'draft_id'
+     LIMIT 1;
+    IF conname IS NOT NULL THEN
+        EXECUTE format('ALTER TABLE public.prediction_reports DROP CONSTRAINT %I', conname);
+    END IF;
+END $$;
+
+ALTER TABLE prediction_reports ALTER COLUMN draft_id DROP NOT NULL;
+
+ALTER TABLE prediction_reports
+    ADD CONSTRAINT prediction_reports_draft_id_fkey
+    FOREIGN KEY (draft_id) REFERENCES prediction_report_drafts(id)
+    ON DELETE SET NULL;
 
 CREATE TABLE IF NOT EXISTS prediction_report_evidence (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -198,7 +228,7 @@ CREATE TABLE IF NOT EXISTS genius_editor_boards (
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    draft_id UUID NOT NULL REFERENCES genius_editor_drafts(id) ON DELETE CASCADE,
+    draft_id UUID REFERENCES genius_editor_drafts(id) ON DELETE SET NULL,
     status TEXT NOT NULL DEFAULT 'queued'
         CHECK (status IN ('queued', 'processing', 'completed', 'failed', 'needs_review')),
     input_hash TEXT NOT NULL,
@@ -216,7 +246,7 @@ ALTER TABLE genius_editor_boards
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT now(),
     ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now(),
     ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    ADD COLUMN IF NOT EXISTS draft_id UUID REFERENCES genius_editor_drafts(id) ON DELETE CASCADE,
+    ADD COLUMN IF NOT EXISTS draft_id UUID REFERENCES genius_editor_drafts(id) ON DELETE SET NULL,
     ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'queued',
     ADD COLUMN IF NOT EXISTS input_hash TEXT,
     ADD COLUMN IF NOT EXISTS signal_profile JSONB,
@@ -251,6 +281,36 @@ CREATE INDEX IF NOT EXISTS genius_editor_boards_status_created_at_idx
     ON genius_editor_boards(status, created_at);
 CREATE INDEX IF NOT EXISTS genius_editor_boards_input_hash_idx
     ON genius_editor_boards(draft_id, input_hash);
+
+-- Keep generated boards when their editor draft is scrapped on re-purchase.
+-- Reconciles genius_editor_boards.draft_id from ON DELETE CASCADE to SET NULL so
+-- a returning buyer's blank-slate scrap no longer destroys past boards. The
+-- constraint name is looked up, so this survives schema drift. Idempotent.
+DO $$
+DECLARE
+    conname text;
+BEGIN
+    SELECT tc.constraint_name INTO conname
+      FROM information_schema.table_constraints tc
+      JOIN information_schema.key_column_usage kcu
+        ON tc.constraint_name = kcu.constraint_name
+       AND tc.table_schema = kcu.table_schema
+     WHERE tc.table_schema = 'public'
+       AND tc.table_name = 'genius_editor_boards'
+       AND tc.constraint_type = 'FOREIGN KEY'
+       AND kcu.column_name = 'draft_id'
+     LIMIT 1;
+    IF conname IS NOT NULL THEN
+        EXECUTE format('ALTER TABLE public.genius_editor_boards DROP CONSTRAINT %I', conname);
+    END IF;
+END $$;
+
+ALTER TABLE genius_editor_boards ALTER COLUMN draft_id DROP NOT NULL;
+
+ALTER TABLE genius_editor_boards
+    ADD CONSTRAINT genius_editor_boards_draft_id_fkey
+    FOREIGN KEY (draft_id) REFERENCES genius_editor_drafts(id)
+    ON DELETE SET NULL;
 
 -- Migrate existing answer keys out of `modules` before dropping the column.
 DO $$

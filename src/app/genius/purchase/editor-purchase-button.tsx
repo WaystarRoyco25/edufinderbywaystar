@@ -41,7 +41,7 @@ export default function EditorPurchaseButton({
 }) {
   // Where the buyer lands after paying: ?start=1 reopens the editor. A
   // returning buyer also gets ?reset=1, which clears the locally cached
-  // answers so the scrapped board really starts from a blank editor.
+  // answers so the fresh run really starts from a blank editor.
   const editorUrl = startingOver ? "/genius?start=1&reset=1" : "/genius?start=1";
 
   const [sdkState, setSdkState] = useState<"loading" | "ready" | "error">(
@@ -184,8 +184,8 @@ export default function EditorPurchaseButton({
       <p className="text-xs text-gray-400">USD, one-time payment</p>
       {startingOver && (
         <p className="mt-2 text-xs text-amber-700">
-          Completing this purchase clears your current board and saved editor
-          answers.
+          Completing this purchase clears your saved editor answers; your
+          previous board stays in your dashboard.
         </p>
       )}
       {sdkState === "error" && (

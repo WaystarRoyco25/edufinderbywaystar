@@ -113,7 +113,7 @@ function LockedReview({ m1, m2 }: { m1: ModuleRow; m2: ModuleRow | null }) {
   return (
     <main className="mx-auto max-w-3xl p-6 space-y-5">
       <Link
-        href="/challenge/dashboard"
+        href="/dashboard/challenge"
         className="text-sm text-gray-600 underline hover:text-gray-800"
       >
         Back to Dashboard
@@ -127,7 +127,7 @@ function LockedReview({ m1, m2 }: { m1: ModuleRow; m2: ModuleRow | null }) {
         </p>
         <div className="flex flex-wrap gap-2 pt-2">
           <Link
-            href="/challenge/dashboard"
+            href="/dashboard/challenge"
             className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
             Dashboard

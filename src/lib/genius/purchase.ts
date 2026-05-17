@@ -68,10 +68,10 @@ export async function userHasGeneratedBoard(
   return (count ?? 0) > 0;
 }
 
-// Deletes the user's Genius editor draft. The `genius_editor_boards.draft_id`
-// foreign key cascades, so this also removes every generated board — the
-// "scrap and start fresh" path that a new purchase triggers for a returning
-// buyer.
+// Deletes the user's Genius editor draft so a returning buyer starts from a
+// blank editor. The `genius_editor_boards.draft_id` foreign key is ON DELETE
+// SET NULL, so previously generated boards are kept and stay visible in the
+// dashboard; only the draft is scrapped.
 export async function scrapUserGeniusData(
   admin: SupabaseAdmin,
   userId: string,

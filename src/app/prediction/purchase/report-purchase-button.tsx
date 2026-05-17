@@ -181,8 +181,8 @@ export default function ReportPurchaseButton({
       <p className="text-xs text-gray-400">USD, one-time payment</p>
       {startingOver && (
         <p className="mt-2 text-xs text-amber-700">
-          Completing this purchase clears your current report and saved intake
-          answers.
+          Completing this purchase clears your saved intake answers; your
+          previous report stays in your dashboard.
         </p>
       )}
       {sdkState === "error" && (

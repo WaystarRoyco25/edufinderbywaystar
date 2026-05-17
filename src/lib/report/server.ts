@@ -18,7 +18,9 @@ export const REPORT_ROW_COLUMNS =
 export type PredictionReportRow = {
   id: string;
   user_id: string;
-  draft_id: string;
+  // Null once the intake draft is scrapped on re-purchase; the report row and
+  // its snapshotted applicant_profile/report_json survive (history is kept).
+  draft_id: string | null;
   status: ReportStatus;
   applicant_profile: ApplicantProfile | null;
   report_json: unknown;
@@ -62,6 +64,21 @@ export async function loadReportForUser(
   const report = data as PredictionReportRow | null;
   if (!report || !canUserAccessReport(userId, report)) return null;
   return report;
+}
+
+// Every report the user has generated, newest first, for the dashboard.
+export async function listReportsForUser(
+  admin: SupabaseAdmin,
+  userId: string,
+): Promise<PredictionReportRow[]> {
+  const { data, error } = await admin
+    .from("prediction_reports")
+    .select(REPORT_ROW_COLUMNS)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) throw new Error(error.message);
+  return (data as PredictionReportRow[] | null) ?? [];
 }
 
 export async function loadSubmittedDraftForUser(
@@ -268,6 +285,11 @@ export async function processNextQueuedReport(): Promise<{
   if (!report) return { processed: false, reportId: queued.id, status: null };
 
   try {
+    if (!report.draft_id) {
+      throw new Error(
+        "The report's intake draft was removed before generation could start.",
+      );
+    }
     const draft = await loadDraftById(admin, report.draft_id);
     const result = await generateAdmissionReport(draft.payload);
     await replaceReportEvidence(admin, report.id, result.evidence);

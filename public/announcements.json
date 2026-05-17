@@ -3,6 +3,13 @@
   "notes": "Latest first. Author is always 'Waystar Learning'. Date is ISO YYYY-MM-DD; the page renders it as 'May 11, 2026'. body is two short English paragraphs, separated by a blank line (\\n\\n). No em dash (U+2014) or en dash (U+2013) anywhere in title or body. The formula AI agents must follow when adding a new entry lives in /AGENTS.md under the announcements-protocol section.",
   "entries": [
     {
+      "id": "2026-05-18-unified-dashboard",
+      "author": "Waystar Learning",
+      "date": "2026-05-18",
+      "title": "All three EduFinder services now share one unified dashboard.",
+      "body": "The EduFinder dashboard now brings all three services together behind a single sidebar, so you can move freely between the Challenge! Series, the Insight! Report, and the Genius! Editor. The Insight! Report and the Genius! Editor now also keep a saved history of every report and idea board you generate.\n\nEach saved report and idea board is listed with the exact date and time it was created, so a finished result is no longer something you need to keep track of on your own. It stays in your account, ready for you to revisit whenever you want."
+    },
+    {
       "id": "2026-05-14-genius-ai-personalization",
       "author": "Waystar Learning",
       "date": "2026-05-14",

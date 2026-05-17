@@ -88,7 +88,7 @@ export default function PurchaseButtons({
     (tests: number) => {
       setPaid({ tests });
       router.refresh();
-      window.setTimeout(() => router.push("/challenge/dashboard"), 2500);
+      window.setTimeout(() => router.push("/dashboard/challenge"), 2500);
     },
     [router],
   );
@@ -103,7 +103,7 @@ export default function PurchaseButtons({
         </p>
         <p className="mt-3 text-sm">
           <Link
-            href="/challenge/dashboard"
+            href="/dashboard/challenge"
             className="font-semibold text-[#3b82f6] hover:underline"
           >
             Go to your dashboard

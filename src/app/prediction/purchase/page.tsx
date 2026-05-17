@@ -36,10 +36,10 @@ export default async function ReportPurchasePage() {
         {startingOver ? (
           <p className="text-sm text-gray-600">
             You already have an Insight! Report. To build a brand-new one, pay
-            for a fresh report below. Starting over clears your current report
-            and the intake answers saved for it, so you begin from a clean
-            slate. Pay securely with PayPal and your new intake opens as soon as
-            the payment clears.
+            for a fresh report below. Starting over clears your saved intake
+            answers so you begin from a clean slate; your previous report stays
+            saved in your dashboard. Pay securely with PayPal and your new
+            intake opens as soon as the payment clears.
           </p>
         ) : (
           <p className="text-sm text-gray-600">

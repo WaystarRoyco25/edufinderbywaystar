@@ -164,7 +164,7 @@ export default function ReviewClient({
       <header className="space-y-4 border-b border-gray-200 pb-4">
         <div className="flex items-center justify-between gap-4">
           <Link
-            href="/challenge/dashboard"
+            href="/dashboard/challenge"
             className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
           >
             ← Dashboard
@@ -244,7 +244,7 @@ export default function ReviewClient({
                     </button>
                   ) : (
                     <Link
-                      href="/challenge/dashboard"
+                      href="/dashboard/challenge"
                       className={REVIEW_ACTION_BUTTON_CLASS}
                     >
                       Back to Dashboard
