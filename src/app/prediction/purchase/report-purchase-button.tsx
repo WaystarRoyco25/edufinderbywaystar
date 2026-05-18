@@ -172,32 +172,44 @@ export default function ReportPurchaseButton({
   }
 
   return (
-    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="text-lg font-bold text-gray-900">Insight! Report</h2>
-      <p className="mt-1 text-sm text-gray-600">
-        One full personalized admission-chance report.
-      </p>
-      <p className="mt-2 text-3xl font-bold text-[#3b82f6]">${price}</p>
-      <p className="text-xs text-gray-400">USD, one-time payment</p>
-      {startingOver && (
-        <p className="mt-2 text-xs text-amber-700">
-          Completing this purchase clears your saved intake answers; your
-          previous report stays in your dashboard.
+    <div className="space-y-3">
+      <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-gray-900">Insight! Report</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          One full personalized admission-chance report.
         </p>
-      )}
-      {sdkState === "error" && (
-        <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          PayPal could not load. Please refresh the page and try again.
-        </p>
-      )}
-      <div className="mt-4 min-h-[44px]">
-        {sdkState === "ready" ? (
-          <div ref={containerRef} />
-        ) : (
-          <p className="text-xs text-gray-400">Loading PayPal...</p>
+        <p className="mt-2 text-3xl font-bold text-[#3b82f6]">${price}</p>
+        <p className="text-xs text-gray-400">USD, one-time payment</p>
+        {startingOver && (
+          <p className="mt-2 text-xs text-amber-700">
+            Completing this purchase clears your saved intake answers; your
+            previous report stays in your dashboard.
+          </p>
         )}
+        {sdkState === "error" && (
+          <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            PayPal could not load. Please refresh the page and try again.
+          </p>
+        )}
+        <div className="mt-4 min-h-[44px]">
+          {sdkState === "ready" ? (
+            <div ref={containerRef} />
+          ) : (
+            <p className="text-xs text-gray-400">Loading PayPal...</p>
+          )}
+        </div>
+        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      <p className="text-sm text-gray-600">
+        If you run into any trouble during or after your purchase, email us at{" "}
+        <a
+          href="mailto:edufinder@waystarlearning.com"
+          className="font-semibold text-[#3b82f6] hover:underline"
+        >
+          edufinder@waystarlearning.com
+        </a>{" "}
+        and we will fix it promptly.
+      </p>
     </div>
   );
 }

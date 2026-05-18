@@ -130,6 +130,16 @@ export default function PurchaseButtons({
           />
         ))}
       </div>
+      <p className="text-sm text-gray-600">
+        If you run into any trouble during or after your purchase, email us at{" "}
+        <a
+          href="mailto:edufinder@waystarlearning.com"
+          className="font-semibold text-[#3b82f6] hover:underline"
+        >
+          edufinder@waystarlearning.com
+        </a>{" "}
+        and we will fix it promptly.
+      </p>
     </div>
   );
 }
