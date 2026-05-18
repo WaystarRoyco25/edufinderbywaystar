@@ -41,3 +41,68 @@ DROP POLICY IF EXISTS "purchases insert own" ON purchases;
 DROP POLICY IF EXISTS "purchases update own" ON purchases;
 DROP POLICY IF EXISTS "purchases delete own" ON purchases;
 REVOKE ALL ON purchases FROM anon, authenticated;
+
+-- --- ATOMIC MODULE-1 CLAIM ----------------------------------------------
+-- Creates module 1 of a new exam ONLY when the buyer still has an unused
+-- practice test, with no check-then-insert race.
+--
+-- "Tests used" is COUNT(modules WHERE module_number = 1); "tests purchased"
+-- is SUM(purchases.tests_granted). There is no per-credit row to flip
+-- atomically, so a transaction-scoped advisory lock keyed by the user
+-- serializes every concurrent module-1 creation for that one user: the
+-- COUNT < SUM re-check and the INSERT happen as one indivisible step.
+-- Different users never contend (distinct lock keys).
+--
+-- Returns the new modules.id, or NULL when no test is available. The caller
+-- (the Next.js server, service role) selects questions and inserts the
+-- answer key; only the gated row insert lives here.
+--
+-- Idempotent (CREATE OR REPLACE). Safe to re-run.
+CREATE OR REPLACE FUNCTION public.claim_challenge_module_one(
+    p_user_id       UUID,
+    p_difficulty    TEXT,
+    p_question_ids  UUID[],
+    p_expires_at    TIMESTAMPTZ,
+    p_current_index INT DEFAULT 0
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_used      INT;
+    v_purchased INT;
+    v_new_id    UUID;
+BEGIN
+    PERFORM pg_advisory_xact_lock(hashtext('challenge_m1:' || p_user_id::text));
+
+    SELECT count(*) INTO v_used
+      FROM modules
+     WHERE user_id = p_user_id
+       AND module_number = 1;
+
+    SELECT COALESCE(sum(tests_granted), 0) INTO v_purchased
+      FROM purchases
+     WHERE user_id = p_user_id;
+
+    IF v_used >= v_purchased THEN
+        RETURN NULL;
+    END IF;
+
+    INSERT INTO modules (
+        user_id, difficulty, question_ids, parent_module_id,
+        module_number, expires_at, current_index, answers
+    )
+    VALUES (
+        p_user_id, p_difficulty, p_question_ids, NULL,
+        1, p_expires_at, p_current_index, '{}'::jsonb
+    )
+    RETURNING id INTO v_new_id;
+
+    RETURN v_new_id;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.claim_challenge_module_one(
+    UUID, TEXT, UUID[], TIMESTAMPTZ, INT) FROM anon, authenticated;

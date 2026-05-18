@@ -12,8 +12,9 @@ import {
   processNextQueuedGeniusBoard,
 } from "@/lib/genius/server";
 import {
-  consumeGeniusCredit,
-  countAvailableGeniusCredits,
+  claimGeniusCredit,
+  linkGeniusCreditToBoard,
+  releaseGeniusCredit,
 } from "@/lib/genius/purchase";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -58,15 +59,25 @@ export async function POST() {
     // a brand-new board.
     let board = await findReusableGeniusBoard(admin, draft.id, inputHash);
     if (!board) {
-      const credits = await countAvailableGeniusCredits(admin, user.id);
-      if (credits < 1) {
+      // Claim a credit BEFORE creating anything: the atomic claim is the
+      // gate. N concurrent POSTs for a one-credit user produce exactly one
+      // non-null claim; the rest get null and are turned away here.
+      const creditId = await claimGeniusCredit(admin, user.id);
+      if (!creditId) {
         return NextResponse.json(
           { error: "Purchase the Genius! Editor to generate your idea board." },
           { status: 402 },
         );
       }
-      board = await createQueuedGeniusBoard(admin, draft);
-      await consumeGeniusCredit(admin, user.id, board.id);
+      try {
+        board = await createQueuedGeniusBoard(admin, draft);
+      } catch (creationError) {
+        // Creation failed after the credit was claimed — hand it back so the
+        // buyer is not charged for a board that never queued.
+        await releaseGeniusCredit(admin, creditId);
+        throw creationError;
+      }
+      await linkGeniusCreditToBoard(admin, creditId, board.id);
     }
 
     after(() => processNextQueuedGeniusBoard());

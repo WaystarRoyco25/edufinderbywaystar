@@ -11,8 +11,9 @@ import {
   reportUrl,
 } from "@/lib/report/server";
 import {
-  consumeReportCredit,
-  countAvailableReportCredits,
+  claimReportCredit,
+  linkReportCreditToReport,
+  releaseReportCredit,
 } from "@/lib/report/purchase";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -57,15 +58,25 @@ export async function POST() {
     // report.
     let report = await findExistingReportForDraft(admin, draft.id);
     if (!report) {
-      const credits = await countAvailableReportCredits(admin, user.id);
-      if (credits < 1) {
+      // Claim a credit BEFORE creating anything: the atomic claim is the
+      // gate. N concurrent POSTs for a one-credit user produce exactly one
+      // non-null claim; the rest get null and are turned away here.
+      const creditId = await claimReportCredit(admin, user.id);
+      if (!creditId) {
         return NextResponse.json(
           { error: "Purchase an Insight! Report to generate your results." },
           { status: 402 },
         );
       }
-      report = await createQueuedReport(admin, draft);
-      await consumeReportCredit(admin, user.id, report.id);
+      try {
+        report = await createQueuedReport(admin, draft);
+      } catch (creationError) {
+        // Creation failed after the credit was claimed — hand it back so the
+        // buyer is not charged for a report that never queued.
+        await releaseReportCredit(admin, creditId);
+        throw creationError;
+      }
+      await linkReportCreditToReport(admin, creditId, report.id);
     }
 
     after(() => processNextQueuedReport());

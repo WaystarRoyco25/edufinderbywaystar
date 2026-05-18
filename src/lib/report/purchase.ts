@@ -24,34 +24,77 @@ export async function countAvailableReportCredits(
   return count ?? 0;
 }
 
-// Spends one unused credit on the given report. Returns false when the
-// user had no unused credit, so the caller can refuse to generate.
-export async function consumeReportCredit(
+// Atomically claims one unused report credit for the user. Returns the
+// claimed report_purchases.id, or null when the user holds no unused credit.
+//
+// `UPDATE ... WHERE id = ? AND consumed_at IS NULL` is atomic per row, so two
+// concurrent claims of the same row can never both win. The loop lets a user
+// holding several credits fall through to the next free row when a concurrent
+// request grabs the one this call pre-selected, instead of a spurious refusal.
+export async function claimReportCredit(
   admin: SupabaseAdmin,
   userId: string,
-  reportId: string,
-): Promise<boolean> {
-  const { data, error } = await admin
-    .from("report_purchases")
-    .select("id")
-    .eq("user_id", userId)
-    .is("consumed_at", null)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data) return false;
+): Promise<string | null> {
+  // Bounded so a pathological storm of concurrent requests cannot spin
+  // forever; far beyond any realistic per-user credit count.
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const { data: candidate, error: selectError } = await admin
+      .from("report_purchases")
+      .select("id")
+      .eq("user_id", userId)
+      .is("consumed_at", null)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    if (selectError) throw new Error(selectError.message);
+    if (!candidate) return null;
 
-  const { error: updateError } = await admin
+    const { data: claimed, error: claimError } = await admin
+      .from("report_purchases")
+      .update({ consumed_at: new Date().toISOString() })
+      .eq("id", candidate.id)
+      .is("consumed_at", null)
+      .select("id")
+      .maybeSingle();
+    if (claimError) throw new Error(claimError.message);
+    if (claimed) return claimed.id;
+    // A concurrent request claimed this row first — retry with the next one.
+  }
+  return null;
+}
+
+// Links a freshly claimed credit to the report it paid for. Best-effort: the
+// credit is already spent, so a failure here is logged but never fails the
+// caller's generation flow.
+export async function linkReportCreditToReport(
+  admin: SupabaseAdmin,
+  creditId: string,
+  reportId: string,
+): Promise<void> {
+  const { error } = await admin
     .from("report_purchases")
-    .update({
-      consumed_at: new Date().toISOString(),
-      consumed_report_id: reportId,
-    })
-    .eq("id", data.id)
-    .is("consumed_at", null);
-  if (updateError) throw new Error(updateError.message);
-  return true;
+    .update({ consumed_report_id: reportId })
+    .eq("id", creditId);
+  if (error) {
+    console.error("linkReportCreditToReport failed", { creditId, reportId, error });
+  }
+}
+
+// Returns a claimed credit to the unused pool when report creation failed
+// after the claim. Guards on consumed_report_id IS NULL so a credit already
+// linked to a report can never be released out from under it.
+export async function releaseReportCredit(
+  admin: SupabaseAdmin,
+  creditId: string,
+): Promise<void> {
+  const { error } = await admin
+    .from("report_purchases")
+    .update({ consumed_at: null })
+    .eq("id", creditId)
+    .is("consumed_report_id", null);
+  if (error) {
+    console.error("releaseReportCredit failed", { creditId, error });
+  }
 }
 
 // True once the user has at least one generated report. Used to tell a

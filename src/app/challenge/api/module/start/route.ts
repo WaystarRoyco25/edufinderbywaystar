@@ -212,6 +212,7 @@ async function createNewModule(
   overallDifficulty: Difficulty,
   moduleNumber: 1 | 2,
   excludeQuestionIds: string[],
+  gateModuleOneCredit: boolean,
 ): Promise<TakingResponse | { error: string; status: number }> {
   const hardCount =
     overallDifficulty === "harder" ? HARD_COUNT_HARDER_LEAN : HARD_COUNT_STANDARD_LEAN;
@@ -305,32 +306,63 @@ async function createNewModule(
   const expiresAt = new Date(now.getTime() + MODULE_DURATION_MS);
   const answerKey = chosen.map((q) => ({ id: q.id, a: q.correct_answer }));
 
-  const { data: moduleRow, error: moduleErr } = await admin
-    .from("modules")
-    .insert({
-      user_id: userId,
-      difficulty: overallDifficulty,
-      question_ids: chosen.map((q) => q.id),
-      parent_module_id: parentModuleId,
-      module_number: moduleNumber,
-      expires_at: expiresAt.toISOString(),
-      current_index: 0,
-      answers: {},
-    })
-    .select("id")
-    .single();
-  if (moduleErr || !moduleRow) {
-    return { error: moduleErr?.message ?? "Could not create module", status: 500 };
+  let moduleId: string;
+  if (gateModuleOneCredit) {
+    // Module 1 of a new exam: the credit gate and the modules INSERT are a
+    // single atomic step in Postgres (advisory lock + COUNT < SUM re-check),
+    // closing the race where concurrent starts each spend the same test. A
+    // null result means the buyer has no practice test left.
+    const { data: claimedId, error: claimErr } = await admin.rpc(
+      "claim_challenge_module_one",
+      {
+        p_user_id: userId,
+        p_difficulty: overallDifficulty,
+        p_question_ids: chosen.map((q) => q.id),
+        p_expires_at: expiresAt.toISOString(),
+        p_current_index: 0,
+      },
+    );
+    if (claimErr) {
+      return { error: claimErr.message, status: 500 };
+    }
+    if (!claimedId) {
+      return {
+        error:
+          "You have no practice tests available. Purchase a package to start a new one.",
+        status: 403,
+      };
+    }
+    moduleId = claimedId as string;
+  } else {
+    // Module 2 belongs to an already-paid exam — no credit gate.
+    const { data: moduleRow, error: moduleErr } = await admin
+      .from("modules")
+      .insert({
+        user_id: userId,
+        difficulty: overallDifficulty,
+        question_ids: chosen.map((q) => q.id),
+        parent_module_id: parentModuleId,
+        module_number: moduleNumber,
+        expires_at: expiresAt.toISOString(),
+        current_index: 0,
+        answers: {},
+      })
+      .select("id")
+      .single();
+    if (moduleErr || !moduleRow) {
+      return { error: moduleErr?.message ?? "Could not create module", status: 500 };
+    }
+    moduleId = moduleRow.id;
   }
 
   const { error: keyErr } = await admin
     .from("module_answer_keys")
     .insert({
-      module_id: moduleRow.id,
+      module_id: moduleId,
       answer_key: answerKey,
     });
   if (keyErr) {
-    await admin.from("modules").delete().eq("id", moduleRow.id);
+    await admin.from("modules").delete().eq("id", moduleId);
     return { error: keyErr.message, status: 500 };
   }
 
@@ -350,7 +382,7 @@ async function createNewModule(
 
   return {
     kind: "taking",
-    module_id: moduleRow.id,
+    module_id: moduleId,
     difficulty: overallDifficulty,
     module_number: moduleNumber,
     parent_module_id: parentModuleId,
@@ -452,6 +484,7 @@ export async function POST(request: Request) {
       overallDifficulty,
       2,
       (parent.question_ids ?? []) as string[],
+      false,
     );
     if ("error" in created) {
       return NextResponse.json({ error: created.error }, { status: created.status });
@@ -516,7 +549,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const created = await createNewModule(admin, user.id, null, "standard", 1, []);
+  const created = await createNewModule(admin, user.id, null, "standard", 1, [], true);
   if ("error" in created) {
     return NextResponse.json({ error: created.error }, { status: created.status });
   }
