@@ -101,6 +101,9 @@
             border-radius: .75rem;
             box-shadow: none;
         }
+        html.dashboard-embed-root .report-modal-header {
+            display: none;
+        }
         html.dashboard-embed-root .modal-overlay {
             background: transparent;
             backdrop-filter: none;
@@ -616,7 +619,7 @@
     <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
 
         <!-- Modal header -->
-        <div class="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 flex-shrink-0">
+        <div class="report-modal-header flex items-center justify-between p-5 md:p-6 border-b border-gray-100 flex-shrink-0">
             <div class="flex items-center gap-3">
                 <span class="flex items-center justify-center w-10 h-10 bg-blue-50 text-[#3b82f6] rounded-full shadow-sm">
                     <i class="fa-solid fa-comments text-base"></i>
