@@ -32,7 +32,7 @@ Prepend a new object (latest first) to the `entries` array in `public/announceme
 1. `author` is always the literal string `"Waystar Learning"`. Never change it. Never attribute to an AI, never attribute to a person.
 2. `date` is today's calendar date in ISO `YYYY-MM-DD`. The page renders it as `May 11, 2026`.
 3. `id` is `<date>-<short kebab slug describing the change>`, lowercase ASCII only (a to z, 0 to 9, hyphens).
-4. `title` is one short English sentence summarizing the change.
+4. `title` is one short English sentence summarizing the change, and it must end with a period.
 5. `body` is exactly two short English paragraphs, separated by a single blank line in the JSON string (`\n\n` between them). Each paragraph is one to three sentences. The first paragraph says what changed in user-visible terms. The second paragraph explains how a regular site visitor benefits, or adds the most concrete supporting detail. No bullet lists, no links, no code, no marketing fluff.
 6. Do not include a `commit` field. Earlier entries may still have one; do not add it to new entries.
 
@@ -65,7 +65,7 @@ If you delegate the writing to another chatbot or sub-agent, hand it this prompt
 > 1. `author` is the literal string `"Waystar Learning"`. Never change it.
 > 2. `date` is today in ISO YYYY-MM-DD format.
 > 3. `id` is `<date>-<short kebab slug>` using a to z, 0 to 9, and hyphens only.
-> 4. Write `title` and `body` in English. `title` is one sentence.
+> 4. Write `title` and `body` in English. `title` is one sentence and must end with a period.
 > 5. `body` is exactly two paragraphs separated by `\n\n` inside the JSON string. Each paragraph is one to three sentences. Paragraph one says what changed in user-visible terms; paragraph two says how a regular site visitor benefits.
 > 6. Forbidden characters in `title` and `body`: the em dash (the character at codepoint U+2014) and the en dash (U+2013) used as a sentence break. Use commas, periods, parentheses, or semicolons instead.
 > 7. Before you finish, scan your `title` and `body` for U+2014 and U+2013 and rewrite any sentence that contains either character. Treat their presence as a failed answer.
