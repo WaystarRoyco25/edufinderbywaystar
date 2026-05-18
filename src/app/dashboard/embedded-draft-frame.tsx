@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+
+const EMBED_HEIGHT_MESSAGE = "edufinder:embed-height";
 
 export default function EmbeddedDraftFrame({
   title,
@@ -15,6 +20,27 @@ export default function EmbeddedDraftFrame({
   heightClassName: string;
   showHeader?: boolean;
 }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      if (event.source !== iframeRef.current?.contentWindow) return;
+      const data = event.data as { type?: unknown; height?: unknown };
+      if (
+        data?.type !== EMBED_HEIGHT_MESSAGE ||
+        typeof data.height !== "number" ||
+        !Number.isFinite(data.height) ||
+        data.height <= 0
+      ) {
+        return;
+      }
+      setContentHeight(Math.ceil(data.height));
+    }
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
   return (
     <section className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
       {showHeader && (
@@ -32,9 +58,13 @@ export default function EmbeddedDraftFrame({
         </div>
       )}
       <iframe
+        ref={iframeRef}
         title={title}
         src={src}
-        className={`block w-full border-0 bg-white ${heightClassName}`}
+        className={`block w-full border-0 bg-white ${
+          contentHeight === null ? heightClassName : ""
+        }`}
+        style={contentHeight === null ? undefined : { height: contentHeight }}
       />
     </section>
   );

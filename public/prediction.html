@@ -2001,5 +2001,53 @@ Object.assign(window, {
 });
 </script>
 
+<script>
+/* ── Dashboard embed: report the intake height to the parent
+   dashboard so its iframe can size itself exactly to the content,
+   leaving no empty space below the questionnaire. ── */
+(function () {
+    if (!document.documentElement.classList.contains('dashboard-embed-root')) return;
+    var parentWindow = window.parent;
+    if (!parentWindow || parentWindow === window) return;
+
+    var lastHeight = 0;
+    var scheduled = false;
+
+    function measureContent() {
+        var content = document.getElementById('report-modal');
+        if (!content) return 0;
+        var rect = content.getBoundingClientRect();
+        return Math.ceil(rect.bottom + window.scrollY);
+    }
+
+    function reportHeight() {
+        scheduled = false;
+        var height = measureContent();
+        if (height <= 0 || height === lastHeight) return;
+        lastHeight = height;
+        parentWindow.postMessage(
+            { type: 'edufinder:embed-height', height: height },
+            window.location.origin
+        );
+    }
+
+    function scheduleReport() {
+        if (scheduled) return;
+        scheduled = true;
+        window.requestAnimationFrame(reportHeight);
+    }
+
+    if (typeof ResizeObserver === 'function') {
+        new ResizeObserver(scheduleReport).observe(document.body);
+    }
+    window.addEventListener('load', scheduleReport);
+    window.addEventListener('resize', scheduleReport);
+    [150, 450, 1200].forEach(function (delay) {
+        window.setTimeout(scheduleReport, delay);
+    });
+    scheduleReport();
+})();
+</script>
+
 </body>
 </html>
