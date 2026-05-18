@@ -10,9 +10,18 @@ import {
 } from "@/lib/report/server";
 import type { ReportStatus } from "@/lib/report/types";
 import CrossSellCard from "../cross-sell-card";
+import EmbeddedDraftFrame from "../embedded-draft-frame";
 import SignOutButton from "../sign-out-button";
 
 export const dynamic = "force-dynamic";
+
+type DashboardSearchParams = Promise<{
+  draft?: string | string[];
+}>;
+
+function hasFlag(value: string | string[] | undefined): boolean {
+  return Array.isArray(value) ? value.includes("1") : value === "1";
+}
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleString("en-US", {
@@ -36,8 +45,18 @@ const STATUS_META: Record<ReportStatus, { label: string; className: string }> = 
   failed: { label: "Failed", className: "bg-red-50 text-red-600" },
 };
 
-export default async function InsightDashboardPage() {
-  const user = await requireDashboardUser("/dashboard/prediction");
+export default async function InsightDashboardPage({
+  searchParams,
+}: {
+  searchParams: DashboardSearchParams;
+}) {
+  const params = await searchParams;
+  const draftRequested = hasFlag(params.draft);
+  const user = await requireDashboardUser(
+    draftRequested
+      ? "/dashboard/prediction?draft=1"
+      : "/dashboard/prediction",
+  );
 
   const admin = createSupabaseAdminClient();
   const [reports, credits, ownership] = await Promise.all([
@@ -45,6 +64,7 @@ export default async function InsightDashboardPage() {
     countAvailableReportCredits(admin, user.id),
     loadServiceOwnership(admin, user.id),
   ]);
+  const showDraft = draftRequested && credits > 0;
 
   return (
     <main className="space-y-8">
@@ -71,7 +91,11 @@ export default async function InsightDashboardPage() {
             />
             <div className="shrink-0">
               <Link
-                href="/prediction/purchase"
+                href={
+                  credits > 0
+                    ? "/dashboard/prediction?draft=1"
+                    : "/prediction/purchase"
+                }
                 className="block w-full rounded-lg bg-[#3b82f6] px-5 py-2.5 text-center font-semibold text-white shadow transition hover:bg-[#2563eb] sm:inline-block sm:w-auto"
               >
                 {credits > 0 ? "Generate a Report" : "Buy a Report"}
@@ -83,6 +107,16 @@ export default async function InsightDashboardPage() {
           </div>
         </div>
       </section>
+
+      {showDraft && (
+        <EmbeddedDraftFrame
+          title="Draft your Insight! Report"
+          description="Complete the admissions intake here, then submit it to generate the report."
+          src="/prediction?embed=dashboard&start=1"
+          closeHref="/dashboard/prediction"
+          heightClassName="h-[940px]"
+        />
+      )}
 
       <section className="space-y-3">
         <h2 className="text-xl font-bold text-gray-800 border-b-2 border-[#3b82f6] pb-2">

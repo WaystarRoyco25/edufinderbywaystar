@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" as="style" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+    <script>
+        if (new URLSearchParams(window.location.search).get('embed') === 'dashboard') {
+            document.documentElement.classList.add('dashboard-embed-root');
+        }
+    </script>
     <style>
         body {
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -155,6 +160,23 @@
            the three brand colors #3b82f6 / #1f2937 / #ffffff plus
            neutral grays for borders and supporting copy)
            ════════════════════════════════════════════════════════ */
+        html.dashboard-embed-root body {
+            background: transparent;
+        }
+        html.dashboard-embed-root body > header,
+        html.dashboard-embed-root body > footer,
+        html.dashboard-embed-root #landing-view {
+            display: none !important;
+        }
+        html.dashboard-embed-root .editor-band {
+            padding: 0;
+            background: transparent;
+        }
+        html.dashboard-embed-root .studio-shell {
+            max-width: none;
+            border-radius: .75rem;
+            box-shadow: none;
+        }
         .editor-band { padding: 2.5rem 1rem 4rem; background: #f9fafb; }
         .studio-shell {
             max-width: 1040px;
@@ -1701,6 +1723,11 @@ function unlockEditor() {
 }
 
 function handleEditorStart() {
+    if (new URLSearchParams(window.location.search).get('embed') !== 'dashboard') {
+        window.location.href = '/dashboard/genius?draft=1';
+        return;
+    }
+
     if (typeof window.requestEditorAuth === 'function') {
         window.requestEditorAuth();
         return;
@@ -2723,10 +2750,22 @@ let activeAiFeedback = { likedAngleIds: [], dismissedAngleIds: [], refreshedAngl
 let aiBoardPollTimer = null;
 let aiBoardGenerating = false;
 
+const GENIUS_EMBED_MODE = new URLSearchParams(window.location.search).get('embed') === 'dashboard';
 const GENIUS_DRAFT_ENDPOINT = '/genius/api/draft';
 const GENIUS_BOARD_START_ENDPOINT = '/genius/api/board/start';
 const GENIUS_BOARD_STATUS_ENDPOINT = '/genius/api/board/status';
 const GENIUS_BOARD_FEEDBACK_ENDPOINT = '/genius/api/board/feedback';
+
+function navigateGeniusTarget(url) {
+    if (GENIUS_EMBED_MODE && window.parent && window.parent !== window) {
+        window.parent.location.href = url;
+        return;
+    }
+    window.location.href = url;
+}
+
+window.GENIUS_EMBED_MODE = GENIUS_EMBED_MODE;
+window.navigateGeniusTarget = navigateGeniusTarget;
 
 function blankReveal() {
     return { templateAdjustments: {}, variantIndices: {} };
@@ -3159,7 +3198,7 @@ async function startGeniusAiBoard() {
         // The editor credit was spent or never bought — send the user to
         // checkout, the same redirect the Insight! Report uses on a 402.
         if (response.status === 402) {
-            window.location.href = '/genius/purchase';
+            navigateGeniusTarget('/genius/purchase');
             return;
         }
         if (!response.ok) throw new Error(data.error || 'Could not start AI board.');
@@ -4571,6 +4610,15 @@ async function initEditor() {
     // cached answers too so the editor truly begins from a blank slate.
     if (startParams.get('reset') === '1') {
         try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+        if (GENIUS_EMBED_MODE && window.parent && window.parent !== window) {
+            try {
+                const parentUrl = new URL(window.parent.location.href);
+                parentUrl.searchParams.delete('reset');
+                window.parent.history.replaceState({}, '', parentUrl.pathname + (parentUrl.search ? parentUrl.search : '') + parentUrl.hash);
+            } catch (e) {
+                /* parent URL cleanup is best effort */
+            }
+        }
     }
     // Drop the one-shot ?start / ?reset params so a manual reload does not
     // re-clear a draft the buyer has since started filling in.
@@ -4712,6 +4760,15 @@ function closeAuthModal() {
    are sent to the PayPal checkout page, the same flow the Insight! Report
    uses. GET /genius/api/draft reports the credit as `canStartEditor`. */
 const GENIUS_EDITOR_PURCHASE_URL = '/genius/purchase';
+const GENIUS_LOGIN_URL = '/challenge/login?next=' + encodeURIComponent('/dashboard/genius?draft=1');
+
+function navigateFromAuth(url) {
+    if (typeof window.navigateGeniusTarget === 'function') {
+        window.navigateGeniusTarget(url);
+        return;
+    }
+    window.location.href = url;
+}
 
 async function signedInUserHasEditorCredit() {
     const response = await fetch('/genius/api/draft', {
@@ -4732,7 +4789,7 @@ async function enterEditorAfterAuth() {
         hasCredit = false;
     }
     if (!hasCredit) {
-        window.location.href = GENIUS_EDITOR_PURCHASE_URL;
+        navigateFromAuth(GENIUS_EDITOR_PURCHASE_URL);
         return;
     }
     if (typeof window.unlockEditor === 'function') window.unlockEditor();
@@ -4750,6 +4807,10 @@ function completeAuthFlow() {
 function requestEditorAuth() {
     if (currentUser && currentUserHasPassword) {
         enterEditorAfterAuth();
+        return;
+    }
+    if (window.GENIUS_EMBED_MODE) {
+        navigateFromAuth(GENIUS_LOGIN_URL);
         return;
     }
     openAuthModal({ unlockEditor: true, reset: true });
@@ -4872,9 +4933,8 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
         currentUser = null;
         currentUserHasPassword = false;
     }
-    // After a PayPal purchase the buyer is sent back to /genius?start=1.
-    // Once the initial auth state is known, resume the editor-start flow
-    // so they do not have to click "Start your editor" again.
+    // Legacy /genius?start=1 links still resume the editor-start flow
+    // after the initial auth state is known.
     if (!initialAuthHandled) {
         initialAuthHandled = true;
         if (new URLSearchParams(window.location.search).get('start') === '1') {

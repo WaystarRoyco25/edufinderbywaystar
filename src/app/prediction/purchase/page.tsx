@@ -21,10 +21,10 @@ export default async function ReportPurchasePage() {
 
   const admin = createSupabaseAdminClient();
 
-  // A paid-but-unused credit means there is nothing to buy — send the user
-  // straight into the intake.
+  // A paid-but-unused credit means there is nothing to buy. Send the user
+  // to the dashboard with the intake open inline.
   const credits = await countAvailableReportCredits(admin, user.id);
-  if (credits > 0) redirect("/prediction?start=1");
+  if (credits > 0) redirect("/dashboard/prediction?draft=1");
 
   const startingOver = await userHasGeneratedReport(admin, user.id);
   const paypalClientId = process.env.PAYPAL_CLIENT_ID ?? "";

@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" as="style" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+    <script>
+        if (new URLSearchParams(window.location.search).get('embed') === 'dashboard') {
+            document.documentElement.classList.add('dashboard-embed-root');
+        }
+    </script>
     <style>
         body {
             font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -69,6 +74,38 @@
         /* ── Modal styles ── */
         #report-modal.is-open { display: flex; }
         body.modal-open { overflow: hidden; }
+        html.dashboard-embed-root body {
+            background: transparent;
+        }
+        html.dashboard-embed-root body.modal-open {
+            overflow: auto;
+        }
+        html.dashboard-embed-root body > header,
+        html.dashboard-embed-root body > main,
+        html.dashboard-embed-root body > footer {
+            display: none !important;
+        }
+        html.dashboard-embed-root #report-modal.is-open {
+            display: block;
+            position: static;
+            inset: auto;
+            z-index: auto;
+            min-height: 0;
+            padding: 0;
+            overflow: visible;
+        }
+        html.dashboard-embed-root #report-modal > div {
+            max-width: none;
+            max-height: none;
+            border: 1px solid #e5e7eb;
+            border-radius: .75rem;
+            box-shadow: none;
+        }
+        html.dashboard-embed-root .modal-overlay {
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
         .modal-overlay {
             background: rgba(17, 24, 39, .55);
             backdrop-filter: blur(4px);
@@ -1183,10 +1220,12 @@
 
 
 <script>
-const REPORT_LOGIN_NEXT = '/prediction?start=1';
+const REPORT_LOGIN_NEXT = '/dashboard/prediction?draft=1';
 const REPORT_DRAFT_ENDPOINT = '/prediction/api/draft';
 const REPORT_START_ENDPOINT = '/prediction/api/report/start';
 const REPORT_PURCHASE_URL = '/prediction/purchase';
+const REPORT_DASHBOARD_URL = '/dashboard/prediction?draft=1';
+const REPORT_EMBED_MODE = new URLSearchParams(window.location.search).get('embed') === 'dashboard';
 const REPORT_FIELD_NAMES = [
     'name',
     'email',
@@ -1236,6 +1275,14 @@ let reportSaveTimer = null;
 let lastSavedDraftJson = '';
 let skipNextCloseSave = false;
 let reportConversationStep = 0;
+
+function navigateReportTarget(url) {
+    if (REPORT_EMBED_MODE && window.parent && window.parent !== window) {
+        window.parent.location.href = url;
+        return;
+    }
+    window.location.href = url;
+}
 
 function animateCounters() {
     document.querySelectorAll('.stat-number[data-target]').forEach(el => {
@@ -1294,6 +1341,10 @@ function setReportSaveStatus(message) {
 }
 
 function redirectToReportLogin() {
+    if (REPORT_EMBED_MODE) {
+        navigateReportTarget('/challenge/login?next=' + encodeURIComponent(REPORT_DASHBOARD_URL));
+        return;
+    }
     if (typeof window.openAuthModal === 'function') {
         window.openAuthModal({ resumeReport: true, reset: true });
         return;
@@ -1613,7 +1664,7 @@ async function startReportGeneration() {
 
     // The credit was spent or never bought — send the user back to checkout.
     if (response.status === 402) {
-        window.location.href = REPORT_PURCHASE_URL;
+        navigateReportTarget(REPORT_PURCHASE_URL);
         return null;
     }
 
@@ -1634,6 +1685,11 @@ function queueReportDraftSave() {
 }
 
 async function handleReportStart() {
+    if (!REPORT_EMBED_MODE) {
+        window.location.href = REPORT_DASHBOARD_URL;
+        return;
+    }
+
     const button = document.getElementById('report-start-button');
     if (button) {
         button.disabled = true;
@@ -1647,7 +1703,7 @@ async function handleReportStart() {
         // The intake is paywalled. A signed-in user without a paid report
         // credit is sent to checkout before any question is shown.
         if (!data.canStartIntake) {
-            window.location.href = REPORT_PURCHASE_URL;
+            navigateReportTarget(REPORT_PURCHASE_URL);
             return;
         }
 
@@ -1723,7 +1779,7 @@ async function submitReportForm(event) {
         if (!started) return;
         skipNextCloseSave = true;
         closeReportModal();
-        window.location.href = started.reportUrl;
+        navigateReportTarget(started.reportUrl);
     } catch (error) {
         console.error(error);
         setReportSaveStatus('Report start failed');

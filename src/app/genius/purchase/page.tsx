@@ -21,10 +21,10 @@ export default async function GeniusPurchasePage() {
 
   const admin = createSupabaseAdminClient();
 
-  // A paid-but-unused credit means there is nothing to buy — send the user
-  // straight into the editor.
+  // A paid-but-unused credit means there is nothing to buy. Send the user
+  // to the dashboard with the editor open inline.
   const credits = await countAvailableGeniusCredits(admin, user.id);
-  if (credits > 0) redirect("/genius?start=1");
+  if (credits > 0) redirect("/dashboard/genius?draft=1");
 
   const startingOver = await userHasGeneratedBoard(admin, user.id);
   const paypalClientId = process.env.PAYPAL_CLIENT_ID ?? "";

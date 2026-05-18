@@ -16,9 +16,14 @@ function safeAuthNext(value: string | null): string {
     const parsed = new URL(value, "https://edufinder.local");
     const isSameOrigin = parsed.origin === "https://edufinder.local";
     const isAllowedPath =
+      parsed.pathname === "/dashboard" ||
+      parsed.pathname.startsWith("/dashboard/") ||
       parsed.pathname === "/prediction" ||
       parsed.pathname === "/prediction.html" ||
-      parsed.pathname.startsWith("/prediction/report/") ||
+      parsed.pathname.startsWith("/prediction/") ||
+      parsed.pathname === "/genius" ||
+      parsed.pathname === "/genius.html" ||
+      parsed.pathname.startsWith("/genius/") ||
       parsed.pathname === "/challenge" ||
       parsed.pathname.startsWith("/challenge/");
 

@@ -39,10 +39,12 @@ export default function EditorPurchaseButton({
   price: string;
   startingOver: boolean;
 }) {
-  // Where the buyer lands after paying: ?start=1 reopens the editor. A
-  // returning buyer also gets ?reset=1, which clears the locally cached
-  // answers so the fresh run really starts from a blank editor.
-  const editorUrl = startingOver ? "/genius?start=1&reset=1" : "/genius?start=1";
+  // Where the buyer lands after paying: the dashboard opens the editor
+  // inline. A returning buyer also gets ?reset=1, which clears the locally
+  // cached answers so the fresh run starts from a blank editor.
+  const editorUrl = startingOver
+    ? "/dashboard/genius?draft=1&reset=1"
+    : "/dashboard/genius?draft=1";
 
   const [sdkState, setSdkState] = useState<"loading" | "ready" | "error">(
     "loading",
@@ -160,7 +162,7 @@ export default function EditorPurchaseButton({
       <div className="rounded-xl border border-green-200 bg-green-50 p-6 text-center">
         <p className="text-lg font-bold text-green-900">Payment complete</p>
         <p className="mt-1 text-sm text-green-800">
-          Your Genius! Editor is unlocked. Taking you to the editor...
+          Your Genius! Editor is unlocked. Taking you to the dashboard...
         </p>
         <p className="mt-3 text-sm">
           <a

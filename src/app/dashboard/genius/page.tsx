@@ -14,9 +14,19 @@ import type {
   GeniusSignalProfile,
 } from "@/lib/genius/types";
 import CrossSellCard from "../cross-sell-card";
+import EmbeddedDraftFrame from "../embedded-draft-frame";
 import SignOutButton from "../sign-out-button";
 
 export const dynamic = "force-dynamic";
+
+type DashboardSearchParams = Promise<{
+  draft?: string | string[];
+  reset?: string | string[];
+}>;
+
+function hasFlag(value: string | string[] | undefined): boolean {
+  return Array.isArray(value) ? value.includes("1") : value === "1";
+}
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleString("en-US", {
@@ -63,8 +73,16 @@ function angleCount(value: unknown): number | null {
   return Array.isArray(board.angles) ? board.angles.length : null;
 }
 
-export default async function GeniusDashboardPage() {
-  const user = await requireDashboardUser("/dashboard/genius");
+export default async function GeniusDashboardPage({
+  searchParams,
+}: {
+  searchParams: DashboardSearchParams;
+}) {
+  const params = await searchParams;
+  const draftRequested = hasFlag(params.draft);
+  const resetRequested = hasFlag(params.reset);
+  const loginPath = `/dashboard/genius${draftRequested ? "?draft=1" : ""}`;
+  const user = await requireDashboardUser(loginPath);
 
   const admin = createSupabaseAdminClient();
   const [boards, credits, ownership] = await Promise.all([
@@ -72,6 +90,10 @@ export default async function GeniusDashboardPage() {
     countAvailableGeniusCredits(admin, user.id),
     loadServiceOwnership(admin, user.id),
   ]);
+  const showDraft = draftRequested && credits > 0;
+  const editorSrc = `/genius?embed=dashboard&start=1${
+    resetRequested ? "&reset=1" : ""
+  }`;
 
   return (
     <main className="space-y-8">
@@ -98,7 +120,11 @@ export default async function GeniusDashboardPage() {
             />
             <div className="shrink-0">
               <Link
-                href="/genius/purchase"
+                href={
+                  credits > 0
+                    ? "/dashboard/genius?draft=1"
+                    : "/genius/purchase"
+                }
                 className="block w-full rounded-lg bg-[#3b82f6] px-5 py-2.5 text-center font-semibold text-white shadow transition hover:bg-[#2563eb] sm:inline-block sm:w-auto"
               >
                 {credits > 0 ? "Generate a Board" : "Buy an Editor Run"}
@@ -110,6 +136,16 @@ export default async function GeniusDashboardPage() {
           </div>
         </div>
       </section>
+
+      {showDraft && (
+        <EmbeddedDraftFrame
+          title="Draft your Genius! Editor board"
+          description="Answer the discovery prompts here, then generate the idea board from the saved draft."
+          src={editorSrc}
+          closeHref="/dashboard/genius"
+          heightClassName="h-[1120px]"
+        />
+      )}
 
       <section className="space-y-3">
         <h2 className="text-xl font-bold text-gray-800 border-b-2 border-[#3b82f6] pb-2">

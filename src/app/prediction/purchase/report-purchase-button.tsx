@@ -29,8 +29,8 @@ declare global {
 }
 
 const PAYPAL_SCRIPT_ID = "paypal-sdk";
-// Where the buyer lands after paying: ?start=1 reopens the report intake.
-const INTAKE_URL = "/prediction?start=1";
+// Where the buyer lands after paying: the dashboard opens the intake inline.
+const INTAKE_URL = "/dashboard/prediction?draft=1";
 
 export default function ReportPurchaseButton({
   paypalClientId,
@@ -157,7 +157,7 @@ export default function ReportPurchaseButton({
       <div className="rounded-xl border border-green-200 bg-green-50 p-6 text-center">
         <p className="text-lg font-bold text-green-900">Payment complete</p>
         <p className="mt-1 text-sm text-green-800">
-          Your Insight! Report is unlocked. Taking you to the intake...
+          Your Insight! Report is unlocked. Taking you to the dashboard...
         </p>
         <p className="mt-3 text-sm">
           <a
