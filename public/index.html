@@ -473,29 +473,6 @@
             color: var(--brand-blue);
         }
 
-        /* Eyebrow label — adds editorial / SV-tech feel */
-        .section-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-            font-size: .68rem;
-            font-weight: 700;
-            color: var(--text-tertiary);
-            letter-spacing: .18em;
-            text-transform: uppercase;
-            margin-bottom: .85rem;
-        }
-        .section-eyebrow::before {
-            content: '';
-            width: 5px;
-            height: 5px;
-            border-radius: 999px;
-            background: var(--brand-blue);
-        }
-        .section-eyebrow.is-navy::before {
-            background: var(--brand-blue);
-        }
-
         .category-count {
             display: inline-flex;
             align-items: center;
@@ -1105,76 +1082,11 @@
 
 
     <!-- ════════════════════════════════════════════════════════
-         STEP 1 — Find a school
+         STEP 1 — Get ready with experts
          ════════════════════════════════════════════════════════ -->
     <div class="step-header">
         <span class="step-pill">Step 1</span>
-        <p class="step-title">Find the school that's right for you.</p>
-    </div>
-
-    <div class="card-stack">
-        <!-- ════════════════════════════════════════════════════
-             SECTION 1: International schools / English kindergartens
-             ════════════════════════════════════════════════════ -->
-        <a id="panel-international"
-           href="/reviews.html?category=international"
-           data-auth-required="true"
-           class="panel-bg section-card category-card">
-            <div class="section-card-header">
-                <span class="section-icon is-blue">
-                    <i class="fa-solid fa-building-columns category-arrow"></i>
-                </span>
-                <div>
-                    <span class="section-eyebrow">Reviews · Schools</span>
-                    <h2 class="section-title">International Schools / English Kindergartens</h2>
-                    <p class="section-caption">See key details and star ratings at a glance.</p>
-                    <span class="category-count">
-                        <i class="fa-solid fa-building-columns mr-1.5"></i>
-                        <span id="international-count">0</span>&nbsp;reviews
-                    </span>
-                    <span class="region-badge">
-                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-                        For South Korean users only
-                    </span>
-                </div>
-            </div>
-        </a>
-
-        <!-- ════════════════════════════════════════════════════
-             SECTION 2: Academies / consulting
-             ════════════════════════════════════════════════════ -->
-        <a id="panel-hagwon"
-           href="/reviews.html?category=hagwon"
-           data-auth-required="true"
-           class="panel-bg section-card category-card">
-            <div class="section-card-header">
-                <span class="section-icon">
-                    <i class="fa-solid fa-graduation-cap category-arrow"></i>
-                </span>
-                <div>
-                    <span class="section-eyebrow is-navy">Reviews · Hagwon</span>
-                    <h2 class="section-title">Academies / Consulting</h2>
-                    <p class="section-caption">Read reviews written by real students and parents.</p>
-                    <span class="category-count">
-                        <i class="fa-solid fa-graduation-cap mr-1.5"></i>
-                        <span id="hagwon-count">0</span>&nbsp;reviews
-                    </span>
-                    <span class="region-badge">
-                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-                        For South Korean users only
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
-
-
-    <!-- ════════════════════════════════════════════════════════
-         STEP 2 — Study with experts
-         ════════════════════════════════════════════════════════ -->
-    <div class="step-header">
-        <span class="step-pill">Step 2</span>
-        <p class="step-title">Study with the experts.</p>
+        <p class="step-title">Get ready with the experts.</p>
     </div>
 
     <div class="card-stack">
@@ -1187,7 +1099,6 @@
                     <i class="fa-solid fa-laptop-file"></i>
                 </span>
                 <div>
-                    <span class="section-eyebrow">Practice · Digital SAT</span>
                     <h2 class="section-title">The Challenge! Series</h2>
                     <p class="section-caption">The only Digital SAT prep you'll need.</p>
                 </div>
@@ -1215,7 +1126,6 @@
                     <i class="fa-solid fa-chart-column"></i>
                 </span>
                 <div>
-                    <span class="section-eyebrow is-navy">Insights · Admissions AI</span>
                     <h2 class="section-title">The Insight! Report</h2>
                     <p class="section-caption">Transforming college admissions with big data and AI.</p>
                 </div>
@@ -1244,7 +1154,6 @@
                     <i class="fa-solid fa-feather-pointed"></i>
                 </span>
                 <div>
-                    <span class="section-eyebrow">Writing · Essay Studio</span>
                     <h2 class="section-title">The Genius! Editor</h2>
                     <p class="section-caption">Drawing out inspiration for your college essay.</p>
                 </div>
@@ -1262,6 +1171,69 @@
                 Learn more<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
             </a>
         </section>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         STEP 2 — Find a school
+         ════════════════════════════════════════════════════════ -->
+    <div class="step-header">
+        <span class="step-pill">Step 2</span>
+        <p class="step-title">Find the school that's right for you.</p>
+    </div>
+
+    <div class="card-stack">
+        <!-- ════════════════════════════════════════════════════
+             SECTION 1: International schools / English kindergartens
+             ════════════════════════════════════════════════════ -->
+        <a id="panel-international"
+           href="/reviews.html?category=international"
+           data-auth-required="true"
+           class="panel-bg section-card category-card">
+            <div class="section-card-header">
+                <span class="section-icon is-blue">
+                    <i class="fa-solid fa-building-columns category-arrow"></i>
+                </span>
+                <div>
+                    <h2 class="section-title">International Schools / English Kindergartens</h2>
+                    <p class="section-caption">See key details and star ratings at a glance.</p>
+                    <span class="category-count">
+                        <i class="fa-solid fa-building-columns mr-1.5"></i>
+                        <span id="international-count">0</span>&nbsp;reviews
+                    </span>
+                    <span class="region-badge">
+                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                        For South Korean users only
+                    </span>
+                </div>
+            </div>
+        </a>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 2: Academies / consulting
+             ════════════════════════════════════════════════════ -->
+        <a id="panel-hagwon"
+           href="/reviews.html?category=hagwon"
+           data-auth-required="true"
+           class="panel-bg section-card category-card">
+            <div class="section-card-header">
+                <span class="section-icon">
+                    <i class="fa-solid fa-graduation-cap category-arrow"></i>
+                </span>
+                <div>
+                    <h2 class="section-title">Academies / Consulting</h2>
+                    <p class="section-caption">Read reviews written by real students and parents.</p>
+                    <span class="category-count">
+                        <i class="fa-solid fa-graduation-cap mr-1.5"></i>
+                        <span id="hagwon-count">0</span>&nbsp;reviews
+                    </span>
+                    <span class="region-badge">
+                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                        For South Korean users only
+                    </span>
+                </div>
+            </div>
+        </a>
     </div>
 
 
