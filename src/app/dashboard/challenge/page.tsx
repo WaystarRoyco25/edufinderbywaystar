@@ -342,6 +342,7 @@ function TestsAvailableStatus({
         >
           View packages
         </Link>
+        .
       </>
     );
   } else if (!positive) {

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { requireDashboardUser } from "@/lib/dashboard/guard";
-import { loadServiceOwnership } from "@/lib/dashboard/ownership";
 import { countAvailableGeniusCredits } from "@/lib/genius/purchase";
 import {
   geniusBoardUrl,
@@ -13,7 +12,6 @@ import type {
   GeniusBoardStatus,
   GeniusSignalProfile,
 } from "@/lib/genius/types";
-import CrossSellCard from "../cross-sell-card";
 import EmbeddedDraftFrame from "../embedded-draft-frame";
 import SignOutButton from "../sign-out-button";
 
@@ -85,10 +83,9 @@ export default async function GeniusDashboardPage({
   const user = await requireDashboardUser(loginPath);
 
   const admin = createSupabaseAdminClient();
-  const [boards, credits, ownership] = await Promise.all([
+  const [boards, credits] = await Promise.all([
     listGeniusBoardsForUser(admin, user.id),
     countAvailableGeniusCredits(admin, user.id),
-    loadServiceOwnership(admin, user.id),
   ]);
   const showDraft = draftRequested && credits > 0;
   const editorSrc = `/genius?embed=dashboard&start=1${
@@ -164,8 +161,6 @@ export default async function GeniusDashboardPage({
           </ul>
         )}
       </section>
-
-      {!ownership.challenge && <CrossSellCard service="challenge" />}
     </main>
   );
 }
