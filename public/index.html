@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -514,6 +514,24 @@
         .category-count i {
             color: var(--brand-blue);
         }
+        .region-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            width: fit-content;
+            margin: .7rem auto 0;
+            padding: .3rem .75rem;
+            border-radius: 999px;
+            background: rgba(245, 158, 11, .1);
+            border: 1px solid rgba(245, 158, 11, .38);
+            color: #b45309;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .005em;
+        }
+        .region-badge i {
+            font-size: .7rem;
+        }
         .category-arrow {
             color: var(--text-quaternary);
             transition: transform .2s ease, color .2s ease;
@@ -1005,7 +1023,7 @@
                 <input
                     type="text"
                     id="institution-search-input"
-                    placeholder="관심 있는 학교 / 학원 / 유치원을 검색해 보세요."
+                    placeholder="Search for a school, academy, or kindergarten."
                     autocomplete="off"
                     class="w-full pl-11 pr-28 py-3 bg-transparent text-sm md:text-base border-0"
                 >
@@ -1016,7 +1034,7 @@
                            inline-flex items-center gap-1.5"
                 >
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    <span class="hidden sm:inline">검색</span>
+                    <span class="hidden sm:inline">Search</span>
                 </button>
             </div>
         </div>
@@ -1026,9 +1044,9 @@
     <!-- ════════════════════════════════════════════════════════
          NEWS TICKER (stretches like stock-market headlines)
          ════════════════════════════════════════════════════════ -->
-    <div class="news-ticker" role="region" aria-label="이번 주 교육 뉴스">
+    <div class="news-ticker" role="region" aria-label="This week's education news">
         <div class="news-ticker-label">
-            <span>이번 주 교육 뉴스</span>
+            <span>This Week's Education News</span>
         </div>
         <div class="news-ticker-track">
             <div class="news-ticker-list">
@@ -1082,21 +1100,21 @@
          LEAD TAGLINE
          ════════════════════════════════════════════════════════ -->
     <p class="lead-tagline">
-        미래 인재를 키우는 곳, <span class="lead-accent">EduFinder</span>입니다.
+        This is <span class="lead-accent">EduFinder</span>, where tomorrow's talent is nurtured.
     </p>
 
 
     <!-- ════════════════════════════════════════════════════════
-         STEP 1 — 학교 찾기
+         STEP 1 — Find a school
          ════════════════════════════════════════════════════════ -->
     <div class="step-header">
         <span class="step-pill">Step 1</span>
-        <p class="step-title">나에게 맞는 학교를 찾으세요.</p>
+        <p class="step-title">Find the school that's right for you.</p>
     </div>
 
     <div class="card-stack">
         <!-- ════════════════════════════════════════════════════
-             SECTION 1: 국제학교 / 영어 유치원
+             SECTION 1: International schools / English kindergartens
              ════════════════════════════════════════════════════ -->
         <a id="panel-international"
            href="/reviews.html?category=international"
@@ -1108,18 +1126,22 @@
                 </span>
                 <div>
                     <span class="section-eyebrow">Reviews · Schools</span>
-                    <h2 class="section-title">국제학교 / 영어 유치원</h2>
-                    <p class="section-caption">핵심 정보 및 별점을 한눈에 확인하세요.</p>
+                    <h2 class="section-title">International Schools / English Kindergartens</h2>
+                    <p class="section-caption">See key details and star ratings at a glance.</p>
                     <span class="category-count">
                         <i class="fa-solid fa-building-columns mr-1.5"></i>
-                        <span id="international-count">0</span>개 리뷰
+                        <span id="international-count">0</span>&nbsp;reviews
+                    </span>
+                    <span class="region-badge">
+                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                        For South Korean users only
                     </span>
                 </div>
             </div>
         </a>
 
         <!-- ════════════════════════════════════════════════════
-             SECTION 2: 학원 / 컨설팅
+             SECTION 2: Academies / consulting
              ════════════════════════════════════════════════════ -->
         <a id="panel-hagwon"
            href="/reviews.html?category=hagwon"
@@ -1131,11 +1153,15 @@
                 </span>
                 <div>
                     <span class="section-eyebrow is-navy">Reviews · Hagwon</span>
-                    <h2 class="section-title">학원 / 컨설팅</h2>
-                    <p class="section-caption">진짜 학생과 학부모가 남긴 유학원 리뷰를 읽어보세요.</p>
+                    <h2 class="section-title">Academies / Consulting</h2>
+                    <p class="section-caption">Read reviews written by real students and parents.</p>
                     <span class="category-count">
                         <i class="fa-solid fa-graduation-cap mr-1.5"></i>
-                        <span id="hagwon-count">0</span>개 리뷰
+                        <span id="hagwon-count">0</span>&nbsp;reviews
+                    </span>
+                    <span class="region-badge">
+                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                        For South Korean users only
                     </span>
                 </div>
             </div>
@@ -1144,16 +1170,16 @@
 
 
     <!-- ════════════════════════════════════════════════════════
-         STEP 2 — 전문가와 공부하기
+         STEP 2 — Study with experts
          ════════════════════════════════════════════════════════ -->
     <div class="step-header">
         <span class="step-pill">Step 2</span>
-        <p class="step-title">전문가와 공부하세요.</p>
+        <p class="step-title">Study with the experts.</p>
     </div>
 
     <div class="card-stack">
         <!-- ════════════════════════════════════════════════════
-             SECTION 3: 디지털 SAT 실전 모의고사
+             SECTION 3: Digital SAT practice tests
              ════════════════════════════════════════════════════ -->
         <section id="panel-dsat" class="panel-bg section-card">
             <div class="section-card-header is-static">
@@ -1163,25 +1189,25 @@
                 <div>
                     <span class="section-eyebrow">Practice · Digital SAT</span>
                     <h2 class="section-title">The Challenge! Series</h2>
-                    <p class="section-caption">Digital SAT 공부는 이걸로 끝납니다.</p>
+                    <p class="section-caption">The only Digital SAT prep you'll need.</p>
                 </div>
             </div>
             <div class="compact-copy space-y-3">
                 <p>
-                    최신 기출문제를 꼭 닮은 <strong>R/W 섹션 모의고사</strong> 및
-                    전문가 해설을 제공합니다.
+                    We provide <strong>R/W section practice tests</strong> closely modeled
+                    on the latest real exams, along with expert explanations.
                 </p>
                 <p>
-                    꾸준한 연습을 통해 매일 발전하는 스스로를 확인할 수 있습니다.
+                    With steady practice, you can watch yourself improve every day.
                 </p>
             </div>
             <a href="/challenge" class="cta-button is-primary">
-                자세히 보기<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
+                Learn more<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
             </a>
         </section>
 
         <!-- ════════════════════════════════════════════════════
-             SECTION 4: 미국 대입 예측 모델
+             SECTION 4: U.S. college admissions prediction model
              ════════════════════════════════════════════════════ -->
         <section id="panel-prediction" class="panel-bg section-card">
             <div class="section-card-header is-static">
@@ -1191,25 +1217,26 @@
                 <div>
                     <span class="section-eyebrow is-navy">Insights · Admissions AI</span>
                     <h2 class="section-title">The Insight! Report</h2>
-                    <p class="section-caption">빅데이터와 AI로 입시를 혁신합니다.</p>
+                    <p class="section-caption">Transforming college admissions with big data and AI.</p>
                 </div>
             </div>
             <div class="compact-copy space-y-3">
                 <p>
-                    지난 10년간 쌓인 <strong>5만 건 이상의 미국 대입 데이터</strong>를 바탕으로
-                    나의 성적, 활동, 배경을 객관적으로 분석합니다.
+                    Drawing on <strong>more than 50,000 U.S. college admissions records</strong>
+                    gathered over the past decade, we objectively analyze your grades,
+                    activities, and background.
                 </p>
                 <p>
-                    지망 대학별 합격 가능성을 높이는 방법을 구체적으로 제시합니다.
+                    Then we lay out concrete ways to improve your chances at each target college.
                 </p>
             </div>
             <a href="/prediction" class="cta-button is-outline">
-                자세히 보기<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
+                Learn more<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
             </a>
         </section>
 
         <!-- ════════════════════════════════════════════════════
-             SECTION 5: Genius! Editor (대입 에세이 브레인스토밍)
+             SECTION 5: Genius! Editor (college essay brainstorming)
              ════════════════════════════════════════════════════ -->
         <section id="panel-genius" class="panel-bg section-card">
             <div class="section-card-header is-static">
@@ -1219,19 +1246,20 @@
                 <div>
                     <span class="section-eyebrow">Writing · Essay Studio</span>
                     <h2 class="section-title">The Genius! Editor</h2>
-                    <p class="section-caption">대입 에세이를 위한 영감을 길어 올립니다.</p>
+                    <p class="section-caption">Drawing out inspiration for your college essay.</p>
                 </div>
             </div>
             <div class="compact-copy space-y-3">
                 <p>
-                    <strong>날것의 감정과 대담한 꿈</strong>을 끌어내는 39개 질문을 준비했습니다.
+                    We have prepared 39 questions that draw out a student's
+                    <strong>rawest emotions and boldest dreams</strong>.
                 </p>
                 <p>
-                    성적표가 담지 못한 학생의 참모습을 함께 찾아갑니다.
+                    Together, we uncover the true self that a transcript can never capture.
                 </p>
             </div>
             <a href="/genius" class="cta-button is-primary">
-                자세히 보기<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
+                Learn more<i class="fa-solid fa-arrow-right arrow-icon text-xs"></i>
             </a>
         </section>
     </div>
@@ -1239,7 +1267,7 @@
 
     <div class="mt-14 flex justify-center">
         <button onclick="openFeedbackModal()" class="ghost-button">
-            <i class="fa-regular fa-envelope"></i>문의 및 건의하기
+            <i class="fa-regular fa-envelope"></i>Questions &amp; Suggestions
         </button>
     </div>
 
@@ -1260,7 +1288,7 @@
 
 
 <!-- ════════════════════════════════════════════════════════════
-     MODAL: Auth (로그인 / 회원가입)
+     MODAL: Auth (log in / sign up)
      ════════════════════════════════════════════════════════════ -->
 <div id="auth-modal"
      class="fixed inset-0 z-50 hidden flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto"
@@ -1347,18 +1375,18 @@
 
 
 <!-- ════════════════════════════════════════════════════════════
-     MODAL: Review (별점 이유 선택)
+     MODAL: Review (select rating reasons)
      ════════════════════════════════════════════════════════════ -->
 <div id="review-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md">
-        <h3 id="modal-title" class="text-xl font-bold mb-2">별점 선택 이유</h3>
+        <h3 id="modal-title" class="text-xl font-bold mb-2">Why this rating?</h3>
         <p id="modal-subtitle" class="text-gray-500 text-sm mb-4">
-            <strong class="text-[#3b82f6] font-bold">1~2가지</strong> 이유를 선택해주세요.
+            Please select <strong class="text-[#3b82f6] font-bold">1 or 2</strong> reasons.
         </p>
         <div id="modal-options" class="flex flex-col space-y-2 mb-6"></div>
         <div class="flex justify-end space-x-3">
             <button onclick="closeReviewModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium">
-                취소
+                Cancel
             </button>
             <button
                 id="modal-submit"
@@ -1366,7 +1394,7 @@
                 disabled
                 class="px-4 py-2 bg-[#3b82f6] text-white rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                리뷰 제출
+                Submit Review
             </button>
         </div>
     </div>
@@ -1374,27 +1402,27 @@
 
 
 <!-- ════════════════════════════════════════════════════════════
-     MODAL: Feedback (문의 및 건의)
+     MODAL: Feedback (questions & suggestions)
      ════════════════════════════════════════════════════════════ -->
 <div id="feedback-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md">
 
         <div id="feedback-form-step">
-            <h3 class="text-xl font-bold mb-2">문의 및 건의</h3>
-            <p class="text-gray-500 text-sm mb-4">궁금한 점이나 개선 사항을 자유롭게 남겨주세요.</p>
+            <h3 class="text-xl font-bold mb-2">Questions &amp; Suggestions</h3>
+            <p class="text-gray-500 text-sm mb-4">Feel free to share any questions or ideas for improvement.</p>
             <textarea
                 id="feedback-text"
                 rows="5"
-                placeholder="내용을 입력해주세요..."
+                placeholder="Enter your message..."
                 class="w-full px-4 py-3 border rounded-md mb-4 focus:outline-none focus:border-[#3b82f6]
                        text-sm leading-relaxed resize-none"
             ></textarea>
             <div class="flex justify-end space-x-3">
                 <button onclick="closeFeedbackModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium">
-                    취소
+                    Cancel
                 </button>
                 <button onclick="submitFeedback()" class="px-4 py-2 bg-[#3b82f6] text-white rounded-md font-medium hover:bg-[#3b82f6]">
-                    제출하기
+                    Submit
                 </button>
             </div>
         </div>
@@ -1403,10 +1431,10 @@
             <div class="flex items-center justify-center w-14 h-14 bg-green-100 text-green-600 rounded-full mx-auto mb-4">
                 <i class="fa-solid fa-check text-2xl"></i>
             </div>
-            <p class="text-base font-medium text-gray-800 mb-1">제출이 완료되었습니다.</p>
-            <p class="text-sm text-gray-500 mb-5">소중한 의견 감사합니다.</p>
+            <p class="text-base font-medium text-gray-800 mb-1">Your message has been sent.</p>
+            <p class="text-sm text-gray-500 mb-5">Thank you for your valuable feedback.</p>
             <button onclick="closeFeedbackModal()" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300">
-                닫기
+                Close
             </button>
         </div>
     </div>
@@ -1414,7 +1442,7 @@
 
 
 <!-- ════════════════════════════════════════════════════════════
-     MODAL: Hagwon Tips (학원/컨설팅 이용법)
+     MODAL: Hagwon Tips (how to use academies / consulting)
      ════════════════════════════════════════════════════════════ -->
 <div id="hagwon-tips-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl w-11/12 max-w-lg max-h-[85vh] flex flex-col">
@@ -1425,8 +1453,8 @@
                     <i class="fa-solid fa-lightbulb text-base"></i>
                 </span>
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800">학원 / 컨설팅 이용법</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">등록 전 꼭 확인해야 할 다섯 가지</p>
+                    <h3 class="text-lg font-bold text-gray-800">Choosing an Academy or Consultant</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Five things to check before you enroll</p>
                 </div>
             </div>
             <button onclick="closeHagwonTipsModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-1">
@@ -1440,11 +1468,11 @@
                     <span class="flex items-center justify-center w-7 h-7 bg-amber-100 text-amber-600 rounded-full font-bold text-xs shadow-sm">1</span>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-gray-800 mb-1.5">합격 사례만 보여주는 곳은 의심하세요.</p>
+                    <p class="text-sm font-semibold text-gray-800 mb-1.5">Be wary of places that show only success stories.</p>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        잘된 학생 몇 명을 앞세우는 건 어디든 할 수 있습니다.
-                        중요한 건 누가 왜 떨어졌고 누가 왜 중간에 그만뒀는지입니다.
-                        불리한 이야기를 꺼내지 않는 곳은 결과보다 포장이 앞서는 곳일 가능성이 높습니다.
+                        Any academy can put a few star students on display.
+                        What truly matters is who was rejected and why, and who quit partway and why.
+                        A place that avoids the unflattering stories likely values image over results.
                     </p>
                 </div>
             </div>
@@ -1453,11 +1481,11 @@
                     <span class="flex items-center justify-center w-7 h-7 bg-amber-100 text-amber-600 rounded-full font-bold text-xs shadow-sm">2</span>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-gray-800 mb-1.5">대표 말만 듣고 등록하지 마세요.</p>
+                    <p class="text-sm font-semibold text-gray-800 mb-1.5">Don't enroll on the director's word alone.</p>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        상담할 때는 대표가 직접 나와서 열심히 설득하지만,
-                        막상 수업이 시작되면 초보 컨설턴트가 아이를 맡는 경우가 많습니다.
-                        내 아이를 누가 끝까지 책임지는지 반드시 확인하세요.
+                        During the consultation, the director often appears in person and works hard to win you over.
+                        But once classes actually begin, a junior consultant is frequently the one assigned to your child.
+                        Always confirm who will be responsible for your child from start to finish.
                     </p>
                 </div>
             </div>
@@ -1466,12 +1494,12 @@
                     <span class="flex items-center justify-center w-7 h-7 bg-amber-100 text-amber-600 rounded-full font-bold text-xs shadow-sm">3</span>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-gray-800 mb-1.5">커리큘럼보다 중요한 건 피드백과 관리입니다.</p>
+                    <p class="text-sm font-semibold text-gray-800 mb-1.5">Feedback and management matter more than the curriculum.</p>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        수업 계획을 그럴듯하게 짜는 곳은 많습니다.
-                        하지만 첨삭이 늦고, 과제 점검이 느슨하고, 일정 관리에 빈틈이 생기면 성적은 무너집니다.
-                        아이를 실제로 돕는 건 화려한 프로그램이 아니라,
-                        매주 꼼꼼히 챙겨주고 묵묵히 응원해 주는 선생님 한 분입니다.
+                        Many places can draw up an impressive-looking lesson plan.
+                        But when feedback is slow, homework goes unchecked, and the schedule has gaps, grades fall apart.
+                        What truly helps a child is not a flashy program, but one teacher
+                        who checks in carefully each week and quietly cheers them on.
                     </p>
                 </div>
             </div>
@@ -1480,11 +1508,11 @@
                     <span class="flex items-center justify-center w-7 h-7 bg-amber-100 text-amber-600 rounded-full font-bold text-xs shadow-sm">4</span>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-gray-800 mb-1.5">비용이 많이 든다고 좋은 학원은 아닙니다.</p>
+                    <p class="text-sm font-semibold text-gray-800 mb-1.5">A high price does not make a good academy.</p>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        교육 시장에는 부모의 불안을 이용해 비용을 부풀리는 곳이 많습니다.
-                        수업료는 높은데 관리는 허술하고, 약속은 거창하지만 근거는 빈약한 곳도 적지 않습니다.
-                        청구하는 비용으로 정확히 무엇을 해주는지를 따져봐야 합니다.
+                        Many places in the education market inflate their fees by preying on parents' anxiety.
+                        More than a few charge high tuition yet give careless support, and make grand promises with little behind them.
+                        Examine exactly what the fees you are charged actually buy.
                     </p>
                 </div>
             </div>
@@ -1494,12 +1522,12 @@
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-gray-800 mb-1.5">
-                        아이를 성장시키는 곳인지, 그저 지치게 만드는 곳인지 냉정하게 보세요.
+                        Look honestly at whether a place helps your child grow, or simply wears them out.
                     </p>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        힘든 과정 자체가 나쁜 건 아닙니다.
-                        하지만 시간을 들여도 실력이 나아지지 않고
-                        자기 주도성만 떨어지는 곳은 좋은 학원이라 할 수 없습니다.
+                        A demanding program is not a bad thing in itself.
+                        But a place where ability never improves despite the hours invested,
+                        and a child's independence only erodes, cannot be called a good academy.
                     </p>
                 </div>
             </div>
@@ -1511,7 +1539,7 @@
                 class="w-full px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium
                        hover:bg-gray-200 transition-colors text-sm"
             >
-                닫기
+                Close
             </button>
         </div>
     </div>
@@ -1519,7 +1547,7 @@
 
 
 <!-- ════════════════════════════════════════════════════════════
-     MODAL: School Tips (국제학교 이용 가이드)
+     MODAL: School Tips (international school guide)
      ════════════════════════════════════════════════════════════ -->
 <div id="school-tips-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl w-11/12 max-w-lg max-h-[85vh] flex flex-col">
@@ -1530,8 +1558,8 @@
                     <i class="fa-solid fa-lightbulb text-base"></i>
                 </span>
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800">국제학교 이용 가이드</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">카드에 표시된 연락처 관련 안내</p>
+                    <h3 class="text-lg font-bold text-gray-800">International School Guide</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">About the contact details shown on each card</p>
                 </div>
             </div>
             <button onclick="closeSchoolTipsModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-1">
@@ -1546,11 +1574,11 @@
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-gray-800 mb-1.5">
-                        전화번호가 '비공개'인 학교는 공식 웹사이트를 참고하세요.
+                        For schools whose phone number is listed as "Not disclosed," check the official website.
                     </p>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        일부 학교는 대표 전화번호를 외부에 공개하지 않습니다.
-                        이 경우 개별 학교 공식 홈페이지 내 문의 양식이나 이메일을 이용해 주세요.
+                        Some schools do not make a main phone number public.
+                        In that case, please use the inquiry form or email address on the school's official website.
                     </p>
                 </div>
             </div>
@@ -1560,11 +1588,11 @@
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-gray-800 mb-1.5">
-                        주소와 전화번호는 변경될 수 있습니다.
+                        Addresses and phone numbers may change.
                     </p>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        본 사이트에 표시된 연락처는 2026년 상반기 이후 학교 사정에 따라 달라질 수 있습니다.
-                        정확한 정보는 문의 전 학교 공식 웹사이트에서 다시 한번 확인해 주세요.
+                        The contact details shown on this site may change after the first half of 2026, depending on each school's circumstances.
+                        Before reaching out, please confirm the current details once more on the school's official website.
                     </p>
                 </div>
             </div>
@@ -1576,7 +1604,7 @@
                 class="w-full px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium
                        hover:bg-gray-200 transition-colors text-sm"
             >
-                닫기
+                Close
             </button>
         </div>
     </div>
@@ -1592,18 +1620,18 @@
             <div class="flex items-center justify-center w-14 h-14 bg-orange-100 text-orange-500 rounded-full mx-auto mb-4">
                 <i class="fa-solid fa-magnifying-glass text-2xl"></i>
             </div>
-            <p class="text-base font-semibold text-gray-800 mb-1.5">검색 결과가 없습니다</p>
+            <p class="text-base font-semibold text-gray-800 mb-1.5">No results found</p>
             <p class="text-sm text-gray-500 mb-1">
-                <span id="search-not-found-query" class="font-medium text-gray-700"></span>와(과) 일치하는
+                No institution matching <span id="search-not-found-query" class="font-medium text-gray-700"></span>
             </p>
             <p class="text-sm text-gray-500 mb-5">
-                기관을 본 페이지에서 찾을 수 없습니다.
+                could be found on this page.
             </p>
             <button
                 onclick="closeNotFoundModal()"
                 class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
             >
-                닫기
+                Close
             </button>
         </div>
     </div>
@@ -1955,7 +1983,7 @@ function updateAuthUI() {
         const logoutButton = document.createElement('button');
         logoutButton.type = 'button';
         logoutButton.className = 'logout-btn';
-        logoutButton.textContent = '로그아웃';
+        logoutButton.textContent = 'Log out';
         logoutButton.addEventListener('click', logout);
 
         pill.append(userLabel, logoutButton);
@@ -2089,7 +2117,7 @@ async function signInWithPassword() {
     currentUser = data.user?.email || email;
     currentUserId = data.user?.id || currentUserId;
     currentUserHasPassword = true;
-    completeAuthFlow("로그인되었습니다.");
+    completeAuthFlow("You are now logged in.");
 }
 
 async function sendAuthCode() {
@@ -2124,7 +2152,7 @@ async function verifyAuthCode() {
         currentUser = data.user?.email || pendingEmail;
         currentUserId = data.user?.id || currentUserId;
         currentUserHasPassword = true;
-        completeAuthFlow("로그인되었습니다.");
+        completeAuthFlow("You are now logged in.");
         return;
     }
     document.getElementById('auth-new-password').value = '';
@@ -2145,7 +2173,7 @@ async function setNewPassword() {
     });
     if (error) { showAuthMessage("Could not set your password: " + error.message); return; }
     currentUserHasPassword = true;
-    completeAuthFlow("비밀번호가 설정되었습니다. 이제 EduFinder와 SAT Factory를 자유롭게 이용하실 수 있습니다.");
+    completeAuthFlow("Your password has been set. You can now use EduFinder and SAT Factory freely.");
 }
 
 async function logout() {
@@ -2240,7 +2268,7 @@ function renderSchools(schoolList, containerId) {
             badge.className = "mt-2 inline-flex items-center bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded border border-green-200";
             const icon = document.createElement('i');
             icon.className = "fa-solid fa-check text-green-500 mr-1.5";
-            badge.append(icon, document.createTextNode('교육부 인가'));
+            badge.append(icon, document.createTextNode('Ministry of Education Accredited'));
             topSection.appendChild(badge);
         }
 
@@ -2276,7 +2304,7 @@ function renderSchools(schoolList, containerId) {
             } else {
                 const privateLabel = document.createElement('span');
                 privateLabel.className = "text-gray-400";
-                privateLabel.textContent = "비공개";
+                privateLabel.textContent = "Not disclosed";
                 phoneRow.appendChild(privateLabel);
             }
             contact.appendChild(phoneRow);
@@ -2292,7 +2320,7 @@ function renderSchools(schoolList, containerId) {
         scoreValue.textContent = avg;
         const scoreMeta = document.createElement('span');
         scoreMeta.className = "text-sm text-gray-500 mt-1";
-        scoreMeta.textContent = '/ 5 (' + votes + '개 리뷰)';
+        scoreMeta.textContent = '/ 5 (' + votes + ' reviews)';
         scoreRow.append(scoreValue, scoreMeta);
         card.appendChild(scoreRow);
 
@@ -2311,10 +2339,10 @@ function renderSchools(schoolList, containerId) {
                 insights.appendChild(row);
             };
             if (topStrength) {
-                addInsight("fa-solid fa-arrow-trend-up text-green-500 w-4 mr-1", "최대 장점:", topStrength);
+                addInsight("fa-solid fa-arrow-trend-up text-green-500 w-4 mr-1", "Top strength:", topStrength);
             }
             if (topWeakness) {
-                addInsight("fa-solid fa-arrow-trend-down text-red-500 w-4 mr-1", "최대 단점:", topWeakness);
+                addInsight("fa-solid fa-arrow-trend-down text-red-500 w-4 mr-1", "Top weakness:", topWeakness);
             }
             card.appendChild(insights);
         }
@@ -2326,9 +2354,9 @@ function renderSchools(schoolList, containerId) {
                     <div class="flex items-start gap-2">
                         <i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5 text-sm"></i>
                         <div>
-                            <p class="text-xs font-bold text-red-700 mb-1">게시물 임시조치 안내</p>
+                            <p class="text-xs font-bold text-red-700 mb-1">Notice of Temporary Post Restriction</p>
                             <p class="text-[11px] text-red-600/90 leading-relaxed">
-                                정보통신망법 제44조의2에 의거, 위 학원의 권리침해(명예훼손) 신고로 <strong>리뷰 1건을 30일간 블라인드 처리</strong>하였습니다. 소명 여부에 따라 해당 리뷰는 복구 또는 삭제될 수 있습니다.
+                                Pursuant to Article 44-2 of the Information and Communications Network Act, and following a rights-infringement (defamation) report from this academy, <strong>one review has been blinded for 30 days</strong>. Depending on whether a rebuttal is submitted, the review may be restored or deleted.
                             </p>
                         </div>
                     </div>
@@ -2351,7 +2379,7 @@ function renderSchools(schoolList, containerId) {
 
         const hint = document.createElement('p');
         hint.className = "text-xs text-gray-400 mt-2";
-        hint.textContent = "별점을 클릭하여 리뷰를 남겨보세요.";
+        hint.textContent = "Click a star to leave a review.";
         card.appendChild(hint);
 
         container.appendChild(card);
@@ -2370,27 +2398,27 @@ function resetStars(el) {
 
 function initiateRating(school, rating) {
     if (!currentUser || !currentUserId) { openAuthModal(); return; }
-    if (hasReviewedInstitution(school)) { showToast("이미 이 곳에 대한 리뷰를 작성하셨습니다. (1인당 1회 작성 가능)", "warning"); return; }
+    if (hasReviewedInstitution(school)) { showToast("You have already reviewed this institution. (One review per person.)", "warning"); return; }
     let hagwonCount = 0, schoolCount = 0;
     myReviewedSchools.forEach(prev => { if (isHagwonInstitution(prev)) hagwonCount++; else schoolCount++; });
-    if (isHagwonInstitution(school) && hagwonCount >= 2) { showToast("무분별한 리뷰 방지를 위해 학원 / 컨설팅 리뷰는 계정당 최대 2개까지만 작성할 수 있습니다.", "warning"); return; }
-    if (!isHagwonInstitution(school) && schoolCount >= 3) { showToast("무분별한 리뷰 방지를 위해 학교/유치원 리뷰는 계정당 최대 3개까지만 작성할 수 있습니다.", "warning"); return; }
+    if (isHagwonInstitution(school) && hagwonCount >= 2) { showToast("To prevent review abuse, each account may post at most 2 academy or consulting reviews.", "warning"); return; }
+    if (!isHagwonInstitution(school) && schoolCount >= 3) { showToast("To prevent review abuse, each account may post at most 3 school or kindergarten reviews.", "warning"); return; }
     pendingSchool = school; pendingRating = rating; selectedReasons = [];
     const optionsContainer = document.getElementById('modal-options');
     optionsContainer.innerHTML = '';
     const subtitle = document.getElementById('modal-subtitle');
     if (rating === 3) {
-        document.getElementById('modal-title').innerText = '별점 3점(보통) — 제출하시겠습니까?';
-        subtitle.innerHTML = '3점은 <strong class="text-[#3b82f6]">"좋지도 나쁘지도 않음"</strong>을 의미합니다.';
-        optionsContainer.innerHTML = '<p class="text-gray-500 text-sm py-2"><i class="fa-solid fa-circle-info text-blue-400 mr-1.5"></i>별점 3점은 별도의 이유 선택 없이 바로 제출됩니다.</p>';
+        document.getElementById('modal-title').innerText = '3 stars (Average). Submit this rating?';
+        subtitle.innerHTML = '3 stars means it was <strong class="text-[#3b82f6]">"neither good nor bad."</strong>';
+        optionsContainer.innerHTML = '<p class="text-gray-500 text-sm py-2"><i class="fa-solid fa-circle-info text-blue-400 mr-1.5"></i>A 3-star rating is submitted right away, with no reasons to select.</p>';
         document.getElementById('modal-submit').disabled = false;
         document.getElementById('review-modal').classList.remove('hidden');
         return;
     }
     let reasons = (rating >= 4) ? [...POSITIVE_REASONS] : [...NEGATIVE_REASONS];
     if (isHagwonInstitution(school)) reasons = reasons.slice(0, 5);
-    document.getElementById('modal-title').innerText = (rating >= 4) ? '어떤 점이 가장 만족스러우셨나요? (별점 ' + rating + '점)' : '어떤 점이 아쉬우셨나요? (별점 ' + rating + '점)';
-    subtitle.innerHTML = '<strong class="text-[#3b82f6] font-bold">1~2가지</strong> 이유를 선택해주세요.';
+    document.getElementById('modal-title').innerText = (rating >= 4) ? 'What did you like most? (' + rating + ' stars)' : 'What fell short? (' + rating + ' stars)';
+    subtitle.innerHTML = 'Please select <strong class="text-[#3b82f6] font-bold">1 or 2</strong> reasons.';
     reasons.forEach(reason => {
         const btn = document.createElement('button');
         btn.className = "reason-btn w-full text-left px-4 py-3 rounded border border-gray-300 hover:bg-blue-50 transition-colors text-sm font-medium text-gray-700";
@@ -2413,11 +2441,11 @@ async function submitFinalRating() {
     if (!currentUserId) { closeReviewModal(); openAuthModal(); return; }
     const { error } = await supabaseClient.from('reviews').insert([{ user_id: currentUserId, school_name: pendingSchool, rating: pendingRating, reasons: selectedReasons }]);
     if (error) {
-        if (error.code === '23505') showToast("이미 이 학교에 대한 리뷰를 작성하셨습니다.", "warning");
-        else showToast("오류가 발생했습니다: " + error.message, "error");
+        if (error.code === '23505') showToast("You have already reviewed this institution.", "warning");
+        else showToast("An error occurred: " + error.message, "error");
         closeReviewModal(); return;
     }
-    showToast("리뷰가 성공적으로 등록되었습니다!", "success");
+    showToast("Your review has been posted successfully!", "success");
     closeReviewModal();
     await renderAll();
 }
@@ -2464,14 +2492,14 @@ async function submitFeedback() {
         return;
     }
     const message = document.getElementById('feedback-text').value.trim();
-    if (!message) { showToast('내용을 입력해주세요.', 'warning'); return; }
+    if (!message) { showToast('Please enter a message.', 'warning'); return; }
     const { error } = await supabaseClient.from('feedback').insert([{
         message: message,
         user_id: currentUserId,
         user_email: currentUser
     }]);
     if (error) {
-        showToast('문의 접수 중 오류가 발생했습니다: ' + error.message, 'error');
+        showToast('An error occurred while submitting your message: ' + error.message, 'error');
         return;
     }
     document.getElementById('feedback-form-step').classList.add('hidden');
@@ -2545,7 +2573,7 @@ function performSearch() {
     const input = document.getElementById('institution-search-input');
     const raw = input.value.trim();
     if (!raw) {
-        showToast('검색어를 입력해주세요.', 'warning');
+        showToast('Please enter a search term.', 'warning');
         return;
     }
     const result = findInstitution(raw);
