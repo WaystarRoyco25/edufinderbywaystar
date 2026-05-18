@@ -115,6 +115,7 @@ export default async function InsightDashboardPage({
           src="/prediction?embed=dashboard&start=1"
           closeHref="/dashboard/prediction"
           heightClassName="h-[940px]"
+          showHeader={false}
         />
       )}
 
